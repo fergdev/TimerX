@@ -14,7 +14,7 @@ class App : Application() {
     private val androidModule by lazy {
         module {
             viewModel { MainViewModel(get()) }
-            viewModel { RunViewModel(get()) }
+            viewModel { RunViewModel(get(), get()) }
         }
     }
 

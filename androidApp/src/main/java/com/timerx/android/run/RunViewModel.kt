@@ -1,9 +1,11 @@
 package com.timerx.android.run
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timerx.android.beep.BeepMaker
 import com.timerx.android.beep.BeepMakerImpl
+import com.timerx.android.main.Screens.RUN_TIMER_ID
 import com.timerx.android.run.RunViewModel.TimerState.Finished
 import com.timerx.android.run.RunViewModel.TimerState.Paused
 import com.timerx.android.run.RunViewModel.TimerState.Running
@@ -17,10 +19,9 @@ import kotlinx.coroutines.launch
 
 class RunViewModel(
     timerRepository: TimerRepository,
+    savedStateHandle: SavedStateHandle,
     private val beepMaker: BeepMaker = BeepMakerImpl(),
-    private val timerId: Int = 0
-) :
-    ViewModel() {
+) : ViewModel() {
 
     enum class TimerState {
         Running,
@@ -30,6 +31,7 @@ class RunViewModel(
 
     data class RunState(
         val timerState: TimerState = Running,
+        val timerName: String = "",
 
         val set: Int = 0,
         val setCount: Int = 0,
@@ -45,6 +47,7 @@ class RunViewModel(
         val intervalDuration: Int = 0
     )
 
+    private val timerId: Int = savedStateHandle[RUN_TIMER_ID]!!
     private val timer: Timer = timerRepository.timers().first { it.id == timerId }
 
     private val _state = MutableStateFlow(RunState())
@@ -200,6 +203,7 @@ class RunViewModel(
 
         _state.value = _state.value.copy(
             timerState = Running,
+            timerName = timer.name,
 
             setCount = timer.sets.size,
             repetitionCount = firstSet.repetitions,
@@ -211,5 +215,10 @@ class RunViewModel(
         )
         beepMaker.beepStart()
         startTimer()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopTimer()
     }
 }

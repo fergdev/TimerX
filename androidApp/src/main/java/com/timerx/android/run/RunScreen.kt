@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -33,9 +34,10 @@ import com.timerx.android.main.Screens
 import com.timerx.android.run.RunViewModel.TimerState.Finished
 import com.timerx.android.run.RunViewModel.TimerState.Paused
 import com.timerx.android.run.RunViewModel.TimerState.Running
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun RunScreen(navController: NavHostController, viewModel: RunViewModel) {
+fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getViewModel()) {
     val state by viewModel.state.collectAsState()
     Box(
         modifier = Modifier
@@ -43,7 +45,10 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel) {
             .background(Color.Blue),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row {
                 IconButton(onClick = { viewModel.previousInterval() }) {
                     Icon(
@@ -64,6 +69,9 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel) {
                 }
             }
 
+            TText(text = state.timerName)
+            Spacer(modifier = Modifier.weight(2f))
+
             if (state.repetitionCount != 1) {
                 TText(text = "${state.repetitionCount - state.repetition}")
             }
@@ -71,6 +79,8 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel) {
             TText(text = state.intervalName)
             Spacer(modifier = Modifier.height(24.dp))
             TText(text = "${state.intervalDuration - state.elapsed} ")
+
+            Spacer(modifier = Modifier.weight(2f))
 
             Row {
                 IconButton(onClick = { navController.navigate(Screens.MAIN) }) {
@@ -124,6 +134,8 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel) {
 @Composable
 private fun TText(text: String) {
     Text(
-        text = text, style = MaterialTheme.typography.titleLarge, color = Color.White
+        text = text,
+        style = MaterialTheme.typography.headlineLarge,
+        color = Color.White
     )
 }
