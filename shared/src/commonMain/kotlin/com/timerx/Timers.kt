@@ -7,6 +7,6 @@ class Timers {
     private val timerRepository = getTimerRepository()
 
     fun timers(): List<Timer> {
-        return timerRepository.timers
+        return timerRepository.timers()
     }
 }

@@ -3,10 +3,10 @@ package com.timerx.domain
 data class Timer(
     val id: Int,
     val name: String,
-    val intervalSets: List<IntervalSet>
+    val sets: List<TimerSet>
 )
 
-data class IntervalSet(
+data class TimerSet(
     val id: Int,
     val repetitions: Int,
     val intervals: List<Interval>
