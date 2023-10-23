@@ -9,8 +9,8 @@ import com.timerx.android.main.Screens.RUN_TIMER_ID
 import com.timerx.android.run.RunViewModel.TimerState.Finished
 import com.timerx.android.run.RunViewModel.TimerState.Paused
 import com.timerx.android.run.RunViewModel.TimerState.Running
+import com.timerx.database.TimerDatabase
 import com.timerx.domain.Timer
-import com.timerx.repository.TimerRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RunViewModel(
-    timerRepository: TimerRepository,
+    timerRepository: TimerDatabase,
     savedStateHandle: SavedStateHandle,
     private val beepMaker: BeepMaker = BeepMakerImpl(),
 ) : ViewModel() {
@@ -36,19 +36,19 @@ class RunViewModel(
         val set: Int = 0,
         val setCount: Int = 0,
 
-        val repetition: Int = 0,
-        val repetitionCount: Int = 0,
+        val repetition: Long = 0,
+        val repetitionCount: Long = 0,
 
         val interval: Int = 0,
         val intervalCount: Int = 0,
         val intervalName: String = "",
 
-        val elapsed: Int = 0,
-        val intervalDuration: Int = 0
+        val elapsed: Long = 0,
+        val intervalDuration: Long = 0
     )
 
-    private val timerId: Int = savedStateHandle[RUN_TIMER_ID]!!
-    private val timer: Timer = timerRepository.timers().first { it.id == timerId }
+    private val timerId: Long = savedStateHandle[RUN_TIMER_ID]!!
+    private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
 
     private val _state = MutableStateFlow(RunState())
 
@@ -80,7 +80,7 @@ class RunViewModel(
 
     private fun updateState(
         set: Int,
-        repetition: Int,
+        repetition: Long,
         interval: Int,
     ) {
         val repetitionCount = timer.sets[set].repetitions
@@ -146,7 +146,7 @@ class RunViewModel(
         restartTimer()
         beepMaker.beepBack()
 
-        if (_state.value.elapsed != 0) {
+        if (_state.value.elapsed != 0L) {
             _state.value = _state.value.copy(elapsed = 0)
             return
         }

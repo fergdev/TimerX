@@ -30,7 +30,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.timerx.android.R
-import com.timerx.android.main.Screens
 import com.timerx.android.run.RunViewModel.TimerState.Finished
 import com.timerx.android.run.RunViewModel.TimerState.Paused
 import com.timerx.android.run.RunViewModel.TimerState.Running
@@ -72,7 +71,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
             TText(text = state.timerName)
             Spacer(modifier = Modifier.weight(2f))
 
-            if (state.repetitionCount != 1) {
+            if (state.repetitionCount != 1L) {
                 TText(text = "${state.repetitionCount - state.repetition}")
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -83,7 +82,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
             Spacer(modifier = Modifier.weight(2f))
 
             Row {
-                IconButton(onClick = { navController.navigate(Screens.MAIN) }) {
+                IconButton(onClick = { navController.navigateUp() }) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.Close,

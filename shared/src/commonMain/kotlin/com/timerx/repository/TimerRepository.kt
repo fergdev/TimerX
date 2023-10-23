@@ -1,6 +1,6 @@
 package com.timerx.repository
 
-import com.timerx.domain.Interval
+import com.timerx.domain.TimerInterval
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerSet
 import kotlinx.collections.immutable.PersistentList
@@ -19,12 +19,12 @@ interface TimerRepository {
                     TimerSet(
                         id = 0,
                         repetitions = 1,
-                        intervals = listOf(Interval(0, "Warmup", 10))
+                        intervals = listOf(TimerInterval(0, "Warmup", 10))
                     ),
                     TimerSet(
                         id = 0,
                         repetitions = 20,
-                        intervals = listOf(Interval(0, "Work", 60))
+                        intervals = listOf(TimerInterval(0, "Work", 60))
                     )
                 )
             ),
@@ -36,8 +36,8 @@ interface TimerRepository {
                         id = 0,
                         repetitions = 10,
                         intervals = listOf(
-                            Interval(0, "Work", 30),
-                            Interval(0, "Rest", 30)
+                            TimerInterval(0, "Work", 30),
+                            TimerInterval(0, "Rest", 30)
                         )
                     )
                 )

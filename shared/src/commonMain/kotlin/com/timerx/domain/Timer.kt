@@ -1,19 +1,19 @@
 package com.timerx.domain
 
 data class Timer(
-    val id: Int,
+    val id: Long = -1,
     val name: String,
     val sets: List<TimerSet>
 )
 
 data class TimerSet(
-    val id: Int,
-    val repetitions: Int,
-    val intervals: List<Interval>
+    val id: Long = -1,
+    val repetitions: Long,
+    val intervals: List<TimerInterval>
 )
 
-data class Interval(
-    val id: Int,
+data class TimerInterval(
+    val id: Long = -1,
     val name: String,
-    val duration: Int
+    val duration: Long
 )
