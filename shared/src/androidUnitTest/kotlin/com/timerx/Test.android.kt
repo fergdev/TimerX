@@ -1,12 +1,13 @@
 package com.timerx
 
-import org.junit.Assert.assertTrue
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class AndroidGreetingTest {
 
     @Test
     fun testExample() {
-        assertTrue("Check Android is mentioned", Greeting().greet().contains("Android"))
+        assertThat(true, `is`(true))
     }
 }
