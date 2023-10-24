@@ -24,3 +24,9 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+
+    - name: Archive Android APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: Android debug build
+        path: androidApp/build/outputs/apk/debug/androidApp-debug.apk
