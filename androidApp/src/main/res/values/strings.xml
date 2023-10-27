@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="appName">TimerX</string>
+    <string name="noTimers">No timers yet, try adding one :)</string>
+
+    <string name="add">Add</string>
+    <string name="name">Name</string>
+    <string name="finished">Finished</string>
 </resources>

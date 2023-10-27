@@ -35,7 +35,7 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
                 dbQuery.insertTimerSet(timerRowId, setRowId)
 
                 intervals.forEach {
-                    dbQuery.insertInterval(it.name, it.duration)
+                    dbQuery.insertInterval(it.name, it. repetitions, it.duration)
                     val intervalRowId = dbQuery.lastInsertRowId().executeAsOne()
                     dbQuery.insertSetInterval(setRowId, intervalRowId)
                 }
@@ -52,7 +52,12 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
             val intervals =
                 intervalIds.map { intervalId -> dbQuery.selectInterval(intervalId).executeAsOne() }
                     .map {
-                        TimerXInterval(id = it.id, name = it.name, duration = it.duration)
+                        TimerXInterval(
+                            id = it.id,
+                            name = it.name,
+                            repetitions = it.repetitions,
+                            duration = it.duration
+                        )
                     }
 
             TimerXSet(

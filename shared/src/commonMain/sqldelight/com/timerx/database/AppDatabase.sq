@@ -23,6 +23,7 @@ CREATE TABLE SetInterval (
 CREATE TABLE Interval (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    repetitions Integer NOT NULL,
     duration Integer NOT NULL
 );
 
@@ -38,8 +39,8 @@ INSERT INTO Sets(repetitions)
 VALUES(?);
 
 insertInterval:
-INSERT INTO Interval (name, duration)
-VALUES (?, ?);
+INSERT INTO Interval (name, repetitions, duration)
+VALUES (?, ?, ?);
 
 insertTimerSet:
 INSERT INTO TimerSet(timerId, setId)

@@ -36,10 +36,14 @@ class RunViewModel(
         val set: Int = 0,
         val setCount: Int = 0,
 
-        val repetition: Long = 0,
-        val repetitionCount: Long = 0,
+        val setRepetition: Long = 0,
+        val setRepetitionCount: Long = 0,
 
         val interval: Int = 0,
+
+        val intervalRepetition: Int = 0,
+        val intervalRepetitionCount: Int = 0,
+
         val intervalCount: Int = 0,
         val intervalName: String = "",
 
@@ -54,7 +58,7 @@ class RunViewModel(
 
     val state: StateFlow<RunState> = _state
 
-    private var timerJob: Job? = null
+    private var tickerJob: Job? = null
 
     init {
         initTimer()
@@ -64,12 +68,12 @@ class RunViewModel(
         when (state.value.timerState) {
             Running -> {
                 _state.value = _state.value.copy(timerState = Paused)
-                stopTimer()
+                stopTicker()
             }
 
             Paused -> {
                 _state.value = _state.value.copy(timerState = Running)
-                startTimer()
+                startTicker()
             }
 
             Finished -> {
@@ -91,8 +95,8 @@ class RunViewModel(
         _state.value = _state.value.copy(
             set = set,
 
-            repetition = repetition,
-            repetitionCount = repetitionCount,
+            setRepetition = repetition,
+            setRepetitionCount = repetitionCount,
 
             interval = interval,
             intervalCount = intervalCount,
@@ -108,7 +112,7 @@ class RunViewModel(
             return
         }
         var setIndex = _state.value.set
-        var repetitionIndex = _state.value.repetition
+        var repetitionIndex = _state.value.setRepetition
         var intervalIndex = _state.value.interval
 
         val timerSet = timer.sets[setIndex]
@@ -126,9 +130,9 @@ class RunViewModel(
         if (setIndex == timer.sets.size) {
             _state.value = RunState(timerState = Finished)
             beepMaker.beepFinished()
-            stopTimer()
+            stopTicker()
         } else {
-            restartTimer()
+            restartTicker()
             beepMaker.beepNext()
             updateState(
                 setIndex,
@@ -143,7 +147,7 @@ class RunViewModel(
             return
         }
 
-        restartTimer()
+        restartTicker()
         beepMaker.beepBack()
 
         if (_state.value.elapsed != 0L) {
@@ -152,7 +156,7 @@ class RunViewModel(
         }
 
         var setIndex = _state.value.set
-        var repetitionIndex = _state.value.repetition
+        var repetitionIndex = _state.value.setRepetition
         var intervalIndex = _state.value.interval
 
         if (--intervalIndex < 0) {
@@ -172,17 +176,17 @@ class RunViewModel(
         )
     }
 
-    private fun restartTimer() {
-        stopTimer()
-        startTimer()
+    private fun restartTicker() {
+        stopTicker()
+        startTicker()
     }
 
-    private fun stopTimer() {
-        timerJob?.cancel()
+    private fun stopTicker() {
+        tickerJob?.cancel()
     }
 
-    private fun startTimer() {
-        timerJob = viewModelScope.launch {
+    private fun startTicker() {
+        tickerJob = viewModelScope.launch {
             while (true) {
                 delay(1000)
                 val nextElapsed = _state.value.elapsed + 1
@@ -206,7 +210,7 @@ class RunViewModel(
             timerName = timer.name,
 
             setCount = timer.sets.size,
-            repetitionCount = firstSet.repetitions,
+            setRepetitionCount = firstSet.repetitions,
 
             intervalCount = firstSet.intervals.size,
 
@@ -214,11 +218,11 @@ class RunViewModel(
             intervalDuration = firstInterval.duration
         )
         beepMaker.beepStart()
-        startTimer()
+        startTicker()
     }
 
     override fun onCleared() {
         super.onCleared()
-        stopTimer()
+        stopTicker()
     }
 }
