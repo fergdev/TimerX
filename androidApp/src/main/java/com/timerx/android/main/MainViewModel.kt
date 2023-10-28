@@ -31,4 +31,9 @@ class MainViewModel(private val timerRepository: TimerDatabase) : ViewModel() {
         timerRepository.deleteTimer(timer)
         refreshData()
     }
+
+    fun duplicateTimer(timer: Timer) {
+        timerRepository.duplicate(timer)
+        refreshData()
+    }
 }

@@ -35,7 +35,7 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
                 dbQuery.insertTimerSet(timerRowId, setRowId)
 
                 intervals.forEach {
-                    dbQuery.insertInterval(it.name, it. repetitions, it.duration)
+                    dbQuery.insertInterval(it.name, it.duration)
                     val intervalRowId = dbQuery.lastInsertRowId().executeAsOne()
                     dbQuery.insertSetInterval(setRowId, intervalRowId)
                 }
@@ -43,30 +43,31 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
         }
     }
 
-    private fun mapTimer(id: Long, name: String): TimerX {
-        val setIds = dbQuery.selectTimerSet(id).executeAsList()
+    private fun mapTimer(timerId: Long, name: String): TimerX {
+        val setIds = dbQuery.selectTimerSet(timerId).executeAsList()
         val sets = setIds.map { dbQuery.selectSet(it).executeAsOne() }
 
-        val timerXSets = sets.map {
-            val intervalIds = dbQuery.selectSetInterval(it.id).executeAsList()
+        val timerXSets = sets.map { (setId, repetitions) ->
+            val intervalIds = dbQuery.selectSetInterval(setId).executeAsList()
             val intervals =
-                intervalIds.map { intervalId -> dbQuery.selectInterval(intervalId).executeAsOne() }
-                    .map {
+                intervalIds
+                    .map { intervalId -> dbQuery.selectInterval(intervalId).executeAsOne() }
+                    .map { (intervalId, name, duration) ->
                         TimerXInterval(
-                            id = it.id,
-                            name = it.name,
-                            repetitions = it.repetitions,
-                            duration = it.duration
+                            id = intervalId,
+                            name = name,
+                            duration = duration
                         )
                     }
 
             TimerXSet(
-                id = it.id, repetitions = it.repetitions,
+                id = setId,
+                repetitions = repetitions,
                 intervals = intervals
             )
         }
 
-        return TimerX(id, name, timerXSets)
+        return TimerX(timerId, name, timerXSets)
     }
 
     fun deleteTimer(timer: Timer) {
@@ -81,5 +82,9 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
             }
             dbQuery.deleteTimer(timer.id)
         }
+    }
+
+    fun duplicate(timer: Timer) {
+        insertTimer(timer)
     }
 }

@@ -1,7 +1,7 @@
 package com.timerx.android
 
 import android.app.Application
-import com.timerx.android.add.CreateViewModel
+import com.timerx.android.create.CreateViewModel
 import com.timerx.android.main.MainViewModel
 import com.timerx.android.run.RunViewModel
 import com.timerx.database.DatabaseDriverFactory

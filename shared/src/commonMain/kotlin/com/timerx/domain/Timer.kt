@@ -9,7 +9,7 @@ data class TimerSet(
 )
 
 data class TimerInterval(
-    val id: Long = -1, val name: String, val repetitions: Long = 1, val duration: Long
+    val id: Long = -1, val name: String, val duration: Long
 )
 
 fun Long.formatted(): String {
@@ -26,7 +26,7 @@ fun Long.formatted(): String {
     } else if (mins < 10L) {
         "0$mins"
     } else {
-        "0$mins"
+        "$mins"
     }
 
     val secs = this % 60L
@@ -60,5 +60,5 @@ fun TimerSet.length(): Long {
 }
 
 fun TimerInterval.length(): Long {
-    return duration * repetitions
+    return duration
 }
