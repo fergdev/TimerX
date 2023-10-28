@@ -28,17 +28,21 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
             dbQuery.insertTimer(timer.name)
             val timerRowId = dbQuery.lastInsertRowId().executeAsOne()
 
-            timer.sets.forEach { (_, repetitions, intervals) ->
+            insertTimerSets(timer.sets, timerRowId)
+        }
+    }
 
-                dbQuery.insertSet(repetitions)
-                val setRowId = dbQuery.lastInsertRowId().executeAsOne()
-                dbQuery.insertTimerSet(timerRowId, setRowId)
+    private fun insertTimerSets(sets: List<TimerXSet>, timerId: Long) {
+        sets.forEach { (_, repetitions, intervals) ->
 
-                intervals.forEach {
-                    dbQuery.insertInterval(it.name, it.duration)
-                    val intervalRowId = dbQuery.lastInsertRowId().executeAsOne()
-                    dbQuery.insertSetInterval(setRowId, intervalRowId)
-                }
+            dbQuery.insertSet(repetitions)
+            val setRowId = dbQuery.lastInsertRowId().executeAsOne()
+            dbQuery.insertTimerSet(timerId, setRowId)
+
+            intervals.forEach {
+                dbQuery.insertInterval(it.name, it.duration)
+                val intervalRowId = dbQuery.lastInsertRowId().executeAsOne()
+                dbQuery.insertSetInterval(setRowId, intervalRowId)
             }
         }
     }
@@ -70,21 +74,41 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
         return TimerX(timerId, name, timerXSets)
     }
 
+    fun updateTimer(timer: Timer) {
+        dbQuery.transaction {
+            val oldTimer = getTimer(timer.id)
+            dbQuery.deleteTimerSet(timer.id)
+            deleteTimerSets(oldTimer)
+
+            dbQuery.updateTimer(timer.name, timer.id)
+            insertTimerSets(timer.sets, timer.id)
+        }
+    }
+
+    private fun deleteTimerSets(timer: TimerX) {
+        timer.sets.forEach { (id, _, intervals) ->
+            intervals.forEach {
+                dbQuery.deleteInterval(it.id)
+            }
+
+            dbQuery.deleteSetInterval(id)
+            dbQuery.deleteSet(id)
+        }
+        dbQuery.deleteTimerSet(timer.id)
+    }
+
     fun deleteTimer(timer: Timer) {
         dbQuery.transaction {
-            timer.sets.forEach { (id, _, intervals) ->
-                intervals.forEach {
-                    dbQuery.deleteInterval(it.id)
-                }
-
-                dbQuery.deleteSetInterval(id)
-                dbQuery.deleteSet(id)
-            }
+            deleteTimerSets(timer)
             dbQuery.deleteTimer(timer.id)
         }
     }
 
     fun duplicate(timer: Timer) {
         insertTimer(timer)
+    }
+
+    fun getTimer(timerId: Long): TimerX {
+        return dbQuery.selectTimer(timerId, ::mapTimer).executeAsOne()
     }
 }

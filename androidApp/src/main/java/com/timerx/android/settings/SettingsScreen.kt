@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.timerx.android.R
@@ -21,9 +22,12 @@ import com.timerx.android.R
 fun SettingsScreen(navController: NavHostController) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column {
-            TopAppBar(title = { Text(text = stringResource(id = R.string.settings)) },
+            TopAppBar(
+                title = { Text(text = stringResource(id = R.string.settings)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    IconButton(
+                        modifier = Modifier.rotate(90F),
+                        onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back)

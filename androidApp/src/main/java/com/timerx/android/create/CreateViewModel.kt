@@ -1,19 +1,23 @@
 package com.timerx.android.create
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.timerx.android.main.Screens
 import com.timerx.database.TimerDatabase
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
 class CreateViewModel(
-    private val timerDatabase: TimerDatabase
+    savedStateHandle: SavedStateHandle, private val timerDatabase: TimerDatabase
 ) : ViewModel() {
 
     private val defaultTimerSet = TimerSet(
@@ -28,39 +32,69 @@ class CreateViewModel(
     private val defaultInterval = TimerInterval(
         name = "Work", duration = 30
     )
-    private var sets = mutableListOf(
-        TimerSet(
-            repetitions = 1,
-            intervals = listOf(
-                TimerInterval(
-                    name = "Prepare",
-                    duration = 10
-                )
-            )
-        ), defaultTimerSet.copy()
-    )
+
+    private var sets: MutableList<TimerSet>
 
     data class State(
         val timerName: String = "",
-        val sets: PersistentList<TimerSet>
+        val sets: PersistentList<TimerSet> = persistentListOf()
     )
 
-    private val _state = MutableStateFlow(
-        State(sets = sets.toPersistentList())
-    )
+    private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
+
+    private val timerEditing: Timer?
+
+    init {
+        val timerId: Long = savedStateHandle[Screens.TIMER_ID]!!
+        if (timerId != -1L) {
+            timerEditing = timerDatabase.getTimer(timerId)
+            sets = timerEditing.sets.toMutableList()
+
+            _state.update {
+                it.copy(
+                    timerName = timerEditing.name,
+                    sets = sets.toPersistentList()
+                )
+            }
+        } else {
+            timerEditing = null
+
+            sets = mutableListOf(
+                TimerSet(
+                    repetitions = 1, intervals = listOf(
+                        TimerInterval(
+                            name = "Prepare", duration = 10
+                        )
+                    )
+                ), defaultTimerSet.copy()
+            )
+            _state.update {
+                it.copy(sets = sets.toPersistentList())
+            }
+        }
+    }
 
     fun updateTimerName(name: String) {
         _state.value = state.value.copy(timerName = name)
     }
 
-    fun createTimer() {
-        val name = state.value.timerName.ifBlank {
-            val time = Calendar.getInstance().time
-            val formatter = SimpleDateFormat.getDateTimeInstance()
-            formatter.format(time)
+    fun save() {
+        if (timerEditing != null) {
+            val name = state.value.timerName.ifBlank {
+                val time = Calendar.getInstance().time
+                val formatter = SimpleDateFormat.getDateTimeInstance()
+                formatter.format(time)
+            }
+            timerDatabase.updateTimer(Timer(timerEditing.id, name, sets = state.value.sets))
+        } else {
+            val name = state.value.timerName.ifBlank {
+                val time = Calendar.getInstance().time
+                val formatter = SimpleDateFormat.getDateTimeInstance()
+                formatter.format(time)
+            }
+            timerDatabase.insertTimer(Timer(-1, name, sets = state.value.sets))
         }
-        timerDatabase.insertTimer(Timer(-1, name, sets = state.value.sets))
     }
 
     fun addSet() {

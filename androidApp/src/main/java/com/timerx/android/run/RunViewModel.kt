@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timerx.android.beep.BeepMaker
 import com.timerx.android.beep.BeepMakerImpl
-import com.timerx.android.main.Screens.RUN_TIMER_ID
+import com.timerx.android.main.Screens.TIMER_ID
 import com.timerx.android.run.RunViewModel.TimerState.Finished
 import com.timerx.android.run.RunViewModel.TimerState.Paused
 import com.timerx.android.run.RunViewModel.TimerState.Running
@@ -51,7 +51,7 @@ class RunViewModel(
         val intervalDuration: Long = 0
     )
 
-    private val timerId: Long = savedStateHandle[RUN_TIMER_ID]!!
+    private val timerId: Long = savedStateHandle[TIMER_ID]!!
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
 
     private val _state = MutableStateFlow(RunState())

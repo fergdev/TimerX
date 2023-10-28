@@ -16,11 +16,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.timerx.android.TimerXTheme
 import com.timerx.android.create.CreateScreen
-import com.timerx.android.main.Screens.ADD
+import com.timerx.android.main.Screens.CREATE_TEMPLATE
 import com.timerx.android.main.Screens.MAIN
 import com.timerx.android.main.Screens.RUN_TEMPLATE
-import com.timerx.android.main.Screens.RUN_TIMER_ID
 import com.timerx.android.main.Screens.SETTINGS
+import com.timerx.android.main.Screens.TIMER_ID
 import com.timerx.android.run.RunScreen
 import com.timerx.android.settings.SettingsScreen
 import org.koin.androidx.compose.KoinAndroidContext
@@ -42,8 +42,9 @@ class MainActivity : ComponentActivity() {
                             composable(route = MAIN) {
                                 MainScreen(navController = navController)
                             }
-                            composable(route = RUN_TEMPLATE,
-                                arguments = listOf(navArgument(RUN_TIMER_ID) {
+                            composable(
+                                route = RUN_TEMPLATE,
+                                arguments = listOf(navArgument(TIMER_ID) {
                                     type = NavType.LongType
                                 }),
                                 enterTransition = {
@@ -60,17 +61,24 @@ class MainActivity : ComponentActivity() {
                                 }) {
                                 RunScreen(navController = navController)
                             }
-                            composable(ADD, enterTransition = {
-                                slideIntoContainer(
-                                    AnimatedContentTransitionScope.SlideDirection.Up,
-                                    animationSpec = tween(700)
-                                )
-                            }, exitTransition = {
-                                slideOutOfContainer(
-                                    AnimatedContentTransitionScope.SlideDirection.Down,
-                                    animationSpec = tween(700)
-                                )
-                            }) {
+                            composable(
+                                CREATE_TEMPLATE,
+                                arguments = listOf(navArgument(TIMER_ID) {
+                                    type = NavType.LongType
+                                    defaultValue = -1L
+                                }),
+
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        AnimatedContentTransitionScope.SlideDirection.Up,
+                                        animationSpec = tween(700)
+                                    )
+                                }, exitTransition = {
+                                    slideOutOfContainer(
+                                        AnimatedContentTransitionScope.SlideDirection.Down,
+                                        animationSpec = tween(700)
+                                    )
+                                }) {
                                 CreateScreen(navController = navController)
                             }
                             composable(SETTINGS, enterTransition = {

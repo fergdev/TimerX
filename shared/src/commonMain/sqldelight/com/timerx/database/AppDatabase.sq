@@ -33,6 +33,11 @@ insertTimer:
 INSERT INTO Timer(name)
 VALUES(?);
 
+updateTimer:
+UPDATE Timer
+SET name = ?
+WHERE id = :id;
+
 insertSet:
 INSERT INTO Sets(repetitions)
 VALUES(?);
