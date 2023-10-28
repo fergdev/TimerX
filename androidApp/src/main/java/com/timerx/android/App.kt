@@ -18,7 +18,7 @@ class App : Application() {
         module {
             viewModel { MainViewModel(get()) }
             viewModel { RunViewModel(get(), get()) }
-            viewModel { CreateViewModel(get()) }
+            viewModel { CreateViewModel(get(), get()) }
             single { TimerDatabase(DatabaseDriverFactory(get())) }
         }
     }

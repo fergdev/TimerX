@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -45,15 +46,14 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row {
                 IconButton(onClick = { viewModel.previousInterval() }) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = null,
+                        contentDescription = stringResource(id = R.string.back),
                         tint = Color.White
                     )
                 }
@@ -62,7 +62,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.ArrowForward,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.next),
                         tint = Color.White
                     )
                 }
@@ -71,13 +71,17 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
             TText(text = state.timerName)
             Spacer(modifier = Modifier.weight(2f))
 
-            if (state.repetitionCount != 1L) {
-                TText(text = "${state.repetitionCount - state.repetition}")
+            if (state.timerState == Finished) {
+                TText(text = stringResource(id = R.string.finished))
+            } else {
+                if (state.setRepetitionCount != 1L) {
+                    TText(text = "${state.setRepetitionCount - state.setRepetition}")
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                TText(text = state.intervalName)
+                Spacer(modifier = Modifier.height(24.dp))
+                TText(text = "${state.intervalDuration - state.elapsed} ")
             }
-            Spacer(modifier = Modifier.height(24.dp))
-            TText(text = state.intervalName)
-            Spacer(modifier = Modifier.height(24.dp))
-            TText(text = "${state.intervalDuration - state.elapsed} ")
 
             Spacer(modifier = Modifier.weight(2f))
 
@@ -86,7 +90,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.Close,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.close),
                         tint = Color.White
                     )
                 }
@@ -97,7 +101,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = ImageVector.vectorResource(id = R.drawable.pause_24),
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.pause),
                                 tint = Color.White
                             )
                         }
@@ -108,7 +112,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.play),
                                 tint = Color.White
                             )
                         }
@@ -119,7 +123,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.refresh),
                                 tint = Color.White
                             )
                         }
@@ -133,8 +137,6 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
 @Composable
 private fun TText(text: String) {
     Text(
-        text = text,
-        style = MaterialTheme.typography.headlineLarge,
-        color = Color.White
+        text = text, style = typography.headlineLarge, color = Color.White
     )
 }

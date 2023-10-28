@@ -19,12 +19,12 @@ interface TimerRepository {
                     TimerSet(
                         id = 0,
                         repetitions = 1,
-                        intervals = listOf(TimerInterval(0, "Warmup", 10))
+                        intervals = listOf(TimerInterval(name = "Warmup", duration = 10))
                     ),
                     TimerSet(
                         id = 0,
                         repetitions = 20,
-                        intervals = listOf(TimerInterval(0, "Work", 60))
+                        intervals = listOf(TimerInterval(name = "Work", duration = 60))
                     )
                 )
             ),
@@ -36,8 +36,8 @@ interface TimerRepository {
                         id = 0,
                         repetitions = 10,
                         intervals = listOf(
-                            TimerInterval(0, "Work", 30),
-                            TimerInterval(0, "Rest", 30)
+                            TimerInterval(name = "Work", duration = 30),
+                            TimerInterval(name = "Rest", duration = 30)
                         )
                     )
                 )
