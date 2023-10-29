@@ -2,12 +2,11 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    let timers = Timers().timers()
+    let greet = Greeting().greet()
+    
 	var body: some View {
 		Text("TimerX")
-        List(timers, id: \.self) { t in
-            Text(t.name)
-        }
+        Text(greet)
 	}
 }
 
