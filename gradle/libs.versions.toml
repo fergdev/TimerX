@@ -9,6 +9,7 @@ koin = "3.5.0"
 kotlin = "1.9.10"
 kotlinx-immutable = "0.3.6"
 sql-delight = "1.5.5"
+stability-report = "1.1.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -35,5 +36,6 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sql-delight" }
+stabilityReport = { id = "dev.shreyaspatil.compose-compiler-report-generator", version.ref = "stability-report" }
 
 

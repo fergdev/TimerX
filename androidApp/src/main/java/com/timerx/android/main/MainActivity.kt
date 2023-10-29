@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
@@ -26,6 +28,9 @@ import com.timerx.android.settings.SettingsScreen
 import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.core.annotation.KoinExperimentalAPI
 
+private const val ENTER_DURATION = 400
+private const val EXIT_DURATION = 200
+
 class MainActivity : ComponentActivity() {
 
     @OptIn(KoinExperimentalAPI::class)
@@ -35,64 +40,73 @@ class MainActivity : ComponentActivity() {
             TimerXTheme {
                 KoinAndroidContext {
                     val navController = rememberNavController()
+                    val navigateUp: () -> Unit = { navController.navigateUp() }
+
                     Surface(
-                        modifier = Modifier.fillMaxSize(), color = colorScheme.background
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorScheme.background
                     ) {
                         NavHost(navController = navController, startDestination = MAIN) {
-                            composable(route = MAIN) {
-                                MainScreen(navController = navController)
+                            composable(route = MAIN, enterTransition = {
+                                fadeIn(animationSpec = tween(ENTER_DURATION))
+                            }, exitTransition = {
+                                fadeOut(animationSpec = tween(EXIT_DURATION))
+                            }) {
+                                MainScreen(
+                                    navigateSettingsScreen = navController::settingsScreen,
+                                    navigateAddScreen = navController::addScreen,
+                                    navigateEditScreen = navController::editScreen,
+                                    navigateRunScreen = navController::runScreen
+                                )
                             }
-                            composable(
-                                route = RUN_TEMPLATE,
+                            composable(route = RUN_TEMPLATE,
                                 arguments = listOf(navArgument(TIMER_ID) {
                                     type = NavType.LongType
                                 }),
                                 enterTransition = {
                                     slideIntoContainer(
                                         AnimatedContentTransitionScope.SlideDirection.Left,
-                                        animationSpec = tween(700)
+                                        animationSpec = tween(ENTER_DURATION)
                                     )
                                 },
                                 exitTransition = {
                                     slideOutOfContainer(
                                         AnimatedContentTransitionScope.SlideDirection.Right,
-                                        animationSpec = tween(700)
+                                        animationSpec = tween(EXIT_DURATION)
                                     )
                                 }) {
-                                RunScreen(navController = navController)
+                                RunScreen(navigateUp)
                             }
-                            composable(
-                                CREATE_TEMPLATE,
-                                arguments = listOf(navArgument(TIMER_ID) {
-                                    type = NavType.LongType
-                                    defaultValue = -1L
-                                }),
-
+                            composable(CREATE_TEMPLATE, arguments = listOf(navArgument(TIMER_ID) {
+                                type = NavType.LongType
+                                defaultValue = -1L
+                            }),
                                 enterTransition = {
                                     slideIntoContainer(
                                         AnimatedContentTransitionScope.SlideDirection.Up,
-                                        animationSpec = tween(700)
+                                        animationSpec = tween(ENTER_DURATION)
                                     )
                                 }, exitTransition = {
                                     slideOutOfContainer(
                                         AnimatedContentTransitionScope.SlideDirection.Down,
-                                        animationSpec = tween(700)
+                                        animationSpec = tween(EXIT_DURATION)
                                     )
                                 }) {
-                                CreateScreen(navController = navController)
+                                CreateScreen(navigateUp = navigateUp)
                             }
-                            composable(SETTINGS, enterTransition = {
-                                slideIntoContainer(
-                                    AnimatedContentTransitionScope.SlideDirection.Down,
-                                    animationSpec = tween(700)
-                                )
-                            }, exitTransition = {
-                                slideOutOfContainer(
-                                    AnimatedContentTransitionScope.SlideDirection.Up,
-                                    animationSpec = tween(700)
-                                )
-                            }) {
-                                SettingsScreen(navController = navController)
+                            composable(SETTINGS,
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        AnimatedContentTransitionScope.SlideDirection.Down,
+                                        animationSpec = tween(ENTER_DURATION)
+                                    )
+                                }, exitTransition = {
+                                    slideOutOfContainer(
+                                        AnimatedContentTransitionScope.SlideDirection.Up,
+                                        animationSpec = tween(EXIT_DURATION)
+                                    )
+                                }) {
+                                SettingsScreen(navigateUp = navigateUp)
                             }
                         }
                     }

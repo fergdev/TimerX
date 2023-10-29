@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.stabilityReport)
 }
 
 android {
@@ -49,4 +50,9 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.kotlin.immutable)
     debugImplementation(libs.compose.ui.tooling)
+}
+
+htmlComposeCompilerReport {
+    includeStableClasses.set(true)
+    includeClasses.set(true)
 }

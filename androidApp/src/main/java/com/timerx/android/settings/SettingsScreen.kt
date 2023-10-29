@@ -14,12 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import com.timerx.android.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navController: NavHostController) {
+fun SettingsScreen(navigateUp: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column {
             TopAppBar(
@@ -27,7 +26,7 @@ fun SettingsScreen(navController: NavHostController) {
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.rotate(90F),
-                        onClick = { navController.navigateUp() }) {
+                        onClick = { navigateUp() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back)

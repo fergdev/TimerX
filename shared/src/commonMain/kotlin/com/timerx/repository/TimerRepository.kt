@@ -15,27 +15,27 @@ interface TimerRepository {
             Timer(
                 id = 0,
                 name = "EMOM",
-                sets = listOf(
+                sets = persistentListOf(
                     TimerSet(
                         id = 0,
                         repetitions = 1,
-                        intervals = listOf(TimerInterval(name = "Warmup", duration = 10))
+                        intervals = persistentListOf(TimerInterval(name = "Warmup", duration = 10))
                     ),
                     TimerSet(
                         id = 0,
                         repetitions = 20,
-                        intervals = listOf(TimerInterval(name = "Work", duration = 60))
+                        intervals = persistentListOf(TimerInterval(name = "Work", duration = 60))
                     )
                 )
             ),
             Timer(
                 id = 1,
                 name = "30 for 30",
-                sets = listOf(
+                sets = persistentListOf(
                     TimerSet(
                         id = 0,
                         repetitions = 10,
-                        intervals = listOf(
+                        intervals = persistentListOf(
                             TimerInterval(name = "Work", duration = 30),
                             TimerInterval(name = "Rest", duration = 30)
                         )

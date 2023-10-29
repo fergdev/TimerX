@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.timerx.android.R
 import com.timerx.android.run.RunViewModel.TimerState.Finished
 import com.timerx.android.run.RunViewModel.TimerState.Paused
@@ -37,7 +36,8 @@ import com.timerx.android.run.RunViewModel.TimerState.Running
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getViewModel()) {
+fun RunScreen(navigateUp: () -> Unit) {
+    val viewModel: RunViewModel = getViewModel()
     val state by viewModel.state.collectAsState()
     Box(
         modifier = Modifier
@@ -86,7 +86,7 @@ fun RunScreen(navController: NavHostController, viewModel: RunViewModel = getVie
             Spacer(modifier = Modifier.weight(2f))
 
             Row {
-                IconButton(onClick = { navController.navigateUp() }) {
+                IconButton(onClick = { navigateUp() }) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.Close,
