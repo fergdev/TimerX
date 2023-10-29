@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,19 +43,36 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.timerx.android.R
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.formatted
 import com.timerx.domain.length
+import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.getViewModel
+
+data class TimerB(
+    val id: Long = -1,
+    val name: String,
+    val sets: ImmutableList<TimerSetB>
+)
+
+data class TimerSetB(
+    val id: Long = -1,
+    val repetitions: Long = 1,
+    val intervals: ImmutableList<TimerIntervalB>
+)
+
+data class TimerIntervalB(
+    val id: Long = -1,
+    val name: String,
+    val duration: Long
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateScreen(
-    navController: NavHostController, viewModel: CreateViewModel = getViewModel()
-) {
+fun CreateScreen(navigateUp: () -> Unit) {
+    val viewModel: CreateViewModel = getViewModel()
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -64,7 +82,7 @@ fun CreateScreen(
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.rotate(270F),
-                        onClick = { navController.navigateUp() }) {
+                        onClick = { navigateUp() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.back)
@@ -76,7 +94,7 @@ fun CreateScreen(
         }, floatingActionButton = {
             FloatingActionButton(onClick = {
                 viewModel.save()
-                navController.navigateUp()
+                navigateUp()
             }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),

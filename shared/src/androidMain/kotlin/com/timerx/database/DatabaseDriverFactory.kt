@@ -4,6 +4,7 @@ import android.content.Context
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import com.timerx.domain.Timer
+import kotlinx.collections.immutable.toPersistentList
 import sqldelight.AppDatabase
 import com.timerx.domain.Timer as TimerX
 import com.timerx.domain.TimerSet as TimerXSet
@@ -67,11 +68,11 @@ class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) {
             TimerXSet(
                 id = setId,
                 repetitions = repetitions,
-                intervals = intervals
+                intervals = intervals.toPersistentList()
             )
         }
 
-        return TimerX(timerId, name, timerXSets)
+        return TimerX(timerId, name, timerXSets.toPersistentList())
     }
 
     fun updateTimer(timer: Timer) {

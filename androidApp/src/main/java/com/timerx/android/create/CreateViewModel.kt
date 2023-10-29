@@ -7,6 +7,7 @@ import com.timerx.database.TimerDatabase
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -21,7 +22,7 @@ class CreateViewModel(
 ) : ViewModel() {
 
     private val defaultTimerSet = TimerSet(
-        repetitions = 5, intervals = listOf(
+        repetitions = 5, intervals = persistentListOf(
             TimerInterval(
                 name = "Work", duration = 30
             ), TimerInterval(
@@ -37,7 +38,7 @@ class CreateViewModel(
 
     data class State(
         val timerName: String = "",
-        val sets: PersistentList<TimerSet> = persistentListOf()
+        val sets: ImmutableList<TimerSet> = persistentListOf()
     )
 
     private val _state = MutableStateFlow(State())
@@ -62,7 +63,7 @@ class CreateViewModel(
 
             sets = mutableListOf(
                 TimerSet(
-                    repetitions = 1, intervals = listOf(
+                    repetitions = 1, intervals = persistentListOf(
                         TimerInterval(
                             name = "Prepare", duration = 10
                         )
@@ -105,7 +106,7 @@ class CreateViewModel(
     fun addInterval(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it === timerSet }
         sets[index] = timerSet.copy(
-            intervals = timerSet.intervals + defaultInterval.copy()
+            intervals = (timerSet.intervals + defaultInterval.copy()).toPersistentList()
         )
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
@@ -152,7 +153,7 @@ class CreateViewModel(
             } else {
                 intervals
             }
-            TimerSet(-1, repetitions, newIntervals)
+            TimerSet(-1, repetitions, newIntervals.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -162,7 +163,7 @@ class CreateViewModel(
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet(-1, repetitions, intervals.filter {
                 interval !== it
-            })
+            }.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -186,7 +187,7 @@ class CreateViewModel(
                 } else {
                     it
                 }
-            })
+            }.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -200,7 +201,7 @@ class CreateViewModel(
                 } else {
                     it
                 }
-            })
+            }.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -213,7 +214,7 @@ class CreateViewModel(
                 val mutable = set.intervals.toMutableList()
                 mutable.removeAt(index)
                 mutable.add(index - 1, timerInterval)
-                TimerSet(-1, set.repetitions, mutable.toList())
+                TimerSet(-1, set.repetitions, mutable.toPersistentList())
             } else {
                 set
             }
@@ -229,7 +230,7 @@ class CreateViewModel(
                 val mutable = set.intervals.toMutableList()
                 mutable.removeAt(index)
                 mutable.add(index + 1, timerInterval)
-                TimerSet(-1, set.repetitions, mutable.toList())
+                TimerSet(-1, set.repetitions, mutable.toPersistentList())
             } else {
                 set
             }

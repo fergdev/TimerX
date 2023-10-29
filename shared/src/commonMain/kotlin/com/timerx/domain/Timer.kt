@@ -1,15 +1,23 @@
 package com.timerx.domain
 
+import kotlinx.collections.immutable.ImmutableList
+
 data class Timer(
-    val id: Long = -1, val name: String, val sets: List<TimerSet>
+    val id: Long = -1,
+    val name: String,
+    val sets: ImmutableList<TimerSet>
 )
 
 data class TimerSet(
-    val id: Long = -1, val repetitions: Long = 1, val intervals: List<TimerInterval>
+    val id: Long = -1,
+    val repetitions: Long = 1,
+    val intervals: ImmutableList<TimerInterval>
 )
 
 data class TimerInterval(
-    val id: Long = -1, val name: String, val duration: Long
+    val id: Long = -1,
+    val name: String,
+    val duration: Long
 )
 
 fun Long.formatted(): String {
@@ -20,25 +28,25 @@ fun Long.formatted(): String {
         "$hours:"
     }
 
-    val mins = this / 60L
-    val minsString = if (mins == 0L) {
+    val minutes = this / 60L
+    val minutesString = if (minutes == 0L) {
         "00"
-    } else if (mins < 10L) {
-        "0$mins"
+    } else if (minutes < 10L) {
+        "0$minutes"
     } else {
-        "$mins"
+        "$minutes"
     }
 
-    val secs = this % 60L
-    val secsString = if (secs == 0L) {
+    val seconds = this % 60L
+    val secondsString = if (seconds == 0L) {
         "00"
-    } else if (secs < 10L) {
-        "0$secs"
+    } else if (seconds < 10L) {
+        "0$seconds"
     } else {
-        "$secs"
+        "$seconds"
     }
 
-    return "$hoursString$minsString:$secsString"
+    return "$hoursString$minutesString:$secondsString"
 }
 
 fun Timer.length(): Long {

@@ -32,7 +32,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.timerx.android.R
 import com.timerx.domain.Timer
 import com.timerx.domain.formatted
@@ -42,15 +41,19 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainScreen(
-    navController: NavHostController,
-    mainViewModel: MainViewModel = koinViewModel()
+    navigateSettingsScreen: () -> Unit,
+    navigateAddScreen: () -> Unit,
+    navigateEditScreen: (Long) -> Unit,
+    navigateRunScreen: (Long) -> Unit
 ) {
+    val viewModel: MainViewModel = koinViewModel()
+
     // TODO REMOVE this hack. This was put in here to refresh the data after adding a timer in the create screen
     LaunchedEffect(Unit) {
-        mainViewModel.refreshData()
+        viewModel.refreshData()
     }
 
-    val state by mainViewModel.state.collectAsState()
+    val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -59,7 +62,7 @@ internal fun MainScreen(
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.appName)) },
                 actions = {
-                    IconButton(onClick = { navController.settingsScreen() }) {
+                    IconButton(onClick = navigateSettingsScreen) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = stringResource(R.string.settings)
@@ -70,13 +73,14 @@ internal fun MainScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.addScreen() }) {
+            FloatingActionButton(onClick = navigateAddScreen) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(id = R.string.add)
                 )
             }
         }) {
+
         Box(modifier = Modifier.padding(it)) {
             if (state.timers.isEmpty()) {
                 Text(
@@ -86,7 +90,13 @@ internal fun MainScreen(
             } else {
                 LazyColumn {
                     items(state.timers) { timer ->
-                        Timer(navController, timer, mainViewModel)
+                        Timer(
+                            timer = timer,
+                            duplicateTimer = viewModel::duplicateTimer,
+                            deleteTimer = viewModel::deleteTimer,
+                            navigateRunScreen = navigateRunScreen,
+                            navigateEditScreen = navigateEditScreen,
+                        )
                     }
                 }
             }
@@ -96,39 +106,35 @@ internal fun MainScreen(
 
 @Composable
 private fun Timer(
-    navController: NavHostController,
     timer: Timer,
-    mainViewModel: MainViewModel
+    duplicateTimer: (Timer) -> Unit,
+    deleteTimer: (Timer) -> Unit,
+    navigateRunScreen: (Long) -> Unit,
+    navigateEditScreen: (Long) -> Unit
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        ListItem(modifier = Modifier.clickable { navController.runScreen(timer.id) },
+        ListItem(modifier = Modifier.clickable { navigateRunScreen(timer.id) },
             headlineContent = { Text(text = timer.name) },
             supportingContent = { Text(text = timer.length().formatted()) },
             trailingContent = {
                 Row {
-                    IconButton(onClick = {
-                        mainViewModel.duplicateTimer(timer)
-                    }) {
+                    IconButton(onClick = { duplicateTimer(timer) }) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_copy),
                             contentDescription = stringResource(R.string.duplicate)
                         )
                     }
-                    IconButton(onClick = {
-                        navController.editScreen(timer.id)
-                    }) {
+                    IconButton(onClick = { navigateEditScreen(timer.id) }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = stringResource(R.string.edit)
                         )
                     }
-                    IconButton(onClick = {
-                        mainViewModel.deleteTimer(timer)
-                    }) {
+                    IconButton(onClick = { deleteTimer(timer) }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(id = R.string.delete)
