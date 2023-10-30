@@ -5,8 +5,7 @@ import com.timerx.android.create.CreateViewModel
 import com.timerx.android.main.MainViewModel
 import com.timerx.android.run.RunViewModel
 import com.timerx.database.DatabaseDriverFactory
-import com.timerx.database.TimerDatabase
-import com.timerx.shareModule
+import com.timerx.sharedModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -19,17 +18,16 @@ class App : Application() {
             viewModel { MainViewModel(get()) }
             viewModel { RunViewModel(get(), get()) }
             viewModel { CreateViewModel(get(), get()) }
-            single { TimerDatabase(DatabaseDriverFactory(get())) }
+            single { DatabaseDriverFactory(get()) }
         }
     }
 
     override fun onCreate() {
         super.onCreate()
-        println("App OnCreate")
         startKoin {
             androidContext(this@App)
             androidLogger()
-            modules(androidModule + shareModule())
+            modules(androidModule + sharedModule())
         }
     }
 }
