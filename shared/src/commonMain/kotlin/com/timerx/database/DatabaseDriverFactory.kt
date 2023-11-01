@@ -2,6 +2,8 @@ package com.timerx.database
 
 import com.squareup.sqldelight.db.SqlDriver
 
-expect class DatabaseDriverFactory {
+expect fun getDatabaseDriverFactory(): DatabaseDriverFactory
+
+interface DatabaseDriverFactory {
     fun createDriver(): SqlDriver
 }

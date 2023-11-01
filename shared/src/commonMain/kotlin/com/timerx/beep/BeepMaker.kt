@@ -1,4 +1,6 @@
-package com.timerx.android.beep
+package com.timerx.beep
+
+expect fun getBeepMaker(): BeepMaker
 
 interface BeepMaker {
     fun beepNext()

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.3.0-alpha11"
+agp = "8.3.0-alpha12"
 androidx-activityCompose = "1.8.0"
 compose = "1.5.4"
 jetbrains-compose = "1.5.3"
@@ -11,6 +11,7 @@ kotlin = "1.9.10"
 kotlinx-immutable = "0.3.6"
 sql-delight = "1.5.5"
 stability-report = "1.1.0"
+pre-compose = "1.5.4"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -29,6 +30,9 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 sql-delight = { module = "com.squareup.sqldelight:runtime", version.ref = "sql-delight" }
 sql-delight-android = { module = "com.squareup.sqldelight:android-driver", version.ref = "sql-delight" }
 sql-delight-native = { module = "com.squareup.sqldelight:native-driver", version.ref = "sql-delight" }
+pre-compose = {module = "moe.tlaster:precompose", version.ref = "pre-compose" }
+pre-compose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "pre-compose" }
+pre-compose-koin = {module = "moe.tlaster:precompose-koin", version.ref = "pre-compose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -1,4 +1,4 @@
-package com.timerx.android.run
+package com.timerx.ui.run
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
@@ -25,19 +26,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.timerx.android.R
-import com.timerx.android.run.RunViewModel.TimerState.Finished
-import com.timerx.android.run.RunViewModel.TimerState.Paused
-import com.timerx.android.run.RunViewModel.TimerState.Running
-import org.koin.androidx.compose.getViewModel
+import com.timerx.ui.run.RunViewModel.TimerState.Finished
+import com.timerx.ui.run.RunViewModel.TimerState.Paused
+import com.timerx.ui.run.RunViewModel.TimerState.Running
+import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun RunScreen(navigateUp: () -> Unit) {
-    val viewModel: RunViewModel = getViewModel()
+fun RunScreen(timerId: Long, navigateUp: () -> Unit) {
+    val viewModel: RunViewModel =
+        koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
     Box(
         modifier = Modifier
@@ -46,14 +45,15 @@ fun RunScreen(navigateUp: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row {
                 IconButton(onClick = { viewModel.previousInterval() }) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = stringResource(id = R.string.back),
+                        contentDescription = "Back",
                         tint = Color.White
                     )
                 }
@@ -62,7 +62,7 @@ fun RunScreen(navigateUp: () -> Unit) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.ArrowForward,
-                        contentDescription = stringResource(R.string.next),
+                        contentDescription = "Next",
                         tint = Color.White
                     )
                 }
@@ -72,7 +72,7 @@ fun RunScreen(navigateUp: () -> Unit) {
             Spacer(modifier = Modifier.weight(2f))
 
             if (state.timerState == Finished) {
-                TText(text = stringResource(id = R.string.finished))
+                TText(text = "Finished")
             } else {
                 if (state.setRepetitionCount != 1L) {
                     TText(text = "${state.setRepetitionCount - state.setRepetition}")
@@ -90,7 +90,7 @@ fun RunScreen(navigateUp: () -> Unit) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(R.string.close),
+                        contentDescription = "Close",
                         tint = Color.White
                     )
                 }
@@ -100,8 +100,8 @@ fun RunScreen(navigateUp: () -> Unit) {
                         IconButton(onClick = { viewModel.toggleState() }) {
                             Icon(
                                 modifier = Modifier.size(48.dp),
-                                imageVector = ImageVector.vectorResource(id = R.drawable.pause_24),
-                                contentDescription = stringResource(R.string.pause),
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = "Pause",
                                 tint = Color.White
                             )
                         }
@@ -112,7 +112,7 @@ fun RunScreen(navigateUp: () -> Unit) {
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = stringResource(R.string.play),
+                                contentDescription = "Play",
                                 tint = Color.White
                             )
                         }
@@ -123,7 +123,7 @@ fun RunScreen(navigateUp: () -> Unit) {
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = stringResource(R.string.refresh),
+                                contentDescription = "Refresh",
                                 tint = Color.White
                             )
                         }
@@ -137,6 +137,7 @@ fun RunScreen(navigateUp: () -> Unit) {
 @Composable
 private fun TText(text: String) {
     Text(
-        text = text, style = typography.headlineLarge, color = Color.White
+        text = text,
+        style = typography.headlineLarge, color = Color.White
     )
 }

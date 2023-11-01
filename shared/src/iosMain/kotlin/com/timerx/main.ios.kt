@@ -1,9 +1,18 @@
 package com.timerx
 
-import androidx.compose.material3.Text
-import androidx.compose.ui.window.ComposeUIViewController
+import com.timerx.ui.App
+import moe.tlaster.precompose.PreComposeApplication
+import org.koin.compose.KoinApplication
 
 @Suppress("FunctionName")
-fun MainViewController() = ComposeUIViewController {
-    Text(text = "Here we are in iOS land!")
+fun MainViewController() = PreComposeApplication {
+    KoinApplication(
+        application = {
+            modules(sharedModule())
+        }
+    ) {
+        TimerXTheme {
+            App()
+        }
+    }
 }

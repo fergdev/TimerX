@@ -12,7 +12,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "11"
             }
         }
     }
@@ -41,6 +41,10 @@ kotlin {
 
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+
+                implementation(libs.pre.compose)
+                implementation(libs.pre.compose.viewmodel)
+                implementation(libs.pre.compose.koin)
             }
         }
         val commonTest by getting {
@@ -54,6 +58,7 @@ kotlin {
             }
         }
         val iosMain by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(libs.sql.delight.native)
             }
@@ -66,6 +71,10 @@ android {
     compileSdk = 34
     defaultConfig {
         minSdk = 24
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
