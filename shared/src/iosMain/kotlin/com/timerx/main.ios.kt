@@ -5,7 +5,6 @@ import moe.tlaster.precompose.PreComposeApplication
 import org.koin.compose.KoinApplication
 
 @Suppress("FunctionName")
-<<<<<<< HEAD
 fun MainViewController() = PreComposeApplication {
     KoinApplication(
         application = {
@@ -16,9 +15,4 @@ fun MainViewController() = PreComposeApplication {
             App()
         }
     }
-=======
-fun MainViewController() = ComposeUIViewController {
-    Text(text = "Here we are in iOS land!")
-    App()
->>>>>>> 38d1bf9 (Initial kmp commit.)
 }
