@@ -57,7 +57,7 @@ internal fun MainScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text(text = "App name") },
+                title = { Text(text = "TimerX") },
                 actions = {
                     IconButton(onClick = navigateSettingsScreen) {
                         Icon(
