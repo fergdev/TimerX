@@ -1,14 +1,9 @@
-package com.timerx.android.run
+package com.timerx.ui.run
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.timerx.android.beep.BeepMaker
-import com.timerx.android.beep.BeepMakerImpl
-import com.timerx.android.main.Screens.TIMER_ID
-import com.timerx.android.run.RunViewModel.TimerState.Finished
-import com.timerx.android.run.RunViewModel.TimerState.Paused
-import com.timerx.android.run.RunViewModel.TimerState.Running
+import com.timerx.beep.BeepMaker
+import com.timerx.ui.run.RunViewModel.TimerState.Finished
+import com.timerx.ui.run.RunViewModel.TimerState.Paused
+import com.timerx.ui.run.RunViewModel.TimerState.Running
 import com.timerx.database.TimerDatabase
 import com.timerx.domain.Timer
 import kotlinx.coroutines.Job
@@ -16,11 +11,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class RunViewModel(
+    private val timerId: Long,
     timerRepository: TimerDatabase,
-    savedStateHandle: SavedStateHandle,
-    private val beepMaker: BeepMaker = BeepMakerImpl(),
+    private val beepMaker: BeepMaker,
 ) : ViewModel() {
 
     enum class TimerState {
@@ -51,7 +48,6 @@ class RunViewModel(
         val intervalDuration: Long = 0
     )
 
-    private val timerId: Long = savedStateHandle[TIMER_ID]!!
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
 
     private val _state = MutableStateFlow(RunState())

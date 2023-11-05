@@ -1,24 +1,20 @@
-package com.timerx.android.create
+package com.timerx.ui.create
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import com.timerx.android.main.Screens
 import com.timerx.database.TimerDatabase
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import java.text.SimpleDateFormat
-import java.util.Calendar
+import moe.tlaster.precompose.viewmodel.ViewModel
 
 class CreateViewModel(
-    savedStateHandle: SavedStateHandle, private val timerDatabase: TimerDatabase
+    timerId: Long = -1,
+    private val timerDatabase: TimerDatabase
 ) : ViewModel() {
 
     private val defaultTimerSet = TimerSet(
@@ -47,7 +43,6 @@ class CreateViewModel(
     private val timerEditing: Timer?
 
     init {
-        val timerId: Long = savedStateHandle[Screens.TIMER_ID]!!
         if (timerId != -1L) {
             timerEditing = timerDatabase.getTimer(timerId)
             sets = timerEditing.sets.toMutableList()
@@ -81,19 +76,15 @@ class CreateViewModel(
     }
 
     fun save() {
+        val name = state.value.timerName.ifBlank {
+//            val time = Calendar.getInstance().time
+//            val formatter = SimpleDateFormat.getDateTimeInstance()
+//            formatter.format(time)
+            "lolololol"
+        }
         if (timerEditing != null) {
-            val name = state.value.timerName.ifBlank {
-                val time = Calendar.getInstance().time
-                val formatter = SimpleDateFormat.getDateTimeInstance()
-                formatter.format(time)
-            }
             timerDatabase.updateTimer(Timer(timerEditing.id, name, sets = state.value.sets))
         } else {
-            val name = state.value.timerName.ifBlank {
-                val time = Calendar.getInstance().time
-                val formatter = SimpleDateFormat.getDateTimeInstance()
-                formatter.format(time)
-            }
             timerDatabase.insertTimer(Timer(-1, name, sets = state.value.sets))
         }
     }

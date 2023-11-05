@@ -1,4 +1,4 @@
-package com.timerx.android.create
+package com.timerx.ui.create
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +16,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -32,60 +35,42 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.timerx.android.R
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.formatted
 import com.timerx.domain.length
-import kotlinx.collections.immutable.ImmutableList
-import org.koin.androidx.compose.getViewModel
-
-data class TimerB(
-    val id: Long = -1,
-    val name: String,
-    val sets: ImmutableList<TimerSetB>
-)
-
-data class TimerSetB(
-    val id: Long = -1,
-    val repetitions: Long = 1,
-    val intervals: ImmutableList<TimerIntervalB>
-)
-
-data class TimerIntervalB(
-    val id: Long = -1,
-    val name: String,
-    val duration: Long
-)
+import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateScreen(navigateUp: () -> Unit) {
-    val viewModel: CreateViewModel = getViewModel()
+fun CreateScreen(
+    timerId: Long,
+    navigateUp: () -> Unit
+) {
+    val viewModel: CreateViewModel =
+        koinViewModel(vmClass = CreateViewModel::class) { parametersOf(timerId) }
+
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(R.string.create_timer)) },
+                title = { Text(text = "Create timer") },
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.rotate(270F),
                         onClick = { navigateUp() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back)
+                            contentDescription = "Back"
                         )
                     }
                 },
@@ -97,8 +82,9 @@ fun CreateScreen(navigateUp: () -> Unit) {
                 navigateUp()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),
-                    contentDescription = stringResource(id = R.string.create)
+//                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Create"
                 )
             }
         }
@@ -117,7 +103,7 @@ fun CreateScreen(navigateUp: () -> Unit) {
                 item {
                     OutlinedTextField(modifier = Modifier.fillMaxWidth(),
                         value = state.timerName,
-                        label = { Text(text = stringResource(R.string.timer_name)) },
+                        label = { Text(text = "Timer name") },
                         onValueChange = { viewModel.updateTimerName(it) })
                 }
                 items(state.sets) {
@@ -149,7 +135,7 @@ fun CreateScreen(navigateUp: () -> Unit) {
                         FilledIconButton(onClick = { viewModel.addSet() }) {
                             Icon(
                                 imageVector = Icons.Filled.Add,
-                                contentDescription = stringResource(id = R.string.add)
+                                contentDescription = "Add"
                             )
                         }
                     }
@@ -202,11 +188,11 @@ private fun Set(
                 OutlinedIconButton(onClick = { moveSetDown(timerSet) }) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowDown,
-                        contentDescription = stringResource(id = R.string.down)
+                        contentDescription = "Down"
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = stringResource(R.string.repetitions))
+                    Text(text = "Repetitions")
                     NumberIncrement(
                         value = timerSet.repetitions,
                         onChange = { updateRepetitions(timerSet, it) })
@@ -214,7 +200,7 @@ private fun Set(
                 OutlinedIconButton(onClick = { moveSetUp(timerSet) }) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowUp,
-                        contentDescription = stringResource(id = R.string.up)
+                        contentDescription = "Up"
                     )
                 }
             }
@@ -244,20 +230,21 @@ private fun Set(
             ) {
                 FilledTonalIconButton(onClick = { duplicateSet(timerSet) }) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_copy),
-                        contentDescription = stringResource(id = R.string.duplicate)
+//                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_copy),
+                        imageVector = Icons.Default.MailOutline,
+                        contentDescription = "Duplicate"
                     )
                 }
                 FilledTonalIconButton(onClick = { addInterval(timerSet) }) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(id = R.string.add)
+                        contentDescription = "Add"
                     )
                 }
                 FilledTonalIconButton(onClick = { deleteSet(timerSet) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(id = R.string.delete)
+                        contentDescription = "Delete"
                     )
                 }
             }
@@ -284,7 +271,7 @@ private fun Interval(
         ) {
             OutlinedTextField(modifier = Modifier.fillMaxWidth(),
                 value = interval.name,
-                label = { Text(text = stringResource(R.string.interval_name)) },
+                label = { Text(text = "Interval") },
                 onValueChange = { updateName(interval, it) })
 
             NumberIncrement(
@@ -299,25 +286,26 @@ private fun Interval(
                 IconButton(onClick = { moveIntervalDown(interval) }) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = stringResource(id = R.string.down)
+                        contentDescription = "Down"
                     )
                 }
                 IconButton(onClick = { duplicateInterval(interval) }) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_copy),
-                        contentDescription = stringResource(id = R.string.duplicate)
+                        imageVector = Icons.Default.MailOutline,
+//                        imageVector = ImageVector.vectorResource(R.drawable.ic_copy),
+                        contentDescription = "Duplicate"
                     )
                 }
                 IconButton(onClick = { deleteInterval(interval) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(id = R.string.delete)
+                        contentDescription = "Delete"
                     )
                 }
                 IconButton(onClick = { moveIntervalUp(interval) }) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowUp,
-                        contentDescription = stringResource(id = R.string.up)
+                        contentDescription = "Up"
                     )
                 }
             }
@@ -341,15 +329,16 @@ private fun NumberIncrement(
     ) {
         IconButton(onClick = { onChange(value - 1) }) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_minus),
-                contentDescription = stringResource(id = R.string.minus)
+//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_minus),
+                imageVector = Icons.Default.KeyboardArrowLeft,
+                contentDescription = "Minus"
             )
         }
         Text(text = formatter(value))
         IconButton(onClick = { onChange(value + 1) }) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = stringResource(id = R.string.add)
+                contentDescription = "Add"
             )
         }
     }

@@ -34,3 +34,8 @@ google-services.json
 
 # Macos
 .DS_Store 
+
+# ios
+xcuserdata
+xcuserdata/*
+*.xcuserstate

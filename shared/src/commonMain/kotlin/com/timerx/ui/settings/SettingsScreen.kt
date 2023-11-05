@@ -1,4 +1,4 @@
-package com.timerx.android.settings
+package com.timerx.ui.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +13,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.res.stringResource
-import com.timerx.android.R
 import com.timerx.getPlatform
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,14 +21,14 @@ fun SettingsScreen(navigateUp: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column {
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.settings)) },
+                title = { Text(text = "Settings") },
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.rotate(90F),
                         onClick = { navigateUp() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
+                            contentDescription = "Back"
                         )
                     }
                 })

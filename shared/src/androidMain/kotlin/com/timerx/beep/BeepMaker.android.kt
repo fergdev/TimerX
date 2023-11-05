@@ -1,7 +1,9 @@
-package com.timerx.android.beep
+package com.timerx.beep
 
 import android.media.AudioManager
 import android.media.ToneGenerator
+
+actual fun getBeepMaker(): BeepMaker = BeepMakerImpl()
 
 class BeepMakerImpl : BeepMaker {
     private val toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)

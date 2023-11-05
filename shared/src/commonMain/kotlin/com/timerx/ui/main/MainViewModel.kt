@@ -1,6 +1,5 @@
-package com.timerx.android.main
+package com.timerx.ui.main
 
-import androidx.lifecycle.ViewModel
 import com.timerx.database.TimerDatabase
 import com.timerx.domain.Timer
 import kotlinx.collections.immutable.ImmutableList
@@ -9,6 +8,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import moe.tlaster.precompose.viewmodel.ViewModel
 
 class MainViewModel(private val timerRepository: TimerDatabase) : ViewModel() {
 

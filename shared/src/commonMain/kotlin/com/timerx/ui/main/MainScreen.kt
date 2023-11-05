@@ -1,4 +1,4 @@
-package com.timerx.android.main
+package com.timerx.ui.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,16 +28,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.timerx.android.R
 import com.timerx.domain.Timer
 import com.timerx.domain.formatted
 import com.timerx.domain.length
-import org.koin.androidx.compose.koinViewModel
+import moe.tlaster.precompose.koin.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,8 +43,8 @@ internal fun MainScreen(
     navigateEditScreen: (Long) -> Unit,
     navigateRunScreen: (Long) -> Unit
 ) {
-    val viewModel: MainViewModel = koinViewModel()
 
+    val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
     // TODO REMOVE this hack. This was put in here to refresh the data after adding a timer in the create screen
     LaunchedEffect(Unit) {
         viewModel.refreshData()
@@ -60,12 +57,12 @@ internal fun MainScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.appName)) },
+                title = { Text(text = "TimerX") },
                 actions = {
                     IconButton(onClick = navigateSettingsScreen) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = stringResource(R.string.settings)
+                            contentDescription = null
                         )
                     }
                 },
@@ -76,7 +73,7 @@ internal fun MainScreen(
             FloatingActionButton(onClick = navigateAddScreen) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.add)
+                    contentDescription = null
                 )
             }
         }) {
@@ -85,7 +82,7 @@ internal fun MainScreen(
             if (state.timers.isEmpty()) {
                 Text(
                     modifier = Modifier.padding(16.dp),
-                    text = stringResource(id = R.string.no_timers)
+                    text = "No timers"
                 )
             } else {
                 LazyColumn {
@@ -124,23 +121,24 @@ private fun Timer(
                 Row {
                     IconButton(onClick = { duplicateTimer(timer) }) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_copy),
-                            contentDescription = stringResource(R.string.duplicate)
+                            imageVector = Icons.Default.Face,
+                            contentDescription = null
                         )
                     }
                     IconButton(onClick = { navigateEditScreen(timer.id) }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(R.string.edit)
+                            contentDescription = null
                         )
                     }
                     IconButton(onClick = { deleteTimer(timer) }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(id = R.string.delete)
+                            contentDescription = null
                         )
                     }
                 }
             })
     }
 }
+

@@ -1,8 +1,7 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
-        maven("https://digital.artifacts.nz.thenational.com/repository/digital-maven")
-        maven("https://digital.artifacts.nz.thenational.com/repository/gradle-plugins")
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
         gradlePluginPortal()
         mavenCentral()
@@ -11,8 +10,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        maven("https://digital.artifacts.nz.thenational.com/repository/digital-maven")
-        maven("https://digital.artifacts.nz.thenational.com/repository/gradle-plugins")
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
         mavenCentral()
     }
