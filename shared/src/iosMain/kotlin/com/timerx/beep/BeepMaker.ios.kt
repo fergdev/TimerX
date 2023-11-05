@@ -1,21 +1,24 @@
 package com.timerx.beep
 
+import platform.AudioToolbox.AudioServicesPlayAlertSound
+
 actual fun getBeepMaker(): BeepMaker = BeepMakerImpl()
 
 class BeepMakerImpl : BeepMaker {
+
     override fun beepNext() {
-        println("Beep next")
+        AudioServicesPlayAlertSound(1120u)
     }
 
     override fun beepBack() {
-        println("Beep back")
+        AudioServicesPlayAlertSound(1111u)
     }
 
     override fun beepFinished() {
-        println("Beep finished")
+        AudioServicesPlayAlertSound(1112u)
     }
 
     override fun beepStart() {
-        println("Beep start")
+        AudioServicesPlayAlertSound(1113u)
     }
 }
