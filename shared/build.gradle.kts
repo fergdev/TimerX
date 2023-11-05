@@ -44,6 +44,8 @@ kotlin {
                 implementation(libs.pre.compose)
                 implementation(libs.pre.compose.viewmodel)
                 implementation(libs.pre.compose.koin)
+
+                api(libs.koin.compose)
             }
         }
         val commonTest by getting {

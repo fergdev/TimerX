@@ -1,18 +1,9 @@
 package com.timerx
 
+import androidx.compose.ui.window.ComposeUIViewController
 import com.timerx.ui.App
-import moe.tlaster.precompose.PreComposeApplication
-import org.koin.compose.KoinApplication
 
 @Suppress("FunctionName")
-fun MainViewController() = PreComposeApplication {
-    KoinApplication(
-        application = {
-            modules(sharedModule())
-        }
-    ) {
-        TimerXTheme {
-            App()
-        }
-    }
+fun MainViewController() = ComposeUIViewController {
+    App()
 }
