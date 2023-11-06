@@ -1,6 +1,6 @@
 package com.timerx.ui.create
 
-import com.timerx.database.TimerDatabase
+import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
@@ -14,7 +14,7 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 
 class CreateViewModel(
     timerId: Long = -1,
-    private val timerDatabase: TimerDatabase
+    private val timerDatabase: ITimerRepository
 ) : ViewModel() {
 
     private val defaultTimerSet = TimerSet(

@@ -1,6 +1,6 @@
 package com.timerx.ui.main
 
-import com.timerx.database.TimerDatabase
+import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import moe.tlaster.precompose.viewmodel.ViewModel
 
-class MainViewModel(private val timerRepository: TimerDatabase) : ViewModel() {
+class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel() {
 
     data class State(val timers: ImmutableList<Timer> = persistentListOf())
 

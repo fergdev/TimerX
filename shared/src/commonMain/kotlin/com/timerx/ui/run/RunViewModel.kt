@@ -1,11 +1,11 @@
 package com.timerx.ui.run
 
 import com.timerx.beep.BeepMaker
+import com.timerx.database.ITimerRepository
+import com.timerx.domain.Timer
 import com.timerx.ui.run.RunViewModel.TimerState.Finished
 import com.timerx.ui.run.RunViewModel.TimerState.Paused
 import com.timerx.ui.run.RunViewModel.TimerState.Running
-import com.timerx.database.TimerDatabase
-import com.timerx.domain.Timer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +16,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class RunViewModel(
     private val timerId: Long,
-    timerRepository: TimerDatabase,
+    timerRepository: ITimerRepository,
     private val beepMaker: BeepMaker,
 ) : ViewModel() {
 

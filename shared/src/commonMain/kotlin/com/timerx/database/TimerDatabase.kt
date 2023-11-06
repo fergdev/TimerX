@@ -6,7 +6,7 @@ import com.timerx.domain.TimerSet
 import kotlinx.collections.immutable.toPersistentList
 import sqldelight.AppDatabase
 
-interface ITimerDatabase {
+interface ITimerRepository {
     fun getTimers(): List<Timer>
     fun insertTimer(timer: Timer)
     fun updateTimer(timer: Timer)
@@ -15,7 +15,7 @@ interface ITimerDatabase {
     fun getTimer(timerId: Long): Timer
 }
 
-class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) : ITimerDatabase {
+class TimerDatabase(databaseDriverFactory: DatabaseDriverFactory) : ITimerRepository {
     private val database = AppDatabase(databaseDriverFactory.createDriver())
     private val dbQuery = database.appDatabaseQueries
 
