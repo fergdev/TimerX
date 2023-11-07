@@ -9,17 +9,3 @@ plugins {
     alias(libs.plugins.sqlDelight).apply(false)
     alias(libs.plugins.jetbrainsCompose).apply(false)
 }
-
-// Try removing this when compatible compose compiler / kotlin versions are beack inline.
-allprojects {
-    this.tasks.withType()
-    // Suppress Compose Kotlin compiler compatibility warning
-    tasks.withType(KotlinCompile::class).configureEach {
-        kotlinOptions {
-            freeCompilerArgs += listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
-            )
-        }
-    }
-}
