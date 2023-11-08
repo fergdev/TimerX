@@ -1,7 +1,18 @@
 plugins {
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.stabilityReport)
+    alias(libs.plugins.jetbrainsCompose)
+}
+
+kotlin {
+    androidTarget()
+    sourceSets {
+        val androidMain by getting {
+            dependencies {
+                implementation(project(":shared"))
+            }
+        }
+    }
 }
 
 android {
@@ -13,12 +24,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
     packaging {
         resources {
@@ -34,25 +39,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        jvmToolchain(17)
     }
-}
-
-dependencies {
-    implementation(projects.shared)
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
-    implementation(libs.kotlin.immutable)
-    implementation(libs.pre.compose)
-    debugImplementation(libs.compose.ui.tooling)
-}
-
-htmlComposeCompilerReport {
-    includeStableClasses.set(true)
-    includeClasses.set(true)
 }
