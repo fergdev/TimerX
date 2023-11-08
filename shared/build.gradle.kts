@@ -1,20 +1,14 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.sqlDelight)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
-        }
-    }
+    androidTarget()
 
     listOf(
         iosX64(),
@@ -29,10 +23,12 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                //put your multiplatform dependencies here
                 implementation(libs.koin)
+                api(libs.koin.compose)
+
                 implementation(libs.kotlin.immutable)
-                implementation(libs.sql.delight)
+
+                api(libs.sql.delight)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
@@ -45,7 +41,6 @@ kotlin {
                 implementation(libs.pre.compose.viewmodel)
                 implementation(libs.pre.compose.koin)
 
-                api(libs.koin.compose)
             }
         }
         val commonTest by getting {
@@ -55,7 +50,10 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(libs.koin.android)
                 implementation(libs.sql.delight.android)
+                api(libs.koin.android)
+                api(libs.androidx.activity.compose)
             }
         }
         val iosX64Main by getting
@@ -64,17 +62,6 @@ kotlin {
         val iosMain by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(libs.koin)
-                implementation(libs.kotlin.immutable)
-                implementation(libs.sql.delight)
-
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-
-                implementation(libs.pre.compose)
-                implementation(libs.pre.compose.viewmodel)
-                implementation(libs.pre.compose.koin)
                 implementation(libs.sql.delight.native)
             }
             iosX64Main.dependsOn(this)
@@ -96,12 +83,6 @@ android {
     }
     kotlin {
         jvmToolchain(17)
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 }
 
