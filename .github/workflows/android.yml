@@ -27,7 +27,7 @@ jobs:
       run: ./gradlew build
 
     - name: Archive Android APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Android debug build
         path: androidApp/build/outputs/apk/debug/androidApp-debug.apk
