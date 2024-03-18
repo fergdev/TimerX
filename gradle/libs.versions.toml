@@ -1,6 +1,6 @@
 [versions]
 agp = "8.2.2"
-androidx-activityCompose = "1.8.1"
+androidx-activityCompose = "1.8.2"
 compose = "1.6.1"
 jetbrains-compose = "1.5.11"
 compose-compiler = "1.5.4"
