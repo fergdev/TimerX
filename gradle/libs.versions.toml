@@ -1,15 +1,15 @@
 [versions]
 agp = "8.3.1"
 androidx-activityCompose = "1.8.2"
-compose = "1.6.1"
+compose = "1.6.3"
 jetbrains-compose = "1.6.1"
 compose-material3 = "1.2.1"
-koin = "3.5.0"
+koin = "3.5.3"
 kotlin = "1.9.23"
 kotlinx-immutable = "0.3.7"
 sql-delight = "1.5.5"
 stability-report = "1.1.0"
-pre-compose = "1.5.10"
+pre-compose = "1.5.11"
 koin-compose = "1.1.2"
 
 [libraries]
