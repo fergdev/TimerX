@@ -22,15 +22,15 @@ fun TimerXTheme(
 ) {
     val colors = if (darkTheme) {
         darkColorScheme(
-            primary = Color(0xFFBB86FC),
-            secondary = Color(0xFF03DAC5),
-            tertiary = Color(0xFF3700B3)
+            primary = Color(0xFFBB86FCL),
+            secondary = Color(0xFF03DAC5L),
+            tertiary = Color(0xFF3700B3L)
         )
     } else {
         lightColorScheme(
-            primary = Color(0xFF6200EE),
-            secondary = Color(0xFF03DAC5),
-            tertiary = Color(0xFF3700B3)
+            primary = Color(0xFF6200EEL),
+            secondary = Color(0xFF03DAC5L),
+            tertiary = Color(0xFF3700B3L)
         )
     }
     val typography = Typography(
