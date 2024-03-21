@@ -40,10 +40,9 @@ import moe.tlaster.precompose.koin.koinViewModel
 internal fun MainScreen(
     navigateSettingsScreen: () -> Unit,
     navigateAddScreen: () -> Unit,
-    navigateEditScreen: (Long) -> Unit,
-    navigateRunScreen: (Long) -> Unit
+    navigateEditScreen: (String) -> Unit,
+    navigateRunScreen: (String) -> Unit
 ) {
-
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
     // TODO REMOVE this hack. This was put in here to refresh the data after adding a timer in the create screen
     LaunchedEffect(Unit) {
@@ -106,15 +105,16 @@ private fun Timer(
     timer: Timer,
     duplicateTimer: (Timer) -> Unit,
     deleteTimer: (Timer) -> Unit,
-    navigateRunScreen: (Long) -> Unit,
-    navigateEditScreen: (Long) -> Unit
+    navigateRunScreen: (String) -> Unit,
+    navigateEditScreen: (String) -> Unit
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        ListItem(modifier = Modifier.clickable { navigateRunScreen(timer.id) },
+        ListItem(
+            modifier = Modifier.clickable { navigateRunScreen(timer.id) },
             headlineContent = { Text(text = timer.name) },
             supportingContent = { Text(text = timer.length().formatted()) },
             trailingContent = {
@@ -138,7 +138,8 @@ private fun Timer(
                         )
                     }
                 }
-            })
+            }
+        )
     }
 }
 

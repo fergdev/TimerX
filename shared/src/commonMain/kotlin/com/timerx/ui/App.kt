@@ -40,11 +40,11 @@ fun App() {
                             })
                     }
                     scene(route = "create/{timerId}?") {
-                        val timerId: Long = it.path<Long>("timerId") ?: -1
+                        val timerId: String = it.path<String>("timerId") ?: ""
                         CreateScreen(timerId = timerId) { navigator.goBack() }
                     }
                     scene(route = "run/{timerId}") {
-                        val timerId: Long = it.path<Long>("timerId")!!
+                        val timerId: String = it.path<String>("timerId")!!
                         RunScreen(timerId) { navigator.goBack() }
                     }
                     scene(route = "settings") {

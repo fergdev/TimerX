@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import moe.tlaster.precompose.viewmodel.ViewModel
 
 class CreateViewModel(
-    timerId: Long = -1,
+    timerName: String = "",
     private val timerDatabase: ITimerRepository
 ) : ViewModel() {
 
@@ -43,8 +43,8 @@ class CreateViewModel(
     private val timerEditing: Timer?
 
     init {
-        if (timerId != -1L) {
-            timerEditing = timerDatabase.getTimer(timerId)
+        if (timerName != "") {
+            timerEditing = timerDatabase.getTimer(timerName)
             sets = timerEditing.sets.toMutableList()
 
             _state.update {
@@ -77,6 +77,7 @@ class CreateViewModel(
 
     fun save() {
         val name = state.value.timerName.ifBlank {
+            // TODO come up with simple name
 //            val time = Calendar.getInstance().time
 //            val formatter = SimpleDateFormat.getDateTimeInstance()
 //            formatter.format(time)
@@ -85,7 +86,7 @@ class CreateViewModel(
         if (timerEditing != null) {
             timerDatabase.updateTimer(Timer(timerEditing.id, name, sets = state.value.sets))
         } else {
-            timerDatabase.insertTimer(Timer(-1, name, sets = state.value.sets))
+            timerDatabase.insertTimer(Timer("", name, sets = state.value.sets))
         }
     }
 
@@ -144,7 +145,7 @@ class CreateViewModel(
             } else {
                 intervals
             }
-            TimerSet(-1, repetitions, newIntervals.toPersistentList())
+            TimerSet("", repetitions, newIntervals.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -152,7 +153,7 @@ class CreateViewModel(
 
     fun deleteInterval(interval: TimerInterval) {
         sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet(-1, repetitions, intervals.filter {
+            TimerSet("", repetitions, intervals.filter {
                 interval !== it
             }.toPersistentList())
         }.toMutableList()
@@ -172,7 +173,7 @@ class CreateViewModel(
     fun updateIntervalDuration(timerInterval: TimerInterval, duration: Long) {
         if (duration < 1) return
         sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet(-1, repetitions, intervals.map {
+            TimerSet("", repetitions, intervals.map {
                 if (it === timerInterval) {
                     it.copy(duration = duration)
                 } else {
@@ -186,7 +187,7 @@ class CreateViewModel(
 
     fun updateIntervalName(timerInterval: TimerInterval, name: String) {
         sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet(-1, repetitions, intervals.map {
+            TimerSet("", repetitions, intervals.map {
                 if (it === timerInterval) {
                     it.copy(name = name)
                 } else {
@@ -205,7 +206,7 @@ class CreateViewModel(
                 val mutable = set.intervals.toMutableList()
                 mutable.removeAt(index)
                 mutable.add(index - 1, timerInterval)
-                TimerSet(-1, set.repetitions, mutable.toPersistentList())
+                TimerSet("", set.repetitions, mutable.toPersistentList())
             } else {
                 set
             }
@@ -221,7 +222,7 @@ class CreateViewModel(
                 val mutable = set.intervals.toMutableList()
                 mutable.removeAt(index)
                 mutable.add(index + 1, timerInterval)
-                TimerSet(-1, set.repetitions, mutable.toPersistentList())
+                TimerSet("", set.repetitions, mutable.toPersistentList())
             } else {
                 set
             }

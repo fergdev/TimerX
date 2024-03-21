@@ -12,11 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MailOutline
@@ -52,7 +52,7 @@ import org.koin.core.parameter.parametersOf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(
-    timerId: Long,
+    timerId: String,
     navigateUp: () -> Unit
 ) {
     val viewModel: CreateViewModel =
@@ -69,7 +69,7 @@ fun CreateScreen(
                         modifier = Modifier.rotate(270F),
                         onClick = { navigateUp() }) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -82,7 +82,6 @@ fun CreateScreen(
                 navigateUp()
             }) {
                 Icon(
-//                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),
                     imageVector = Icons.Default.Lock,
                     contentDescription = "Create"
                 )
@@ -230,7 +229,6 @@ private fun Set(
             ) {
                 FilledTonalIconButton(onClick = { duplicateSet(timerSet) }) {
                     Icon(
-//                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_copy),
                         imageVector = Icons.Default.MailOutline,
                         contentDescription = "Duplicate"
                     )
@@ -292,7 +290,6 @@ private fun Interval(
                 IconButton(onClick = { duplicateInterval(interval) }) {
                     Icon(
                         imageVector = Icons.Default.MailOutline,
-//                        imageVector = ImageVector.vectorResource(R.drawable.ic_copy),
                         contentDescription = "Duplicate"
                     )
                 }
@@ -329,8 +326,7 @@ private fun NumberIncrement(
     ) {
         IconButton(onClick = { onChange(value - 1) }) {
             Icon(
-//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_minus),
-                imageVector = Icons.Default.KeyboardArrowLeft,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Minus"
             )
         }

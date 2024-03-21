@@ -3,19 +3,19 @@ package com.timerx.domain
 import kotlinx.collections.immutable.ImmutableList
 
 data class Timer(
-    val id: Long = -1,
+    val id: String = "",
     val name: String,
     val sets: ImmutableList<TimerSet>
 )
 
 data class TimerSet(
-    val id: Long = -1,
+    val id: String = "",
     val repetitions: Long = 1,
     val intervals: ImmutableList<TimerInterval>
 )
 
 data class TimerInterval(
-    val id: Long = -1,
+    val id: String = "",
     val name: String,
     val duration: Long
 )

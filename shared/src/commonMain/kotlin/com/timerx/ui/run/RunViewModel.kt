@@ -15,7 +15,7 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class RunViewModel(
-    private val timerId: Long,
+    private val timerId: String,
     timerRepository: ITimerRepository,
     private val beepMaker: BeepMaker,
 ) : ViewModel() {
