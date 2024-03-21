@@ -7,7 +7,7 @@ compose-material3 = "1.2.1"
 koin = "3.5.3"
 kotlin = "1.9.23"
 kotlinx-immutable = "0.3.7"
-sql-delight = "1.5.5"
+#sql-delight = "1.5.5"
 stability-report = "1.1.0"
 pre-compose = "1.5.11"
 koin-compose = "1.1.2"
@@ -25,9 +25,9 @@ koin-android-viewmodel = { module = "io.insert-koin:koin-android-viewmodel", ver
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 kotlin-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-immutable" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-sql-delight = { module = "com.squareup.sqldelight:runtime", version.ref = "sql-delight" }
-sql-delight-android = { module = "com.squareup.sqldelight:android-driver", version.ref = "sql-delight" }
-sql-delight-native = { module = "com.squareup.sqldelight:native-driver", version.ref = "sql-delight" }
+#sql-delight = { module = "com.squareup.sqldelight:runtime", version.ref = "sql-delight" }
+#sql-delight-android = { module = "com.squareup.sqldelight:android-driver", version.ref = "sql-delight" }
+#sql-delight-native = { module = "com.squareup.sqldelight:native-driver", version.ref = "sql-delight" }
 pre-compose = {module = "moe.tlaster:precompose", version.ref = "pre-compose" }
 pre-compose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "pre-compose" }
 pre-compose-koin = {module = "moe.tlaster:precompose-koin", version.ref = "pre-compose" }
@@ -39,7 +39,7 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
-sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sql-delight" }
+#sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sql-delight" }
 stabilityReport = { id = "dev.shreyaspatil.compose-compiler-report-generator", version.ref = "stability-report" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 
