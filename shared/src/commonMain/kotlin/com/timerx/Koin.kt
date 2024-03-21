@@ -12,6 +12,6 @@ fun sharedModule() = module {
     single { getBeepMaker() }
     single<ITimerRepository> { TimerRepo() }
     factory { MainViewModel(get()) }
-    factory { (timerId: Long) -> CreateViewModel(timerId, get()) }
-    factory { (timerId: Long) -> RunViewModel(timerId, get(), get()) }
+    factory { (timerName: String) -> CreateViewModel(timerName, get()) }
+    factory { (timerName: String) -> RunViewModel(timerName, get(), get()) }
 }

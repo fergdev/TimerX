@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
@@ -34,7 +34,7 @@ import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun RunScreen(timerId: Long, navigateUp: () -> Unit) {
+fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val viewModel: RunViewModel =
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
@@ -52,7 +52,7 @@ fun RunScreen(timerId: Long, navigateUp: () -> Unit) {
                 IconButton(onClick = { viewModel.previousInterval() }) {
                     Icon(
                         modifier = Modifier.size(48.dp),
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
                         tint = Color.White
                     )
@@ -61,7 +61,7 @@ fun RunScreen(timerId: Long, navigateUp: () -> Unit) {
                 IconButton(onClick = { viewModel.nextInterval() }) {
                     Icon(
                         modifier = Modifier.size(48.dp),
-                        imageVector = Icons.Default.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "Next",
                         tint = Color.White
                     )
