@@ -10,7 +10,7 @@ jobs:
   build:
     # Reverted this to get builds going, iOS currently won't build due to
     # missing SQLDelight dependencies on iOS target.
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v4
