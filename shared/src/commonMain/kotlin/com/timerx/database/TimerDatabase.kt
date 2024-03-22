@@ -64,7 +64,7 @@ private fun Color.toRealmColor(): RealmColor {
 
 private fun RealmColor?.toComposeColor(): Color {
     if (this == null) return Color.Blue
-    return Color(this.red ?: 0f, this.green ?: 0f, this.blue ?: 0f, this.alpha ?: 0f)
+    return Color(this.red, this.green, this.blue, this.alpha)
 }
 
 class TimerRepo : ITimerRepository {
