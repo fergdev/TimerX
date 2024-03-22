@@ -1,5 +1,6 @@
 package com.timerx.ui.create
 
+import androidx.compose.ui.graphics.Color
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
@@ -20,14 +21,14 @@ class CreateViewModel(
     private val defaultTimerSet = TimerSet(
         repetitions = 5, intervals = persistentListOf(
             TimerInterval(
-                name = "Work", duration = 30
+                name = "Work", duration = 30, color = Color.Green
             ), TimerInterval(
-                name = "Rest", duration = 30
+                name = "Rest", duration = 30, color = Color.Red
             )
         )
     )
     private val defaultInterval = TimerInterval(
-        name = "Work", duration = 30
+        name = "Work", duration = 30, color = Color.Green
     )
 
     private var sets: MutableList<TimerSet>
@@ -60,7 +61,7 @@ class CreateViewModel(
                 TimerSet(
                     repetitions = 1, intervals = persistentListOf(
                         TimerInterval(
-                            name = "Prepare", duration = 10
+                            name = "Prepare", duration = 10, color = Color.Yellow
                         )
                     )
                 ), defaultTimerSet.copy()
@@ -226,6 +227,20 @@ class CreateViewModel(
             } else {
                 set
             }
+        }.toMutableList()
+
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
+    fun updateIntervalColor(timerInterval: TimerInterval, color: Color) {
+        sets = sets.map { (_, repetitions, intervals) ->
+            TimerSet("", repetitions, intervals.map {
+                if (it === timerInterval) {
+                    it.copy(color = color)
+                } else {
+                    it
+                }
+            }.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())

@@ -1,5 +1,6 @@
 package com.timerx.domain
 
+import androidx.compose.ui.graphics.Color
 import kotlinx.collections.immutable.ImmutableList
 
 data class Timer(
@@ -17,7 +18,8 @@ data class TimerSet(
 data class TimerInterval(
     val id: String = "",
     val name: String,
-    val duration: Long
+    val duration: Long,
+    val color: Color = Color.Blue
 )
 
 fun Long.formatted(): String {
