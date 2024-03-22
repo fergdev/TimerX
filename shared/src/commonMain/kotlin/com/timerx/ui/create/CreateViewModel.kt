@@ -11,6 +11,13 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.toLocalDateTime
 import moe.tlaster.precompose.viewmodel.ViewModel
 
 class CreateViewModel(
@@ -30,6 +37,9 @@ class CreateViewModel(
     private val defaultInterval = TimerInterval(
         name = "Work", duration = 30, color = Color.Green
     )
+
+    @OptIn(FormatStringsInDatetimeFormats::class)
+    val dateTimeFormat = LocalDateTime.Format { byUnicodePattern("yyyy-MM-dd HH:mm:ss") }
 
     private var sets: MutableList<TimerSet>
 
@@ -78,11 +88,8 @@ class CreateViewModel(
 
     fun save() {
         val name = state.value.timerName.ifBlank {
-            // TODO come up with simple name
-//            val time = Calendar.getInstance().time
-//            val formatter = SimpleDateFormat.getDateTimeInstance()
-//            formatter.format(time)
-            "lolololol"
+            "Created " + Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                .format(dateTimeFormat)
         }
         if (timerEditing != null) {
             timerDatabase.updateTimer(Timer(timerEditing.id, name, sets = state.value.sets))
