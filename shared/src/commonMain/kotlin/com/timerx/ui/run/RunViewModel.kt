@@ -1,5 +1,6 @@
 package com.timerx.ui.run
 
+import androidx.compose.ui.graphics.Color
 import com.timerx.beep.BeepMaker
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
@@ -45,7 +46,9 @@ class RunViewModel(
         val intervalName: String = "",
 
         val elapsed: Long = 0,
-        val intervalDuration: Long = 0
+        val intervalDuration: Long = 0,
+
+        val backgroundColor: Color = Color.Red
     )
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
@@ -87,6 +90,7 @@ class RunViewModel(
         val intervalCount = timer.sets[set].intervals.size
         val intervalName = timer.sets[set].intervals[interval].name
         val intervalDuration = timer.sets[set].intervals[interval].duration
+        val color = timer.sets[set].intervals[interval].color
 
         _state.value = _state.value.copy(
             set = set,
@@ -99,7 +103,8 @@ class RunViewModel(
             intervalName = intervalName,
 
             elapsed = 0,
-            intervalDuration = intervalDuration
+            intervalDuration = intervalDuration,
+            backgroundColor = color
         )
     }
 
@@ -211,7 +216,9 @@ class RunViewModel(
             intervalCount = firstSet.intervals.size,
 
             intervalName = firstInterval.name,
-            intervalDuration = firstInterval.duration
+            intervalDuration = firstInterval.duration,
+
+            backgroundColor = firstInterval.color
         )
         beepMaker.beepStart()
         startTicker()

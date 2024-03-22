@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.run.RunViewModel.TimerState.Finished
 import com.timerx.ui.run.RunViewModel.TimerState.Paused
@@ -38,10 +39,11 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val viewModel: RunViewModel =
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
+    val displayColor = displayColor(state.backgroundColor)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Blue),
+            .background(state.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -54,7 +56,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = displayColor
                     )
                 }
                 Spacer(modifier = Modifier.weight(2f))
@@ -63,24 +65,24 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "Next",
-                        tint = Color.White
+                        tint = displayColor
                     )
                 }
             }
 
-            TText(text = state.timerName)
+            TText(text = state.timerName, displayColor)
             Spacer(modifier = Modifier.weight(2f))
 
             if (state.timerState == Finished) {
-                TText(text = "Finished")
+                TText(text = "Finished", displayColor)
             } else {
                 if (state.setRepetitionCount != 1L) {
-                    TText(text = "${state.setRepetitionCount - state.setRepetition}")
+                    TText(text = "${state.setRepetitionCount - state.setRepetition}", displayColor)
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                TText(text = state.intervalName)
+                TText(text = state.intervalName, displayColor)
                 Spacer(modifier = Modifier.height(24.dp))
-                TText(text = "${state.intervalDuration - state.elapsed} ")
+                TText(text = "${state.intervalDuration - state.elapsed} ", displayColor)
             }
 
             Spacer(modifier = Modifier.weight(2f))
@@ -91,7 +93,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.Close,
                         contentDescription = "Close",
-                        tint = Color.White
+                        tint = displayColor
                     )
                 }
                 Spacer(modifier = Modifier.weight(2f))
@@ -102,7 +104,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.Lock,
                                 contentDescription = "Pause",
-                                tint = Color.White
+                                tint = displayColor
                             )
                         }
                     }
@@ -113,7 +115,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.PlayArrow,
                                 contentDescription = "Play",
-                                tint = Color.White
+                                tint = displayColor
                             )
                         }
                     }
@@ -124,7 +126,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = "Refresh",
-                                tint = Color.White
+                                tint = displayColor
                             )
                         }
                     }
@@ -135,9 +137,14 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
 }
 
 @Composable
-private fun TText(text: String) {
+private fun TText(text: String, color: Color) {
     Text(
         text = text,
-        style = typography.headlineLarge, color = Color.White
+        style = typography.headlineLarge,
+        color = color
     )
+}
+
+private fun displayColor(backgroundColor: Color): Color {
+    return if (backgroundColor.luminance() > 0.5f) Color.Black else Color.White
 }

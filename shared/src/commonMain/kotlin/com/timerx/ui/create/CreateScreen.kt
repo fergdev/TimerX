@@ -1,5 +1,7 @@
 package com.timerx.ui.create
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -27,6 +30,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
@@ -37,9 +41,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerInterval
@@ -125,6 +133,7 @@ fun CreateScreen(
                         updateRepetitions = viewModel::updateRepetitions,
                         updateIntervalDuration = viewModel::updateIntervalDuration,
                         updateIntervalName = viewModel::updateIntervalName,
+                        updateIntervalColor = viewModel::updateIntervalColor,
                     )
                 }
                 item {
@@ -171,7 +180,8 @@ private fun Set(
 
     updateRepetitions: (TimerSet, Long) -> Unit,
     updateIntervalDuration: (TimerInterval, Long) -> Unit,
-    updateIntervalName: (TimerInterval, String) -> Unit
+    updateIntervalName: (TimerInterval, String) -> Unit,
+    updateIntervalColor: (TimerInterval, Color) -> Unit
 ) {
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -214,7 +224,8 @@ private fun Set(
                     deleteInterval = deleteInterval,
                     duplicateInterval = duplicateInterval,
                     updateDuration = updateIntervalDuration,
-                    updateName = updateIntervalName
+                    updateName = updateIntervalName,
+                    updateColor = updateIntervalColor
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -250,6 +261,7 @@ private fun Set(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Interval(
     interval: TimerInterval,
@@ -258,7 +270,8 @@ private fun Interval(
     deleteInterval: (TimerInterval) -> Unit,
     duplicateInterval: (TimerInterval) -> Unit,
     updateDuration: (TimerInterval, Long) -> Unit,
-    updateName: (TimerInterval, String) -> Unit
+    updateName: (TimerInterval, String) -> Unit,
+    updateColor: (TimerInterval, Color) -> Unit
 ) {
     ElevatedCard {
         Column(
@@ -276,6 +289,37 @@ private fun Interval(
                 value = interval.duration, formatter = ::timeFormatter
             ) {
                 updateDuration(interval, it)
+            }
+
+            var colorPickerVisible by remember { mutableStateOf(false) }
+            Box(modifier = Modifier.size(48.dp).background(interval.color).clickable {
+                colorPickerVisible = true
+            })
+
+            if (colorPickerVisible) {
+                ModalBottomSheet(onDismissRequest = { colorPickerVisible = false }) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        ColorPickerBox(Color.Red) {
+                            updateColor(interval, it)
+                            colorPickerVisible = false
+                        }
+                        ColorPickerBox(Color.Green) {
+                            updateColor(interval, it)
+                            colorPickerVisible = false
+                        }
+                        ColorPickerBox(Color.Blue) {
+                            updateColor(interval, it)
+                            colorPickerVisible = false
+                        }
+                        ColorPickerBox(Color.Yellow) {
+                            updateColor(interval, it)
+                            colorPickerVisible = false
+                        }
+                    }
+                }
             }
 
             Row(
@@ -338,4 +382,11 @@ private fun NumberIncrement(
             )
         }
     }
+}
+
+@Composable
+private fun ColorPickerBox(color: Color, onClick: (Color) -> Unit) {
+    Box(modifier = Modifier.size(48.dp).background(color).clickable {
+        onClick(color)
+    })
 }
