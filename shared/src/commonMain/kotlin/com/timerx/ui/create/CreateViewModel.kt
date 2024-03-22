@@ -45,6 +45,7 @@ class CreateViewModel(
 
     data class State(
         val timerName: String = "",
+        val finishColor: Color = Color.Red,
         val sets: ImmutableList<TimerSet> = persistentListOf()
     )
 
@@ -92,9 +93,21 @@ class CreateViewModel(
                 .format(dateTimeFormat)
         }
         if (timerEditing != null) {
-            timerDatabase.updateTimer(Timer(timerEditing.id, name, sets = state.value.sets))
+            timerDatabase.updateTimer(
+                Timer(
+                    id = timerEditing.id,
+                    name = name,
+                    sets = state.value.sets,
+                    finishColor = state.value.finishColor
+                ))
         } else {
-            timerDatabase.insertTimer(Timer("", name, sets = state.value.sets))
+            timerDatabase.insertTimer(
+                Timer(
+                    id = "",
+                    name = name,
+                    sets = state.value.sets,
+                    finishColor = state.value.finishColor
+                ))
         }
     }
 
@@ -251,5 +264,9 @@ class CreateViewModel(
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
+    fun onFinishColor(color: Color) {
+        _state.value = state.value.copy(finishColor = color)
     }
 }

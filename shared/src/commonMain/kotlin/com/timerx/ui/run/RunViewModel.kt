@@ -129,9 +129,7 @@ class RunViewModel(
         }
 
         if (setIndex == timer.sets.size) {
-            _state.value = RunState(timerState = Finished)
-            beepMaker.beepFinished()
-            stopTicker()
+            finishTimer()
         } else {
             restartTicker()
             beepMaker.beepNext()
@@ -141,6 +139,15 @@ class RunViewModel(
                 intervalIndex,
             )
         }
+    }
+
+    private fun finishTimer() {
+        _state.value = RunState(
+            timerState = Finished,
+            backgroundColor = timer.finishColor
+        )
+        beepMaker.beepFinished()
+        stopTicker()
     }
 
     fun previousInterval() {

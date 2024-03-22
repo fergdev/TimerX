@@ -156,6 +156,21 @@ fun CreateScreen(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+                item {
+                    var colorPickerVisible by remember { mutableStateOf(false) }
+                    Box(modifier = Modifier.size(48.dp).background(state.finishColor).clickable {
+                        colorPickerVisible = true
+                    })
+
+                    if (colorPickerVisible) {
+                        ColorPicker {
+                            if (it != null) {
+                                viewModel.onFinishColor(it)
+                            }
+                            colorPickerVisible = false
+                        }
+                    }
+                }
             }
         }
     }
@@ -297,28 +312,11 @@ private fun Interval(
             })
 
             if (colorPickerVisible) {
-                ModalBottomSheet(onDismissRequest = { colorPickerVisible = false }) {
-                    Row(
-                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        ColorPickerBox(Color.Red) {
-                            updateColor(interval, it)
-                            colorPickerVisible = false
-                        }
-                        ColorPickerBox(Color.Green) {
-                            updateColor(interval, it)
-                            colorPickerVisible = false
-                        }
-                        ColorPickerBox(Color.Blue) {
-                            updateColor(interval, it)
-                            colorPickerVisible = false
-                        }
-                        ColorPickerBox(Color.Yellow) {
-                            updateColor(interval, it)
-                            colorPickerVisible = false
-                        }
+                ColorPicker {
+                    if (it != null) {
+                        updateColor(interval, it)
                     }
+                    colorPickerVisible = false
                 }
             }
 
@@ -349,6 +347,32 @@ private fun Interval(
                         contentDescription = "Up"
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ColorPicker(
+    updateColor: (Color?) -> Unit,
+) {
+    ModalBottomSheet(onDismissRequest = { updateColor(null) }) {
+        Row(
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            ColorPickerBox(Color.Red) {
+                updateColor(it)
+            }
+            ColorPickerBox(Color.Green) {
+                updateColor(it)
+            }
+            ColorPickerBox(Color.Blue) {
+                updateColor(it)
+            }
+            ColorPickerBox(Color.Yellow) {
+                updateColor(it)
             }
         }
     }

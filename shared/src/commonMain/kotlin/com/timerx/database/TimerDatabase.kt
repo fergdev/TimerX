@@ -36,6 +36,7 @@ private class RealmTimer() : RealmObject {
     var _id: ObjectId = ObjectId()
     var name: String = ""
     var sets: RealmList<RealmSet> = realmListOf()
+    var finishColor : RealmColor? = null
 }
 
 private class RealmSet() : RealmObject {
@@ -85,13 +86,16 @@ class TimerRepo : ITimerRepository {
 
     private fun realmTimerToTimer(realmTimer: RealmTimer): Timer {
         return Timer(
-            realmTimer._id.toHexString(), realmTimer.name, realmTimer.sets.map { realmSet ->
+            realmTimer._id.toHexString(),
+            realmTimer.name,
+            realmTimer.sets.map { realmSet ->
                 TimerSet(realmSet._id.toHexString(), realmSet.repetitions, realmSet.intervals.map {
                     TimerInterval(
                         it._id.toHexString(), it.name, it.duration, it.color.toComposeColor()
                     )
                 }.toPersistentList())
-            }.toPersistentList()
+            }.toPersistentList(),
+            realmTimer.finishColor.toComposeColor()
         )
     }
 
@@ -110,6 +114,7 @@ class TimerRepo : ITimerRepository {
                     }.toRealmList()
                 }
             }.toRealmList()
+            finishColor = timer.finishColor.toRealmColor()
         }
         realm.writeBlocking {
             copyToRealm(realmTimer)

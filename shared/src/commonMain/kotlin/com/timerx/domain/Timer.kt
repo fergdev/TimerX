@@ -6,7 +6,8 @@ import kotlinx.collections.immutable.ImmutableList
 data class Timer(
     val id: String = "",
     val name: String,
-    val sets: ImmutableList<TimerSet>
+    val sets: ImmutableList<TimerSet>,
+    val finishColor: Color = Color.Red
 )
 
 data class TimerSet(
