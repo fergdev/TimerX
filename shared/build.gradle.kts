@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
 //    alias(libs.plugins.sqlDelight)
-    id("io.realm.kotlin") version "1.13.0"
+    id("io.realm.kotlin") version "1.14.1"
 }
 
 kotlin {
