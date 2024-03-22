@@ -314,7 +314,7 @@ private fun Interval(
                             updateColor(interval, it)
                             colorPickerVisible = false
                         }
-                        ColorPickerBox(Color.Green) {
+                        ColorPickerBox(Color.Yellow) {
                             updateColor(interval, it)
                             colorPickerVisible = false
                         }
