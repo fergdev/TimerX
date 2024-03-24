@@ -31,13 +31,13 @@ class RunViewModel(
         val timerState: TimerState = Running,
         val timerName: String = "",
 
-        val set: Int = 0,
+        val setIndex: Int = 0,
         val setCount: Int = 0,
 
-        val setRepetition: Long = 0,
-        val setRepetitionCount: Long = 0,
+        val repetitionIndex: Int = 0,
+        val setRepetitionCount: Int = 0,
 
-        val interval: Int = 0,
+        val intervalIndex: Int = 0,
 
         val intervalRepetition: Int = 0,
         val intervalRepetitionCount: Int = 0,
@@ -45,8 +45,8 @@ class RunViewModel(
         val intervalCount: Int = 0,
         val intervalName: String = "",
 
-        val elapsed: Long = 0,
-        val intervalDuration: Long = 0,
+        val elapsed: Int = 0,
+        val intervalDuration: Int = 0,
 
         val backgroundColor: Color = Color.Red
     )
@@ -82,23 +82,23 @@ class RunViewModel(
     }
 
     private fun updateState(
-        set: Int,
-        repetition: Long,
-        interval: Int,
+        setIndex: Int,
+        repetitionIndex: Int,
+        intervalIndex: Int,
     ) {
-        val repetitionCount = timer.sets[set].repetitions
-        val intervalCount = timer.sets[set].intervals.size
-        val intervalName = timer.sets[set].intervals[interval].name
-        val intervalDuration = timer.sets[set].intervals[interval].duration
-        val color = timer.sets[set].intervals[interval].color
+        val repetitionCount = timer.sets[setIndex].repetitions
+        val intervalCount = timer.sets[setIndex].intervals.size
+        val intervalName = timer.sets[setIndex].intervals[intervalIndex].name
+        val intervalDuration = timer.sets[setIndex].intervals[intervalIndex].duration
+        val color = timer.sets[setIndex].intervals[intervalIndex].color
 
         _state.value = _state.value.copy(
-            set = set,
+            setIndex = setIndex,
 
-            setRepetition = repetition,
+            repetitionIndex = repetitionIndex,
             setRepetitionCount = repetitionCount,
 
-            interval = interval,
+            intervalIndex = intervalIndex,
             intervalCount = intervalCount,
             intervalName = intervalName,
 
@@ -108,22 +108,39 @@ class RunViewModel(
         )
     }
 
+
     fun nextInterval() {
         if (state.value.timerState == Finished) {
             return
         }
-        var setIndex = _state.value.set
-        var repetitionIndex = _state.value.setRepetition
-        var intervalIndex = _state.value.interval
+        var setIndex = _state.value.setIndex
+        var repetitionIndex = _state.value.repetitionIndex
+        var intervalIndex = _state.value.intervalIndex
 
-        val timerSet = timer.sets[setIndex]
+        val currentSet = timer.sets[setIndex]
 
-        if (++intervalIndex == timerSet.intervals.size) {
+        // Check for end of current repetition
+        if (++intervalIndex == currentSet.intervals.size) {
             intervalIndex = 0
             repetitionIndex++
         }
 
-        if (repetitionIndex == timer.sets[setIndex].repetitions) {
+        // Handle all skip on last set
+        if (repetitionIndex == currentSet.repetitions - 1) {
+            while (
+                intervalIndex < currentSet.intervals.size &&
+                currentSet.intervals[intervalIndex].skipOnLastSet
+            ) {
+                intervalIndex++
+            }
+
+            if (intervalIndex == currentSet.intervals.size) {
+                intervalIndex = 0
+                repetitionIndex++
+            }
+        }
+
+        if (repetitionIndex == currentSet.repetitions) {
             repetitionIndex = 0
             setIndex++
         }
@@ -158,24 +175,43 @@ class RunViewModel(
         restartTicker()
         beepMaker.beepBack()
 
-        if (_state.value.elapsed != 0L) {
+        if (_state.value.elapsed != 0) {
             _state.value = _state.value.copy(elapsed = 0)
             return
         }
 
-        var setIndex = _state.value.set
-        var repetitionIndex = _state.value.setRepetition
-        var intervalIndex = _state.value.interval
+        var setIndex = _state.value.setIndex
+        var repetitionIndex = _state.value.repetitionIndex
+        var intervalIndex = _state.value.intervalIndex
+
+        if (setIndex == 0 && repetitionIndex == 0 && intervalIndex == 0) {
+            return
+        }
 
         if (--intervalIndex < 0) {
-            intervalIndex = 0
             repetitionIndex--
+
+            if (repetitionIndex < 0) {
+                setIndex--
+                repetitionIndex = timer.sets[setIndex].repetitions - 1
+            }
+            intervalIndex = timer.sets[setIndex].intervals.size - 1
         }
-        if (repetitionIndex < 0) {
-            repetitionIndex = 0
-            setIndex--
+
+        if (repetitionIndex == timer.sets[setIndex].repetitions - 1) {
+            // Handle skip on last set
+            while (
+                intervalIndex >= 0 &&
+                timer.sets[setIndex].intervals[intervalIndex].skipOnLastSet
+            ) {
+                intervalIndex--
+            }
+
+            if (intervalIndex < 0) {
+                repetitionIndex--
+                intervalIndex = timer.sets[setIndex].intervals.size - 1
+            }
         }
-        if (setIndex < 0) setIndex = 0
 
         updateState(
             setIndex,

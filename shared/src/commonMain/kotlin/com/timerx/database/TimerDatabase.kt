@@ -36,13 +36,13 @@ private class RealmTimer() : RealmObject {
     var _id: ObjectId = ObjectId()
     var name: String = ""
     var sets: RealmList<RealmSet> = realmListOf()
-    var finishColor : RealmColor? = null
+    var finishColor: RealmColor? = null
 }
 
 private class RealmSet() : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
-    var repetitions: Long = 1
+    var repetitions: Int = 1
     var intervals: RealmList<RealmInterval> = realmListOf()
 }
 
@@ -50,8 +50,9 @@ private class RealmInterval() : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var name: String = ""
-    var duration: Long = 1
+    var duration: Int = 1
     var color: RealmColor? = null
+    var skipOnLastSet: Boolean = false
 }
 
 private fun Color.toRealmColor(): RealmColor {
@@ -89,11 +90,19 @@ class TimerRepo : ITimerRepository {
             realmTimer._id.toHexString(),
             realmTimer.name,
             realmTimer.sets.map { realmSet ->
-                TimerSet(realmSet._id.toHexString(), realmSet.repetitions, realmSet.intervals.map {
-                    TimerInterval(
-                        it._id.toHexString(), it.name, it.duration, it.color.toComposeColor()
-                    )
-                }.toPersistentList())
+                TimerSet(
+                    realmSet._id.toHexString(),
+                    realmSet.repetitions,
+                    realmSet.intervals.map {
+                        TimerInterval(
+                            it._id.toHexString(),
+                            it.name,
+                            it.duration,
+                            it.color.toComposeColor(),
+                            it.skipOnLastSet
+                        )
+                    }.toPersistentList()
+                )
             }.toPersistentList(),
             realmTimer.finishColor.toComposeColor()
         )
@@ -110,6 +119,7 @@ class TimerRepo : ITimerRepository {
                             this.name = it.name
                             this.duration = it.duration
                             this.color = it.color.toRealmColor()
+                            this.skipOnLastSet = it.skipOnLastSet
                         }
                     }.toRealmList()
                 }

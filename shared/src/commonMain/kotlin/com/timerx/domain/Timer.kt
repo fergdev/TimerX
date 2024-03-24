@@ -12,18 +12,19 @@ data class Timer(
 
 data class TimerSet(
     val id: String = "",
-    val repetitions: Long = 1,
+    val repetitions: Int = 1,
     val intervals: ImmutableList<TimerInterval>
 )
 
 data class TimerInterval(
     val id: String = "",
     val name: String,
-    val duration: Long,
-    val color: Color = Color.Blue
+    val duration: Int,
+    val color: Color = Color.Blue,
+    val skipOnLastSet: Boolean = false
 )
 
-fun Long.formatted(): String {
+fun Int.timeFormatted(): String {
     val hours = this / (60L * 60L)
     val hoursString = if (hours == 0L) {
         ""
@@ -52,24 +53,24 @@ fun Long.formatted(): String {
     return "$hoursString$minutesString:$secondsString"
 }
 
-fun Timer.length(): Long {
-    return sets.fold(0L) { acc, i ->
+fun Timer.length(): Int {
+    return sets.fold(0) { acc, i ->
         acc + i.length()
     }
 }
 
-fun List<TimerSet>.length(): Long {
-    return fold(0L) { acc, i ->
+fun List<TimerSet>.length(): Int {
+    return fold(0) { acc, i ->
         acc + i.length()
     }
 }
 
-fun TimerSet.length(): Long {
-    return intervals.fold(0L) { acc, i ->
+fun TimerSet.length(): Int {
+    return intervals.fold(0) { acc, i ->
         acc + i.length()
     } * repetitions
 }
 
-fun TimerInterval.length(): Long {
+fun TimerInterval.length(): Int {
     return duration
 }

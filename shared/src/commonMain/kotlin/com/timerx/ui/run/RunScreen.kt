@@ -76,8 +76,11 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             if (state.timerState == Finished) {
                 TText(text = "Finished", displayColor)
             } else {
-                if (state.setRepetitionCount != 1L) {
-                    TText(text = "${state.setRepetitionCount - state.setRepetition}", displayColor)
+                if (state.setRepetitionCount != 1) {
+                    TText(
+                        text = "${state.setRepetitionCount - state.repetitionIndex}",
+                        displayColor
+                    )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 TText(text = state.intervalName, displayColor)

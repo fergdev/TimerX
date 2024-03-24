@@ -11,14 +11,6 @@ struct ComposeView: UIViewControllerRepresentable {
 
 
 struct ContentView: View {
-//    let timers = Timers().timers()
-//	var body: some View {
-//		Text("TimerX")
-//        List(timers, id: \.self) { t in
-//            Text(t.name)
-//        }
-//	}
-
     var body: some View {
         ComposeView()
                 .ignoresSafeArea(.keyboard) // Compose has own keyboard handler

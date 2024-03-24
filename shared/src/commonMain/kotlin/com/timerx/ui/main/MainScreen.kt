@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.Timer
-import com.timerx.domain.formatted
+import com.timerx.domain.timeFormatted
 import com.timerx.domain.length
 import moe.tlaster.precompose.koin.koinViewModel
 
@@ -116,7 +116,7 @@ private fun Timer(
         ListItem(
             modifier = Modifier.clickable { navigateRunScreen(timer.id) },
             headlineContent = { Text(text = timer.name) },
-            supportingContent = { Text(text = timer.length().formatted()) },
+            supportingContent = { Text(text = timer.length().timeFormatted()) },
             trailingContent = {
                 Row {
                     IconButton(onClick = { duplicateTimer(timer) }) {

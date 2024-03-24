@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -35,6 +36,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -52,7 +54,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
-import com.timerx.domain.formatted
+import com.timerx.domain.timeFormatted
 import com.timerx.domain.length
 import moe.tlaster.precompose.koin.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -134,6 +136,8 @@ fun CreateScreen(
                         updateIntervalDuration = viewModel::updateIntervalDuration,
                         updateIntervalName = viewModel::updateIntervalName,
                         updateIntervalColor = viewModel::updateIntervalColor,
+
+                        updateSkipOnLastSet = viewModel::updateSkipOnLastSet
                     )
                 }
                 item {
@@ -152,22 +156,31 @@ fun CreateScreen(
                     Box(
                         modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "Total ${state.sets.length().formatted()}")
+                        Text(text = "Total ${state.sets.length().timeFormatted()}")
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 item {
-                    var colorPickerVisible by remember { mutableStateOf(false) }
-                    Box(modifier = Modifier.size(48.dp).background(state.finishColor).clickable {
-                        colorPickerVisible = true
-                    })
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Finish color")
+                        Spacer(modifier = Modifier.width(16.dp))
+                        var colorPickerVisible by remember { mutableStateOf(false) }
+                        Box(
+                            modifier = Modifier.size(48.dp).background(state.finishColor)
+                                .clickable {
+                                    colorPickerVisible = true
+                                })
 
-                    if (colorPickerVisible) {
-                        ColorPicker {
-                            if (it != null) {
-                                viewModel.onFinishColor(it)
+                        if (colorPickerVisible) {
+                            ColorPicker {
+                                if (it != null) {
+                                    viewModel.onFinishColor(it)
+                                }
+                                colorPickerVisible = false
                             }
-                            colorPickerVisible = false
                         }
                     }
                 }
@@ -193,10 +206,12 @@ private fun Set(
     moveIntervalUp: (TimerInterval) -> Unit,
     moveIntervalDown: (TimerInterval) -> Unit,
 
-    updateRepetitions: (TimerSet, Long) -> Unit,
-    updateIntervalDuration: (TimerInterval, Long) -> Unit,
+    updateRepetitions: (TimerSet, Int) -> Unit,
+    updateIntervalDuration: (TimerInterval, Int) -> Unit,
     updateIntervalName: (TimerInterval, String) -> Unit,
-    updateIntervalColor: (TimerInterval, Color) -> Unit
+    updateIntervalColor: (TimerInterval, Color) -> Unit,
+
+    updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit
 ) {
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -232,6 +247,7 @@ private fun Set(
             timerSet.intervals.forEach { interval ->
                 Interval(
                     interval = interval,
+                    canSkipOnLastSet = timerSet.repetitions > 1,
 
                     moveIntervalUp = moveIntervalUp,
                     moveIntervalDown = moveIntervalDown,
@@ -240,12 +256,13 @@ private fun Set(
                     duplicateInterval = duplicateInterval,
                     updateDuration = updateIntervalDuration,
                     updateName = updateIntervalName,
-                    updateColor = updateIntervalColor
+                    updateColor = updateIntervalColor,
+                    updateSkipOnLastSet = updateSkipOnLastSet
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            Text(text = timerSet.length().formatted())
+            Text(text = timerSet.length().timeFormatted())
 
             Row(
                 modifier = Modifier
@@ -276,17 +293,18 @@ private fun Set(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Interval(
     interval: TimerInterval,
+    canSkipOnLastSet: Boolean,
     moveIntervalUp: (TimerInterval) -> Unit,
     moveIntervalDown: (TimerInterval) -> Unit,
     deleteInterval: (TimerInterval) -> Unit,
     duplicateInterval: (TimerInterval) -> Unit,
-    updateDuration: (TimerInterval, Long) -> Unit,
+    updateDuration: (TimerInterval, Int) -> Unit,
     updateName: (TimerInterval, String) -> Unit,
-    updateColor: (TimerInterval, Color) -> Unit
+    updateColor: (TimerInterval, Color) -> Unit,
+    updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit
 ) {
     ElevatedCard {
         Column(
@@ -318,6 +336,18 @@ private fun Interval(
                     }
                     colorPickerVisible = false
                 }
+            }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(text = "Skip on last set")
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Switch(
+                    enabled = canSkipOnLastSet,
+                    checked = interval.skipOnLastSet,
+                    onCheckedChange = { updateSkipOnLastSet(interval, it) }
+                )
             }
 
             Row(
@@ -378,15 +408,15 @@ private fun ColorPicker(
     }
 }
 
-private fun timeFormatter(time: Long): String {
-    return time.formatted()
+private fun timeFormatter(time: Int): String {
+    return time.timeFormatted()
 }
 
 @Composable
 private fun NumberIncrement(
-    value: Long,
-    formatter: (Long) -> String = { "$it" },
-    onChange: (Long) -> Unit,
+    value: Int,
+    formatter: (Int) -> String = { "$it" },
+    onChange: (Int) -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,

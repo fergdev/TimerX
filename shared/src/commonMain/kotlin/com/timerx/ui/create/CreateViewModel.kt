@@ -7,6 +7,7 @@ import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,14 +29,21 @@ class CreateViewModel(
     private val defaultTimerSet = TimerSet(
         repetitions = 5, intervals = persistentListOf(
             TimerInterval(
-                name = "Work", duration = 30, color = Color.Green
-            ), TimerInterval(
-                name = "Rest", duration = 30, color = Color.Red
+                name = "Work",
+                duration = 30,
+                color = Color.Green
+            ),
+            TimerInterval(
+                name = "Rest",
+                duration = 30,
+                color = Color.Red
             )
         )
     )
     private val defaultInterval = TimerInterval(
-        name = "Work", duration = 30, color = Color.Green
+        name = "Work",
+        duration = 30,
+        color = Color.Green
     )
 
     @OptIn(FormatStringsInDatetimeFormats::class)
@@ -99,7 +107,8 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor
-                ))
+                )
+            )
         } else {
             timerDatabase.insertTimer(
                 Timer(
@@ -107,7 +116,8 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor
-                ))
+                )
+            )
         }
     }
 
@@ -182,16 +192,23 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun updateRepetitions(timerSet: TimerSet, repetitions: Long) {
+    fun updateRepetitions(timerSet: TimerSet, repetitions: Int) {
         if (repetitions < 1) return
         val index = sets.indexOfFirst { it === timerSet }
         sets[index] = timerSet.copy(
-            repetitions = repetitions
+            repetitions = repetitions,
+            intervals = if (repetitions == 1) {
+                timerSet.intervals.map {
+                    it.copy(skipOnLastSet = false)
+                }
+            } else {
+                timerSet.intervals
+            }.toImmutableList()
         )
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun updateIntervalDuration(timerInterval: TimerInterval, duration: Long) {
+    fun updateIntervalDuration(timerInterval: TimerInterval, duration: Int) {
         if (duration < 1) return
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
@@ -268,5 +285,19 @@ class CreateViewModel(
 
     fun onFinishColor(color: Color) {
         _state.value = state.value.copy(finishColor = color)
+    }
+
+    fun updateSkipOnLastSet(timerInterval: TimerInterval, skipOnLastSet: Boolean) {
+        sets = sets.map { (_, repetitions, intervals) ->
+            TimerSet("", repetitions, intervals.map {
+                if (it === timerInterval) {
+                    it.copy(skipOnLastSet = skipOnLastSet)
+                } else {
+                    it
+                }
+            }.toPersistentList())
+        }.toMutableList()
+
+        _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 }
