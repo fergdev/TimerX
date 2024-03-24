@@ -300,4 +300,32 @@ class CreateViewModel(
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
+
+    fun updateCountUp(timerInterval: TimerInterval, countUp: Boolean) {
+        sets = sets.map { (_, repetitions, intervals) ->
+            TimerSet("", repetitions, intervals.map {
+                if (it === timerInterval) {
+                    it.copy(countUp = countUp)
+                } else {
+                    it
+                }
+            }.toPersistentList())
+        }.toMutableList()
+
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
+    fun updateManualNext(timerInterval: TimerInterval, manualNext: Boolean) {
+        sets = sets.map { (_, repetitions, intervals) ->
+            TimerSet("", repetitions, intervals.map {
+                if (it === timerInterval) {
+                    it.copy(manualNext = manualNext)
+                } else {
+                    it
+                }
+            }.toPersistentList())
+        }.toMutableList()
+
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
 }

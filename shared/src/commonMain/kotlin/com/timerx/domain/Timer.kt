@@ -21,7 +21,9 @@ data class TimerInterval(
     val name: String,
     val duration: Int,
     val color: Color = Color.Blue,
-    val skipOnLastSet: Boolean = false
+    val skipOnLastSet: Boolean = false,
+    val countUp: Boolean = false,
+    val manualNext: Boolean = false
 )
 
 fun Int.timeFormatted(): String {

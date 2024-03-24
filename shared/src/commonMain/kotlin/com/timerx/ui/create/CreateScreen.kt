@@ -137,7 +137,9 @@ fun CreateScreen(
                         updateIntervalName = viewModel::updateIntervalName,
                         updateIntervalColor = viewModel::updateIntervalColor,
 
-                        updateSkipOnLastSet = viewModel::updateSkipOnLastSet
+                        updateSkipOnLastSet = viewModel::updateSkipOnLastSet,
+                        updateCountUp = viewModel::updateCountUp,
+                        updateManualNext = viewModel::updateManualNext
                     )
                 }
                 item {
@@ -211,7 +213,9 @@ private fun Set(
     updateIntervalName: (TimerInterval, String) -> Unit,
     updateIntervalColor: (TimerInterval, Color) -> Unit,
 
-    updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit
+    updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit,
+    updateCountUp: (TimerInterval, Boolean) -> Unit,
+    updateManualNext: (TimerInterval, Boolean) -> Unit
 ) {
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -257,7 +261,9 @@ private fun Set(
                     updateDuration = updateIntervalDuration,
                     updateName = updateIntervalName,
                     updateColor = updateIntervalColor,
-                    updateSkipOnLastSet = updateSkipOnLastSet
+                    updateSkipOnLastSet = updateSkipOnLastSet,
+                    updateCountUp = updateCountUp,
+                    updateManualNext = updateManualNext
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -304,7 +310,9 @@ private fun Interval(
     updateDuration: (TimerInterval, Int) -> Unit,
     updateName: (TimerInterval, String) -> Unit,
     updateColor: (TimerInterval, Color) -> Unit,
-    updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit
+    updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit,
+    updateCountUp: (TimerInterval, Boolean) -> Unit,
+    updateManualNext: (TimerInterval, Boolean) -> Unit,
 ) {
     ElevatedCard {
         Column(
@@ -338,7 +346,10 @@ private fun Interval(
                 }
             }
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(text = "Skip on last set")
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -347,6 +358,35 @@ private fun Interval(
                     enabled = canSkipOnLastSet,
                     checked = interval.skipOnLastSet,
                     onCheckedChange = { updateSkipOnLastSet(interval, it) }
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Count up")
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Switch(
+                    checked = interval.countUp,
+                    onCheckedChange = { updateCountUp(interval, it) }
+                )
+            }
+
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Manual next")
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Switch(
+                    checked = interval.manualNext,
+                    onCheckedChange = { updateManualNext(interval, it) }
                 )
             }
 

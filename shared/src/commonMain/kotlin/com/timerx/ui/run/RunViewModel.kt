@@ -48,7 +48,9 @@ class RunViewModel(
         val elapsed: Int = 0,
         val intervalDuration: Int = 0,
 
-        val backgroundColor: Color = Color.Red
+        val backgroundColor: Color = Color.Red,
+        val displayCountAsUp: Boolean = false,
+        val manualNext: Boolean = false
     )
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
@@ -88,9 +90,12 @@ class RunViewModel(
     ) {
         val repetitionCount = timer.sets[setIndex].repetitions
         val intervalCount = timer.sets[setIndex].intervals.size
-        val intervalName = timer.sets[setIndex].intervals[intervalIndex].name
-        val intervalDuration = timer.sets[setIndex].intervals[intervalIndex].duration
-        val color = timer.sets[setIndex].intervals[intervalIndex].color
+
+        val interval = timer.sets[setIndex].intervals[intervalIndex]
+        val intervalName = interval.name
+        val intervalDuration = interval.duration
+        val color = interval.color
+        val displayCountAsUp = interval.countUp
 
         _state.value = _state.value.copy(
             setIndex = setIndex,
@@ -104,10 +109,13 @@ class RunViewModel(
 
             elapsed = 0,
             intervalDuration = intervalDuration,
-            backgroundColor = color
+
+            backgroundColor = color,
+            displayCountAsUp = displayCountAsUp,
+
+            manualNext = interval.manualNext
         )
     }
-
 
     fun nextInterval() {
         if (state.value.timerState == Finished) {
@@ -235,11 +243,14 @@ class RunViewModel(
                 delay(1000)
                 val nextElapsed = _state.value.elapsed + 1
                 if (nextElapsed == _state.value.intervalDuration) {
-                    nextInterval()
+                    if (state.value.manualNext) {
+                        _state.value = _state.value.copy(elapsed = nextElapsed)
+                        break
+                    } else {
+                        nextInterval()
+                    }
                 } else {
-                    _state.value = _state.value.copy(
-                        elapsed = nextElapsed
-                    )
+                    _state.value = _state.value.copy(elapsed = nextElapsed)
                 }
             }
         }
@@ -261,7 +272,9 @@ class RunViewModel(
             intervalName = firstInterval.name,
             intervalDuration = firstInterval.duration,
 
-            backgroundColor = firstInterval.color
+            backgroundColor = firstInterval.color,
+            displayCountAsUp = firstInterval.countUp,
+            manualNext = firstInterval.manualNext
         )
         beepMaker.beepStart()
         startTicker()
@@ -270,5 +283,9 @@ class RunViewModel(
     override fun onCleared() {
         super.onCleared()
         stopTicker()
+    }
+
+    fun onManualNext() {
+        nextInterval()
     }
 }

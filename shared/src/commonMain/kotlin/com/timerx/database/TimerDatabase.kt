@@ -53,6 +53,8 @@ private class RealmInterval() : RealmObject {
     var duration: Int = 1
     var color: RealmColor? = null
     var skipOnLastSet: Boolean = false
+    var countUp: Boolean = false
+    var manualNext: Boolean = false
 }
 
 private fun Color.toRealmColor(): RealmColor {
@@ -99,7 +101,9 @@ class TimerRepo : ITimerRepository {
                             it.name,
                             it.duration,
                             it.color.toComposeColor(),
-                            it.skipOnLastSet
+                            it.skipOnLastSet,
+                            it.countUp,
+                            it.manualNext
                         )
                     }.toPersistentList()
                 )
@@ -120,6 +124,8 @@ class TimerRepo : ITimerRepository {
                             this.duration = it.duration
                             this.color = it.color.toRealmColor()
                             this.skipOnLastSet = it.skipOnLastSet
+                            this.countUp = it.countUp
+                            this.manualNext = it.manualNext
                         }
                     }.toRealmList()
                 }

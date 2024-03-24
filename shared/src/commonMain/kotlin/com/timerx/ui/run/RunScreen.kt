@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
@@ -85,7 +86,16 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
                 TText(text = state.intervalName, displayColor)
                 Spacer(modifier = Modifier.height(24.dp))
-                TText(text = "${state.intervalDuration - state.elapsed} ", displayColor)
+                TText(
+                    text = if (state.displayCountAsUp) "${state.elapsed}"
+                    else "${state.intervalDuration - state.elapsed} ",
+                    displayColor
+                )
+                if (state.manualNext) {
+                    Button(onClick = { viewModel.onManualNext() }) {
+                        Text(text = "NEXT")
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.weight(2f))
