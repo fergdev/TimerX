@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package com.timerx.database
 
 import androidx.compose.ui.graphics.Color
@@ -13,7 +15,12 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.getString
 import org.mongodb.kbson.ObjectId
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.copy_parenthesis
 
 interface ITimerRepository {
     fun getTimers(): List<Timer>
@@ -152,7 +159,9 @@ class TimerRepo : ITimerRepository {
     }
 
     override fun duplicate(timer: Timer) {
-        insertTimer(timer.copy(name = timer.name + "blah"))
+        runBlocking {
+            insertTimer(timer.copy(name = timer.name + getString(Res.string.copy_parenthesis)))
+        }
     }
 
     override fun getTimer(timerId: String): Timer {

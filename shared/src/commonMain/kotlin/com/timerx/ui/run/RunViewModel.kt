@@ -242,15 +242,13 @@ class RunViewModel(
             while (true) {
                 delay(1000)
                 val nextElapsed = _state.value.elapsed + 1
+                _state.value = _state.value.copy(elapsed = nextElapsed)
                 if (nextElapsed == _state.value.intervalDuration) {
                     if (state.value.manualNext) {
-                        _state.value = _state.value.copy(elapsed = nextElapsed)
                         break
                     } else {
                         nextInterval()
                     }
-                } else {
-                    _state.value = _state.value.copy(elapsed = nextElapsed)
                 }
             }
         }

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
@@ -12,6 +14,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -20,28 +23,39 @@ import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toLocalDateTime
 import moe.tlaster.precompose.viewmodel.ViewModel
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.getString
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.created_value
+import timerx.shared.generated.resources.prepare
+import timerx.shared.generated.resources.rest
+import timerx.shared.generated.resources.work
 
 class CreateViewModel(
     timerName: String = "",
     private val timerDatabase: ITimerRepository
 ) : ViewModel() {
 
+    private val workString: String = runBlocking { getString(Res.string.work) }
+    private val restString: String = runBlocking { getString(Res.string.rest) }
+
     private val defaultTimerSet = TimerSet(
-        repetitions = 5, intervals = persistentListOf(
+        repetitions = 5,
+        intervals = persistentListOf(
             TimerInterval(
-                name = "Work",
+                name = workString,
                 duration = 30,
                 color = Color.Green
             ),
             TimerInterval(
-                name = "Rest",
+                name = restString,
                 duration = 30,
                 color = Color.Red
             )
         )
     )
     private val defaultInterval = TimerInterval(
-        name = "Work",
+        name = workString,
         duration = 30,
         color = Color.Green
     )
@@ -76,15 +90,19 @@ class CreateViewModel(
         } else {
             timerEditing = null
 
-            sets = mutableListOf(
-                TimerSet(
-                    repetitions = 1, intervals = persistentListOf(
-                        TimerInterval(
-                            name = "Prepare", duration = 10, color = Color.Yellow
+            sets = runBlocking {
+                mutableListOf(
+                    TimerSet(
+                        repetitions = 1, intervals = persistentListOf(
+                            TimerInterval(
+                                name = getString(Res.string.prepare),
+                                duration = 10,
+                                color = Color.Yellow
+                            )
                         )
-                    )
-                ), defaultTimerSet.copy()
-            )
+                    ), defaultTimerSet.copy()
+                )
+            }
             _state.update {
                 it.copy(sets = sets.toPersistentList())
             }
@@ -96,9 +114,14 @@ class CreateViewModel(
     }
 
     fun save() {
-        val name = state.value.timerName.ifBlank {
-            "Created " + Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                .format(dateTimeFormat)
+        val name = runBlocking {
+            state.value.timerName.ifBlank {
+                getString(
+                    Res.string.created_value,
+                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                        .format(dateTimeFormat)
+                )
+            }
         }
         if (timerEditing != null) {
             timerDatabase.updateTimer(
@@ -112,7 +135,6 @@ class CreateViewModel(
         } else {
             timerDatabase.insertTimer(
                 Timer(
-                    id = "",
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor
