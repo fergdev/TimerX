@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalResourceApi::class, ExperimentalResourceApi::class,
+    ExperimentalResourceApi::class
+)
+
 package com.timerx.ui.create
 
 import androidx.compose.foundation.background
@@ -57,7 +61,27 @@ import com.timerx.domain.TimerSet
 import com.timerx.domain.timeFormatted
 import com.timerx.domain.length
 import moe.tlaster.precompose.koin.koinViewModel
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.add
+import timerx.shared.generated.resources.back
+import timerx.shared.generated.resources.copy
+import timerx.shared.generated.resources.count_up
+import timerx.shared.generated.resources.create
+import timerx.shared.generated.resources.create_timer
+import timerx.shared.generated.resources.delete
+import timerx.shared.generated.resources.down
+import timerx.shared.generated.resources.finish_color
+import timerx.shared.generated.resources.interval
+import timerx.shared.generated.resources.manual_next
+import timerx.shared.generated.resources.minus
+import timerx.shared.generated.resources.sets
+import timerx.shared.generated.resources.skip_on_last_set
+import timerx.shared.generated.resources.timer_name
+import timerx.shared.generated.resources.total_value
+import timerx.shared.generated.resources.up
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,14 +97,14 @@ fun CreateScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Create timer") },
+                title = { Text(text = stringResource(Res.string.create_timer)) },
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.rotate(270F),
                         onClick = { navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(Res.string.back)
                         )
                     }
                 },
@@ -93,7 +117,7 @@ fun CreateScreen(
             }) {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "Create"
+                    contentDescription = stringResource(Res.string.create)
                 )
             }
         }
@@ -112,7 +136,7 @@ fun CreateScreen(
                 item {
                     OutlinedTextField(modifier = Modifier.fillMaxWidth(),
                         value = state.timerName,
-                        label = { Text(text = "Timer name") },
+                        label = { Text(text = stringResource(Res.string.timer_name)) },
                         onValueChange = { viewModel.updateTimerName(it) })
                 }
                 items(state.sets) {
@@ -149,7 +173,7 @@ fun CreateScreen(
                         FilledIconButton(onClick = { viewModel.addSet() }) {
                             Icon(
                                 imageVector = Icons.Filled.Add,
-                                contentDescription = "Add"
+                                contentDescription = stringResource(Res.string.add)
                             )
                         }
                     }
@@ -158,7 +182,12 @@ fun CreateScreen(
                     Box(
                         modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "Total ${state.sets.length().timeFormatted()}")
+                        Text(
+                            text = stringResource(
+                                Res.string.total_value,
+                                state.sets.length().timeFormatted()
+                            )
+                        )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -167,7 +196,7 @@ fun CreateScreen(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Finish color")
+                        Text(text = stringResource(Res.string.finish_color))
                         Spacer(modifier = Modifier.width(16.dp))
                         var colorPickerVisible by remember { mutableStateOf(false) }
                         Box(
@@ -231,11 +260,11 @@ private fun Set(
                 OutlinedIconButton(onClick = { moveSetDown(timerSet) }) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Down"
+                        contentDescription = stringResource(Res.string.down)
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "Repetitions")
+                    Text(text = stringResource(Res.string.sets))
                     NumberIncrement(
                         value = timerSet.repetitions,
                         onChange = { updateRepetitions(timerSet, it) })
@@ -243,7 +272,7 @@ private fun Set(
                 OutlinedIconButton(onClick = { moveSetUp(timerSet) }) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowUp,
-                        contentDescription = "Up"
+                        contentDescription = stringResource(Res.string.up)
                     )
                 }
             }
@@ -279,19 +308,19 @@ private fun Set(
                 FilledTonalIconButton(onClick = { duplicateSet(timerSet) }) {
                     Icon(
                         imageVector = Icons.Default.MailOutline,
-                        contentDescription = "Duplicate"
+                        contentDescription = stringResource(Res.string.copy)
                     )
                 }
                 FilledTonalIconButton(onClick = { addInterval(timerSet) }) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add"
+                        contentDescription = stringResource(Res.string.add)
                     )
                 }
                 FilledTonalIconButton(onClick = { deleteSet(timerSet) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete"
+                        contentDescription = stringResource(Res.string.delete)
                     )
                 }
             }
@@ -323,7 +352,7 @@ private fun Interval(
         ) {
             OutlinedTextField(modifier = Modifier.fillMaxWidth(),
                 value = interval.name,
-                label = { Text(text = "Interval") },
+                label = { Text(text = stringResource(Res.string.interval)) },
                 onValueChange = { updateName(interval, it) })
 
             NumberIncrement(
@@ -350,7 +379,7 @@ private fun Interval(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Skip on last set")
+                Text(text = stringResource(Res.string.skip_on_last_set))
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -365,7 +394,7 @@ private fun Interval(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Count up")
+                Text(text = stringResource(Res.string.count_up))
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -375,12 +404,11 @@ private fun Interval(
                 )
             }
 
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Manual next")
+                Text(text = stringResource(Res.string.manual_next))
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -396,25 +424,25 @@ private fun Interval(
                 IconButton(onClick = { moveIntervalDown(interval) }) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Down"
+                        contentDescription = stringResource(Res.string.down)
                     )
                 }
                 IconButton(onClick = { duplicateInterval(interval) }) {
                     Icon(
                         imageVector = Icons.Default.MailOutline,
-                        contentDescription = "Duplicate"
+                        contentDescription = stringResource(Res.string.copy)
                     )
                 }
                 IconButton(onClick = { deleteInterval(interval) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete"
+                        contentDescription = stringResource(Res.string.delete)
                     )
                 }
                 IconButton(onClick = { moveIntervalUp(interval) }) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowUp,
-                        contentDescription = "Up"
+                        contentDescription = stringResource(Res.string.up)
                     )
                 }
             }
@@ -465,14 +493,14 @@ private fun NumberIncrement(
         IconButton(onClick = { onChange(value - 1) }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Minus"
+                contentDescription = stringResource(Res.string.minus)
             )
         }
         Text(text = formatter(value))
         IconButton(onClick = { onChange(value + 1) }) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Add"
+                contentDescription = stringResource(Res.string.add)
             )
         }
     }

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package com.timerx.ui.main
 
 import androidx.compose.foundation.clickable
@@ -34,8 +36,18 @@ import com.timerx.domain.Timer
 import com.timerx.domain.timeFormatted
 import com.timerx.domain.length
 import moe.tlaster.precompose.koin.koinViewModel
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.add
+import timerx.shared.generated.resources.app_name
+import timerx.shared.generated.resources.copy
+import timerx.shared.generated.resources.delete
+import timerx.shared.generated.resources.edit
+import timerx.shared.generated.resources.no_timers
+import timerx.shared.generated.resources.settings
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 internal fun MainScreen(
     navigateSettingsScreen: () -> Unit,
@@ -56,12 +68,12 @@ internal fun MainScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text(text = "TimerX") },
+                title = { Text(text = stringResource(Res.string.app_name)) },
                 actions = {
                     IconButton(onClick = navigateSettingsScreen) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = null
+                            contentDescription = stringResource(Res.string.settings)
                         )
                     }
                 },
@@ -72,7 +84,7 @@ internal fun MainScreen(
             FloatingActionButton(onClick = navigateAddScreen) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = null
+                    contentDescription = stringResource(Res.string.add)
                 )
             }
         }) {
@@ -81,7 +93,7 @@ internal fun MainScreen(
             if (state.timers.isEmpty()) {
                 Text(
                     modifier = Modifier.padding(16.dp),
-                    text = "No timers"
+                    text = stringResource(Res.string.no_timers)
                 )
             } else {
                 LazyColumn {
@@ -122,19 +134,19 @@ private fun Timer(
                     IconButton(onClick = { duplicateTimer(timer) }) {
                         Icon(
                             imageVector = Icons.Default.Face,
-                            contentDescription = null
+                            contentDescription = stringResource(Res.string.copy)
                         )
                     }
                     IconButton(onClick = { navigateEditScreen(timer.id) }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = null
+                            contentDescription = stringResource(Res.string.edit)
                         )
                     }
                     IconButton(onClick = { deleteTimer(timer) }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = null
+                            contentDescription = stringResource(Res.string.delete)
                         )
                     }
                 }

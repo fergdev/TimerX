@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package com.timerx.ui.run
 
 import androidx.compose.foundation.background
@@ -33,7 +35,17 @@ import com.timerx.ui.run.RunViewModel.TimerState.Finished
 import com.timerx.ui.run.RunViewModel.TimerState.Paused
 import com.timerx.ui.run.RunViewModel.TimerState.Running
 import moe.tlaster.precompose.koin.koinViewModel
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.back
+import timerx.shared.generated.resources.close
+import timerx.shared.generated.resources.finished
+import timerx.shared.generated.resources.next
+import timerx.shared.generated.resources.pause
+import timerx.shared.generated.resources.play
+import timerx.shared.generated.resources.restart
 
 @Composable
 fun RunScreen(timerId: String, navigateUp: () -> Unit) {
@@ -56,7 +68,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(Res.string.back),
                         tint = displayColor
                     )
                 }
@@ -65,47 +77,56 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "Next",
+                        contentDescription = stringResource(Res.string.next),
                         tint = displayColor
                     )
                 }
             }
-
-            TText(text = state.timerName, displayColor)
-            Spacer(modifier = Modifier.weight(2f))
+            Spacer(modifier = Modifier.weight(1f))
 
             if (state.timerState == Finished) {
-                TText(text = "Finished", displayColor)
+                Text(
+                    text = stringResource(Res.string.finished),
+                    style = typography.displayLarge,
+                    color = displayColor
+                )
             } else {
                 if (state.setRepetitionCount != 1) {
-                    TText(
+                    Text(
                         text = "${state.setRepetitionCount - state.repetitionIndex}",
-                        displayColor
+                        color = displayColor,
+                        style = typography.displaySmall,
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                TText(text = state.intervalName, displayColor)
+                Text(
+                    text = state.intervalName.uppercase(),
+                    style = typography.displayLarge,
+                    color = displayColor
+                )
                 Spacer(modifier = Modifier.height(24.dp))
-                TText(
+                Text(
                     text = if (state.displayCountAsUp) "${state.elapsed}"
                     else "${state.intervalDuration - state.elapsed} ",
-                    displayColor
+                    style = typography.displaySmall,
+                    color = displayColor
                 )
+                Spacer(modifier = Modifier.height(24.dp))
                 if (state.manualNext) {
                     Button(onClick = { viewModel.onManualNext() }) {
-                        Text(text = "NEXT")
+                        Text(text = stringResource(Res.string.next))
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.weight(2f))
+            Spacer(modifier = Modifier.weight(1f))
 
             Row {
                 IconButton(onClick = { navigateUp() }) {
                     Icon(
                         modifier = Modifier.size(48.dp),
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(Res.string.close),
                         tint = displayColor
                     )
                 }
@@ -116,7 +137,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.Lock,
-                                contentDescription = "Pause",
+                                contentDescription = stringResource(Res.string.pause),
                                 tint = displayColor
                             )
                         }
@@ -127,7 +148,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Play",
+                                contentDescription = stringResource(Res.string.play),
                                 tint = displayColor
                             )
                         }
@@ -138,7 +159,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                             Icon(
                                 modifier = Modifier.size(48.dp),
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "Refresh",
+                                contentDescription = stringResource(Res.string.restart),
                                 tint = displayColor
                             )
                         }
@@ -147,15 +168,6 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             }
         }
     }
-}
-
-@Composable
-private fun TText(text: String, color: Color) {
-    Text(
-        text = text,
-        style = typography.headlineLarge,
-        color = color
-    )
 }
 
 private fun displayColor(backgroundColor: Color): Color {
