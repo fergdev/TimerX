@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -31,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
+import com.timerx.CustomIcons
 import com.timerx.ui.run.RunViewModel.TimerState.Finished
 import com.timerx.ui.run.RunViewModel.TimerState.Paused
 import com.timerx.ui.run.RunViewModel.TimerState.Running
@@ -122,13 +122,15 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
 
             Row {
-                IconButton(onClick = { navigateUp() }) {
-                    Icon(
-                        modifier = Modifier.size(48.dp),
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(Res.string.close),
-                        tint = displayColor
-                    )
+                if (state.timerState == Paused || state.timerState == Finished) {
+                    IconButton(onClick = { navigateUp() }) {
+                        Icon(
+                            modifier = Modifier.size(48.dp),
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(Res.string.close),
+                            tint = displayColor
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.weight(2f))
                 when (state.timerState) {
@@ -136,7 +138,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                         IconButton(onClick = { viewModel.toggleState() }) {
                             Icon(
                                 modifier = Modifier.size(48.dp),
-                                imageVector = Icons.Default.Lock,
+                                imageVector = CustomIcons.pause(),
                                 contentDescription = stringResource(Res.string.pause),
                                 tint = displayColor
                             )

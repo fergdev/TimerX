@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,9 +32,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.timerx.CustomIcons
 import com.timerx.domain.Timer
-import com.timerx.domain.timeFormatted
 import com.timerx.domain.length
+import com.timerx.domain.timeFormatted
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -131,20 +132,26 @@ private fun Timer(
             supportingContent = { Text(text = timer.length().timeFormatted()) },
             trailingContent = {
                 Row {
-                    IconButton(onClick = { duplicateTimer(timer) }) {
+                    IconButton(
+                        onClick = { duplicateTimer(timer) }) {
                         Icon(
-                            imageVector = Icons.Default.Face,
+                            modifier = Modifier.size(24.dp),
+                            imageVector = CustomIcons.contentCopy(),
                             contentDescription = stringResource(Res.string.copy)
                         )
                     }
-                    IconButton(onClick = { navigateEditScreen(timer.id) }) {
+                    IconButton(
+                        onClick = { navigateEditScreen(timer.id) }) {
                         Icon(
+                            modifier = Modifier.size(24.dp),
                             imageVector = Icons.Default.Edit,
                             contentDescription = stringResource(Res.string.edit)
                         )
                     }
-                    IconButton(onClick = { deleteTimer(timer) }) {
+                    IconButton(
+                        onClick = { deleteTimer(timer) }) {
                         Icon(
+                            modifier = Modifier.size(24.dp),
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(Res.string.delete)
                         )
@@ -154,4 +161,3 @@ private fun Timer(
         )
     }
 }
-

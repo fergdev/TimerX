@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalResourceApi::class, ExperimentalResourceApi::class,
-    ExperimentalResourceApi::class
-)
+@file:OptIn(ExperimentalResourceApi::class)
 
 package com.timerx.ui.create
 
@@ -21,13 +19,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -56,10 +52,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.timerx.CustomIcons
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
-import com.timerx.domain.timeFormatted
 import com.timerx.domain.length
+import com.timerx.domain.timeFormatted
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -116,7 +113,7 @@ fun CreateScreen(
                 navigateUp()
             }) {
                 Icon(
-                    imageVector = Icons.Default.Lock,
+                    imageVector = Icons.Default.Done,
                     contentDescription = stringResource(Res.string.create)
                 )
             }
@@ -307,7 +304,8 @@ private fun Set(
             ) {
                 FilledTonalIconButton(onClick = { duplicateSet(timerSet) }) {
                     Icon(
-                        imageVector = Icons.Default.MailOutline,
+                        modifier = Modifier.size(24.dp),
+                        imageVector = CustomIcons.contentCopy(),
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
@@ -350,21 +348,28 @@ private fun Interval(
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextField(modifier = Modifier.fillMaxWidth(),
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = interval.name,
                 label = { Text(text = stringResource(Res.string.interval)) },
-                onValueChange = { updateName(interval, it) })
+                onValueChange = { updateName(interval, it) }
+            )
 
             NumberIncrement(
-                value = interval.duration, formatter = ::timeFormatter
+                value = interval.duration,
+                formatter = ::timeFormatter
             ) {
+                println("update duration $it")
                 updateDuration(interval, it)
+                println("post update duration")
             }
 
             var colorPickerVisible by remember { mutableStateOf(false) }
-            Box(modifier = Modifier.size(48.dp).background(interval.color).clickable {
-                colorPickerVisible = true
-            })
+            Box(modifier = Modifier.size(48.dp)
+                .background(interval.color)
+                .clickable {
+                    colorPickerVisible = true
+                })
 
             if (colorPickerVisible) {
                 ColorPicker {
@@ -429,7 +434,8 @@ private fun Interval(
                 }
                 IconButton(onClick = { duplicateInterval(interval) }) {
                     Icon(
-                        imageVector = Icons.Default.MailOutline,
+                        modifier = Modifier.size(24.dp),
+                        imageVector = CustomIcons.contentCopy(),
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
@@ -487,22 +493,26 @@ private fun NumberIncrement(
     onChange: (Int) -> Unit,
 ) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = { onChange(value - 1) }) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = stringResource(Res.string.minus)
-            )
-        }
+        Icon(
+            modifier = Modifier.size(CustomIcons.defaultIconSize)
+                .clickable {
+                    onChange(value - 1)
+                },
+            imageVector = CustomIcons.checkIndeterminateSmall(),
+            contentDescription = stringResource(Res.string.minus)
+        )
         Text(text = formatter(value))
-        IconButton(onClick = { onChange(value + 1) }) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(Res.string.add)
-            )
-        }
+        Icon(
+            modifier = Modifier.size(CustomIcons.defaultIconSize)
+                .clickable {
+                    onChange(value + 1)
+                },
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(Res.string.minus)
+        )
     }
 }
 
