@@ -24,6 +24,8 @@ import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.settings
 
+private const val NINETY_DEGREES = 90f
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navigateUp: () -> Unit) {
@@ -33,7 +35,7 @@ fun SettingsScreen(navigateUp: () -> Unit) {
                 title = { Text(text = stringResource(Res.string.settings)) },
                 navigationIcon = {
                     IconButton(
-                        modifier = Modifier.rotate(90F),
+                        modifier = Modifier.rotate(NINETY_DEGREES),
                         onClick = { navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,

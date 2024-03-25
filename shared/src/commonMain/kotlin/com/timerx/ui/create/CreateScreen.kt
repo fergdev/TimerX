@@ -80,6 +80,8 @@ import timerx.shared.generated.resources.timer_name
 import timerx.shared.generated.resources.total_value
 import timerx.shared.generated.resources.up
 
+private const val TWO_HUNDRED_SEVENTY_DEG = 270f
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(
@@ -97,7 +99,7 @@ fun CreateScreen(
                 title = { Text(text = stringResource(Res.string.create_timer)) },
                 navigationIcon = {
                     IconButton(
-                        modifier = Modifier.rotate(270F),
+                        modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),
                         onClick = { navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,

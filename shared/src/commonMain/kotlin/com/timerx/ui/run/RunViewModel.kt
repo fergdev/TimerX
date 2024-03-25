@@ -1,5 +1,6 @@
 package com.timerx.ui.run
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.BeepMaker
 import com.timerx.database.ITimerRepository
@@ -240,7 +241,7 @@ class RunViewModel(
     private fun startTicker() {
         tickerJob = viewModelScope.launch {
             while (true) {
-                delay(1000)
+                delay(TICKER_DELAY)
                 val nextElapsed = _state.value.elapsed + 1
                 _state.value = _state.value.copy(elapsed = nextElapsed)
                 if (nextElapsed == _state.value.intervalDuration) {
@@ -285,5 +286,9 @@ class RunViewModel(
 
     fun onManualNext() {
         nextInterval()
+    }
+
+    companion object {
+        private const val TICKER_DELAY = 1000L
     }
 }

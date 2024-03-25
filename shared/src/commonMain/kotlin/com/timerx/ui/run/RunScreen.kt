@@ -172,6 +172,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     }
 }
 
+private const val HALF_LUMINANCE = 0.5F
 private fun displayColor(backgroundColor: Color): Color {
-    return if (backgroundColor.luminance() > 0.5f) Color.Black else Color.White
+    return if (backgroundColor.luminance() > HALF_LUMINANCE) Color.Black else Color.White
 }

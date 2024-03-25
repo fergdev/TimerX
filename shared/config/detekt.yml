@@ -1,0 +1,20 @@
+config:
+  validation: true
+  warningsAsErrors: false
+  excludes: ''
+
+style:
+  active: true
+  MagicNumber:
+    active: true
+    excludes: ['**/CustomIcons.kt']
+  ReturnCount:
+    max: 3
+
+complexity:
+  LongMethod:
+    excludes: ['**/CustomIcons.kt']
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']

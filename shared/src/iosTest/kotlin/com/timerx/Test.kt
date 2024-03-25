@@ -3,7 +3,7 @@ package com.timerx
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class IosGreetingTest {
+class Test {
 
     @Test
     fun testExample() {

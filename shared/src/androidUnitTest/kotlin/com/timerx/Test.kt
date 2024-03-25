@@ -4,7 +4,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
-class AndroidGreetingTest {
+class Test {
 
     @Test
     fun testExample() {
