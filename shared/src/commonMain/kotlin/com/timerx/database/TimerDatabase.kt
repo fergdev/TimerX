@@ -96,15 +96,15 @@ class TimerRepo : ITimerRepository {
 
     private fun realmTimerToTimer(realmTimer: RealmTimer): Timer {
         return Timer(
-            realmTimer._id.toHexString(),
+            realmTimer.id.toHexString(),
             realmTimer.name,
             realmTimer.sets.map { realmSet ->
                 TimerSet(
-                    realmSet._id.toHexString(),
+                    realmSet.id.toHexString(),
                     realmSet.repetitions,
                     realmSet.intervals.map {
                         TimerInterval(
-                            it._id.toHexString(),
+                            it.id.toHexString(),
                             it.name,
                             it.duration,
                             it.color.toComposeColor(),
@@ -166,13 +166,13 @@ class TimerRepo : ITimerRepository {
 
     override fun getTimer(timerId: String): Timer {
         return realmTimerToTimer(realm.query<RealmTimer>().find().first {
-            it._id.toHexString() == timerId
+            it.id.toHexString() == timerId
         })
     }
 
     private fun getRealmTimer(timerId: String): RealmTimer {
         return realm.query<RealmTimer>().find().first {
-            it._id.toHexString() == timerId
+            it.id.toHexString() == timerId
         }
     }
 }

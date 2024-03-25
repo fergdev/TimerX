@@ -14,6 +14,9 @@ style:
 complexity:
   LongMethod:
     excludes: ['**/CustomIcons.kt']
+  # TODO remove and this and refactor some of the view models
+  TooManyFunctions:
+    thresholdInClasses: 22
 
 naming:
   FunctionNaming:

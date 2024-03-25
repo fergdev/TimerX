@@ -1,6 +1,5 @@
 package com.timerx.ui.run
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.BeepMaker
 import com.timerx.database.ITimerRepository
@@ -60,13 +59,29 @@ class RunViewModel(
 
     val state: StateFlow<RunState> = _state
 
+    class Interactions(
+        val togglePlayState: () -> Unit,
+        val nextInterval: () -> Unit,
+        val previousInterval: () -> Unit,
+        val onManualNext: () -> Unit,
+        val restartTimer: () -> Unit
+    )
+
+    val interactions = Interactions(
+        togglePlayState = ::togglePlayState,
+        nextInterval = ::nextInterval,
+        previousInterval = ::previousInterval,
+        onManualNext = ::onManualNext,
+        restartTimer = ::initTimer
+    )
+
     private var tickerJob: Job? = null
 
     init {
         initTimer()
     }
 
-    fun toggleState() {
+    private fun togglePlayState() {
         when (state.value.timerState) {
             Running -> {
                 _state.value = _state.value.copy(timerState = Paused)
@@ -118,7 +133,7 @@ class RunViewModel(
         )
     }
 
-    fun nextInterval() {
+    private fun nextInterval() {
         if (state.value.timerState == Finished) {
             return
         }
@@ -176,7 +191,7 @@ class RunViewModel(
         stopTicker()
     }
 
-    fun previousInterval() {
+    private fun previousInterval() {
         if (state.value.timerState == Finished) {
             return
         }
@@ -255,7 +270,7 @@ class RunViewModel(
         }
     }
 
-    fun initTimer() {
+    private fun initTimer() {
         val firstSet = timer.sets.first()
         val firstInterval = firstSet.intervals.first()
 
@@ -279,13 +294,13 @@ class RunViewModel(
         startTicker()
     }
 
+    private fun onManualNext() {
+        nextInterval()
+    }
+
     override fun onCleared() {
         super.onCleared()
         stopTicker()
-    }
-
-    fun onManualNext() {
-        nextInterval()
     }
 
     companion object {

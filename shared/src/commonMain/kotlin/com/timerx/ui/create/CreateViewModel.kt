@@ -32,38 +32,104 @@ import timerx.shared.generated.resources.rest
 import timerx.shared.generated.resources.work
 
 class CreateViewModel(
-    timerName: String = "",
-    private val timerDatabase: ITimerRepository
+    timerName: String = "", private val timerDatabase: ITimerRepository
 ) : ViewModel() {
 
     private val workString: String = runBlocking { getString(Res.string.work) }
     private val restString: String = runBlocking { getString(Res.string.rest) }
 
     private val defaultTimerSet = TimerSet(
-        repetitions = 5,
-        intervals = persistentListOf(
+        repetitions = 5, intervals = persistentListOf(
             TimerInterval(
-                name = workString,
-                duration = 30,
-                color = Color.Green
-            ),
-            TimerInterval(
-                name = restString,
-                duration = 30,
-                color = Color.Red
+                name = workString, duration = 30, color = Color.Green
+            ), TimerInterval(
+                name = restString, duration = 30, color = Color.Red
             )
         )
     )
     private val defaultInterval = TimerInterval(
-        name = workString,
-        duration = 30,
-        color = Color.Green
+        name = workString, duration = 30, color = Color.Green
     )
 
     @OptIn(FormatStringsInDatetimeFormats::class)
-    val dateTimeFormat = LocalDateTime.Format { byUnicodePattern("yyyy-MM-dd HH:mm:ss") }
+    private val dateTimeFormat = LocalDateTime.Format { byUnicodePattern("yyyy-MM-dd HH:mm:ss") }
 
     private var sets: MutableList<TimerSet>
+
+    class SetInteractions(
+        val moveUp: (TimerSet) -> Unit,
+        val moveDown: (TimerSet) -> Unit,
+        val duplicate: (TimerSet) -> Unit,
+        val delete: (TimerSet) -> Unit,
+
+        val update: UpdateSetInteractions
+    )
+
+    class UpdateSetInteractions(
+        val newInterval: (TimerSet) -> Unit,
+        val updateRepetitions: (TimerSet, Int) -> Unit,
+    )
+
+    class IntervalInteractions(
+        val moveUp: (TimerInterval) -> Unit,
+        val moveDown: (TimerInterval) -> Unit,
+        val delete: (TimerInterval) -> Unit,
+        val duplicate: (TimerInterval) -> Unit,
+
+        val update: UpdateIntervalInteractions
+    )
+
+    class UpdateIntervalInteractions(
+        val updateDuration: (TimerInterval, Int) -> Unit,
+        val updateName: (TimerInterval, String) -> Unit,
+        val updateColor: (TimerInterval, Color) -> Unit,
+        val updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit,
+        val updateCountUp: (TimerInterval, Boolean) -> Unit,
+        val updateManualNext: (TimerInterval, Boolean) -> Unit,
+    )
+
+    class Interactions(
+        val updateTimerName: (String) -> Unit,
+        val addSet: () -> Unit,
+        val updateFinishColor: (Color) -> Unit,
+        val save: () -> Unit,
+
+        val set: SetInteractions,
+        val interval: IntervalInteractions
+    )
+
+    val interactions = Interactions(
+        updateTimerName = ::updateTimerName,
+        addSet = ::addSet,
+        updateFinishColor = ::onFinishColor,
+        save = ::save,
+
+        set = SetInteractions(
+            moveUp = ::moveSetUp,
+            moveDown = ::moveSetDown,
+            duplicate = ::duplicateSet,
+            delete = ::deleteSet,
+            update = UpdateSetInteractions(
+                newInterval = ::newInterval,
+                updateRepetitions = ::updateRepetitions
+            )
+        ),
+
+        interval = IntervalInteractions(
+            delete = ::deleteInterval,
+            duplicate = ::duplicateInterval,
+            moveUp = ::moveIntervalUp,
+            moveDown = ::moveIntervalDown,
+            update = UpdateIntervalInteractions(
+                updateDuration = ::updateIntervalDuration,
+                updateName = ::updateIntervalName,
+                updateColor = ::updateIntervalColor,
+                updateSkipOnLastSet = ::updateSkipOnLastSet,
+                updateCountUp = ::updateCountUp,
+                updateManualNext = ::updateManualNext
+            ),
+        )
+    )
 
     data class State(
         val timerName: String = "",
@@ -109,11 +175,11 @@ class CreateViewModel(
         }
     }
 
-    fun updateTimerName(name: String) {
+    private fun updateTimerName(name: String) {
         _state.value = state.value.copy(timerName = name)
     }
 
-    fun save() {
+    private fun save() {
         val name = runBlocking {
             state.value.timerName.ifBlank {
                 getString(
@@ -135,20 +201,18 @@ class CreateViewModel(
         } else {
             timerDatabase.insertTimer(
                 Timer(
-                    name = name,
-                    sets = state.value.sets,
-                    finishColor = state.value.finishColor
+                    name = name, sets = state.value.sets, finishColor = state.value.finishColor
                 )
             )
         }
     }
 
-    fun addSet() {
+    private fun addSet() {
         sets.add(defaultTimerSet.copy())
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun addInterval(timerSet: TimerSet) {
+    private fun newInterval(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it === timerSet }
         sets[index] = timerSet.copy(
             intervals = (timerSet.intervals + defaultInterval.copy()).toPersistentList()
@@ -156,7 +220,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun moveSetUp(timerSet: TimerSet) {
+    private fun moveSetUp(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it === timerSet }
         if (index == 0) return
 
@@ -166,7 +230,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun moveSetDown(timerSet: TimerSet) {
+    private fun moveSetDown(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it === timerSet }
         if (index == sets.size - 1) return
 
@@ -176,19 +240,33 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun duplicateSet(timerSet: TimerSet) {
+    private fun duplicateSet(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it === timerSet }
         sets.add(index, sets[index].copy())
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun deleteSet(timerSet: TimerSet) {
+    private fun deleteSet(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it === timerSet }
         sets.removeAt(index)
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun duplicateInterval(interval: TimerInterval) {
+    private fun updateRepetitions(timerSet: TimerSet, repetitions: Int) {
+        if (repetitions < 1) return
+        val index = sets.indexOfFirst { it === timerSet }
+        sets[index] =
+            timerSet.copy(repetitions = repetitions, intervals = if (repetitions == 1) {
+                timerSet.intervals.map {
+                    it.copy(skipOnLastSet = false)
+                }
+            } else {
+                timerSet.intervals
+            }.toImmutableList())
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
+    private fun duplicateInterval(interval: TimerInterval) {
         sets = sets.map { (_, repetitions, intervals) ->
             val newIntervals: List<TimerInterval> = if (intervals.contains(interval)) {
                 val index = intervals.indexOf(interval)
@@ -204,7 +282,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun deleteInterval(interval: TimerInterval) {
+    private fun deleteInterval(interval: TimerInterval) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.filter {
                 interval !== it
@@ -214,23 +292,8 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun updateRepetitions(timerSet: TimerSet, repetitions: Int) {
-        if (repetitions < 1) return
-        val index = sets.indexOfFirst { it === timerSet }
-        sets[index] = timerSet.copy(
-            repetitions = repetitions,
-            intervals = if (repetitions == 1) {
-                timerSet.intervals.map {
-                    it.copy(skipOnLastSet = false)
-                }
-            } else {
-                timerSet.intervals
-            }.toImmutableList()
-        )
-        _state.value = state.value.copy(sets = sets.toPersistentList())
-    }
 
-    fun updateIntervalDuration(timerInterval: TimerInterval, duration: Int) {
+    private fun updateIntervalDuration(timerInterval: TimerInterval, duration: Int) {
         if (duration < 1) return
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
@@ -245,7 +308,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun updateIntervalName(timerInterval: TimerInterval, name: String) {
+    private fun updateIntervalName(timerInterval: TimerInterval, name: String) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
                 if (it === timerInterval) {
@@ -259,7 +322,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun moveIntervalUp(timerInterval: TimerInterval) {
+    private fun moveIntervalUp(timerInterval: TimerInterval) {
         sets = sets.map { set ->
             val index = set.intervals.indexOf(timerInterval)
             if (index > 0) {
@@ -275,7 +338,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun moveIntervalDown(timerInterval: TimerInterval) {
+    private fun moveIntervalDown(timerInterval: TimerInterval) {
         sets = sets.map { set ->
             val index = set.intervals.indexOf(timerInterval)
             if (index != -1 && index != set.intervals.size - 1) {
@@ -291,7 +354,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun updateIntervalColor(timerInterval: TimerInterval, color: Color) {
+    private fun updateIntervalColor(timerInterval: TimerInterval, color: Color) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
                 if (it === timerInterval) {
@@ -305,11 +368,11 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun onFinishColor(color: Color) {
+    private fun onFinishColor(color: Color) {
         _state.value = state.value.copy(finishColor = color)
     }
 
-    fun updateSkipOnLastSet(timerInterval: TimerInterval, skipOnLastSet: Boolean) {
+    private fun updateSkipOnLastSet(timerInterval: TimerInterval, skipOnLastSet: Boolean) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
                 if (it === timerInterval) {
@@ -323,7 +386,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun updateCountUp(timerInterval: TimerInterval, countUp: Boolean) {
+    private fun updateCountUp(timerInterval: TimerInterval, countUp: Boolean) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
                 if (it === timerInterval) {
@@ -337,7 +400,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    fun updateManualNext(timerInterval: TimerInterval, manualNext: Boolean) {
+    private fun updateManualNext(timerInterval: TimerInterval, manualNext: Boolean) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
                 if (it === timerInterval) {

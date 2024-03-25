@@ -63,25 +63,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
-                IconButton(onClick = { viewModel.previousInterval() }) {
-                    Icon(
-                        modifier = Modifier.size(48.dp),
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(Res.string.back),
-                        tint = displayColor
-                    )
-                }
-                Spacer(modifier = Modifier.weight(2f))
-                IconButton(onClick = { viewModel.nextInterval() }) {
-                    Icon(
-                        modifier = Modifier.size(48.dp),
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = stringResource(Res.string.next),
-                        tint = displayColor
-                    )
-                }
-            }
+            TopButtons(viewModel, displayColor)
             Spacer(modifier = Modifier.weight(1f))
 
             if (state.timerState == Finished) {
@@ -113,7 +95,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 if (state.manualNext) {
-                    Button(onClick = { viewModel.onManualNext() }) {
+                    Button(onClick = { viewModel.interactions.onManualNext() }) {
                         Text(text = stringResource(Res.string.next))
                     }
                 }
@@ -121,51 +103,87 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row {
-                if (state.timerState == Paused || state.timerState == Finished) {
-                    IconButton(onClick = { navigateUp() }) {
-                        Icon(
-                            modifier = Modifier.size(48.dp),
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(Res.string.close),
-                            tint = displayColor
-                        )
-                    }
+            BottomButtons(state, navigateUp, displayColor, viewModel)
+        }
+    }
+}
+
+@Composable
+private fun TopButtons(
+    viewModel: RunViewModel,
+    displayColor: Color
+) {
+    Row {
+        IconButton(onClick = { viewModel.interactions.previousInterval() }) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.back),
+                tint = displayColor
+            )
+        }
+        Spacer(modifier = Modifier.weight(2f))
+        IconButton(onClick = { viewModel.interactions.nextInterval() }) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = stringResource(Res.string.next),
+                tint = displayColor
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomButtons(
+    state: RunViewModel.RunState,
+    navigateUp: () -> Unit,
+    displayColor: Color,
+    viewModel: RunViewModel
+) {
+    Row {
+        if (state.timerState == Paused || state.timerState == Finished) {
+            IconButton(onClick = { navigateUp() }) {
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(Res.string.close),
+                    tint = displayColor
+                )
+            }
+        }
+        Spacer(modifier = Modifier.weight(2f))
+        when (state.timerState) {
+            Running -> {
+                IconButton(onClick = { viewModel.interactions.togglePlayState() }) {
+                    Icon(
+                        modifier = Modifier.size(48.dp),
+                        imageVector = CustomIcons.pause(),
+                        contentDescription = stringResource(Res.string.pause),
+                        tint = displayColor
+                    )
                 }
-                Spacer(modifier = Modifier.weight(2f))
-                when (state.timerState) {
-                    Running -> {
-                        IconButton(onClick = { viewModel.toggleState() }) {
-                            Icon(
-                                modifier = Modifier.size(48.dp),
-                                imageVector = CustomIcons.pause(),
-                                contentDescription = stringResource(Res.string.pause),
-                                tint = displayColor
-                            )
-                        }
-                    }
+            }
 
-                    Paused -> {
-                        IconButton(onClick = { viewModel.toggleState() }) {
-                            Icon(
-                                modifier = Modifier.size(48.dp),
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = stringResource(Res.string.play),
-                                tint = displayColor
-                            )
-                        }
-                    }
+            Paused -> {
+                IconButton(onClick = { viewModel.interactions.togglePlayState() }) {
+                    Icon(
+                        modifier = Modifier.size(48.dp),
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = stringResource(Res.string.play),
+                        tint = displayColor
+                    )
+                }
+            }
 
-                    Finished -> {
-                        IconButton(onClick = { viewModel.initTimer() }) {
-                            Icon(
-                                modifier = Modifier.size(48.dp),
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = stringResource(Res.string.restart),
-                                tint = displayColor
-                            )
-                        }
-                    }
+            Finished -> {
+                IconButton(onClick = { viewModel.interactions.restartTimer() }) {
+                    Icon(
+                        modifier = Modifier.size(48.dp),
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(Res.string.restart),
+                        tint = displayColor
+                    )
                 }
             }
         }
