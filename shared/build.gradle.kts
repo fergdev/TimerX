@@ -99,8 +99,6 @@ detekt {
         "src/iosTest/kotlin",
     )
     config.setFrom("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
-//    baseline =
-//        file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt
 }
 
 tasks.withType<Detekt>().configureEach {
