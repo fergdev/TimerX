@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  actions: read
+  contents: read
+#  security-events: write
+
 jobs:
   build:
     # Reverted this to get builds going, iOS currently won't build due to
