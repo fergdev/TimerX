@@ -27,26 +27,26 @@ data class TimerInterval(
 )
 
 fun Int.timeFormatted(): String {
-    val hours = this / (60L * 60L)
+    val hours = this / (SECONDS_IN_MINUTE * MINUTES_IN_HOUR)
     val hoursString = if (hours == 0L) {
         ""
     } else {
         "$hours:"
     }
 
-    val minutes = this / 60L
+    val minutes = this / MINUTES_IN_HOUR
     val minutesString = if (minutes == 0L) {
         "00"
-    } else if (minutes < 10L) {
+    } else if (minutes < SINGLE_DIGIT_MODULO) {
         "0$minutes"
     } else {
         "$minutes"
     }
 
-    val seconds = this % 60L
+    val seconds = this % SECONDS_IN_MINUTE
     val secondsString = if (seconds == 0L) {
         "00"
-    } else if (seconds < 10L) {
+    } else if (seconds < SINGLE_DIGIT_MODULO) {
         "0$seconds"
     } else {
         "$seconds"
@@ -54,6 +54,10 @@ fun Int.timeFormatted(): String {
 
     return "$hoursString$minutesString:$secondsString"
 }
+
+private const val SECONDS_IN_MINUTE = 60L
+private const val MINUTES_IN_HOUR = 60L
+private const val SINGLE_DIGIT_MODULO = 10L
 
 fun Timer.length(): Int {
     return sets.fold(0) { acc, i ->

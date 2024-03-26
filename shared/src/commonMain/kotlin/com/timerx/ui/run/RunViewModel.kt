@@ -59,13 +59,29 @@ class RunViewModel(
 
     val state: StateFlow<RunState> = _state
 
+    class Interactions(
+        val togglePlayState: () -> Unit,
+        val nextInterval: () -> Unit,
+        val previousInterval: () -> Unit,
+        val onManualNext: () -> Unit,
+        val restartTimer: () -> Unit
+    )
+
+    val interactions = Interactions(
+        togglePlayState = ::togglePlayState,
+        nextInterval = ::nextInterval,
+        previousInterval = ::previousInterval,
+        onManualNext = ::onManualNext,
+        restartTimer = ::initTimer
+    )
+
     private var tickerJob: Job? = null
 
     init {
         initTimer()
     }
 
-    fun toggleState() {
+    private fun togglePlayState() {
         when (state.value.timerState) {
             Running -> {
                 _state.value = _state.value.copy(timerState = Paused)
@@ -117,7 +133,7 @@ class RunViewModel(
         )
     }
 
-    fun nextInterval() {
+    private fun nextInterval() {
         if (state.value.timerState == Finished) {
             return
         }
@@ -175,7 +191,7 @@ class RunViewModel(
         stopTicker()
     }
 
-    fun previousInterval() {
+    private fun previousInterval() {
         if (state.value.timerState == Finished) {
             return
         }
@@ -240,7 +256,7 @@ class RunViewModel(
     private fun startTicker() {
         tickerJob = viewModelScope.launch {
             while (true) {
-                delay(1000)
+                delay(TICKER_DELAY)
                 val nextElapsed = _state.value.elapsed + 1
                 _state.value = _state.value.copy(elapsed = nextElapsed)
                 if (nextElapsed == _state.value.intervalDuration) {
@@ -254,7 +270,7 @@ class RunViewModel(
         }
     }
 
-    fun initTimer() {
+    private fun initTimer() {
         val firstSet = timer.sets.first()
         val firstInterval = firstSet.intervals.first()
 
@@ -278,12 +294,16 @@ class RunViewModel(
         startTicker()
     }
 
+    private fun onManualNext() {
+        nextInterval()
+    }
+
     override fun onCleared() {
         super.onCleared()
         stopTicker()
     }
 
-    fun onManualNext() {
-        nextInterval()
+    companion object {
+        private const val TICKER_DELAY = 1000L
     }
 }

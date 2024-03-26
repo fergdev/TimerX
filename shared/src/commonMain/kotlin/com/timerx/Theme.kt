@@ -15,6 +15,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+private const val COLOR_PRIMARY_DARK = 0xFFBB86FCL
+private const val COLOR_SECONDARY_DARK = 0xFF03DAC5L
+private const val COLOR_TERTIARY_DARK = 0xFF3700B3L
+private const val COLOR_PRIMARY_LIGHT = 0xFF6200EEL
+private const val COLOR_SECONDARY_LIGHT = 0xFF6200EEL
+private const val COLOR_TERTIARY_LIGHT = 0xFF6200EEL
+
 @Composable
 fun TimerXTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -22,15 +29,15 @@ fun TimerXTheme(
 ) {
     val colors = if (darkTheme) {
         darkColorScheme(
-            primary = Color(0xFFBB86FCL),
-            secondary = Color(0xFF03DAC5L),
-            tertiary = Color(0xFF3700B3L)
+            primary = Color(COLOR_PRIMARY_DARK),
+            secondary = Color(COLOR_SECONDARY_DARK),
+            tertiary = Color(COLOR_TERTIARY_DARK)
         )
     } else {
         lightColorScheme(
-            primary = Color(0xFF6200EEL),
-            secondary = Color(0xFF03DAC5L),
-            tertiary = Color(0xFF3700B3L)
+            primary = Color(COLOR_PRIMARY_LIGHT),
+            secondary = Color(COLOR_SECONDARY_LIGHT),
+            tertiary = Color(COLOR_TERTIARY_LIGHT)
         )
     }
     val typography = Typography(

@@ -31,31 +31,31 @@ interface ITimerRepository {
     fun getTimer(timerId: String): Timer
 }
 
-private class RealmColor() : RealmObject {
+private class RealmColor : RealmObject {
     var red: Float = 0f
     var green: Float = 0f
     var blue: Float = 0f
     var alpha: Float = 0f
 }
 
-private class RealmTimer() : RealmObject {
+private class RealmTimer : RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId()
+    var id: ObjectId = ObjectId()
     var name: String = ""
     var sets: RealmList<RealmSet> = realmListOf()
     var finishColor: RealmColor? = null
 }
 
-private class RealmSet() : RealmObject {
+private class RealmSet : RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId()
+    var id: ObjectId = ObjectId()
     var repetitions: Int = 1
     var intervals: RealmList<RealmInterval> = realmListOf()
 }
 
-private class RealmInterval() : RealmObject {
+private class RealmInterval : RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId()
+    var id: ObjectId = ObjectId()
     var name: String = ""
     var duration: Int = 1
     var color: RealmColor? = null
@@ -96,15 +96,15 @@ class TimerRepo : ITimerRepository {
 
     private fun realmTimerToTimer(realmTimer: RealmTimer): Timer {
         return Timer(
-            realmTimer._id.toHexString(),
+            realmTimer.id.toHexString(),
             realmTimer.name,
             realmTimer.sets.map { realmSet ->
                 TimerSet(
-                    realmSet._id.toHexString(),
+                    realmSet.id.toHexString(),
                     realmSet.repetitions,
                     realmSet.intervals.map {
                         TimerInterval(
-                            it._id.toHexString(),
+                            it.id.toHexString(),
                             it.name,
                             it.duration,
                             it.color.toComposeColor(),
@@ -166,13 +166,13 @@ class TimerRepo : ITimerRepository {
 
     override fun getTimer(timerId: String): Timer {
         return realmTimerToTimer(realm.query<RealmTimer>().find().first {
-            it._id.toHexString() == timerId
+            it.id.toHexString() == timerId
         })
     }
 
     private fun getRealmTimer(timerId: String): RealmTimer {
         return realm.query<RealmTimer>().find().first {
-            it._id.toHexString() == timerId
+            it.id.toHexString() == timerId
         }
     }
 }

@@ -1,0 +1,23 @@
+config:
+  validation: true
+  warningsAsErrors: false
+  excludes: ''
+
+style:
+  active: true
+  MagicNumber:
+    active: true
+    excludes: ['**/CustomIcons.kt']
+  ReturnCount:
+    max: 3
+
+complexity:
+  LongMethod:
+    excludes: ['**/CustomIcons.kt']
+  # TODO remove and this and refactor some of the view models
+  TooManyFunctions:
+    thresholdInClasses: 22
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
