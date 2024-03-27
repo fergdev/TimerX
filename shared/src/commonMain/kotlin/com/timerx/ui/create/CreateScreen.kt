@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
@@ -57,7 +59,6 @@ import timerx.shared.generated.resources.create
 import timerx.shared.generated.resources.create_timer
 import timerx.shared.generated.resources.finish_color
 import timerx.shared.generated.resources.timer_name
-import timerx.shared.generated.resources.total_value
 
 private const val TWO_HUNDRED_SEVENTY_DEG = 270f
 
@@ -123,10 +124,14 @@ private fun CreateContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            OutlinedTextField(modifier = Modifier.fillMaxWidth(),
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 1,
                 value = state.timerName,
                 label = { Text(text = stringResource(Res.string.timer_name)) },
-                onValueChange = { viewModel.interactions.updateTimerName(it) })
+                onValueChange = { viewModel.interactions.updateTimerName(it) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+            )
         }
         items(state.sets) {
             Set(
