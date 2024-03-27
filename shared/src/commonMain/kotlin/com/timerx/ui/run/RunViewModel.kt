@@ -172,7 +172,9 @@ class RunViewModel(
         if (setIndex == timer.sets.size) {
             finishTimer()
         } else {
-            restartTicker()
+            if (state.value.timerState == Running) {
+                restartTicker()
+            }
             beepMaker.beepNext()
             updateState(
                 setIndex,
@@ -196,7 +198,9 @@ class RunViewModel(
             return
         }
 
-        restartTicker()
+        if (state.value.timerState == Running) {
+            restartTicker()
+        }
         beepMaker.beepBack()
 
         if (_state.value.elapsed != 0) {
