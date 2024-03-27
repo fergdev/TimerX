@@ -32,7 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.timerx.CustomIcons
+import com.timerx.ui.CustomIcons
 import com.timerx.domain.Timer
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted

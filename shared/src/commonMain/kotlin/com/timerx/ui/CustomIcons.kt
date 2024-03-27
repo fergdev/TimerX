@@ -1,4 +1,4 @@
-package com.timerx
+package com.timerx.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

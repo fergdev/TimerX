@@ -45,6 +45,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.common.AnimatedNumber
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -149,12 +150,7 @@ private fun CreateContent(
             Box(
                 modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = stringResource(
-                        Res.string.total_value,
-                        state.sets.length().timeFormatted()
-                    )
-                )
+                AnimatedNumber(state.sets.length()) { it.timeFormatted() }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }

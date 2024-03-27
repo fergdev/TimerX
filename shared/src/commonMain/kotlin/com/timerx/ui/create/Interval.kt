@@ -31,7 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.timerx.CustomIcons
+import com.timerx.ui.CustomIcons
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.NumberIncrement
@@ -74,6 +74,7 @@ internal fun Interval(
 
             NumberIncrement(
                 value = interval.duration,
+                negativeButtonEnabled = interval.duration > 1,
                 formatter = { it.timeFormatted() }
             ) {
                 interactions.interval.update.updateDuration(

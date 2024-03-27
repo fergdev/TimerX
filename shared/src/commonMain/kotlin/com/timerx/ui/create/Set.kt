@@ -24,10 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.timerx.CustomIcons
+import com.timerx.ui.CustomIcons
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.NumberIncrement
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -59,7 +60,7 @@ internal fun Set(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            Text(text = timerSet.length().timeFormatted())
+            AnimatedNumber(timerSet.length()) { it.timeFormatted() }
 
             SetBottomControls(interactions, timerSet)
         }
@@ -121,6 +122,7 @@ private fun SetTopControls(
             Text(text = stringResource(Res.string.sets))
             NumberIncrement(
                 value = timerSet.repetitions,
+                negativeButtonEnabled = timerSet.repetitions > 1,
                 onChange = {
                     interactions.set.update.updateRepetitions(
                         timerSet,

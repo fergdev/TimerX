@@ -2,7 +2,10 @@
 
 package com.timerx.ui.run
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,18 +26,26 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
-import com.timerx.CustomIcons
+import com.timerx.domain.timeFormatted
+import com.timerx.ui.CustomIcons
+import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.run.RunViewModel.TimerState.Finished
 import com.timerx.ui.run.RunViewModel.TimerState.Paused
 import com.timerx.ui.run.RunViewModel.TimerState.Running
+import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.BackHandler
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
@@ -47,11 +58,15 @@ import timerx.shared.generated.resources.pause
 import timerx.shared.generated.resources.play
 import timerx.shared.generated.resources.restart
 
+private const val CONTROLS_HIDE_DELAY = 3000L
+private val CORNER_ICON_SIZE = 1000.dp
+
 @Composable
 fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val viewModel: RunViewModel =
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
+
     val displayColor = displayColor(state.backgroundColor)
     Box(
         modifier = Modifier
@@ -59,73 +74,110 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             .background(state.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
+        var controlsVisible by remember { mutableStateOf(false) }
+
+        if (state.timerState != Running) {
+            controlsVisible = true
+        } else if (controlsVisible) {
+            LaunchedEffect(Unit) {
+                delay(CONTROLS_HIDE_DELAY)
+                controlsVisible = false
+            }
+        }
+
+        BackHandler(true) {
+            controlsVisible = true
+        }
+
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp)
+                .clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = null
+                ) { controlsVisible = true },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopButtons(viewModel, displayColor)
-            Spacer(modifier = Modifier.weight(1f))
-
-            if (state.timerState == Finished) {
-                Text(
-                    text = stringResource(Res.string.finished),
-                    style = typography.displayLarge,
-                    color = displayColor
-                )
-            } else {
-                if (state.setRepetitionCount != 1) {
-                    Text(
-                        text = "${state.setRepetitionCount - state.repetitionIndex}",
-                        color = displayColor,
-                        style = typography.displaySmall,
-                    )
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = state.intervalName.uppercase(),
-                    style = typography.displayLarge,
-                    color = displayColor
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = if (state.displayCountAsUp) "${state.elapsed}"
-                    else "${state.intervalDuration - state.elapsed} ",
-                    style = typography.displaySmall,
-                    color = displayColor
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                if (state.manualNext) {
-                    Button(onClick = { viewModel.interactions.onManualNext() }) {
-                        Text(text = stringResource(Res.string.next))
-                    }
-                }
+            AnimatedVisibility(controlsVisible) {
+                TopControls(viewModel, displayColor)
             }
+            Spacer(modifier = Modifier.weight(1f))
+
+            TimerInformation(
+                state,
+                displayColor,
+                viewModel.interactions,
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            BottomButtons(state, navigateUp, displayColor, viewModel)
+            AnimatedVisibility(controlsVisible) {
+                BottomControls(state, navigateUp, displayColor, viewModel)
+            }
         }
     }
 }
 
 @Composable
-private fun TopButtons(
+private fun TimerInformation(
+    state: RunViewModel.RunState,
+    displayColor: Color,
+    interactions: RunViewModel.Interactions,
+) {
+    if (state.timerState == Finished) {
+        Text(
+            text = stringResource(Res.string.finished),
+            style = typography.displayLarge,
+            color = displayColor
+        )
+    } else {
+        if (state.setRepetitionCount != 1) {
+            Text(
+                text = "${state.setRepetitionCount - state.repetitionIndex}",
+                color = displayColor,
+                style = typography.displaySmall,
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = state.intervalName.uppercase(),
+            style = typography.displayLarge,
+            color = displayColor
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        AnimatedNumber(
+            value = if (state.displayCountAsUp) state.elapsed
+            else state.intervalDuration - state.elapsed,
+            style = typography.displaySmall,
+            color = displayColor,
+            formatter = { it.timeFormatted() },
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        if (state.manualNext) {
+            Button(onClick = { interactions.onManualNext() }) {
+                Text(text = stringResource(Res.string.next))
+            }
+        }
+    }
+}
+
+@Composable
+private fun TopControls(
     viewModel: RunViewModel,
     displayColor: Color
 ) {
     Row {
         IconButton(onClick = { viewModel.interactions.previousInterval() }) {
             Icon(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(CORNER_ICON_SIZE),
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(Res.string.back),
                 tint = displayColor
             )
         }
-        Spacer(modifier = Modifier.weight(2f))
+        Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { viewModel.interactions.nextInterval() }) {
             Icon(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(CORNER_ICON_SIZE),
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = stringResource(Res.string.next),
                 tint = displayColor
@@ -135,7 +187,7 @@ private fun TopButtons(
 }
 
 @Composable
-private fun BottomButtons(
+private fun BottomControls(
     state: RunViewModel.RunState,
     navigateUp: () -> Unit,
     displayColor: Color,
@@ -145,19 +197,19 @@ private fun BottomButtons(
         if (state.timerState == Paused || state.timerState == Finished) {
             IconButton(onClick = { navigateUp() }) {
                 Icon(
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier.size(CORNER_ICON_SIZE),
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(Res.string.close),
                     tint = displayColor
                 )
             }
         }
-        Spacer(modifier = Modifier.weight(2f))
+        Spacer(modifier = Modifier.weight(1f))
         when (state.timerState) {
             Running -> {
                 IconButton(onClick = { viewModel.interactions.togglePlayState() }) {
                     Icon(
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = CustomIcons.pause(),
                         contentDescription = stringResource(Res.string.pause),
                         tint = displayColor
@@ -168,7 +220,7 @@ private fun BottomButtons(
             Paused -> {
                 IconButton(onClick = { viewModel.interactions.togglePlayState() }) {
                     Icon(
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = stringResource(Res.string.play),
                         tint = displayColor
@@ -179,7 +231,7 @@ private fun BottomButtons(
             Finished -> {
                 IconButton(onClick = { viewModel.interactions.restartTimer() }) {
                     Icon(
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = Icons.Default.Refresh,
                         contentDescription = stringResource(Res.string.restart),
                         tint = displayColor
