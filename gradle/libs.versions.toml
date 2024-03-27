@@ -3,6 +3,7 @@ agp = "8.3.1"
 androidx-activityCompose = "1.8.2"
 compose = "1.6.4"
 compose-material3 = "1.2.1"
+detekt = "1.23.6"
 jetbrains-compose = "1.6.1"
 koin = "3.5.3"
 koin-compose = "1.1.2"
@@ -36,6 +37,7 @@ realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "r
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
