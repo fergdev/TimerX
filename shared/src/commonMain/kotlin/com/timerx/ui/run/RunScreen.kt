@@ -68,8 +68,8 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val viewModel: RunViewModel =
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
-
     val displayColor = displayColor(state.backgroundColor)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -81,11 +81,14 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
 
         LaunchedEffect(touchCounter) {
             delay(CONTROLS_HIDE_DELAY)
-            controlsVisible = false
+            if (state.timerState == Running) {
+                controlsVisible = false
+            }
         }
 
         BackHandler(true) {
             controlsVisible = true
+            touchCounter++
         }
 
         Column(
@@ -100,7 +103,9 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(controlsVisible) {
-                TopControls(viewModel, displayColor)
+                TopControls(viewModel, displayColor) {
+                    touchCounter++
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
 
@@ -113,7 +118,9 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
 
             AnimatedVisibility(controlsVisible) {
-                BottomControls(state, navigateUp, displayColor, viewModel)
+                BottomControls(state, navigateUp, displayColor, viewModel.interactions) {
+                    touchCounter++
+                }
             }
         }
     }
@@ -165,10 +172,14 @@ private fun TimerInformation(
 @Composable
 private fun TopControls(
     viewModel: RunViewModel,
-    displayColor: Color
+    displayColor: Color,
+    incrementTouchCounter: () -> Unit
 ) {
     Row {
-        IconButton(onClick = { viewModel.interactions.previousInterval() }) {
+        IconButton(onClick = {
+            incrementTouchCounter()
+            viewModel.interactions.previousInterval()
+        }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -177,7 +188,10 @@ private fun TopControls(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { viewModel.interactions.nextInterval() }) {
+        IconButton(onClick = {
+            incrementTouchCounter()
+            viewModel.interactions.nextInterval()
+        }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -193,7 +207,8 @@ private fun BottomControls(
     state: RunViewModel.RunState,
     navigateUp: () -> Unit,
     displayColor: Color,
-    viewModel: RunViewModel
+    interactions: RunViewModel.Interactions,
+    incrementTouchCounter: () -> Unit
 ) {
     Row {
         if (state.timerState == Paused || state.timerState == Finished) {
@@ -209,7 +224,7 @@ private fun BottomControls(
         Spacer(modifier = Modifier.weight(1f))
         when (state.timerState) {
             Running -> {
-                IconButton(onClick = { viewModel.interactions.togglePlayState() }) {
+                IconButton(onClick = { interactions.togglePlayState() }) {
                     Icon(
                         modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = CustomIcons.pause(),
@@ -220,7 +235,10 @@ private fun BottomControls(
             }
 
             Paused -> {
-                IconButton(onClick = { viewModel.interactions.togglePlayState() }) {
+                IconButton(onClick = {
+                    interactions.togglePlayState()
+                    incrementTouchCounter()
+                }) {
                     Icon(
                         modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = Icons.Default.PlayArrow,
@@ -231,7 +249,10 @@ private fun BottomControls(
             }
 
             Finished -> {
-                IconButton(onClick = { viewModel.interactions.restartTimer() }) {
+                IconButton(onClick = {
+                    interactions.restartTimer()
+                    incrementTouchCounter()
+                }) {
                     Icon(
                         modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = Icons.Default.Refresh,
