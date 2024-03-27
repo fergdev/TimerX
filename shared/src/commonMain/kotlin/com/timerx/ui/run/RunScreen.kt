@@ -26,9 +26,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -75,14 +77,11 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         var controlsVisible by remember { mutableStateOf(false) }
+        var touchCounter by remember { mutableIntStateOf(1) }
 
-        if (state.timerState != Running) {
-            controlsVisible = true
-        } else if (controlsVisible) {
-            LaunchedEffect(Unit) {
-                delay(CONTROLS_HIDE_DELAY)
-                controlsVisible = false
-            }
+        LaunchedEffect(touchCounter) {
+            delay(CONTROLS_HIDE_DELAY)
+            controlsVisible = false
         }
 
         BackHandler(true) {
@@ -94,7 +93,10 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                 .clickable(
                     interactionSource = MutableInteractionSource(),
                     indication = null
-                ) { controlsVisible = true },
+                ) {
+                    controlsVisible = true
+                    touchCounter++
+                },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(controlsVisible) {
