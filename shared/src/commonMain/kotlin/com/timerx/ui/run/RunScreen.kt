@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
+import com.timerx.ui.KeepScreenOn
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
@@ -68,6 +69,8 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
     val displayColor = displayColor(state.backgroundColor)
+
+    KeepScreenOn()
 
     Box(
         modifier = Modifier

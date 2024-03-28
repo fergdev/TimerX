@@ -1,4 +1,4 @@
-package com.timerx
+package com.timerx.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
