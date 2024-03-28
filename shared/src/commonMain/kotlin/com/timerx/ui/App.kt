@@ -20,6 +20,31 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.koin.compose.KoinApplication
 
+private const val TIMER_ID_OPTIONAL = "{timerId}?"
+private const val TIMER_ID_RAW = "timerId"
+private const val TIMER_ID = "{timerId}"
+
+sealed class Screen(val route: String) {
+    data object MainScreen : Screen("main")
+    data object SettingsScreen : Screen("settings")
+    data object AddScreen : Screen("create/{timerId}?") {
+
+        fun addScreen(): String {
+            return route.replace("/$TIMER_ID_OPTIONAL", "")
+        }
+
+        fun editScreen(id: String): String {
+            return route.replace(TIMER_ID_OPTIONAL, id)
+        }
+    }
+
+    data object RunScreen : Screen("run/{timerId}") {
+        fun withParam(id: String): String {
+            return route.replace(TIMER_ID, id)
+        }
+    }
+}
+
 @Composable
 fun App() {
     PreComposeApp {
@@ -30,42 +55,42 @@ fun App() {
                 val navigator = rememberNavigator()
                 NavHost(
                     navigator = navigator,
-                    initialRoute = "main"
+                    initialRoute = Screen.MainScreen.route
                 ) {
-                    scene(route = "main") {
+                    scene(route = Screen.MainScreen.route) {
                         MainScreen(
                             navigateSettingsScreen = {
-                                navigator.navigate("settings")
+                                navigator.navigate(Screen.SettingsScreen.route)
                             }, navigateAddScreen = {
-                                navigator.navigate("create")
+                                navigator.navigate(Screen.AddScreen.addScreen())
                             }, navigateEditScreen = {
-                                navigator.navigate("create/$it")
+                                navigator.navigate(Screen.AddScreen.editScreen(it))
                             }, navigateRunScreen = {
-                                navigator.navigate("run/$it")
+                                navigator.navigate(Screen.RunScreen.withParam(it))
                             })
                     }
                     scene(
-                        route = "create/{timerId}?",
+                        route = Screen.AddScreen.route,
                         navTransition = NavTransition(
                             createTransition = fadeIn() + slideInVertically { it / 2 },
                             destroyTransition = fadeOut() + slideOutVertically { it / 2 }
                         )
                     ) {
                         CreateScreen(
-                            timerId = it.path<String>("timerId") ?: ""
+                            timerId = it.path<String>(TIMER_ID_OPTIONAL) ?: ""
                         ) { navigator.goBack() }
                     }
                     scene(
-                        route = "run/{timerId}",
+                        route = Screen.RunScreen.route,
                         navTransition = NavTransition(
                             createTransition = fadeIn() + slideInHorizontally { it / 2 },
                             destroyTransition = fadeOut() + slideOutHorizontally { it / 2 }
                         )
                     ) {
-                        RunScreen(it.path<String>("timerId")!!) { navigator.goBack() }
+                        RunScreen(it.path<String>(TIMER_ID_RAW)!!) { navigator.goBack() }
                     }
                     scene(
-                        route = "settings",
+                        route = Screen.SettingsScreen.route,
                         navTransition = NavTransition(
                             createTransition = fadeIn() + slideInVertically(),
                             destroyTransition = fadeOut() + slideOutVertically()
