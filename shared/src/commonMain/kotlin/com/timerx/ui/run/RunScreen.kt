@@ -3,6 +3,8 @@
 package com.timerx.ui.run
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -38,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
@@ -63,7 +67,9 @@ import timerx.shared.generated.resources.play
 import timerx.shared.generated.resources.restart
 
 private const val CONTROLS_HIDE_DELAY = 3000L
-private val CORNER_ICON_SIZE = 1000.dp
+private val CORNER_ICON_SIZE = 48.dp
+
+private const val CROSS_FADE_DURATION = 500
 
 @Composable
 fun RunScreen(timerId: String, navigateUp: () -> Unit) {
@@ -103,7 +109,6 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             .background(state.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
-
         Column(
             modifier = Modifier.padding(16.dp)
                 .safeDrawingPadding(),
@@ -141,17 +146,24 @@ private fun TimerInformation(
 ) {
     if (state.timerState == Finished) {
         Text(
-            text = stringResource(Res.string.finished),
+            text = stringResource(Res.string.finished).uppercase(),
             style = typography.displayLarge,
             color = displayColor
         )
     } else {
         if (state.setRepetitionCount != 1) {
-            Text(
-                text = "${state.setRepetitionCount - state.repetitionIndex}",
-                color = displayColor,
-                style = typography.displaySmall,
-            )
+            Crossfade(
+                targetState = state.intervalName.uppercase(),
+                animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "${state.setRepetitionCount - state.repetitionIndex}",
+                    color = displayColor,
+                    style = typography.displaySmall,
+                )
+            }
         }
         Spacer(modifier = Modifier.height(24.dp))
         AnimatedNumber(
@@ -162,11 +174,18 @@ private fun TimerInformation(
             formatter = { it.timeFormatted() },
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = state.intervalName.uppercase(),
-            style = typography.displaySmall,
-            color = displayColor
-        )
+        Crossfade(
+            targetState = state.intervalName.uppercase(),
+            animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
+        ) {
+            Text(
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+                text = it,
+                style = typography.displaySmall,
+                color = displayColor
+            )
+        }
         Spacer(modifier = Modifier.height(24.dp))
         if (state.manualNext) {
             Button(onClick = { interactions.onManualNext() }) {
