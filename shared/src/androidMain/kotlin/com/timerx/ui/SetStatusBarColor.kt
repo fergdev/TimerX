@@ -14,7 +14,6 @@ actual fun SetStatusBarColor(color: Color) {
     val window = (view.context as Activity).window
     window.statusBarColor = color.toArgb()
     window.navigationBarColor = color.toArgb()
-    window.navigationBarDividerColor = color.toArgb()
     WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
         isColorDark(color).not()
     WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
