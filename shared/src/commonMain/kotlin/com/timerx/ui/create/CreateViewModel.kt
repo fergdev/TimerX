@@ -26,7 +26,9 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.create_timer
 import timerx.shared.generated.resources.created_value
+import timerx.shared.generated.resources.edit_timer
 import timerx.shared.generated.resources.prepare
 import timerx.shared.generated.resources.rest
 import timerx.shared.generated.resources.work
@@ -132,6 +134,7 @@ class CreateViewModel(
     )
 
     data class State(
+        val screenTitle: String = "",
         val timerName: String = "",
         val finishColor: Color = Color.Red,
         val sets: ImmutableList<TimerSet> = persistentListOf()
@@ -148,10 +151,13 @@ class CreateViewModel(
             sets = timerEditing.sets.toMutableList()
 
             _state.update {
-                it.copy(
-                    timerName = timerEditing.name,
-                    sets = sets.toPersistentList()
-                )
+                runBlocking {
+                    it.copy(
+                        screenTitle = getString(Res.string.edit_timer),
+                        timerName = timerEditing.name,
+                        sets = sets.toPersistentList()
+                    )
+                }
             }
         } else {
             timerEditing = null
@@ -170,7 +176,12 @@ class CreateViewModel(
                 )
             }
             _state.update {
-                it.copy(sets = sets.toPersistentList())
+                runBlocking {
+                    it.copy(
+                        screenTitle = getString(Res.string.create_timer),
+                        sets = sets.toPersistentList()
+                    )
+                }
             }
         }
     }

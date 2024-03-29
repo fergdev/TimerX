@@ -21,6 +21,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,10 +33,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.timerx.ui.CustomIcons
 import com.timerx.domain.Timer
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.CustomIcons
+import com.timerx.ui.SetStatusBarColor
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -61,6 +63,8 @@ internal fun MainScreen(
     LaunchedEffect(Unit) {
         viewModel.refreshData()
     }
+
+    SetStatusBarColor(MaterialTheme.colorScheme.surface)
 
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

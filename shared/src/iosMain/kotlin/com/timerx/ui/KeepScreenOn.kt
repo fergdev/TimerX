@@ -7,3 +7,4 @@ actual fun KeepScreenOn() {
     // Do nothing
     // TODO Add keep screen on for iOS
 }
+

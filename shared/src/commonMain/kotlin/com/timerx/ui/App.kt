@@ -1,17 +1,15 @@
 package com.timerx.ui
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import com.timerx.sharedModule
-import com.timerx.ui.run.RunScreen
-import com.timerx.ui.settings.SettingsScreen
 import com.timerx.ui.create.CreateScreen
 import com.timerx.ui.main.MainScreen
+import com.timerx.ui.run.RunScreen
+import com.timerx.ui.settings.SettingsScreen
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
@@ -44,6 +42,7 @@ sealed class Screen(val route: String) {
     }
 }
 
+
 @Composable
 fun App() {
     PreComposeApp {
@@ -71,19 +70,19 @@ fun App() {
                     scene(
                         route = Screen.AddScreen.route,
                         navTransition = NavTransition(
-                            createTransition = fadeIn() + slideInVertically { it / 2 },
-                            destroyTransition = fadeOut() + slideOutVertically { it / 2 }
+                            createTransition = slideInVertically { it / 2 },
+                            destroyTransition = slideOutVertically { it / 2 }
                         )
                     ) {
                         CreateScreen(
-                            timerId = it.path<String>(TIMER_ID_OPTIONAL) ?: ""
+                            timerId = it.path<String>(TIMER_ID_RAW) ?: ""
                         ) { navigator.goBack() }
                     }
                     scene(
                         route = Screen.RunScreen.route,
                         navTransition = NavTransition(
-                            createTransition = fadeIn() + slideInHorizontally { it / 2 },
-                            destroyTransition = fadeOut() + slideOutHorizontally { it / 2 }
+                            createTransition = slideInHorizontally { it / 2 },
+                            destroyTransition = slideOutHorizontally { it / 2 }
                         )
                     ) {
                         RunScreen(it.path<String>(TIMER_ID_RAW)!!) { navigator.goBack() }
@@ -91,8 +90,8 @@ fun App() {
                     scene(
                         route = Screen.SettingsScreen.route,
                         navTransition = NavTransition(
-                            createTransition = fadeIn() + slideInVertically(),
-                            destroyTransition = fadeOut() + slideOutVertically()
+                            createTransition = slideInVertically(),
+                            destroyTransition = slideOutVertically()
                         )
                     ) {
                         SettingsScreen { navigator.goBack() }

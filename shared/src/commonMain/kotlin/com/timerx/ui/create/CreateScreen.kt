@@ -56,7 +56,6 @@ import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.create
-import timerx.shared.generated.resources.create_timer
 import timerx.shared.generated.resources.finish_color
 import timerx.shared.generated.resources.timer_name
 
@@ -76,7 +75,7 @@ internal fun CreateScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(Res.string.create_timer)) },
+                title = { Text(text = state.screenTitle) },
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),

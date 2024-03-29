@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.KeepScreenOn
+import com.timerx.ui.SetStatusBarColor
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.run.RunViewModel.TimerState.Finished
 import com.timerx.ui.run.RunViewModel.TimerState.Paused
@@ -72,38 +73,40 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val displayColor = displayColor(state.backgroundColor)
 
     KeepScreenOn()
+    SetStatusBarColor(state.backgroundColor)
+
+    var controlsVisible by remember { mutableStateOf(false) }
+    var touchCounter by remember { mutableIntStateOf(1) }
+
+    LaunchedEffect(touchCounter) {
+        delay(CONTROLS_HIDE_DELAY)
+        if (state.timerState == Running) {
+            controlsVisible = false
+        }
+    }
+
+    BackHandler(true) {
+        controlsVisible = true
+        touchCounter++
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
+                controlsVisible = true
+                touchCounter++
+            }
             .background(state.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
-        var controlsVisible by remember { mutableStateOf(false) }
-        var touchCounter by remember { mutableIntStateOf(1) }
-
-        LaunchedEffect(touchCounter) {
-            delay(CONTROLS_HIDE_DELAY)
-            if (state.timerState == Running) {
-                controlsVisible = false
-            }
-        }
-
-        BackHandler(true) {
-            controlsVisible = true
-            touchCounter++
-        }
 
         Column(
             modifier = Modifier.padding(16.dp)
-                .safeDrawingPadding()
-                .clickable(
-                    interactionSource = MutableInteractionSource(),
-                    indication = null
-                ) {
-                    controlsVisible = true
-                    touchCounter++
-                },
+                .safeDrawingPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(controlsVisible) {
@@ -151,18 +154,18 @@ private fun TimerInformation(
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = state.intervalName.uppercase(),
-            style = typography.displayLarge,
-            color = displayColor
-        )
-        Spacer(modifier = Modifier.height(24.dp))
         AnimatedNumber(
             value = if (state.displayCountAsUp) state.elapsed
             else state.intervalDuration - state.elapsed,
-            style = typography.displaySmall,
+            style = typography.displayLarge,
             color = displayColor,
             formatter = { it.timeFormatted() },
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = state.intervalName.uppercase(),
+            style = typography.displaySmall,
+            color = displayColor
         )
         Spacer(modifier = Modifier.height(24.dp))
         if (state.manualNext) {
@@ -270,6 +273,10 @@ private fun BottomControls(
 }
 
 private const val HALF_LUMINANCE = 0.5F
-private fun displayColor(backgroundColor: Color): Color {
-    return if (backgroundColor.luminance() > HALF_LUMINANCE) Color.Black else Color.White
+fun displayColor(backgroundColor: Color): Color {
+    return if (isColorDark(backgroundColor)) Color.White else Color.Black
+}
+
+fun isColorDark(color: Color): Boolean {
+    return color.luminance() < HALF_LUMINANCE
 }
