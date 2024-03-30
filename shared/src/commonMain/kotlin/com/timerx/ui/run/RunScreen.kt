@@ -4,6 +4,7 @@ package com.timerx.ui.run
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -71,7 +72,7 @@ import timerx.shared.generated.resources.restart
 private const val CONTROLS_HIDE_DELAY = 3000L
 private val CORNER_ICON_SIZE = 48.dp
 
-private const val CROSS_FADE_DURATION = 500
+private const val CROSS_FADE_DURATION = 600
 
 @Composable
 fun RunScreen(timerId: String, navigateUp: () -> Unit) {
@@ -79,16 +80,21 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
 
-val backgroundColor = if (state.timerState == Paused) {
+    val backgroundColor = if (state.timerState == Paused) {
         MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
             .compositeOver(state.backgroundColor)
     } else {
         state.backgroundColor
     }
 
+    val animatedColor by animateColorAsState(
+        backgroundColor,
+        animationSpec = tween(CROSS_FADE_DURATION)
+    )
+
     val contrastDisplayColor = displayColor(backgroundColor)
     KeepScreenOn()
-    SetStatusBarColor(backgroundColor)
+    SetStatusBarColor(animatedColor)
 
     var controlsVisible by remember { mutableStateOf(false) }
     var touchCounter by remember { mutableIntStateOf(1) }
@@ -115,7 +121,7 @@ val backgroundColor = if (state.timerState == Paused) {
                 controlsVisible = true
                 touchCounter++
             }
-            .background(backgroundColor),
+            .background(animatedColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
