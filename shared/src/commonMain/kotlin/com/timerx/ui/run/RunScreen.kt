@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -76,10 +78,17 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val viewModel: RunViewModel =
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
-    val displayColor = displayColor(state.backgroundColor)
 
+val backgroundColor = if (state.timerState == Paused) {
+        MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
+            .compositeOver(state.backgroundColor)
+    } else {
+        state.backgroundColor
+    }
+
+    val contrastDisplayColor = displayColor(backgroundColor)
     KeepScreenOn()
-    SetStatusBarColor(state.backgroundColor)
+    SetStatusBarColor(backgroundColor)
 
     var controlsVisible by remember { mutableStateOf(false) }
     var touchCounter by remember { mutableIntStateOf(1) }
@@ -91,7 +100,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         }
     }
 
-    BackHandler(true) {
+    BackHandler(state.timerState != Finished) {
         controlsVisible = true
         touchCounter++
     }
@@ -106,7 +115,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                 controlsVisible = true
                 touchCounter++
             }
-            .background(state.backgroundColor),
+            .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -115,7 +124,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(controlsVisible) {
-                TopControls(viewModel, displayColor) {
+                TopControls(viewModel, contrastDisplayColor) {
                     touchCounter++
                 }
             }
@@ -123,14 +132,14 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
 
             TimerInformation(
                 state,
-                displayColor,
+                contrastDisplayColor,
                 viewModel.interactions,
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             AnimatedVisibility(controlsVisible) {
-                BottomControls(state, navigateUp, displayColor, viewModel.interactions) {
+                BottomControls(state, navigateUp, contrastDisplayColor, viewModel.interactions) {
                     touchCounter++
                 }
             }
