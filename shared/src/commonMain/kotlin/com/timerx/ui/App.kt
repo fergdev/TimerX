@@ -5,7 +5,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
-import com.timerx.sharedModule
+import com.timerx.timerXKoinApp
 import com.timerx.ui.create.CreateScreen
 import com.timerx.ui.main.MainScreen
 import com.timerx.ui.run.RunScreen
@@ -15,7 +15,7 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import org.koin.compose.KoinApplication
+import org.koin.compose.KoinIsolatedContext
 
 private const val TIMER_ID_OPTIONAL = "{timerId}?"
 private const val TIMER_ID_RAW = "timerId"
@@ -42,13 +42,10 @@ sealed class Screen(val route: String) {
     }
 }
 
-
 @Composable
 fun App() {
     PreComposeApp {
-        KoinApplication(
-            application = { modules(sharedModule()) }
-        ) {
+        KoinIsolatedContext(context = timerXKoinApp) {
             TimerXTheme {
                 val navigator = rememberNavigator()
                 NavHost(
