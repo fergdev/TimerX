@@ -92,10 +92,24 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         animationSpec = tween(CROSS_FADE_DURATION)
     )
 
-    val contrastDisplayColor = displayColor(backgroundColor)
     KeepScreenOn()
     SetStatusBarColor(animatedColor)
 
+    RunView(
+        backgroundColor = animatedColor,
+        interactions = viewModel.interactions,
+        state = state,
+        navigateUp = navigateUp
+    )
+}
+
+@Composable
+private fun RunView(
+    backgroundColor: Color,
+    interactions: RunViewModel.Interactions,
+    state: RunViewModel.RunState,
+    navigateUp: () -> Unit,
+) {
     var controlsVisible by remember { mutableStateOf(false) }
     var touchCounter by remember { mutableIntStateOf(1) }
 
@@ -110,7 +124,6 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         controlsVisible = true
         touchCounter++
     }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -121,16 +134,18 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
                 controlsVisible = true
                 touchCounter++
             }
-            .background(animatedColor),
+            .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
+        val contrastDisplayColor = contrastColor(backgroundColor)
         Column(
             modifier = Modifier.padding(16.dp)
                 .safeDrawingPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(controlsVisible) {
-                TopControls(viewModel, contrastDisplayColor) {
+                TopControls(interactions, contrastDisplayColor) {
+                    controlsVisible = true
                     touchCounter++
                 }
             }
@@ -139,13 +154,14 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
             TimerInformation(
                 state,
                 contrastDisplayColor,
-                viewModel.interactions,
+                interactions,
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             AnimatedVisibility(controlsVisible) {
-                BottomControls(state, navigateUp, contrastDisplayColor, viewModel.interactions) {
+                BottomControls(state, navigateUp, contrastDisplayColor, interactions) {
+                    controlsVisible = true
                     touchCounter++
                 }
             }
@@ -212,14 +228,14 @@ private fun TimerInformation(
 
 @Composable
 private fun TopControls(
-    viewModel: RunViewModel,
+    interactions: RunViewModel.Interactions,
     displayColor: Color,
     incrementTouchCounter: () -> Unit
 ) {
     Row {
         IconButton(onClick = {
             incrementTouchCounter()
-            viewModel.interactions.previousInterval()
+            interactions.previousInterval()
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
@@ -231,7 +247,7 @@ private fun TopControls(
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = {
             incrementTouchCounter()
-            viewModel.interactions.nextInterval()
+            interactions.nextInterval()
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
@@ -307,7 +323,7 @@ private fun BottomControls(
 }
 
 private const val HALF_LUMINANCE = 0.5F
-fun displayColor(backgroundColor: Color): Color {
+fun contrastColor(backgroundColor: Color): Color {
     return if (isColorDark(backgroundColor)) Color.White else Color.Black
 }
 

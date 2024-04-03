@@ -26,11 +26,11 @@ sealed class Screen(val route: String) {
     data object SettingsScreen : Screen("settings")
     data object AddScreen : Screen("create/{timerId}?") {
 
-        fun addScreen(): String {
+        fun addRoute(): String {
             return route.replace("/$TIMER_ID_OPTIONAL", "")
         }
 
-        fun editScreen(id: String): String {
+        fun editRoute(id: String): String {
             return route.replace(TIMER_ID_OPTIONAL, id)
         }
     }
@@ -57,9 +57,9 @@ fun App() {
                             navigateSettingsScreen = {
                                 navigator.navigate(Screen.SettingsScreen.route)
                             }, navigateAddScreen = {
-                                navigator.navigate(Screen.AddScreen.addScreen())
+                                navigator.navigate(Screen.AddScreen.addRoute())
                             }, navigateEditScreen = {
-                                navigator.navigate(Screen.AddScreen.editScreen(it))
+                                navigator.navigate(Screen.AddScreen.editRoute(it))
                             }, navigateRunScreen = {
                                 navigator.navigate(Screen.RunScreen.withParam(it))
                             })
