@@ -24,10 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.timerx.ui.CustomIcons
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.NumberIncrement
 import org.jetbrains.compose.resources.ExperimentalResourceApi

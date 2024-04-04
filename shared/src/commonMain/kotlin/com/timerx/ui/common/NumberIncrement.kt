@@ -6,7 +6,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.forEachGesture
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -17,12 +21,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.CustomIcons
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
@@ -41,17 +53,37 @@ fun NumberIncrement(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = { onChange(value - 1) }, enabled = negativeButtonEnabled) {
+        IconButton(
+            onClick = {},
+            enabled = negativeButtonEnabled
+        ) {
             Icon(
-                modifier = Modifier.size(CustomIcons.defaultIconSize),
+                modifier = Modifier.size(CustomIcons.defaultIconSize)
+                    .repeatingClickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        enabled = true,
+                        maxDelayMillis = 500,
+                        minDelayMillis = 100,
+                        delayDecayFactor = .4f
+                    ) { onChange(value - 1) },
                 imageVector = CustomIcons.checkIndeterminateSmall(),
                 contentDescription = stringResource(Res.string.minus)
             )
         }
         AnimatedNumber(value = value, formatter = formatter)
-        IconButton(onClick = { onChange(value + 1) }, enabled = positiveButtonEnabled) {
+        IconButton(
+            onClick = {},
+            enabled = positiveButtonEnabled
+        ) {
             Icon(
-                modifier = Modifier.size(CustomIcons.defaultIconSize),
+                modifier = Modifier.size(CustomIcons.defaultIconSize)
+                    .repeatingClickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        enabled = true,
+                        maxDelayMillis = 500,
+                        minDelayMillis = 100,
+                        delayDecayFactor = .4f
+                    ) { onChange(value + 1) },
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(Res.string.add)
             )
@@ -66,20 +98,49 @@ fun AnimatedNumber(
     color: Color = Color.Unspecified,
     formatter: (Int) -> String
 ) {
-    AnimatedContent(
-        targetState = value,
-        transitionSpec = {
-            if (targetState > initialState) {
-                slideInVertically { -it } togetherWith slideOutVertically { it }
-            } else {
-                slideInVertically { it } togetherWith slideOutVertically { -it }
+    AnimatedContent(targetState = value, transitionSpec = {
+        if (targetState > initialState) {
+            slideInVertically { -it } togetherWith slideOutVertically { it }
+        } else {
+            slideInVertically { it } togetherWith slideOutVertically { -it }
+        }
+    }) { count ->
+        Text(
+            text = formatter(count), style = style, color = color
+        )
+    }
+}
+
+fun Modifier.repeatingClickable(
+    interactionSource: InteractionSource,
+    enabled: Boolean,
+    maxDelayMillis: Long = 1000,
+    minDelayMillis: Long = 5,
+    delayDecayFactor: Float = .20f,
+    onClick: () -> Unit
+): Modifier = composed {
+
+    val currentClickListener by rememberUpdatedState(onClick)
+
+    pointerInput(interactionSource, enabled) {
+        forEachGesture {
+            coroutineScope {
+                awaitPointerEventScope {
+                    val down = awaitFirstDown(requireUnconsumed = false)
+                    val heldButtonJob = launch {
+                        var currentDelayMillis = maxDelayMillis
+                        while (enabled && down.pressed) {
+                            currentClickListener()
+                            delay(currentDelayMillis)
+                            val nextMillis =
+                                currentDelayMillis - (currentDelayMillis * delayDecayFactor)
+                            currentDelayMillis = nextMillis.toLong().coerceAtLeast(minDelayMillis)
+                        }
+                    }
+                    waitForUpOrCancellation()
+                    heldButtonJob.cancel()
+                }
             }
         }
-    ) { count ->
-        Text(
-            text = formatter(count),
-            style = style,
-            color = color
-        )
     }
 }

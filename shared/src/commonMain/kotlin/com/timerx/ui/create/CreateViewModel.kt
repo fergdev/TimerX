@@ -40,18 +40,30 @@ class CreateViewModel(
     private val workString: String = runBlocking { getString(Res.string.work) }
     private val restString: String = runBlocking { getString(Res.string.rest) }
 
-    private val defaultTimerSet = TimerSet(
-        repetitions = 5, intervals = persistentListOf(
-            TimerInterval(
-                name = workString, duration = 30, color = Color.Green
-            ), TimerInterval(
-                name = restString, duration = 30, color = Color.Red
+    private var defaultIdGenerator = 0
+    private fun defaultTimerSet(): TimerSet {
+        return TimerSet(
+            id = "${defaultIdGenerator++}",
+            repetitions = 5,
+            intervals = persistentListOf(
+                TimerInterval(
+                    name = workString, duration = 30, color = Color.Green
+                ), TimerInterval(
+                    name = restString, duration = 30, color = Color.Red
+                )
             )
         )
-    )
-    private val defaultInterval = TimerInterval(
-        name = workString, duration = 30, color = Color.Green
-    )
+    }
+
+    private val defaultIntervalIdGenerator = 0
+    private fun defaultInterval(): TimerInterval {
+        return TimerInterval(
+            id = "$defaultIntervalIdGenerator++",
+            name = workString,
+            duration = 30,
+            color = Color.Green
+        )
+    }
 
     @OptIn(FormatStringsInDatetimeFormats::class)
     private val dateTimeFormat = LocalDateTime.Format { byUnicodePattern("yyyy-MM-dd HH:mm:ss") }
@@ -172,7 +184,7 @@ class CreateViewModel(
                                 color = Color.Yellow
                             )
                         )
-                    ), defaultTimerSet.copy()
+                    ), defaultTimerSet()
                 )
             }
             _state.update {
@@ -219,20 +231,20 @@ class CreateViewModel(
     }
 
     private fun addSet() {
-        sets.add(defaultTimerSet.copy())
+        sets.add(defaultTimerSet())
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
     private fun newInterval(timerSet: TimerSet) {
-        val index = sets.indexOfFirst { it === timerSet }
+        val index = sets.indexOfFirst { it.id == timerSet.id }
         sets[index] = timerSet.copy(
-            intervals = (timerSet.intervals + defaultInterval.copy()).toPersistentList()
+            intervals = (timerSet.intervals + defaultInterval()).toPersistentList()
         )
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
     private fun moveSetUp(timerSet: TimerSet) {
-        val index = sets.indexOfFirst { it === timerSet }
+        val index = sets.indexOfFirst { it.id == timerSet.id }
         if (index == 0) return
 
         sets.removeAt(index)
@@ -242,7 +254,7 @@ class CreateViewModel(
     }
 
     private fun moveSetDown(timerSet: TimerSet) {
-        val index = sets.indexOfFirst { it === timerSet }
+        val index = sets.indexOfFirst { it.id == timerSet.id }
         if (index == sets.size - 1) return
 
         sets.removeAt(index)
@@ -252,20 +264,20 @@ class CreateViewModel(
     }
 
     private fun duplicateSet(timerSet: TimerSet) {
-        val index = sets.indexOfFirst { it === timerSet }
+        val index = sets.indexOfFirst { it.id == timerSet.id }
         sets.add(index, sets[index].copy())
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
     private fun deleteSet(timerSet: TimerSet) {
-        val index = sets.indexOfFirst { it === timerSet }
+        val index = sets.indexOfFirst { it.id == timerSet.id }
         sets.removeAt(index)
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
     private fun updateRepetitions(timerSet: TimerSet, repetitions: Int) {
         if (repetitions < 1) return
-        val index = sets.indexOfFirst { it === timerSet }
+        val index = sets.indexOfFirst { it.id == timerSet.id }
         sets[index] =
             timerSet.copy(repetitions = repetitions, intervals = if (repetitions == 1) {
                 timerSet.intervals.map {
@@ -303,12 +315,11 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-
     private fun updateIntervalDuration(timerInterval: TimerInterval, duration: Int) {
         if (duration < 1) return
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
-                if (it === timerInterval) {
+                if (it.id == timerInterval.id) {
                     it.copy(duration = duration)
                 } else {
                     it
@@ -322,7 +333,7 @@ class CreateViewModel(
     private fun updateIntervalName(timerInterval: TimerInterval, name: String) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
-                if (it === timerInterval) {
+                if (it.id == timerInterval.id) {
                     it.copy(name = name)
                 } else {
                     it
@@ -368,7 +379,7 @@ class CreateViewModel(
     private fun updateIntervalColor(timerInterval: TimerInterval, color: Color) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
-                if (it === timerInterval) {
+                if (it.id == timerInterval.id) {
                     it.copy(color = color)
                 } else {
                     it
@@ -386,7 +397,7 @@ class CreateViewModel(
     private fun updateSkipOnLastSet(timerInterval: TimerInterval, skipOnLastSet: Boolean) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
-                if (it === timerInterval) {
+                if (it.id == timerInterval.id) {
                     it.copy(skipOnLastSet = skipOnLastSet)
                 } else {
                     it
@@ -400,7 +411,7 @@ class CreateViewModel(
     private fun updateCountUp(timerInterval: TimerInterval, countUp: Boolean) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
-                if (it === timerInterval) {
+                if (it.id == timerInterval.id) {
                     it.copy(countUp = countUp)
                 } else {
                     it
@@ -414,7 +425,7 @@ class CreateViewModel(
     private fun updateManualNext(timerInterval: TimerInterval, manualNext: Boolean) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
-                if (it === timerInterval) {
+                if (it.id == timerInterval.id) {
                     it.copy(manualNext = manualNext)
                 } else {
                     it

@@ -33,9 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.timerx.ui.CustomIcons
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -79,7 +79,7 @@ internal fun Interval(
             NumberIncrement(
                 value = interval.duration,
                 negativeButtonEnabled = interval.duration > 1,
-                formatter = { it.timeFormatted() }
+                formatter = { it.timeFormatted() },
             ) {
                 interactions.interval.update.updateDuration(
                     interval,
