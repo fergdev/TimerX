@@ -10,7 +10,7 @@ koin-compose = "1.1.2"
 kotlin = "1.9.23"
 kotlinx-immutable = "0.3.7"
 kotlinxDatetime = "0.6.0-RC.2"
-pre-compose = "1.5.11"
+pre-compose = "1.6.0"
 realm = "1.14.1"
 stability-report = "1.2.0"
 
