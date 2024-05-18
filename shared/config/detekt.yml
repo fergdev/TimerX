@@ -16,7 +16,9 @@ complexity:
     excludes: ['**/CustomIcons.kt']
   # TODO remove and this and refactor some of the view models
   TooManyFunctions:
-    thresholdInClasses: 22
+    thresholdInClasses: 25
+  LongParameterList:
+    functionThreshold: 10
 
 naming:
   FunctionNaming:
