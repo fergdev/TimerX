@@ -6,15 +6,21 @@ import com.timerx.database.TimerRepo
 import com.timerx.ui.create.CreateViewModel
 import com.timerx.ui.main.MainViewModel
 import com.timerx.ui.run.RunViewModel
-import org.koin.dsl.koinApplication
+import com.timerx.ui.settings.SettingsViewModel
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-fun sharedModule() = module {
+val sharedModule = module {
     single { getBeepMaker() }
     single<ITimerRepository> { TimerRepo() }
+    single { TimerXNotificationManager() }
     factory { MainViewModel(get()) }
     factory { (timerName: String) -> CreateViewModel(timerName, get()) }
-    factory { (timerName: String) -> RunViewModel(timerName, get(), get()) }
+    factory { (timerName: String) -> RunViewModel(timerName, get(), get(), get()) }
+    factory { SettingsViewModel(get()) }
 }
+val platformModule = module { singleOf(::Platform) }
 
-val timerXKoinApp = koinApplication { modules(sharedModule()) }
+fun appModule() = listOf(sharedModule, platformModule)
+
+//val timerXKoinApp = koinApplication { modules(sharedModule()) }

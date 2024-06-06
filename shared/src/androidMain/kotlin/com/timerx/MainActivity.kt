@@ -1,4 +1,4 @@
-package com.timerx.android.main
+package com.timerx
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

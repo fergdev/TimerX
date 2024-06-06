@@ -2,6 +2,7 @@
 
 package com.timerx.ui.settings
 
+//import com.timerx.getPlatform
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,10 +15,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
-import com.timerx.getPlatform
+import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
@@ -29,6 +32,8 @@ private const val NINETY_DEGREES = 90f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navigateUp: () -> Unit) {
+    val viewModel: SettingsViewModel =
+        koinViewModel(vmClass = SettingsViewModel::class)
     Surface(modifier = Modifier.fillMaxSize()) {
         Column {
             TopAppBar(
@@ -45,7 +50,8 @@ fun SettingsScreen(navigateUp: () -> Unit) {
                 })
 
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = getPlatform().name)
+                val platform by viewModel.state.collectAsState()
+                Text(text = platform)
             }
         }
     }

@@ -5,7 +5,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
-import com.timerx.timerXKoinApp
+//import com.timerx.timerXKoinApp
 import com.timerx.ui.create.CreateScreen
 import com.timerx.ui.main.MainScreen
 import com.timerx.ui.run.RunScreen
@@ -45,7 +45,7 @@ sealed class Screen(val route: String) {
 @Composable
 fun App() {
     PreComposeApp {
-        KoinIsolatedContext(context = timerXKoinApp) {
+//        KoinIsolatedContext(context = timerXKoinApp) {
             TimerXTheme {
                 val navigator = rememberNavigator()
                 NavHost(
@@ -95,6 +95,6 @@ fun App() {
                     }
                 }
             }
-        }
+//        }
     }
 }

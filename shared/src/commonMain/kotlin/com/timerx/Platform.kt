@@ -1,7 +1,5 @@
 package com.timerx
 
-interface Platform {
+expect class Platform() {
     val name: String
 }
-
-expect fun getPlatform(): Platform

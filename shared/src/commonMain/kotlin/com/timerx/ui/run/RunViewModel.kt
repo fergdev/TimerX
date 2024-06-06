@@ -1,6 +1,7 @@
 package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
+import com.timerx.TimerXNotificationManager
 import com.timerx.beep.BeepMaker
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
@@ -19,6 +20,7 @@ class RunViewModel(
     private val timerId: String,
     timerRepository: ITimerRepository,
     private val beepMaker: BeepMaker,
+    private val notificationManager: TimerXNotificationManager,
 ) : ViewModel() {
 
     enum class TimerState {
@@ -263,6 +265,7 @@ class RunViewModel(
                 delay(TICKER_DELAY)
                 val nextElapsed = _state.value.elapsed + 1
                 _state.value = _state.value.copy(elapsed = nextElapsed)
+                notificationManager.updateNotification(notificationState())
                 if (nextElapsed == _state.value.intervalDuration) {
                     if (state.value.manualNext) {
                         break
@@ -272,6 +275,16 @@ class RunViewModel(
                 }
             }
         }
+    }
+
+    private fun notificationState(): String {
+        val set = state.value.setIndex + 1
+        val setCount = state.value.setCount
+        val interval = state.value.intervalIndex + 1
+        val intervalCount = state.value.intervalCount
+        val elapsed = state.value.elapsed
+        val intervalDuration = state.value.intervalDuration
+        return "($set / $setCount) - ($interval / $intervalCount) - ($elapsed / $intervalDuration)"
     }
 
     private fun initTimer() {
@@ -294,6 +307,7 @@ class RunViewModel(
             displayCountAsUp = firstInterval.countUp,
             manualNext = firstInterval.manualNext
         )
+        notificationManager.startService()
         beepMaker.beepStart()
         startTicker()
     }
@@ -305,6 +319,7 @@ class RunViewModel(
     override fun onCleared() {
         super.onCleared()
         stopTicker()
+        notificationManager.stopService()
     }
 
     companion object {

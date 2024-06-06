@@ -10,6 +10,14 @@ plugins {
 }
 
 kotlin {
+    // Prevents warning from using actual classes, remove when this is fully supported
+    targets.all {
+        compilations.all {
+            compilerOptions.configure {
+                freeCompilerArgs.add("-Xexpect-actual-classes")
+            }
+        }
+    }
     applyDefaultHierarchyTemplate()
 
     androidTarget()
