@@ -83,7 +83,7 @@ android {
     namespace = "com.timerx"
     compileSdk = 34
     defaultConfig {
-        minSdk = 24
+        minSdk = 31
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
