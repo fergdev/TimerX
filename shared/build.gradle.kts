@@ -66,6 +66,11 @@ kotlin {
                 api(libs.androidx.activity.compose)
             }
         }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.junit)
+            }
+        }
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -92,6 +97,8 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+}
+dependencies {
 }
 
 detekt {
