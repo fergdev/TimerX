@@ -1,7 +1,7 @@
 package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.TimerXNotificationManager
+import com.timerx.notification.TimerXNotificationManager
 import com.timerx.beep.BeepMaker
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer

@@ -1,6 +1,6 @@
 package com.timerx.ui.settings
 
-import com.timerx.Platform
+import com.timerx.platform.Platform
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

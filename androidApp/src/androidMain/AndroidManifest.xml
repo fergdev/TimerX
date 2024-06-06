@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.timerx.NotificationService"
+            android:name="com.timerx.notification.NotificationService"
             android:enabled="true"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />

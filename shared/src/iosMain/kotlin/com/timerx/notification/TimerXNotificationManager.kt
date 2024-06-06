@@ -1,4 +1,4 @@
-package com.timerx
+package com.timerx.notification
 
 actual class TimerXNotificationManager actual constructor() {
     actual fun startService() {

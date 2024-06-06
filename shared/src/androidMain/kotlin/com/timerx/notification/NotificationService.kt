@@ -1,4 +1,4 @@
-package com.timerx
+package com.timerx.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.timerx.MainActivity
 
 class NotificationService : Service() {
     override fun onBind(intent: Intent?): IBinder? {

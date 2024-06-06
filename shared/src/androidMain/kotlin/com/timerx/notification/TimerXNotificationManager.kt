@@ -1,30 +1,27 @@
-package com.timerx
+package com.timerx.notification
 
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
-import com.timerx.NotificationService.Companion.NOTIFICATION_ID
-import org.koin.mp.KoinPlatform.getKoin
+import androidx.core.content.ContextCompat
+import com.timerx.MainActivity
+import org.koin.mp.KoinPlatform
 
 actual class TimerXNotificationManager {
-    private val context: Context = getKoin().get()
+    private val context: Context = KoinPlatform.getKoin().get()
     actual fun startService() {
-        // TODO remove this sdk check
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(
-                Intent(context, NotificationService::class.java)
-            )
-        }
+        context.startForegroundService(
+            Intent(context, NotificationService::class.java)
+        )
     }
 
     actual fun updateNotification(info: String) {
-        val notificationManager = getSystemService(context, NotificationManager::class.java)
-        notificationManager!!.notify(NOTIFICATION_ID, createNotification(info))
+        val notificationManager =
+            ContextCompat.getSystemService(context, NotificationManager::class.java)
+        notificationManager!!.notify(NotificationService.NOTIFICATION_ID, createNotification(info))
     }
 
     actual fun stopService() {

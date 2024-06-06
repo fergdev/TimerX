@@ -1,4 +1,4 @@
-package com.timerx
+package com.timerx.notification
 
 expect class TimerXNotificationManager() {
 

@@ -1,8 +1,10 @@
-package com.timerx
+package com.timerx.di
 
+import com.timerx.notification.TimerXNotificationManager
 import com.timerx.beep.getBeepMaker
 import com.timerx.database.ITimerRepository
 import com.timerx.database.TimerRepo
+import com.timerx.platform.Platform
 import com.timerx.ui.create.CreateViewModel
 import com.timerx.ui.main.MainViewModel
 import com.timerx.ui.run.RunViewModel
@@ -22,5 +24,3 @@ val sharedModule = module {
 val platformModule = module { singleOf(::Platform) }
 
 fun appModule() = listOf(sharedModule, platformModule)
-
-//val timerXKoinApp = koinApplication { modules(sharedModule()) }
