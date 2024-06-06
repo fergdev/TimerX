@@ -10,6 +10,8 @@ style:
     excludes: ['**/CustomIcons.kt']
   ReturnCount:
     max: 3
+  NewLineAtEndOfFile:
+    active: false
 
 complexity:
   LongMethod:
