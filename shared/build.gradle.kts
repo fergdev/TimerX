@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.realm)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -97,8 +98,6 @@ android {
     kotlin {
         jvmToolchain(17)
     }
-}
-dependencies {
 }
 
 detekt {

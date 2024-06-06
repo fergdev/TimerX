@@ -39,3 +39,6 @@ google-services.json
 xcuserdata
 xcuserdata/*
 *.xcuserstate
+
+# kotlin
+.kotlin/
