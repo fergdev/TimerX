@@ -76,7 +76,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
-				AC68F1222C150D740066FA45 /* alert.mp3 */,
+				AC68F1242C1521DB0066FA45 /* alerts */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -91,6 +91,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AC68F1242C1521DB0066FA45 /* alerts */ = {
+			isa = PBXGroup;
+			children = (
+				AC68F1222C150D740066FA45 /* alert.mp3 */,
+			);
+			path = alerts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
