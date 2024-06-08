@@ -1,24 +1,39 @@
 package com.timerx.beep
 
-import platform.AudioToolbox.AudioServicesPlayAlertSound
+import kotlinx.cinterop.ExperimentalForeignApi
+import platform.AVFAudio.AVAudioPlayer
+import platform.Foundation.NSBundle
 
-actual fun getBeepMaker(): BeepMaker = BeepMakerImpl()
+actual fun getBeepMaker(volumeManager: VolumeManager): BeepMaker = BeepMakerImpl(volumeManager)
 
-class BeepMakerImpl : BeepMaker {
+@OptIn(ExperimentalForeignApi::class)
+class BeepMakerImpl(private val volumeManager: VolumeManager) : BeepMaker {
 
     override fun beepNext() {
-        AudioServicesPlayAlertSound(1120u)
+        playSound()
     }
 
     override fun beepPrevious() {
-        AudioServicesPlayAlertSound(1111u)
+        playSound()
     }
 
     override fun beepFinished() {
-        AudioServicesPlayAlertSound(1112u)
+        playSound()
     }
 
     override fun beepStarted() {
-        AudioServicesPlayAlertSound(1113u)
+        playSound()
     }
+
+    private fun playSound() {
+        val soundURL = NSBundle.mainBundle.URLForResource("alert", "mp3")
+        if (soundURL == null) {
+            println("Sound not found")
+            return
+        }
+        val avAudioPlayer = AVAudioPlayer(contentsOfURL = soundURL, error = null)
+        avAudioPlayer.setVolume(volumeManager.getVolume())
+        avAudioPlayer.play()
+    }
+
 }

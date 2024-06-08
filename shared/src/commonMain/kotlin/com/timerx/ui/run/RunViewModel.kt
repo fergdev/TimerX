@@ -3,8 +3,10 @@ package com.timerx.ui.run
 import androidx.compose.ui.graphics.Color
 import com.timerx.RunState
 import com.timerx.TimerEvent
+import com.timerx.TimerState
 import com.timerx.TimerStateMachineImpl
 import com.timerx.beep.BeepMaker
+import com.timerx.beep.VolumeManager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.notification.TimerXNotificationManager
@@ -15,49 +17,31 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
-sealed interface RunScreenState {
-    val backgroundColor: Color
-
-    class Finished(override val backgroundColor: Color) : RunScreenState
-
-    sealed class TimerInfo(
-        override val backgroundColor: Color,
-        val index: String? = "",
-        val time: Int = 0,
-        val name: String = "",
-        val manualNext: Boolean = false,
-    ) : RunScreenState
-
-    class Running(
-        backgroundColor: Color,
-        index: String? = "",
-        elapsed: Int = 0,
-        name: String = "",
-        manualNext: Boolean = false,
-    ) : TimerInfo(backgroundColor, index, elapsed, name, manualNext)
-
-    class Paused(
-        backgroundColor: Color,
-        index: String? = "",
-        elapsed: Int = 0,
-        name: String = "",
-        manualNext: Boolean = false
-    ) : TimerInfo(backgroundColor, index, elapsed, name, manualNext)
-}
+data class RunScreenState(
+    val timerState: TimerState = TimerState.Running,
+    val backgroundColor: Color,
+    val volume: Float,
+    val index: String? = "",
+    val time: Int = 0,
+    val name: String = "",
+    val manualNext: Boolean = false,
+)
 
 class RunViewModel(
     private val timerId: String,
     timerRepository: ITimerRepository,
     private val beepMaker: BeepMaker,
     private val notificationManager: TimerXNotificationManager,
+    private val volumeManager: VolumeManager
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
     private val timerStateMachine = TimerStateMachineImpl(timer)
 
-    private val _state = MutableStateFlow<RunScreenState>(
-        RunScreenState.Running(
-            backgroundColor = Color.Transparent
+    private val _state = MutableStateFlow(
+        RunScreenState(
+            backgroundColor = Color.Transparent,
+            volume = volumeManager.getVolume()
         )
     )
 
@@ -69,7 +53,8 @@ class RunViewModel(
         val nextInterval: () -> Unit,
         val previousInterval: () -> Unit,
         val onManualNext: () -> Unit,
-        val restartTimer: () -> Unit
+        val restartTimer: () -> Unit,
+        val updateVolume: (Float) -> Unit
     )
 
     val interactions = Interactions(
@@ -78,17 +63,22 @@ class RunViewModel(
         nextInterval = timerStateMachine::nextInterval,
         previousInterval = timerStateMachine::previousInterval,
         onManualNext = ::onManualNext,
-        restartTimer = ::initTimer
+        restartTimer = ::initTimer,
+        updateVolume = ::updateVolume
     )
 
     init {
         initTimer()
+        viewModelScope.launch {
+            volumeManager.volumeFlow.collect { volume ->
+                _state.update { it.copy(volume = volume) }
+            }
+        }
     }
 
     private fun initTimer() {
         viewModelScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
-                println(timerEvent::class.simpleName)
                 val elapsed = if (timerEvent.runState.displayCountAsUp) {
                     timerEvent.runState.elapsed
                 } else {
@@ -102,29 +92,34 @@ class RunViewModel(
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
                         _state.update {
-                            RunScreenState.Running(
+                            it.copy(
                                 backgroundColor = timerEvent.runState.backgroundColor,
-                                index,
-                                elapsed,
-                                timerEvent.runState.intervalName
+                                index = index,
+                                time = elapsed,
+                                name = timerEvent.runState.intervalName
                             )
                         }
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
                     }
 
                     is TimerEvent.Finished -> {
-                        _state.value = RunScreenState.Finished(timerEvent.runState.backgroundColor)
+                        _state.update {
+                            it.copy(
+                                timerState = TimerState.Finished,
+                                backgroundColor = timerEvent.runState.backgroundColor,
+                            )
+                        }
                         beepMaker.beepFinished()
                         notificationManager.stop()
                     }
 
                     is TimerEvent.NextInterval -> {
                         _state.update {
-                            RunScreenState.Running(
+                            it.copy(
                                 backgroundColor = timerEvent.runState.backgroundColor,
-                                index,
-                                elapsed,
-                                timerEvent.runState.intervalName
+                                index = index,
+                                time = elapsed,
+                                name = timerEvent.runState.intervalName
                             )
                         }
                         beepMaker.beepNext()
@@ -132,23 +127,26 @@ class RunViewModel(
 
                     is TimerEvent.PreviousInterval -> {
                         _state.update {
-                            RunScreenState.Running(
+                            it.copy(
                                 backgroundColor = timerEvent.runState.backgroundColor,
-                                index,
-                                elapsed,
-                                timerEvent.runState.intervalName
+                                index = index,
+                                time = elapsed,
+                                name = timerEvent.runState.intervalName
                             )
                         }
                         beepMaker.beepPrevious()
                     }
 
                     is TimerEvent.Started -> {
-                        _state.value = RunScreenState.Running(
-                            backgroundColor = timerEvent.runState.backgroundColor,
-                            index,
-                            elapsed,
-                            timerEvent.runState.intervalName
-                        )
+                        _state.update {
+                            it.copy(
+                                backgroundColor = timerEvent.runState.backgroundColor,
+                                timerState = TimerState.Running,
+                                index = index,
+                                time = elapsed,
+                                name = timerEvent.runState.intervalName
+                            )
+                        }
 
                         beepMaker.beepStarted()
                         notificationManager.start()
@@ -156,12 +154,15 @@ class RunViewModel(
 
                     is TimerEvent.Stopped -> {
                         notificationManager.stop()
-                        _state.value = RunScreenState.Paused(
-                            backgroundColor = timerEvent.runState.backgroundColor,
-                            index,
-                            elapsed,
-                            timerEvent.runState.intervalName
-                        )
+                        _state.update {
+                            it.copy(
+                                backgroundColor = timerEvent.runState.backgroundColor,
+                                timerState = TimerState.Paused,
+                                index = index,
+                                time = elapsed,
+                                name = timerEvent.runState.intervalName
+                            )
+                        }
                     }
                 }
             }
@@ -181,6 +182,10 @@ class RunViewModel(
 
     private fun onManualNext() {
         timerStateMachine.nextInterval()
+    }
+
+    private fun updateVolume(volume: Float) {
+        volumeManager.setVolume(volume)
     }
 
     override fun onCleared() {

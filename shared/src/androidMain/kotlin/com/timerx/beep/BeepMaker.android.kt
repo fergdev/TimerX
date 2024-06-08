@@ -1,35 +1,41 @@
 package com.timerx.beep
 
-import android.media.AudioManager
-import android.media.ToneGenerator
+import android.content.Context
+import android.media.MediaPlayer
+import com.timerx.R
+import org.koin.mp.KoinPlatform
 
-actual fun getBeepMaker(): BeepMaker = BeepMakerImpl()
+actual fun getBeepMaker(volumeManager: VolumeManager): BeepMaker = BeepMakerImpl(volumeManager)
 
-class BeepMakerImpl : BeepMaker {
-    private val toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, VOLUME)
+class BeepMakerImpl(private val volumeManager: VolumeManager) : BeepMaker {
+    private val context: Context = KoinPlatform.getKoin().get()
+    private var mediaPlayer: MediaPlayer? = null
+
+    private fun playSound() {
+        mediaPlayer = MediaPlayer.create(context, R.raw.alert)
+        mediaPlayer?.setOnCompletionListener {
+            it.release()
+        }
+        val volume = volumeManager.getVolume()
+        println("Playing with $volume")
+        mediaPlayer?.setVolume(volume, volume)
+        mediaPlayer?.start()
+    }
 
     override fun beepStarted() {
-        toneGenerator.startTone(ToneGenerator.TONE_CDMA_HIGH_PBX_S_X4, THOUSAND_MILLIS)
+        playSound()
     }
 
     override fun beepNext() {
-        toneGenerator.startTone(
-            ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL,
-            FIVE_HUNDRED_MILLIS
-        )
+        playSound()
     }
 
     override fun beepPrevious() {
-        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, FIVE_HUNDRED_MILLIS)
+        playSound()
     }
 
     override fun beepFinished() {
-        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, THOUSAND_MILLIS)
+        playSound()
     }
 
-    companion object {
-        private const val VOLUME = 100
-        private const val THOUSAND_MILLIS = 1000
-        private const val FIVE_HUNDRED_MILLIS = 500
-    }
 }
