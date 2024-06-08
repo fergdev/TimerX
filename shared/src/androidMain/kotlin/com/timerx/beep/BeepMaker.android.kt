@@ -8,7 +8,7 @@ actual fun getBeepMaker(): BeepMaker = BeepMakerImpl()
 class BeepMakerImpl : BeepMaker {
     private val toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, VOLUME)
 
-    override fun beepStart() {
+    override fun beepStarted() {
         toneGenerator.startTone(ToneGenerator.TONE_CDMA_HIGH_PBX_S_X4, THOUSAND_MILLIS)
     }
 
@@ -19,7 +19,7 @@ class BeepMakerImpl : BeepMaker {
         )
     }
 
-    override fun beepBack() {
+    override fun beepPrevious() {
         toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, FIVE_HUNDRED_MILLIS)
     }
 

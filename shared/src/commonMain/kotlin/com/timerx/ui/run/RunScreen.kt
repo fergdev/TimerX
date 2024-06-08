@@ -51,9 +51,9 @@ import com.timerx.ui.CustomIcons
 import com.timerx.ui.KeepScreenOn
 import com.timerx.ui.SetStatusBarColor
 import com.timerx.ui.common.AnimatedNumber
-import com.timerx.ui.run.RunViewModel.TimerState.Finished
-import com.timerx.ui.run.RunViewModel.TimerState.Paused
-import com.timerx.ui.run.RunViewModel.TimerState.Running
+import com.timerx.ui.run.RunScreenState.Finished
+import com.timerx.ui.run.RunScreenState.Paused
+import com.timerx.ui.run.RunScreenState.Running
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.BackHandler
@@ -80,7 +80,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
 
-    val backgroundColor = if (state.timerState == Paused) {
+    val backgroundColor = if (state is Paused) {
         MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
             .compositeOver(state.backgroundColor)
     } else {
@@ -107,7 +107,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
 private fun RunView(
     backgroundColor: Color,
     interactions: RunViewModel.Interactions,
-    state: RunViewModel.RunState,
+    state: RunScreenState,
     navigateUp: () -> Unit,
 ) {
     var controlsVisible by remember { mutableStateOf(false) }
@@ -115,12 +115,12 @@ private fun RunView(
 
     LaunchedEffect(touchCounter) {
         delay(CONTROLS_HIDE_DELAY)
-        if (state.timerState == Running) {
+        if (state is Paused) {
             controlsVisible = false
         }
     }
 
-    BackHandler(state.timerState != Finished) {
+    BackHandler(state !is Finished) {
         controlsVisible = true
         touchCounter++
     }
@@ -171,56 +171,59 @@ private fun RunView(
 
 @Composable
 private fun TimerInformation(
-    state: RunViewModel.RunState,
+    state: RunScreenState,
     displayColor: Color,
     interactions: RunViewModel.Interactions,
 ) {
-    if (state.timerState == Finished) {
-        Text(
-            text = stringResource(Res.string.finished).uppercase(),
-            style = typography.displayLarge,
-            color = displayColor
-        )
-    } else {
-        if (state.setRepetitionCount != 1) {
+    when (state) {
+        !is RunScreenState.TimerInfo -> {
+            Text(
+                text = stringResource(Res.string.finished).uppercase(),
+                style = typography.displayLarge,
+                color = displayColor
+            )
+        }
+
+        else -> {
+            state.index?.let {
+                Crossfade(
+                    targetState = state.index,
+                    animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.index,
+                        color = displayColor,
+                        style = typography.displaySmall,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            AnimatedNumber(
+                value = state.time,
+                style = typography.displayLarge,
+                color = displayColor,
+                formatter = { it.timeFormatted() },
+            )
+            Spacer(modifier = Modifier.height(24.dp))
             Crossfade(
-                targetState = state.intervalName.uppercase(),
+                targetState = state.name,
                 animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
             ) {
                 Text(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
-                    text = "${state.setRepetitionCount - state.repetitionIndex}",
-                    color = displayColor,
+                    text = it,
                     style = typography.displaySmall,
+                    color = displayColor
                 )
             }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        AnimatedNumber(
-            value = if (state.displayCountAsUp) state.elapsed
-            else state.intervalDuration - state.elapsed,
-            style = typography.displayLarge,
-            color = displayColor,
-            formatter = { it.timeFormatted() },
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Crossfade(
-            targetState = state.intervalName.uppercase(),
-            animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                text = it,
-                style = typography.displaySmall,
-                color = displayColor
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        if (state.manualNext) {
-            Button(onClick = { interactions.onManualNext() }) {
-                Text(text = stringResource(Res.string.next))
+            Spacer(modifier = Modifier.height(24.dp))
+            if (state.manualNext) {
+                Button(onClick = { interactions.onManualNext() }) {
+                    Text(text = stringResource(Res.string.next))
+                }
             }
         }
     }
@@ -261,14 +264,14 @@ private fun TopControls(
 
 @Composable
 private fun BottomControls(
-    state: RunViewModel.RunState,
+    state: RunScreenState,
     navigateUp: () -> Unit,
     displayColor: Color,
     interactions: RunViewModel.Interactions,
     incrementTouchCounter: () -> Unit
 ) {
     Row {
-        if (state.timerState == Paused || state.timerState == Finished) {
+        if (state is Paused || state is Finished) {
             IconButton(onClick = { navigateUp() }) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),
@@ -279,9 +282,9 @@ private fun BottomControls(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        when (state.timerState) {
-            Running -> {
-                IconButton(onClick = { interactions.togglePlayState() }) {
+        when (state) {
+            is Running -> {
+                IconButton(onClick = interactions.pause) {
                     Icon(
                         modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = CustomIcons.pause(),
@@ -291,9 +294,9 @@ private fun BottomControls(
                 }
             }
 
-            Paused -> {
+            is Paused -> {
                 IconButton(onClick = {
-                    interactions.togglePlayState()
+                    interactions.play()
                     incrementTouchCounter()
                 }) {
                     Icon(
@@ -305,7 +308,7 @@ private fun BottomControls(
                 }
             }
 
-            Finished -> {
+            is Finished -> {
                 IconButton(onClick = {
                     interactions.restartTimer()
                     incrementTouchCounter()

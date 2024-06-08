@@ -2,9 +2,9 @@ package com.timerx.notification
 
 expect class TimerXNotificationManager() {
 
-    fun startService()
+    fun start()
 
-    fun stopService()
+    fun stop()
 
     fun updateNotification(info: String)
 }

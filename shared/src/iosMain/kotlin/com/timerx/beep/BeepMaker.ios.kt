@@ -10,7 +10,7 @@ class BeepMakerImpl : BeepMaker {
         AudioServicesPlayAlertSound(1120u)
     }
 
-    override fun beepBack() {
+    override fun beepPrevious() {
         AudioServicesPlayAlertSound(1111u)
     }
 
@@ -18,7 +18,7 @@ class BeepMakerImpl : BeepMaker {
         AudioServicesPlayAlertSound(1112u)
     }
 
-    override fun beepStart() {
+    override fun beepStarted() {
         AudioServicesPlayAlertSound(1113u)
     }
 }

@@ -4,7 +4,7 @@ expect fun getBeepMaker(): BeepMaker
 
 interface BeepMaker {
     fun beepNext()
-    fun beepBack()
+    fun beepPrevious()
     fun beepFinished()
-    fun beepStart()
+    fun beepStarted()
 }
