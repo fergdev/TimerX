@@ -1,13 +1,15 @@
 package com.timerx.domain
 
 import androidx.compose.ui.graphics.Color
+import com.timerx.beep.Beep
 import kotlinx.collections.immutable.ImmutableList
 
 data class Timer(
     val id: String = "",
     val name: String,
     val sets: ImmutableList<TimerSet>,
-    val finishColor: Color = Color.Red
+    val finishColor: Color = Color.Red,
+    val finishAlert: Beep = Beep.Alert
 )
 
 data class TimerSet(
@@ -23,7 +25,8 @@ data class TimerInterval(
     val color: Color = Color.Blue,
     val skipOnLastSet: Boolean = false,
     val countUp: Boolean = false,
-    val manualNext: Boolean = false
+    val manualNext: Boolean = false,
+    val alert: Beep = Beep.Alert
 )
 
 fun Int.timeFormatted(): String {

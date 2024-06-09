@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package com.timerx.ui.create
 
 import ColorPicker
@@ -45,11 +43,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.timerx.beep.Beep
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.common.AlertPicker
 import com.timerx.ui.common.AnimatedNumber
 import moe.tlaster.precompose.koin.koinViewModel
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
 import timerx.shared.generated.resources.Res
@@ -132,7 +131,7 @@ private fun CreateContent(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
         }
-        items(state.sets) {
+        items(state.sets, key = { it.hashCode() }) {
             Set(
                 timerSet = it,
                 viewModel.interactions
@@ -161,6 +160,9 @@ private fun CreateContent(
         item {
             FinishColorPicker(state.finishColor, viewModel.interactions.updateFinishColor)
         }
+        item {
+            FinishAlertPicker(state.finishAlert, viewModel.interactions.updateFinishAlert)
+        }
     }
 }
 
@@ -188,6 +190,29 @@ private fun FinishColorPicker(
                     updateFinishColor(it)
                 }
                 colorPickerVisible = false
+            }
+        }
+    }
+}
+
+@Composable
+private fun FinishAlertPicker(
+    beep: Beep,
+    updateFinishAlert: (Beep) -> Unit
+) {
+    var alertPickerVisible by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(16.dp).clickable { alertPickerVisible = true },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "Finish alert")
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = beep.displayName)
+
+        if (alertPickerVisible) {
+            AlertPicker {
+                updateFinishAlert(it)
+                alertPickerVisible = false
             }
         }
     }

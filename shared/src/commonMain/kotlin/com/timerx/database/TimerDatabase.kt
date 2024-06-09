@@ -3,6 +3,7 @@
 package com.timerx.database
 
 import androidx.compose.ui.graphics.Color
+import com.timerx.beep.Beep
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
@@ -44,6 +45,7 @@ private class RealmTimer : RealmObject {
     var name: String = ""
     var sets: RealmList<RealmSet> = realmListOf()
     var finishColor: RealmColor? = null
+    var finishAlert: Int = 0
 }
 
 private class RealmSet : RealmObject {
@@ -62,6 +64,7 @@ private class RealmInterval : RealmObject {
     var skipOnLastSet: Boolean = false
     var countUp: Boolean = false
     var manualNext: Boolean = false
+    var alertId: Int = 0
 }
 
 private fun Color.toRealmColor(): RealmColor {
@@ -110,12 +113,14 @@ class TimerRepo : ITimerRepository {
                             it.color.toComposeColor(),
                             it.skipOnLastSet,
                             it.countUp,
-                            it.manualNext
+                            it.manualNext,
+                            Beep.entries[it.alertId]
                         )
                     }.toPersistentList()
                 )
             }.toPersistentList(),
-            realmTimer.finishColor.toComposeColor()
+            realmTimer.finishColor.toComposeColor(),
+            Beep.entries[realmTimer.finishAlert]
         )
     }
 
@@ -133,11 +138,13 @@ class TimerRepo : ITimerRepository {
                             this.skipOnLastSet = it.skipOnLastSet
                             this.countUp = it.countUp
                             this.manualNext = it.manualNext
+                            this.alertId = it.alert.ordinal
                         }
                     }.toRealmList()
                 }
             }.toRealmList()
             finishColor = timer.finishColor.toRealmColor()
+            finishAlert = timer.finishAlert.ordinal
         }
         realm.writeBlocking {
             copyToRealm(realmTimer)

@@ -3,6 +3,7 @@
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
+import com.timerx.beep.Beep
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
@@ -47,9 +48,15 @@ class CreateViewModel(
             repetitions = 5,
             intervals = persistentListOf(
                 TimerInterval(
-                    name = workString, duration = 30, color = Color.Green
+                    name = workString,
+                    duration = 30,
+                    color = Color.Green,
+                    alert = Beep.Alert
                 ), TimerInterval(
-                    name = restString, duration = 30, color = Color.Red
+                    name = restString,
+                    duration = 30,
+                    color = Color.Blue,
+                    alert = Beep.Alert2
                 )
             )
         )
@@ -61,7 +68,8 @@ class CreateViewModel(
             id = "$defaultIntervalIdGenerator++",
             name = workString,
             duration = 30,
-            color = Color.Green
+            color = Color.Green,
+            alert = Beep.Alert
         )
     }
 
@@ -100,12 +108,14 @@ class CreateViewModel(
         val updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit,
         val updateCountUp: (TimerInterval, Boolean) -> Unit,
         val updateManualNext: (TimerInterval, Boolean) -> Unit,
+        val updateAlert: (TimerInterval, Beep) -> Unit
     )
 
     class Interactions(
         val updateTimerName: (String) -> Unit,
         val addSet: () -> Unit,
         val updateFinishColor: (Color) -> Unit,
+        val updateFinishAlert: (Beep) -> Unit,
         val save: () -> Unit,
 
         val set: SetInteractions,
@@ -116,6 +126,7 @@ class CreateViewModel(
         updateTimerName = ::updateTimerName,
         addSet = ::addSet,
         updateFinishColor = ::onFinishColor,
+        updateFinishAlert = ::updateFinishAlert,
         save = ::save,
 
         set = SetInteractions(
@@ -140,7 +151,8 @@ class CreateViewModel(
                 updateColor = ::updateIntervalColor,
                 updateSkipOnLastSet = ::updateSkipOnLastSet,
                 updateCountUp = ::updateCountUp,
-                updateManualNext = ::updateManualNext
+                updateManualNext = ::updateManualNext,
+                updateAlert = ::updateAlert
             ),
         )
     )
@@ -149,6 +161,7 @@ class CreateViewModel(
         val screenTitle: String = "",
         val timerName: String = "",
         val finishColor: Color = Color.Red,
+        val finishAlert: Beep = Beep.End,
         val sets: ImmutableList<TimerSet> = persistentListOf()
     )
 
@@ -167,7 +180,9 @@ class CreateViewModel(
                     it.copy(
                         screenTitle = getString(Res.string.edit_timer),
                         timerName = timerEditing.name,
-                        sets = sets.toPersistentList()
+                        sets = sets.toPersistentList(),
+                        finishColor = timerEditing.finishColor,
+                        finishAlert = timerEditing.finishAlert
                     )
                 }
             }
@@ -218,13 +233,17 @@ class CreateViewModel(
                     id = timerEditing.id,
                     name = name,
                     sets = state.value.sets,
-                    finishColor = state.value.finishColor
+                    finishColor = state.value.finishColor,
+                    finishAlert = state.value.finishAlert
                 )
             )
         } else {
             timerDatabase.insertTimer(
                 Timer(
-                    name = name, sets = state.value.sets, finishColor = state.value.finishColor
+                    name = name,
+                    sets = state.value.sets,
+                    finishColor = state.value.finishColor,
+                    finishAlert = state.value.finishAlert
                 )
             )
         }
@@ -434,5 +453,23 @@ class CreateViewModel(
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
+    private fun updateAlert(timerInterval: TimerInterval, beep: Beep) {
+        sets = sets.map { (_, repetitions, intervals) ->
+            TimerSet("", repetitions, intervals.map {
+                if (it.id == timerInterval.id) {
+                    it.copy(alert = beep)
+                } else {
+                    it
+                }
+            }.toPersistentList())
+        }.toMutableList()
+
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
+    private fun updateFinishAlert(beep: Beep) {
+        _state.update { it.copy(finishAlert = beep) }
     }
 }

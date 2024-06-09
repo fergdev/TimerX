@@ -1,7 +1,9 @@
 package com.timerx
 
 import androidx.compose.ui.graphics.Color
+import com.timerx.beep.Beep
 import com.timerx.domain.Timer
+import com.timerx.domain.TimerInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -10,11 +12,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 sealed class TimerEvent(val runState: RunState) {
-    class Started(runState: RunState) : TimerEvent(runState)
+    class Started(runState: RunState, val beep: Beep) : TimerEvent(runState)
     class Paused(runState: RunState) : TimerEvent(runState)
-    class NextInterval(runState: RunState) : TimerEvent(runState)
-    class PreviousInterval(runState: RunState) : TimerEvent(runState)
-    class Finished(runState: RunState) : TimerEvent(runState)
+
+    class NextInterval(runState: RunState, val beep: Beep) : TimerEvent(runState)
+    class PreviousInterval(runState: RunState, val beep: Beep) : TimerEvent(runState)
+    class Finished(runState: RunState, val beep: Beep) : TimerEvent(runState)
+
     class Ticker(runState: RunState) : TimerEvent(runState)
 }
 
@@ -67,7 +71,8 @@ interface TimerStateMachine {
 
 class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
     private val runState = MutableStateFlow(RunState())
-    private val _eventState = MutableStateFlow<TimerEvent>(TimerEvent.Started(runState.value))
+    private val _eventState =
+        MutableStateFlow<TimerEvent>(TimerEvent.Started(runState.value, getCurrentInterval().alert))
     private var tickerJob: Job? = null
 
     override val eventState: StateFlow<TimerEvent>
@@ -75,7 +80,7 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
 
     override fun start() {
         updateState(0, 0, 0)
-        _eventState.value = TimerEvent.Started(runState.value)
+        _eventState.value = TimerEvent.Started(runState.value, getCurrentInterval().alert)
         startTicker()
     }
 
@@ -132,7 +137,10 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
                 repetitionIndex,
                 intervalIndex,
             )
-            _eventState.value = TimerEvent.NextInterval(runState.value)
+            _eventState.value = TimerEvent.NextInterval(
+                runState.value,
+                getCurrentInterval().alert
+            )
         }
     }
 
@@ -147,7 +155,8 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
 
         if (runState.value.elapsed != 0) {
             runState.value = runState.value.copy(elapsed = 0)
-            _eventState.value = TimerEvent.PreviousInterval(runState.value)
+            _eventState.value =
+                TimerEvent.PreviousInterval(runState.value, getCurrentInterval().alert)
             return
         }
 
@@ -189,7 +198,7 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
             repetitionIndex,
             intervalIndex,
         )
-        _eventState.value = TimerEvent.PreviousInterval(runState.value)
+        _eventState.value = TimerEvent.PreviousInterval(runState.value, getCurrentInterval().alert)
     }
 
     override fun destroy() {
@@ -255,13 +264,17 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
         )
     }
 
+    private fun getCurrentInterval(): TimerInterval {
+        return timer.sets[runState.value.setIndex].intervals[runState.value.intervalIndex]
+    }
+
     private fun finishTimer() {
         runState.value = RunState(
             timerState = TimerState.Finished,
             backgroundColor = timer.finishColor
         )
         tickerJob?.cancel()
-        _eventState.value = TimerEvent.Finished(runState.value)
+        _eventState.value = TimerEvent.Finished(runState.value, timer.finishAlert)
     }
 
     companion object {

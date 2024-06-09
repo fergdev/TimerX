@@ -91,7 +91,8 @@ class RunViewModel(
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 index = index,
                                 time = elapsed,
-                                name = timerEvent.runState.intervalName
+                                name = timerEvent.runState.intervalName,
+                                manualNext = timerEvent.runState.manualNext
                             )
                         }
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
@@ -104,7 +105,7 @@ class RunViewModel(
                                 backgroundColor = timerEvent.runState.backgroundColor,
                             )
                         }
-                        beepMaker.beepFinished()
+                        beepMaker.beep(timerEvent.beep)
                         notificationManager.stop()
                     }
 
@@ -114,10 +115,11 @@ class RunViewModel(
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 index = index,
                                 time = elapsed,
-                                name = timerEvent.runState.intervalName
+                                name = timerEvent.runState.intervalName,
+                                manualNext = timerEvent.runState.manualNext
                             )
                         }
-                        beepMaker.beepNext()
+                        beepMaker.beep(timerEvent.beep)
                     }
 
                     is TimerEvent.PreviousInterval -> {
@@ -126,10 +128,11 @@ class RunViewModel(
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 index = index,
                                 time = elapsed,
-                                name = timerEvent.runState.intervalName
+                                name = timerEvent.runState.intervalName,
+                                manualNext = timerEvent.runState.manualNext
                             )
                         }
-                        beepMaker.beepPrevious()
+                        beepMaker.beep(timerEvent.beep)
                     }
 
                     is TimerEvent.Started -> {
@@ -139,11 +142,12 @@ class RunViewModel(
                                 timerState = TimerState.Running,
                                 index = index,
                                 time = elapsed,
-                                name = timerEvent.runState.intervalName
+                                name = timerEvent.runState.intervalName,
+                                manualNext = timerEvent.runState.manualNext
                             )
                         }
 
-                        beepMaker.beepStarted()
+                        beepMaker.beep(timerEvent.beep)
                         notificationManager.start()
                     }
 

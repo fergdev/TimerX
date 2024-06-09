@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
+import com.timerx.ui.common.AlertPicker
 import com.timerx.ui.common.NumberIncrement
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -190,6 +191,26 @@ private fun IntervalSwitches(
                 )
             }
         )
+    }
+
+    var alertPickerVisible by remember { mutableStateOf(false) }
+
+    if (alertPickerVisible) {
+        AlertPicker {
+            alertPickerVisible = false
+            interactions.interval.update.updateAlert(interval, it)
+        }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable { alertPickerVisible = true },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "Alert")
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(text = interval.alert.displayName)
     }
 }
 
