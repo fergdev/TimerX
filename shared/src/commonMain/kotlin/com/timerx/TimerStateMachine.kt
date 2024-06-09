@@ -4,11 +4,13 @@ import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed class TimerEvent(val runState: RunState) {
@@ -73,12 +75,14 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
     private val runState = MutableStateFlow(RunState())
     private val _eventState =
         MutableStateFlow<TimerEvent>(TimerEvent.Started(runState.value, getCurrentInterval().alert))
+
     private var tickerJob: Job? = null
 
     override val eventState: StateFlow<TimerEvent>
         get() = _eventState
 
     override fun start() {
+        runState.update { it.copy(timerState = TimerState.Running) }
         updateState(0, 0, 0)
         _eventState.value = TimerEvent.Started(runState.value, getCurrentInterval().alert)
         startTicker()
@@ -205,6 +209,7 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
         tickerJob?.cancel()
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun startTicker() {
         tickerJob = GlobalScope.launch {
             while (true) {
@@ -243,8 +248,6 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
         val displayCountAsUp = interval.countUp
 
         runState.value = runState.value.copy(
-            timerState = TimerState.Running,
-
             setIndex = setIndex,
 
             repetitionIndex = repetitionIndex,
