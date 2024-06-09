@@ -25,6 +25,7 @@ data class RunScreenState(
     val time: Int = 0,
     val name: String = "",
     val manualNext: Boolean = false,
+    val timerName: String = ""
 )
 
 class RunViewModel(
@@ -37,7 +38,12 @@ class RunViewModel(
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
     private var timerStateMachine = TimerStateMachineImpl(timer)
-    private val _state = MutableStateFlow(RunScreenState(volume = timerXSettings.volume))
+    private val _state = MutableStateFlow(
+        RunScreenState(
+            volume = timerXSettings.volume,
+            timerName = timer.name.uppercase()
+        )
+    )
 
     val state: StateFlow<RunScreenState> = _state
 

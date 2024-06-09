@@ -115,7 +115,7 @@ private fun RunView(
 
     LaunchedEffect(touchCounter) {
         delay(CONTROLS_HIDE_DELAY)
-        if (state.timerState == TimerState.Paused) {
+        if (state.timerState != TimerState.Paused) {
             controlsVisible = false
         }
     }
@@ -256,7 +256,7 @@ private fun TopControls(
                 thumbColor = displayColor,
                 activeTrackColor = displayColor
             )
-            )
+        )
         IconButton(onClick = {
             incrementTouchCounter()
             interactions.nextInterval()
@@ -279,7 +279,7 @@ private fun BottomControls(
     interactions: RunViewModel.Interactions,
     incrementTouchCounter: () -> Unit
 ) {
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         if (state.timerState == TimerState.Paused || state.timerState == TimerState.Finished) {
             IconButton(onClick = { navigateUp() }) {
                 Icon(
@@ -289,46 +289,65 @@ private fun BottomControls(
                     tint = displayColor
                 )
             }
+        } else {
+            // Empty box to align timer name
+            Box(modifier = Modifier.size(CORNER_ICON_SIZE))
         }
-        Spacer(modifier = Modifier.weight(1f))
-        when (state.timerState) {
-            TimerState.Running -> {
-                IconButton(onClick = interactions.pause) {
-                    Icon(
-                        modifier = Modifier.size(CORNER_ICON_SIZE),
-                        imageVector = CustomIcons.pause(),
-                        contentDescription = stringResource(Res.string.pause),
-                        tint = displayColor
-                    )
-                }
-            }
+        Text(
+            text = state.timerName,
+            style = typography.bodyLarge,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+            color = displayColor
+        )
+        TogglePlayButton(state, interactions, displayColor, incrementTouchCounter)
+    }
+}
 
-            TimerState.Paused -> {
-                IconButton(onClick = {
-                    interactions.play()
-                    incrementTouchCounter()
-                }) {
-                    Icon(
-                        modifier = Modifier.size(CORNER_ICON_SIZE),
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = stringResource(Res.string.play),
-                        tint = displayColor
-                    )
-                }
+@Composable
+private fun TogglePlayButton(
+    state: RunScreenState,
+    interactions: RunViewModel.Interactions,
+    displayColor: Color,
+    incrementTouchCounter: () -> Unit,
+) {
+    when (state.timerState) {
+        TimerState.Running -> {
+            IconButton(onClick = interactions.pause) {
+                Icon(
+                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    imageVector = CustomIcons.pause(),
+                    contentDescription = stringResource(Res.string.pause),
+                    tint = displayColor
+                )
             }
+        }
 
-            TimerState.Finished -> {
-                IconButton(onClick = {
-                    interactions.restartTimer()
-                    incrementTouchCounter()
-                }) {
-                    Icon(
-                        modifier = Modifier.size(CORNER_ICON_SIZE),
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(Res.string.restart),
-                        tint = displayColor
-                    )
-                }
+        TimerState.Paused -> {
+            IconButton(onClick = {
+                interactions.play()
+                incrementTouchCounter()
+            }) {
+                Icon(
+                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = stringResource(Res.string.play),
+                    tint = displayColor
+                )
+            }
+        }
+
+        TimerState.Finished -> {
+            IconButton(onClick = {
+                interactions.restartTimer()
+                incrementTouchCounter()
+            }) {
+                Icon(
+                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(Res.string.restart),
+                    tint = displayColor
+                )
             }
         }
     }
