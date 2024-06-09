@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 sealed class TimerEvent(val runState: RunState) {
     class Started(runState: RunState) : TimerEvent(runState)
-    class Stopped(runState: RunState) : TimerEvent(runState)
+    class Paused(runState: RunState) : TimerEvent(runState)
     class NextInterval(runState: RunState) : TimerEvent(runState)
     class PreviousInterval(runState: RunState) : TimerEvent(runState)
     class Finished(runState: RunState) : TimerEvent(runState)
@@ -82,7 +82,7 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
     override fun stop() {
         tickerJob?.cancel()
         runState.value = runState.value.copy(timerState = TimerState.Paused)
-        _eventState.value = TimerEvent.Stopped(runState.value)
+        _eventState.value = TimerEvent.Paused(runState.value)
     }
 
     override fun nextInterval() {

@@ -84,8 +84,8 @@ class RunViewModel(
                 } else {
                     timerEvent.runState.intervalDuration - timerEvent.runState.elapsed
                 }
-                val index = if (timerEvent.runState.repetitionIndex != 0) {
-                    "${timerEvent.runState.repetitionIndex}"
+                val index = if (timerEvent.runState.setRepetitionCount != 1) {
+                    "${timerEvent.runState.setRepetitionCount - timerEvent.runState.repetitionIndex}"
                 } else {
                     null
                 }
@@ -152,7 +152,7 @@ class RunViewModel(
                         notificationManager.start()
                     }
 
-                    is TimerEvent.Stopped -> {
+                    is TimerEvent.Paused -> {
                         notificationManager.stop()
                         _state.update {
                             it.copy(
