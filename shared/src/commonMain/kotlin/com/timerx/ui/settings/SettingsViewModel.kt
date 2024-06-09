@@ -1,17 +1,35 @@
 package com.timerx.ui.settings
 
-import com.timerx.platform.Platform
+import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import moe.tlaster.precompose.viewmodel.ViewModel
 
-class SettingsViewModel(val platform: Platform) : ViewModel(){
+data class SettingsScreenState(
+    val volume: Float = 1.0F
+)
 
-    private val _state = MutableStateFlow("")
-    val state : StateFlow<String> = _state
+class SettingsInteractions(
+    val updateVolume: (Float) -> Unit
+)
 
-    init {
-        _state.update { platform.name }
+class SettingsViewModel(
+    private val timerXSettings: TimerXSettings
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(
+        SettingsScreenState(
+            volume = timerXSettings.volume
+        )
+    )
+    val state: StateFlow<SettingsScreenState> = _state
+    val interactions = SettingsInteractions(
+        updateVolume = ::updateVolume
+    )
+
+    private fun updateVolume(volume: Float) {
+        timerXSettings.volume = volume
+        _state.update { it.copy(volume = volume) }
     }
 }

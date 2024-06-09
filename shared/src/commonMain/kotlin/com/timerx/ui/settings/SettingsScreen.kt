@@ -2,7 +2,6 @@
 
 package com.timerx.ui.settings
 
-//import com.timerx.getPlatform
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -50,8 +50,12 @@ fun SettingsScreen(navigateUp: () -> Unit) {
                 })
 
             Column(modifier = Modifier.padding(16.dp)) {
-                val platform by viewModel.state.collectAsState()
-                Text(text = platform)
+                val state by viewModel.state.collectAsState()
+                Text(text = "Volume")
+                Slider(
+                    value = state.volume,
+                    onValueChange = viewModel.interactions.updateVolume
+                )
             }
         }
     }
