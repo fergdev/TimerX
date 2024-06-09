@@ -12,6 +12,9 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		AC68F1232C150D740066FA45 /* alert.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AC68F1222C150D740066FA45 /* alert.mp3 */; };
+		AC68F1262C1539AB0066FA45 /* whistle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AC68F1252C1539AB0066FA45 /* whistle.mp3 */; };
+		AC68F1282C153C5F0066FA45 /* alert2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AC68F1272C153C5F0066FA45 /* alert2.mp3 */; };
+		AC68F12A2C153F050066FA45 /* end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AC68F1292C153F050066FA45 /* end.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +38,9 @@
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC68F1222C150D740066FA45 /* alert.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alert.mp3; sourceTree = "<group>"; };
+		AC68F1252C1539AB0066FA45 /* whistle.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = whistle.mp3; sourceTree = "<group>"; };
+		AC68F1272C153C5F0066FA45 /* alert2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alert2.mp3; sourceTree = "<group>"; };
+		AC68F1292C153F050066FA45 /* end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = end.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +102,9 @@
 		AC68F1242C1521DB0066FA45 /* alerts */ = {
 			isa = PBXGroup;
 			children = (
+				AC68F1272C153C5F0066FA45 /* alert2.mp3 */,
+				AC68F1292C153F050066FA45 /* end.mp3 */,
+				AC68F1252C1539AB0066FA45 /* whistle.mp3 */,
 				AC68F1222C150D740066FA45 /* alert.mp3 */,
 			);
 			path = alerts;
@@ -161,7 +170,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC68F12A2C153F050066FA45 /* end.mp3 in Resources */,
+				AC68F1282C153C5F0066FA45 /* alert2.mp3 in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
+				AC68F1262C1539AB0066FA45 /* whistle.mp3 in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				AC68F1232C150D740066FA45 /* alert.mp3 in Resources */,
 			);

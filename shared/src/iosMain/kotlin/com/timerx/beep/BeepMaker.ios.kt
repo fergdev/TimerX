@@ -10,25 +10,25 @@ actual fun getBeepMaker(volumeManager: VolumeManager): BeepMaker = BeepMakerImpl
 class BeepMakerImpl(private val volumeManager: VolumeManager) : BeepMaker {
 
     override fun beepNext() {
-        playSound()
+        playSound(Beep.Alert)
     }
 
     override fun beepPrevious() {
-        playSound()
+        playSound(Beep.Alert2)
     }
 
     override fun beepFinished() {
-        playSound()
+        playSound(Beep.End)
     }
 
     override fun beepStarted() {
-        playSound()
+        playSound(Beep.Whistle)
     }
 
-    private fun playSound() {
-        val soundURL = NSBundle.mainBundle.URLForResource("alert", "mp3")
+    private fun playSound(beep: Beep) {
+        val soundURL = NSBundle.mainBundle.URLForResource(beep.path, "mp3")
         if (soundURL == null) {
-            println("Sound not found")
+            println("Sound not found ${beep}")
             return
         }
         val avAudioPlayer = AVAudioPlayer(contentsOfURL = soundURL, error = null)
