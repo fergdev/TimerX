@@ -1,13 +1,13 @@
 package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.RunState
-import com.timerx.TimerEvent
-import com.timerx.TimerState
-import com.timerx.TimerStateMachineImpl
 import com.timerx.beep.BeepMaker
 import com.timerx.database.ITimerRepository
+import com.timerx.domain.RunState
 import com.timerx.domain.Timer
+import com.timerx.domain.TimerEvent
+import com.timerx.domain.TimerState
+import com.timerx.domain.TimerStateMachineImpl
 import com.timerx.notification.TimerXNotificationManager
 import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,111 +69,61 @@ class RunViewModel(
         timerStateMachine.start()
         viewModelScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
-                val elapsed = if (timerEvent.runState.displayCountAsUp) {
-                    timerEvent.runState.elapsed
-                } else {
-                    timerEvent.runState.intervalDuration - timerEvent.runState.elapsed
-                }
-                val index = if (timerEvent.runState.setRepetitionCount != 1) {
-                    "${timerEvent.runState.setRepetitionCount - timerEvent.runState.repetitionIndex}"
-                } else {
-                    null
-                }
+                updateRunState(timerEvent.runState)
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
-                        _state.update {
-                            it.copy(
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                index = index,
-                                time = elapsed,
-                                name = timerEvent.runState.intervalName,
-                                manualNext = timerEvent.runState.manualNext
-                            )
-                        }
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
                     }
 
                     is TimerEvent.Finished -> {
-                        _state.update {
-                            it.copy(
-                                timerState = TimerState.Finished,
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                            )
-                        }
                         beepMaker.beep(timerEvent.beep)
                         notificationManager.stop()
                     }
 
                     is TimerEvent.NextInterval -> {
-                        _state.update {
-                            it.copy(
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                index = index,
-                                time = elapsed,
-                                name = timerEvent.runState.intervalName,
-                                manualNext = timerEvent.runState.manualNext
-                            )
-                        }
                         beepMaker.beep(timerEvent.beep)
                     }
 
                     is TimerEvent.PreviousInterval -> {
-                        _state.update {
-                            it.copy(
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                index = index,
-                                time = elapsed,
-                                name = timerEvent.runState.intervalName,
-                                manualNext = timerEvent.runState.manualNext
-                            )
-                        }
                         beepMaker.beep(timerEvent.beep)
                     }
 
                     is TimerEvent.Started -> {
-                        _state.update {
-                            it.copy(
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                timerState = TimerState.Running,
-                                index = index,
-                                time = elapsed,
-                                name = timerEvent.runState.intervalName,
-                                manualNext = timerEvent.runState.manualNext
-                            )
-                        }
-
                         beepMaker.beep(timerEvent.beep)
                         notificationManager.start()
                     }
 
                     is TimerEvent.Resumed -> {
-                        _state.update {
-                            it.copy(
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                timerState = TimerState.Running,
-                                index = index,
-                                time = elapsed,
-                                name = timerEvent.runState.intervalName,
-                                manualNext = timerEvent.runState.manualNext
-                            )
-                        }
                         notificationManager.start()
                     }
 
                     is TimerEvent.Paused -> {
                         notificationManager.stop()
-                        _state.update {
-                            it.copy(
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                timerState = TimerState.Paused,
-                                index = index,
-                                time = elapsed,
-                                name = timerEvent.runState.intervalName
-                            )
-                        }
                     }
                 }
             }
+        }
+    }
+
+    private fun updateRunState(runState: RunState) {
+        val elapsed = if (runState.displayCountAsUp) {
+            runState.elapsed
+        } else {
+            runState.intervalDuration - runState.elapsed
+        }
+        val index = if (runState.setRepetitionCount != 1) {
+            "${runState.setRepetitionCount - runState.repetitionIndex}"
+        } else {
+            null
+        }
+        _state.update {
+            it.copy(
+                timerState = runState.timerState,
+                backgroundColor = runState.backgroundColor,
+                index = index,
+                time = elapsed,
+                name = runState.intervalName
+            )
         }
     }
 

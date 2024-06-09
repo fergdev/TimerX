@@ -9,6 +9,7 @@
             android:name=".App"
             android:label="@string/appName"
             android:theme="@style/AppTheme"
+            android:enableOnBackInvokedCallback="true"
             android:icon="@mipmap/ic_launcher">
         <activity
                 android:name="com.timerx.MainActivity"

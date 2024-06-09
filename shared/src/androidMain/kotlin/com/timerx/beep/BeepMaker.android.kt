@@ -15,10 +15,10 @@ class BeepMakerImpl(private val timerXSettings: TimerXSettings) : BeepMaker {
     override fun beep(beep: Beep) {
         mediaPlayer = MediaPlayer.create(context, beep.toResource())
         mediaPlayer?.setOnCompletionListener {
+            it.reset()
             it.release()
         }
         val volume = timerXSettings.volume
-        println("Playing $beep with $volume")
         mediaPlayer?.setVolume(volume, volume)
         mediaPlayer?.start()
     }

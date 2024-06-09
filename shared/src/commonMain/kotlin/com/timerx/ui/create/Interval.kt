@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package com.timerx.ui.create
 
 import ColorPicker
@@ -38,9 +36,9 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AlertPicker
 import com.timerx.ui.common.NumberIncrement
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.alert
 import timerx.shared.generated.resources.copy
 import timerx.shared.generated.resources.count_up
 import timerx.shared.generated.resources.delete
@@ -135,66 +133,28 @@ private fun IntervalSwitches(
     interval: TimerInterval,
     interactions: CreateViewModel.Interactions,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.skip_on_last_set))
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Switch(
-            enabled = canSkipOnLastSet,
-            checked = interval.skipOnLastSet,
-            onCheckedChange = {
-                interactions.interval.update.updateSkipOnLastSet(
-                    interval,
-                    it
-                )
-            }
+    if (canSkipOnLastSet) {
+        RowSwitch(stringResource(Res.string.skip_on_last_set), interval.skipOnLastSet) {
+            interactions.interval.update.updateSkipOnLastSet(
+                interval,
+                it
+            )
+        }
+    }
+    RowSwitch(stringResource(Res.string.count_up), interval.countUp) {
+        interactions.interval.update.updateCountUp(
+            interval,
+            it
         )
     }
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.count_up))
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Switch(
-            checked = interval.countUp,
-            onCheckedChange = {
-                interactions.interval.update.updateCountUp(
-                    interval,
-                    it
-                )
-            }
-        )
-    }
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.manual_next))
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Switch(
-            checked = interval.manualNext,
-            onCheckedChange = {
-                interactions.interval.update.updateManualNext(
-                    interval,
-                    it
-                )
-            }
+    RowSwitch(stringResource(Res.string.manual_next), interval.manualNext) {
+        interactions.interval.update.updateManualNext(
+            interval,
+            it
         )
     }
 
     var alertPickerVisible by remember { mutableStateOf(false) }
-
     if (alertPickerVisible) {
         AlertPicker {
             alertPickerVisible = false
@@ -206,11 +166,24 @@ private fun IntervalSwitches(
         modifier = Modifier.fillMaxWidth().clickable { alertPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "Alert")
-
+        Text(text = stringResource(Res.string.alert))
         Spacer(modifier = Modifier.weight(1f))
-
         Text(text = interval.alert.displayName)
+    }
+}
+
+@Composable
+private fun RowSwitch(label: String, value: Boolean, onValueChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label)
+        Spacer(modifier = Modifier.weight(1f))
+        Switch(
+            checked = value,
+            onCheckedChange = onValueChange
+        )
     }
 }
 

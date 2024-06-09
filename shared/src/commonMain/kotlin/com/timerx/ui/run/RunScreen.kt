@@ -48,7 +48,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.timerx.TimerState
+import com.timerx.domain.TimerState
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.KeepScreenOn

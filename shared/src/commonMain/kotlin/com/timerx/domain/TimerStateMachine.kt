@@ -1,9 +1,7 @@
-package com.timerx
+package com.timerx.domain
 
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
-import com.timerx.domain.Timer
-import com.timerx.domain.TimerInterval
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job

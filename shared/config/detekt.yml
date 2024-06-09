@@ -21,7 +21,12 @@ complexity:
     thresholdInClasses: 25
   LongParameterList:
     functionThreshold: 10
+    constructorThreshold: 10
+
 
 naming:
   FunctionNaming:
     ignoreAnnotated: ['Composable']
+
+  MatchingDeclarationName:
+    active: false

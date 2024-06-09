@@ -3,6 +3,7 @@
     <string name="app_name">TimerX</string>
     <string name="no_timers">No timers</string>
     <string name="add">Add</string>
+    <string name="alert">Alert</string>
     <string name="copy">Copy</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
