@@ -1,6 +1,8 @@
 package com.timerx.beep
 
-expect fun getBeepMaker(volumeManager: VolumeManager): BeepMaker
+import com.timerx.settings.TimerXSettings
+
+expect fun getBeepMaker(timerXSettings: TimerXSettings): BeepMaker
 
 interface BeepMaker {
     fun beepNext()

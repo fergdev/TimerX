@@ -1,13 +1,14 @@
 package com.timerx.beep
 
+import com.timerx.settings.TimerXSettings
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFAudio.AVAudioPlayer
 import platform.Foundation.NSBundle
 
-actual fun getBeepMaker(volumeManager: VolumeManager): BeepMaker = BeepMakerImpl(volumeManager)
+actual fun getBeepMaker(timerXSettings: TimerXSettings): BeepMaker = BeepMakerImpl(timerXSettings)
 
 @OptIn(ExperimentalForeignApi::class)
-class BeepMakerImpl(private val volumeManager: VolumeManager) : BeepMaker {
+class BeepMakerImpl(private val timerXSettings: TimerXSettings) : BeepMaker {
 
     override fun beepNext() {
         playSound(Beep.Alert)
@@ -32,7 +33,7 @@ class BeepMakerImpl(private val volumeManager: VolumeManager) : BeepMaker {
             return
         }
         val avAudioPlayer = AVAudioPlayer(contentsOfURL = soundURL, error = null)
-        avAudioPlayer.setVolume(volumeManager.getVolume())
+        avAudioPlayer.setVolume(timerXSettings.volume)
         avAudioPlayer.play()
     }
 

@@ -6,10 +6,10 @@ import com.timerx.TimerEvent
 import com.timerx.TimerState
 import com.timerx.TimerStateMachineImpl
 import com.timerx.beep.BeepMaker
-import com.timerx.beep.VolumeManager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.notification.TimerXNotificationManager
+import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -32,7 +32,7 @@ class RunViewModel(
     timerRepository: ITimerRepository,
     private val beepMaker: BeepMaker,
     private val notificationManager: TimerXNotificationManager,
-    private val volumeManager: VolumeManager
+    private val timerXSettings: TimerXSettings
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
@@ -41,7 +41,7 @@ class RunViewModel(
     private val _state = MutableStateFlow(
         RunScreenState(
             backgroundColor = Color.Transparent,
-            volume = volumeManager.getVolume()
+            volume = timerXSettings.volume
         )
     )
 
@@ -69,11 +69,6 @@ class RunViewModel(
 
     init {
         initTimer()
-        viewModelScope.launch {
-            volumeManager.volumeFlow.collect { volume ->
-                _state.update { it.copy(volume = volume) }
-            }
-        }
     }
 
     private fun initTimer() {
@@ -185,7 +180,8 @@ class RunViewModel(
     }
 
     private fun updateVolume(volume: Float) {
-        volumeManager.setVolume(volume)
+        timerXSettings.volume = volume
+        _state.update { it.copy(volume = volume) }
     }
 
     override fun onCleared() {

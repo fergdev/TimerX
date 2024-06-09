@@ -3,11 +3,12 @@ package com.timerx.beep
 import android.content.Context
 import android.media.MediaPlayer
 import com.timerx.R
+import com.timerx.settings.TimerXSettings
 import org.koin.mp.KoinPlatform
 
-actual fun getBeepMaker(volumeManager: VolumeManager): BeepMaker = BeepMakerImpl(volumeManager)
+actual fun getBeepMaker(timerXSettings: TimerXSettings): BeepMaker = BeepMakerImpl(timerXSettings)
 
-class BeepMakerImpl(private val volumeManager: VolumeManager) : BeepMaker {
+class BeepMakerImpl(val timerXSettings: TimerXSettings) : BeepMaker {
     private val context: Context = KoinPlatform.getKoin().get()
     private var mediaPlayer: MediaPlayer? = null
 
@@ -16,7 +17,7 @@ class BeepMakerImpl(private val volumeManager: VolumeManager) : BeepMaker {
         mediaPlayer?.setOnCompletionListener {
             it.release()
         }
-        val volume = volumeManager.getVolume()
+        val volume = timerXSettings.volume
         println("Playing $beep with $volume")
         mediaPlayer?.setVolume(volume, volume)
         mediaPlayer?.start()

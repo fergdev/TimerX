@@ -1,6 +1,5 @@
 package com.timerx.di
 
-import com.timerx.beep.VolumeManager
 import com.timerx.beep.getBeepMaker
 import com.timerx.database.ITimerRepository
 import com.timerx.database.TimerRepo
@@ -15,7 +14,6 @@ import org.koin.dsl.module
 
 val sharedModule = module {
     single { TimerXSettings(SettingsManager()) }
-    factory { VolumeManager(get()) }
     single { getBeepMaker(get()) }
     single<ITimerRepository> { TimerRepo() }
     single { TimerXNotificationManager() }
