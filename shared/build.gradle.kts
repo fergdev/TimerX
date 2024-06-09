@@ -1,4 +1,3 @@
-
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -10,6 +9,7 @@ plugins {
     alias(libs.plugins.realm)
     alias(libs.plugins.detekt)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.androidJunit5)
 }
 
 kotlin {
@@ -70,6 +70,18 @@ kotlin {
         val androidUnitTest by getting {
             dependencies {
                 implementation(libs.junit)
+                implementation(libs.junit.api)
+                implementation(libs.junit.engine)
+            }
+        }
+        val androidInstrumentedTest by getting {
+            dependencies {
+                implementation(libs.junit)
+                implementation(libs.junit.api)
+                implementation(libs.junit.engine)
+                implementation(libs.junit5.android.test.core)
+                implementation(libs.junit5.android.test.runner)
+                implementation(libs.junit5.android.test.compose)
             }
         }
         val iosX64Main by getting
@@ -86,6 +98,8 @@ android {
     compileSdk = 34
     defaultConfig {
         minSdk = 31
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["runnerBuilder"] = "de.mannodermaus.junit5.AndroidJUnit5Builder"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -94,6 +108,13 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+}
+junitPlatform {
+    // Using local dependency instead of Maven coordinates
+    instrumentationTests.enabled = false
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 detekt {

@@ -1,10 +1,13 @@
 [versions]
 agp = "8.4.1"
+android-test-extensions = "1.4.0"
 androidx-activityCompose = "1.9.0"
+androidJunit5Plugin = "1.10.0.0"
 compose = "1.6.7"
 compose-material3 = "1.2.1"
 detekt = "1.23.6"
 jetbrains-compose = "1.6.11"
+junit = "5.10.2"
 koin = "3.5.6"
 koin-compose = "1.1.5"
 kotlin = "2.0.0"
@@ -13,16 +16,21 @@ kotlinxDatetime = "0.6.0"
 pre-compose = "1.6.0"
 realm = "2.0.0"
 stability-report = "1.3.1"
-junit = "5.10.2"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+android-test-extensions = { module = "de.mannodermaus.junit5:android-test-extensions", version.ref = "android-test-extensions" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-junit = {module = "org.junit.jupiter:junit-jupiter", version.ref = "junit"}
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit5-android-test-compose = { module = "de.mannodermaus.junit5:android-test-compose", version.ref = "android-test-extensions" }
+junit5-android-test-core = { module = "de.mannodermaus.junit5:android-test-core", version.ref = "android-test-extensions" }
+junit5-android-test-runner = { module = "de.mannodermaus.junit5:android-test-runner", version.ref = "android-test-extensions" }
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-android-viewmodel = { module = "io.insert-koin:koin-android-viewmodel", version.ref = "koin" }
@@ -38,6 +46,7 @@ realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "r
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidJunit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

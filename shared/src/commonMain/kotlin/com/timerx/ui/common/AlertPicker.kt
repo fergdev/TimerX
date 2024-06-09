@@ -14,12 +14,12 @@ import com.timerx.beep.Beep
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertPicker(updateAlert: (Beep) -> Unit) {
+fun AlertPicker(onSelected: (Beep) -> Unit) {
     ModalBottomSheet(onDismissRequest = {}) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Beep.entries.forEach {
                 Text(modifier = Modifier.clickable {
-                    updateAlert(it)
+                    onSelected(it)
                 }, text = it.displayName)
             }
         }
