@@ -19,7 +19,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 
 data class RunScreenState(
     val timerState: TimerState = TimerState.Running,
-    val backgroundColor: Color,
+    val backgroundColor: Color = Color.Transparent,
     val volume: Float,
     val index: String? = "",
     val time: Int = 0,
@@ -36,14 +36,8 @@ class RunViewModel(
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
-    private val timerStateMachine = TimerStateMachineImpl(timer)
-
-    private val _state = MutableStateFlow(
-        RunScreenState(
-            backgroundColor = Color.Transparent,
-            volume = timerXSettings.volume
-        )
-    )
+    private var timerStateMachine = TimerStateMachineImpl(timer)
+    private val _state = MutableStateFlow(RunScreenState(volume = timerXSettings.volume))
 
     val state: StateFlow<RunScreenState> = _state
 
@@ -58,8 +52,8 @@ class RunViewModel(
     )
 
     val interactions = Interactions(
-        play = timerStateMachine::start,
-        pause = timerStateMachine::stop,
+        play = ::play,
+        pause = timerStateMachine::pause,
         nextInterval = timerStateMachine::nextInterval,
         previousInterval = timerStateMachine::previousInterval,
         onManualNext = ::onManualNext,
@@ -72,6 +66,7 @@ class RunViewModel(
     }
 
     private fun initTimer() {
+        timerStateMachine.start()
         viewModelScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
                 val elapsed = if (timerEvent.runState.displayCountAsUp) {
@@ -151,6 +146,20 @@ class RunViewModel(
                         notificationManager.start()
                     }
 
+                    is TimerEvent.Resumed -> {
+                        _state.update {
+                            it.copy(
+                                backgroundColor = timerEvent.runState.backgroundColor,
+                                timerState = TimerState.Running,
+                                index = index,
+                                time = elapsed,
+                                name = timerEvent.runState.intervalName,
+                                manualNext = timerEvent.runState.manualNext
+                            )
+                        }
+                        notificationManager.start()
+                    }
+
                     is TimerEvent.Paused -> {
                         notificationManager.stop()
                         _state.update {
@@ -166,7 +175,6 @@ class RunViewModel(
                 }
             }
         }
-        timerStateMachine.start()
     }
 
     private fun notificationState(runState: RunState): String {
@@ -186,6 +194,14 @@ class RunViewModel(
     private fun updateVolume(volume: Float) {
         timerXSettings.volume = volume
         _state.update { it.copy(volume = volume) }
+    }
+
+    private fun play() {
+        if (timerStateMachine.eventState.value.runState.timerState == TimerState.Finished) {
+            initTimer()
+        } else {
+            timerStateMachine.resume()
+        }
     }
 
     override fun onCleared() {

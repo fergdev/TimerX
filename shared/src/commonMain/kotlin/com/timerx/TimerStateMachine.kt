@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 sealed class TimerEvent(val runState: RunState) {
     class Started(runState: RunState, val beep: Beep) : TimerEvent(runState)
     class Paused(runState: RunState) : TimerEvent(runState)
+    class Resumed(runState: RunState) : TimerEvent(runState)
 
     class NextInterval(runState: RunState, val beep: Beep) : TimerEvent(runState)
     class PreviousInterval(runState: RunState, val beep: Beep) : TimerEvent(runState)
@@ -61,7 +62,7 @@ interface TimerStateMachine {
 
     fun start()
 
-    fun stop()
+    fun pause()
 
     fun nextInterval()
 
@@ -69,6 +70,7 @@ interface TimerStateMachine {
 
     fun destroy()
 
+    fun resume()
 }
 
 class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
@@ -84,11 +86,25 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
     override fun start() {
         runState.update { it.copy(timerState = TimerState.Running) }
         updateState(0, 0, 0)
-        _eventState.value = TimerEvent.Started(runState.value, getCurrentInterval().alert)
+        _eventState.value = TimerEvent.Started(
+            runState.value,
+            getCurrentInterval().alert
+        )
         startTicker()
     }
 
-    override fun stop() {
+    override fun resume() {
+        if (runState.value.timerState == TimerState.Finished) {
+            return
+        }
+        runState.update { it.copy(timerState = TimerState.Running) }
+        _eventState.value = TimerEvent.Resumed(
+            runState.value
+        )
+        startTicker()
+    }
+
+    override fun pause() {
         tickerJob?.cancel()
         runState.value = runState.value.copy(timerState = TimerState.Paused)
         _eventState.value = TimerEvent.Paused(runState.value)
