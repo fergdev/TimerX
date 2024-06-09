@@ -7,7 +7,7 @@ style:
   active: true
   MagicNumber:
     active: true
-    excludes: ['**/CustomIcons.kt']
+    excludes: ['**/CustomIcons.kt', '**/commonTest/**']
   ReturnCount:
     max: 3
   NewLineAtEndOfFile:

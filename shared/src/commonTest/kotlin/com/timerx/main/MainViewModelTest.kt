@@ -24,12 +24,15 @@ class MainViewModelTest {
         }
 
         override fun insertTimer(timer: Timer) {
+            // noop
         }
 
         override fun updateTimer(timer: Timer) {
+            // noop
         }
 
         override fun deleteTimer(timer: Timer) {
+            // noop
         }
 
         override fun duplicate(timer: Timer) {
