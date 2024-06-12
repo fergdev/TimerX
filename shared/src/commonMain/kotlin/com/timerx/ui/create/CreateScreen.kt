@@ -56,8 +56,8 @@ import androidx.compose.ui.unit.dp
 import com.timerx.beep.Beep
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
-import com.timerx.ui.common.AlertPicker
 import com.timerx.ui.common.AnimatedNumber
+import com.timerx.ui.common.BeepPicker
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
@@ -238,8 +238,8 @@ private fun FinishAlertPicker(
         Text(text = beep.displayName)
 
         if (alertPickerVisible) {
-            AlertPicker {
-                updateFinishAlert(it)
+            BeepPicker {
+                it?.let { updateFinishAlert(it) }
                 alertPickerVisible = false
             }
         }

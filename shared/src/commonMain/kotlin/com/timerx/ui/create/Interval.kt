@@ -31,10 +31,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
-import com.timerx.ui.common.AlertPicker
+import com.timerx.ui.common.BeepPicker
 import com.timerx.ui.common.NumberIncrement
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
@@ -43,6 +44,7 @@ import timerx.shared.generated.resources.copy
 import timerx.shared.generated.resources.count_up
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.down
+import timerx.shared.generated.resources.final_count_down
 import timerx.shared.generated.resources.interval
 import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.skip_on_last_set
@@ -156,9 +158,11 @@ private fun IntervalSwitches(
 
     var alertPickerVisible by remember { mutableStateOf(false) }
     if (alertPickerVisible) {
-        AlertPicker {
+        BeepPicker {
             alertPickerVisible = false
-            interactions.interval.update.updateAlert(interval, it)
+            it?.let {
+                interactions.interval.update.updateAlert(interval, it)
+            }
         }
     }
 
@@ -168,7 +172,48 @@ private fun IntervalSwitches(
     ) {
         Text(text = stringResource(Res.string.alert))
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = interval.alert.displayName)
+        Text(text = interval.beep.displayName)
+    }
+
+    FinalCountDownRow(interval.finalCountDown) {
+        interactions.interval.update.updateFinalCountDown(interval, it)
+    }
+}
+
+@Composable
+private fun FinalCountDownRow(
+    finalCountDown: FinalCountDown,
+    update: (FinalCountDown) -> Unit
+) {
+    var beepPickerVisible by remember { mutableStateOf(false) }
+    if (beepPickerVisible) {
+        BeepPicker {
+            beepPickerVisible = false
+            it?.let {
+                update(FinalCountDown(finalCountDown.duration, it))
+            }
+        }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable { beepPickerVisible = true },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(Res.string.final_count_down))
+        Spacer(modifier = Modifier.weight(1f))
+        NumberIncrement(
+            value = finalCountDown.duration,
+            negativeButtonEnabled = finalCountDown.duration > 0,
+            positiveButtonEnabled = true
+        ) {
+            update(FinalCountDown(it, finalCountDown.beep))
+        }
+        Text(
+            modifier = Modifier.clickable {
+                beepPickerVisible = true
+            },
+            text = finalCountDown.beep.displayName
+        )
     }
 }
 

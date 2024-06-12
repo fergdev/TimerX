@@ -4,6 +4,7 @@ package com.timerx.database
 
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
+import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
@@ -12,6 +13,7 @@ import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
+import io.realm.kotlin.types.EmbeddedRealmObject
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
@@ -45,7 +47,7 @@ private class RealmTimer : RealmObject {
     var name: String = ""
     var sets: RealmList<RealmSet> = realmListOf()
     var finishColor: RealmColor? = null
-    var finishAlert: Int = 0
+    var finishBeepId: Int = 0
 }
 
 private class RealmSet : RealmObject {
@@ -64,7 +66,13 @@ private class RealmInterval : RealmObject {
     var skipOnLastSet: Boolean = false
     var countUp: Boolean = false
     var manualNext: Boolean = false
-    var alertId: Int = 0
+    var beepId: Int = 0
+    var finalCountDown: RealmFinalCountDown? = null
+}
+
+private class RealmFinalCountDown : EmbeddedRealmObject {
+    var duration: Int = 3
+    var beepId: Int = Beep.Alert.ordinal
 }
 
 private fun Color.toRealmColor(): RealmColor {
@@ -81,13 +89,19 @@ private fun RealmColor?.toComposeColor(): Color {
     return Color(this.red, this.green, this.blue, this.alpha)
 }
 
+private fun RealmFinalCountDown?.toFinalCountDown(): FinalCountDown {
+    if (this == null) return FinalCountDown()
+    return FinalCountDown(duration, Beep.entries[beepId])
+}
+
 class TimerRepo : ITimerRepository {
     private val configuration = RealmConfiguration.create(
         schema = setOf(
             RealmTimer::class,
             RealmSet::class,
             RealmInterval::class,
-            RealmColor::class
+            RealmColor::class,
+            RealmFinalCountDown::class
         )
     )
 
@@ -105,22 +119,23 @@ class TimerRepo : ITimerRepository {
                 TimerSet(
                     realmSet.id.toHexString(),
                     realmSet.repetitions,
-                    realmSet.intervals.map {
+                    realmSet.intervals.map { realmInterval ->
                         TimerInterval(
-                            it.id.toHexString(),
-                            it.name,
-                            it.duration,
-                            it.color.toComposeColor(),
-                            it.skipOnLastSet,
-                            it.countUp,
-                            it.manualNext,
-                            Beep.entries[it.alertId]
+                            realmInterval.id.toHexString(),
+                            realmInterval.name,
+                            realmInterval.duration,
+                            realmInterval.color.toComposeColor(),
+                            realmInterval.skipOnLastSet,
+                            realmInterval.countUp,
+                            realmInterval.manualNext,
+                            Beep.entries[realmInterval.beepId],
+                            realmInterval.finalCountDown.toFinalCountDown()
                         )
                     }.toPersistentList()
                 )
             }.toPersistentList(),
             realmTimer.finishColor.toComposeColor(),
-            Beep.entries[realmTimer.finishAlert]
+            Beep.entries[realmTimer.finishBeepId],
         )
     }
 
@@ -138,13 +153,17 @@ class TimerRepo : ITimerRepository {
                             this.skipOnLastSet = it.skipOnLastSet
                             this.countUp = it.countUp
                             this.manualNext = it.manualNext
-                            this.alertId = it.alert.ordinal
+                            this.beepId = it.beep.ordinal
+                            this.finalCountDown = RealmFinalCountDown().apply {
+                                this.duration = it.finalCountDown.duration
+                                this.beepId = it.finalCountDown.beep.ordinal
+                            }
                         }
                     }.toRealmList()
                 }
             }.toRealmList()
-            finishColor = timer.finishColor.toRealmColor()
-            finishAlert = timer.finishAlert.ordinal
+            this.finishColor = timer.finishColor.toRealmColor()
+            this.finishBeepId = timer.finishBeep.ordinal
         }
         realm.writeBlocking {
             copyToRealm(realmTimer)

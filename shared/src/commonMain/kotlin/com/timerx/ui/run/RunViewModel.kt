@@ -79,6 +79,9 @@ class RunViewModel(
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
+                        timerEvent.beep?.let{
+                            beepMaker.beep(it)
+                        }
                     }
 
                     is TimerEvent.Finished -> {

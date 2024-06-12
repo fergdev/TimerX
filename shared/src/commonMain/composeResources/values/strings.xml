@@ -17,6 +17,7 @@
     <string name="edit_timer">Edit timer</string>
     <string name="finish_color">Finish color</string>
     <string name="finish_alert">Finish alert</string>
+    <string name="final_count_down">Final count down</string>
     <string name="finished">Finished</string>
     <string name="interval">Interval</string>
     <string name="manual_next">Manual next</string>

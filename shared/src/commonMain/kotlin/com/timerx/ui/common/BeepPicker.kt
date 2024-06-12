@@ -14,8 +14,8 @@ import com.timerx.beep.Beep
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertPicker(onSelected: (Beep) -> Unit) {
-    ModalBottomSheet(onDismissRequest = {}) {
+fun BeepPicker(onSelected: (Beep?) -> Unit) {
+    ModalBottomSheet(onDismissRequest = { onSelected(null) }) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Beep.entries.forEach {
                 Text(modifier = Modifier.clickable {

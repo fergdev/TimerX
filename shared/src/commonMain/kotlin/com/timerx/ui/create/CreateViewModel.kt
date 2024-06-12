@@ -5,6 +5,7 @@ package com.timerx.ui.create
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
 import com.timerx.database.ITimerRepository
+import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
@@ -48,15 +49,17 @@ class CreateViewModel(
             repetitions = 5,
             intervals = persistentListOf(
                 TimerInterval(
+                    id = "${defaultIdGenerator++}",
                     name = workString,
                     duration = 30,
                     color = Color.Green,
-                    alert = Beep.Alert
+                    beep = Beep.Alert
                 ), TimerInterval(
+                    id = "${defaultIdGenerator++}",
                     name = restString,
                     duration = 30,
                     color = Color.Blue,
-                    alert = Beep.Alert2
+                    beep = Beep.Alert2
                 )
             )
         )
@@ -69,7 +72,7 @@ class CreateViewModel(
             name = workString,
             duration = 30,
             color = Color.Green,
-            alert = Beep.Alert
+            beep = Beep.Alert
         )
     }
 
@@ -108,7 +111,8 @@ class CreateViewModel(
         val updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit,
         val updateCountUp: (TimerInterval, Boolean) -> Unit,
         val updateManualNext: (TimerInterval, Boolean) -> Unit,
-        val updateAlert: (TimerInterval, Beep) -> Unit
+        val updateAlert: (TimerInterval, Beep) -> Unit,
+        val updateFinalCountDown: (TimerInterval, FinalCountDown) -> Unit
     )
 
     class Interactions(
@@ -152,7 +156,8 @@ class CreateViewModel(
                 updateSkipOnLastSet = ::updateSkipOnLastSet,
                 updateCountUp = ::updateCountUp,
                 updateManualNext = ::updateManualNext,
-                updateAlert = ::updateAlert
+                updateAlert = ::updateAlert,
+                updateFinalCountDown = ::updateFinalCountDown
             ),
         )
     )
@@ -182,7 +187,7 @@ class CreateViewModel(
                         timerName = timerEditing.name,
                         sets = sets.toPersistentList(),
                         finishColor = timerEditing.finishColor,
-                        finishAlert = timerEditing.finishAlert
+                        finishAlert = timerEditing.finishBeep
                     )
                 }
             }
@@ -234,7 +239,7 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor,
-                    finishAlert = state.value.finishAlert
+                    finishBeep = state.value.finishAlert
                 )
             )
         } else {
@@ -243,7 +248,7 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor,
-                    finishAlert = state.value.finishAlert
+                    finishBeep = state.value.finishAlert
                 )
             )
         }
@@ -459,7 +464,7 @@ class CreateViewModel(
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
                 if (it.id == timerInterval.id) {
-                    it.copy(alert = beep)
+                    it.copy(beep = beep)
                 } else {
                     it
                 }
@@ -472,4 +477,22 @@ class CreateViewModel(
     private fun updateFinishAlert(beep: Beep) {
         _state.update { it.copy(finishAlert = beep) }
     }
+
+    private fun updateFinalCountDown(
+        timerInterval: TimerInterval,
+        finalCountDown: FinalCountDown
+    ) {
+        sets = sets.map { (_, repetitions, intervals) ->
+            TimerSet("", repetitions, intervals.map {
+                if (it.id == timerInterval.id) {
+                    it.copy(finalCountDown = finalCountDown)
+                } else {
+                    it
+                }
+            }.toPersistentList())
+        }.toMutableList()
+
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
 }

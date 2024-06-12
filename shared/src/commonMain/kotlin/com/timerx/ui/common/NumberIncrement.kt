@@ -65,7 +65,11 @@ fun NumberIncrement(
                         maxDelayMillis = 500,
                         minDelayMillis = 100,
                         delayDecayFactor = .4f
-                    ) { onChange(value - 1) },
+                    ) {
+                        if (negativeButtonEnabled) {
+                            onChange(value - 1)
+                        }
+                    },
                 imageVector = CustomIcons.checkIndeterminateSmall(),
                 contentDescription = stringResource(Res.string.minus)
             )
@@ -83,7 +87,11 @@ fun NumberIncrement(
                         maxDelayMillis = 500,
                         minDelayMillis = 100,
                         delayDecayFactor = .4f
-                    ) { onChange(value + 1) },
+                    ) {
+                        if (positiveButtonEnabled) {
+                            onChange(value + 1)
+                        }
+                    },
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(Res.string.add)
             )

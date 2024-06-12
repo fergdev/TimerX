@@ -9,7 +9,7 @@ data class Timer(
     val name: String,
     val sets: ImmutableList<TimerSet>,
     val finishColor: Color = Color.Red,
-    val finishAlert: Beep = Beep.Alert
+    val finishBeep: Beep = Beep.Alert,
 )
 
 data class TimerSet(
@@ -26,7 +26,13 @@ data class TimerInterval(
     val skipOnLastSet: Boolean = false,
     val countUp: Boolean = false,
     val manualNext: Boolean = false,
-    val alert: Beep = Beep.Alert
+    val beep: Beep = Beep.Alert,
+    val finalCountDown: FinalCountDown = FinalCountDown()
+)
+
+data class FinalCountDown(
+    val duration: Int = 3,
+    val beep: Beep = Beep.Alert
 )
 
 fun Int.timeFormatted(): String {
