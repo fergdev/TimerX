@@ -1,6 +1,7 @@
 package com.timerx.settings
 
-expect class SettingsManager() {
+
+interface ISettingsManager {
     fun getString(key: String, defaultValue: String? = null): String?
     fun putString(key: String, value: String)
 
@@ -13,3 +14,5 @@ expect class SettingsManager() {
     fun getBoolean(key: String, defaultValue: Boolean = false): Boolean
     fun putBoolean(key: String, value: Boolean)
 }
+
+expect fun getSettingsManager(): ISettingsManager

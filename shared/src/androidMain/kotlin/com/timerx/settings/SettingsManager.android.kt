@@ -4,40 +4,40 @@ import android.content.Context
 import android.content.SharedPreferences
 import org.koin.mp.KoinPlatform
 
-actual class SettingsManager {
+class AndroidSettingsManager : ISettingsManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-    actual fun getString(key: String, defaultValue: String?): String? {
+    override fun getString(key: String, defaultValue: String?): String? {
         return sharedPreferences.getString(key, defaultValue)
     }
 
-    actual fun putString(key: String, value: String) {
+    override fun putString(key: String, value: String) {
         sharedPreferences.edit().putString(key, value).apply()
     }
 
-    actual fun getInt(key: String, defaultValue: Int): Int {
+    override fun getInt(key: String, defaultValue: Int): Int {
         return sharedPreferences.getInt(key, defaultValue)
     }
 
-    actual fun putInt(key: String, value: Int) {
+    override fun putInt(key: String, value: Int) {
         sharedPreferences.edit().putInt(key, value).apply()
     }
 
-    actual fun getBoolean(key: String, defaultValue: Boolean): Boolean {
+    override fun getBoolean(key: String, defaultValue: Boolean): Boolean {
         return sharedPreferences.getBoolean(key, defaultValue)
     }
 
-    actual fun putBoolean(key: String, value: Boolean) {
+    override fun putBoolean(key: String, value: Boolean) {
         sharedPreferences.edit().putBoolean(key, value).apply()
     }
 
-    actual fun getFloat(key: String, defaultValue: Float): Float {
+    override fun getFloat(key: String, defaultValue: Float): Float {
         return sharedPreferences.getFloat(key, defaultValue)
     }
 
-    actual fun putFloat(key: String, value: Float) {
+    override fun putFloat(key: String, value: Float) {
         sharedPreferences.edit().putFloat(key, value).apply()
     }
 
@@ -45,3 +45,5 @@ actual class SettingsManager {
         private const val PREFERENCES_NAME = "TimerXPreferences"
     }
 }
+
+actual fun getSettingsManager() : ISettingsManager = AndroidSettingsManager()
