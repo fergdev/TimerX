@@ -13,6 +13,7 @@ koin-compose = "1.1.5"
 kotlin = "2.0.0"
 kotlinx-immutable = "0.3.7"
 kotlinxDatetime = "0.6.0"
+mokkery = "2.0.0"
 pre-compose = "1.6.0"
 realm = "2.0.0"
 stability-report = "1.3.1"
@@ -54,5 +55,6 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-comp
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 realm = { id = "io.realm.kotlin", version.ref = "realm" }
 stabilityReport = { id = "dev.shreyaspatil.compose-compiler-report-generator", version.ref = "stability-report" }

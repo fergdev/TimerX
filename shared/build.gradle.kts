@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.androidJunit5)
+    alias(libs.plugins.mokkery)
 }
 
 kotlin {

@@ -3,8 +3,12 @@ package com.timerx.main
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.ui.main.MainViewModel
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlinx.collections.immutable.persistentListOf
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,71 +21,66 @@ class MainViewModelTest {
         Timer("1", "name 1", persistentListOf()),
         Timer("2", "name 2", persistentListOf()),
     )
-
-    private var timerRepository: ITimerRepository = object : ITimerRepository {
-        override fun getTimers(): List<Timer> {
-            return timers
-        }
-
-        override fun insertTimer(timer: Timer) {
-            // noop
-        }
-
-        override fun updateTimer(timer: Timer) {
-            // noop
-        }
-
-        override fun deleteTimer(timer: Timer) {
-            // noop
-        }
-
-        override fun duplicate(timer: Timer) {
-            timers.add(timer.copy(id = "${timers.size + 1}"))
-        }
-
-        override fun getTimer(timerId: String): Timer {
-            return timers.first { it.id == timerId }
-        }
-    }
-
-    @BeforeTest
-    fun setup() {
-        viewModel = MainViewModel(timerRepository)
-    }
+    private val timerRepository = mock<ITimerRepository>()
 
     @Test
     fun `init - sets state`() {
-        // given  + when + then
+        // given
+        every { timerRepository.getTimers() }.returns(timers)
+        // when
+        viewModel = MainViewModel(timerRepository)
+        // then
         assertEquals(2, viewModel.state.value.timers.size)
     }
 
     @Test
     fun `refresh timers - updates state`() {
         // given
-        timers.add(Timer("3", "name 3", persistentListOf()))
+        every { timerRepository.getTimers() }.returns(listOf())
+        viewModel = MainViewModel(timerRepository)
+        assertEquals(0, viewModel.state.value.timers.size)
+        every { timerRepository.getTimers() }.returns(
+            listOf(
+                Timer(
+                    "3",
+                    "name 3",
+                    persistentListOf()
+                )
+            )
+        )
 
         // when
         viewModel.refreshData()
 
         // then
-        assertEquals(3, viewModel.state.value.timers.size)
+        assertEquals(1, viewModel.state.value.timers.size)
     }
 
     @Test
     fun `delete timer - deletes timer`() {
-        // given + when
+        // given
+        every { timerRepository.getTimers() }.returns(listOf())
+        every { timerRepository.deleteTimer(any()) }.returns(Unit)
+        viewModel = MainViewModel(timerRepository)
+
+        // when
         viewModel.deleteTimer(timers[1])
 
         // then
-        assertEquals(2, viewModel.state.value.timers.size)
+        verify { timerRepository.deleteTimer(timers[1]) }
     }
 
     @Test
     fun `duplicate timer - updates state`() {
-        // given + when
+        // given
+        every { timerRepository.getTimers() }.returns(listOf())
+        every { timerRepository.duplicate(any()) }.returns(Unit)
+        viewModel = MainViewModel(timerRepository)
+
+        // when
         viewModel.duplicateTimer(timers[1])
 
         // then
-        assertEquals(3, viewModel.state.value.timers.size)
+        verify { timerRepository.duplicate(timers[1]) }
     }
 }
