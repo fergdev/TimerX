@@ -16,6 +16,7 @@ kotlinxDatetime = "0.6.0"
 mokkery = "2.0.0"
 pre-compose = "1.6.0"
 realm = "2.0.0"
+reorderable = "2.1.1"
 stability-report = "1.3.1"
 
 [libraries]
@@ -44,6 +45,7 @@ pre-compose = { module = "moe.tlaster:precompose", version.ref = "pre-compose" }
 pre-compose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "pre-compose" }
 pre-compose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "pre-compose" }
 realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

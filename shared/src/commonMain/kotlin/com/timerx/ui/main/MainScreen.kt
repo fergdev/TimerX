@@ -1,15 +1,16 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package com.timerx.ui.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -39,8 +40,9 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.SetStatusBarColor
 import moe.tlaster.precompose.koin.koinViewModel
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.app_name
@@ -50,7 +52,10 @@ import timerx.shared.generated.resources.edit
 import timerx.shared.generated.resources.no_timers
 import timerx.shared.generated.resources.settings
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 internal fun MainScreen(
     navigateSettingsScreen: () -> Unit,
@@ -61,7 +66,7 @@ internal fun MainScreen(
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
     // TODO REMOVE this hack. This was put in here to refresh the data after adding a timer in the create screen
     LaunchedEffect(Unit) {
-        viewModel.refreshData()
+        viewModel.interactions.refreshData()
     }
 
     SetStatusBarColor(MaterialTheme.colorScheme.surface)
@@ -101,15 +106,23 @@ internal fun MainScreen(
                     text = stringResource(Res.string.no_timers)
                 )
             } else {
-                LazyColumn {
-                    items(state.timers) { timer ->
-                        Timer(
-                            timer = timer,
-                            duplicateTimer = viewModel::duplicateTimer,
-                            deleteTimer = viewModel::deleteTimer,
-                            navigateRunScreen = navigateRunScreen,
-                            navigateEditScreen = navigateEditScreen,
-                        )
+                val lazyListState = rememberLazyListState()
+                val reorderableLazyListState =
+                    rememberReorderableLazyListState(lazyListState) { from, to ->
+                        viewModel.interactions.swapTimers(from.index, to.index)
+                    }
+
+                LazyColumn(modifier = Modifier.fillMaxSize(), state = lazyListState) {
+                    items(state.timers, key = { it.id }) { timer ->
+                        ReorderableItem(reorderableLazyListState, key = timer.id) {
+                            Timer(
+                                modifier = Modifier.longPressDraggableHandle(),
+                                timer = timer,
+                                interactions = viewModel.interactions,
+                                navigateRunScreen = navigateRunScreen,
+                                navigateEditScreen = navigateEditScreen,
+                            )
+                        }
                     }
                 }
             }
@@ -119,14 +132,14 @@ internal fun MainScreen(
 
 @Composable
 private fun Timer(
+    modifier: Modifier,
     timer: Timer,
-    duplicateTimer: (Timer) -> Unit,
-    deleteTimer: (Timer) -> Unit,
+    interactions: MainViewModel.Interactions,
     navigateRunScreen: (String) -> Unit,
-    navigateEditScreen: (String) -> Unit
+    navigateEditScreen: (String) -> Unit,
 ) {
     ElevatedCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
@@ -137,7 +150,7 @@ private fun Timer(
             trailingContent = {
                 Row {
                     IconButton(
-                        onClick = { duplicateTimer(timer) }) {
+                        onClick = { interactions.duplicateTimer(timer) }) {
                         Icon(
                             modifier = Modifier.size(24.dp),
                             imageVector = CustomIcons.contentCopy(),
@@ -153,7 +166,7 @@ private fun Timer(
                         )
                     }
                     IconButton(
-                        onClick = { deleteTimer(timer) }) {
+                        onClick = { interactions.deleteTimer(timer) }) {
                         Icon(
                             modifier = Modifier.size(24.dp),
                             imageVector = Icons.Default.Delete,

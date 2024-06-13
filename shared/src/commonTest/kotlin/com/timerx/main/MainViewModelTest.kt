@@ -50,7 +50,7 @@ class MainViewModelTest {
         )
 
         // when
-        viewModel.refreshData()
+        viewModel.interactions.refreshData()
 
         // then
         assertEquals(1, viewModel.state.value.timers.size)
@@ -64,7 +64,7 @@ class MainViewModelTest {
         viewModel = MainViewModel(timerRepository)
 
         // when
-        viewModel.deleteTimer(timers[1])
+        viewModel.interactions.deleteTimer(timers[1])
 
         // then
         verify { timerRepository.deleteTimer(timers[1]) }
@@ -78,9 +78,23 @@ class MainViewModelTest {
         viewModel = MainViewModel(timerRepository)
 
         // when
-        viewModel.duplicateTimer(timers[1])
+        viewModel.interactions.duplicateTimer(timers[1])
 
         // then
         verify { timerRepository.duplicate(timers[1]) }
+    }
+
+    @Test
+    fun `swap timers - swaps timers`() {
+        // given
+        every { timerRepository.getTimers() }.returns(timers)
+        every { timerRepository.swapTimers(any(), any()) }.returns(Unit)
+        viewModel = MainViewModel(timerRepository)
+
+        // when
+        viewModel.interactions.swapTimers(0, 1)
+
+        // then
+        assertEquals(viewModel.state.value.timers, listOf(timers[1], timers[0]))
     }
 }
