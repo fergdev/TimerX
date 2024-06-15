@@ -116,19 +116,15 @@ class RealmTimerRepository : ITimerRepository {
     )
 
     private val realm = Realm.open(configuration)
-    private lateinit var realmTimerContainer: RealmTimerContainer
 
     init {
         val query = realm.query<RealmTimerContainer>().find()
         if (query.isEmpty()) {
             realm.writeBlocking {
-                realmTimerContainer = RealmTimerContainer()
-                copyToRealm(realmTimerContainer)
+                copyToRealm(RealmTimerContainer())
             }
         } else if (query.size > 1) {
             throw IllegalStateException("More than 1 RealmTimerContainer ${query.size}")
-        } else {
-            realmTimerContainer = query.first()
         }
     }
 
@@ -145,15 +141,15 @@ class RealmTimerRepository : ITimerRepository {
         val realmTimer = RealmTimer()
         realmTimer.setTimer(timer)
         realm.writeBlocking {
-            val realmTimerContainer = this.findLatest(realmTimerContainer)
-            realmTimerContainer!!.timers.add(realmTimer)
+            val realmTimerContainer = this.query<RealmTimerContainer>().find().first()
+            realmTimerContainer.timers.add(realmTimer)
             copyToRealm(realmTimerContainer)
         }
     }
 
     override fun updateTimer(timer: Timer) {
         realm.writeBlocking {
-            val realmTimerContainer = this.findLatest(realmTimerContainer)!!
+            val realmTimerContainer = this.query<RealmTimerContainer>().find().first()
             val index = realmTimerContainer.timers.first { it.id.toHexString() == timer.id }
             index.setTimer(timer)
             copyToRealm(index)
@@ -162,7 +158,7 @@ class RealmTimerRepository : ITimerRepository {
 
     override fun deleteTimer(timer: Timer) {
         realm.writeBlocking {
-            val realmTimerContainer = this.findLatest(realmTimerContainer)!!
+            val realmTimerContainer = this.query<RealmTimerContainer>().find().first()
             realmTimerContainer.timers.remove(realmTimerContainer.timers.first { it.id.toHexString() == timer.id })
             copyToRealm(realmTimerContainer)
         }
@@ -180,7 +176,7 @@ class RealmTimerRepository : ITimerRepository {
 
     override fun swapTimers(from: Int, to: Int) {
         realm.writeBlocking {
-            val realmTimerContainer = this.findLatest(realmTimerContainer)!!
+            val realmTimerContainer = this.query<RealmTimerContainer>().find().first()
             val fromTimer = realmTimerContainer.timers[from]
             val toTimer = realmTimerContainer.timers[to]
             realmTimerContainer.timers[from] = toTimer
