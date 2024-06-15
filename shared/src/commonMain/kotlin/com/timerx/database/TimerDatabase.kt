@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package com.timerx.database
 
 import androidx.compose.ui.graphics.Color
@@ -20,7 +18,6 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 import org.mongodb.kbson.ObjectId
 import timerx.shared.generated.resources.Res

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package com.timerx.ui.run
 
 import androidx.compose.animation.AnimatedVisibility
@@ -57,7 +55,6 @@ import com.timerx.ui.common.AnimatedNumber
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.BackHandler
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
 import timerx.shared.generated.resources.Res

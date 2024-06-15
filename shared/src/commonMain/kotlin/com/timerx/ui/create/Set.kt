@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package com.timerx.ui.create
 
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +29,6 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.NumberIncrement
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
