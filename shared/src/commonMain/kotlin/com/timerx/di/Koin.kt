@@ -1,5 +1,6 @@
 package com.timerx.di
 
+import com.timerx.analytics.Analytics
 import com.timerx.beep.getBeepMaker
 import com.timerx.database.ITimerRepository
 import com.timerx.database.RealmTimerRepository
@@ -15,11 +16,12 @@ import org.koin.dsl.module
 val sharedModule = module {
     single { TimerXSettings(getSettingsManager()) }
     single { getBeepMaker(get()) }
+    single { Analytics() }
     single<ITimerRepository> { RealmTimerRepository() }
     single { TimerXNotificationManager() }
     factory { MainViewModel(get()) }
     factory { (timerName: String) -> CreateViewModel(timerName, get()) }
-    factory { (timerName: String) -> RunViewModel(timerName, get(), get(), get(), get()) }
+    factory { (timerName: String) -> RunViewModel(timerName, get(), get(), get(), get(), get()) }
     factory { SettingsViewModel(get()) }
 }
 

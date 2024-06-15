@@ -17,8 +17,9 @@
 		AC68F12A2C153F050066FA45 /* end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AC68F1292C153F050066FA45 /* end.mp3 */; };
 		AC95AEDF2C1D09B2003080AE /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = AC95AEDE2C1D09B2003080AE /* FirebaseCrashlytics */; };
 		AC95AEE12C1D0CEA003080AE /* FirebaseInstallations in Frameworks */ = {isa = PBXBuildFile; productRef = AC95AEE02C1D0CEA003080AE /* FirebaseInstallations */; };
+		AC95AEE52C1D1A68003080AE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AC95AEE42C1D1A68003080AE /* GoogleService-Info.plist */; };
+		AC95AEE72C1D2301003080AE /* AnalyticsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC95AEE62C1D2301003080AE /* AnalyticsHelper.swift */; };
 		AC9C5AF92C1CF22F005DB4D3 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AC9C5AF82C1CF22F005DB4D3 /* FirebaseAnalytics */; };
-		AC9C5AFC2C1CF975005DB4D3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AC9C5AFB2C1CF975005DB4D3 /* GoogleService-Info.plist */; };
 		AC9C5AFE2C1CFC0C005DB4D3 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = AC9C5AFD2C1CFC0C005DB4D3 /* FirebaseAnalyticsOnDeviceConversion */; };
 		AC9C5B002C1CFC0C005DB4D3 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AC9C5AFF2C1CFC0C005DB4D3 /* FirebaseAnalyticsSwift */; };
 		AC9C5B022C1CFC0C005DB4D3 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = AC9C5B012C1CFC0C005DB4D3 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -49,7 +50,8 @@
 		AC68F1252C1539AB0066FA45 /* whistle.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = whistle.mp3; sourceTree = "<group>"; };
 		AC68F1272C153C5F0066FA45 /* alert2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alert2.mp3; sourceTree = "<group>"; };
 		AC68F1292C153F050066FA45 /* end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = end.mp3; sourceTree = "<group>"; };
-		AC9C5AFB2C1CF975005DB4D3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		AC95AEE42C1D1A68003080AE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		AC95AEE62C1D2301003080AE /* AnalyticsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,13 +100,14 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
-				AC9C5AFB2C1CF975005DB4D3 /* GoogleService-Info.plist */,
+				AC95AEE42C1D1A68003080AE /* GoogleService-Info.plist */,
 				AC68F1242C1521DB0066FA45 /* alerts */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
+				AC95AEE62C1D2301003080AE /* AnalyticsHelper.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -206,7 +209,7 @@
 				AC68F1262C1539AB0066FA45 /* whistle.mp3 in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				AC68F1232C150D740066FA45 /* alert.mp3 in Resources */,
-				AC9C5AFC2C1CF975005DB4D3 /* GoogleService-Info.plist in Resources */,
+				AC95AEE52C1D1A68003080AE /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +265,7 @@
 			files = (
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
+				AC95AEE72C1D2301003080AE /* AnalyticsHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

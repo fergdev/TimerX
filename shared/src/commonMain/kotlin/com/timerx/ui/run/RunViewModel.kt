@@ -1,6 +1,7 @@
 package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
+import com.timerx.analytics.Analytics
 import com.timerx.beep.BeepMaker
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.RunState
@@ -33,7 +34,8 @@ class RunViewModel(
     timerRepository: ITimerRepository,
     private val beepMaker: BeepMaker,
     private val notificationManager: TimerXNotificationManager,
-    private val timerXSettings: TimerXSettings
+    private val timerXSettings: TimerXSettings,
+    private val analytics: Analytics
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
@@ -69,6 +71,7 @@ class RunViewModel(
 
     init {
         initTimer()
+        analytics.logEvent("TimerStart", null)
     }
 
     private fun initTimer() {
@@ -78,6 +81,7 @@ class RunViewModel(
                 updateRunState(timerEvent.runState)
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
+                        analytics.logEvent("Ticker", null)
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
                         timerEvent.beep?.let{
                             beepMaker.beep(it)

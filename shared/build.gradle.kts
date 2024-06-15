@@ -69,7 +69,7 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 //noinspection BomWithoutPlatform
                 implementation(libs.firebase.bom)
-                implementation(libs.firebase.analytics)
+                api(libs.firebase.analytics)
                 implementation(libs.firebase.crashlytics)
             }
         }

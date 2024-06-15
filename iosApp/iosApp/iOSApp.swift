@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseCrashlytics
+import FirebaseAnalytics  // Import Firebase Analytics module
 import Firebase
 import shared
 
@@ -7,6 +8,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
+        
+        // Log a custom event
+        Analytics.logEvent("login_event", parameters: [
+            "username": "example_user",
+            "method": "email"
+        ])
+        
         return true
     }
 }
