@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.koin.mp.KoinPlatform
 
-actual class Analytics {
+actual class TimerXAnalytics {
     private val context: Context = KoinPlatform.getKoin().get()
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 

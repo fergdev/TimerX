@@ -1,6 +1,6 @@
 import SwiftUI
 import FirebaseCrashlytics
-import FirebaseAnalytics  // Import Firebase Analytics module
+import FirebaseAnalytics
 import Firebase
 import shared
 
@@ -8,14 +8,37 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        
-        // Log a custom event
-        Analytics.logEvent("login_event", parameters: [
-            "username": "example_user",
-            "method": "email"
-        ])
-        
+        TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
         return true
+    }
+}
+
+class FirebaseLoggingCallback: FirebaseIosCallback {
+    
+    func logEvent(eventId: String, params: String) {
+        let dict = splitStringToDictionary(params, ",", ":")
+        Analytics.logEvent(eventId, parameters: dict)
+    }
+     
+    func splitStringToDictionary(_ input: String, _ pairDelimiter: Character, _ keyValueDelimiter: Character) -> [String: String] {
+        var result = [String: String]()
+        
+        // Split the input string into key-value pairs
+        let pairs = input.split(separator: pairDelimiter)
+        
+        for pair in pairs {
+            // Split each pair into key and value
+            let keyValueArray = pair.split(separator: keyValueDelimiter, maxSplits: 1).map { String($0) }
+            
+            // Ensure there are exactly two components: key and value
+            if keyValueArray.count == 2 {
+                let key = keyValueArray[0].trimmingCharacters(in: .whitespacesAndNewlines)
+                let value = keyValueArray[1].trimmingCharacters(in: .whitespacesAndNewlines)
+                result[key] = value
+            }
+        }
+        
+        return result
     }
 }
 

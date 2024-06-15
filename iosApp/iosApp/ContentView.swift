@@ -1,9 +1,11 @@
 import SwiftUI
 import shared
+import FirebaseAnalytics
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        Main_iosKt.MainViewController()
+
+        return Main_iosKt.MainViewController()
     }
         
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

@@ -10,7 +10,8 @@ fun MainViewController() = ComposeUIViewController {
     initKoin()
     App()
 }
-fun initKoin(){
+
+fun initKoin() {
     startKoin {
         modules(appModule())
     }
