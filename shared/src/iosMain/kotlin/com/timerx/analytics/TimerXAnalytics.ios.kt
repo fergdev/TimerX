@@ -5,7 +5,7 @@ actual class TimerXAnalytics actual constructor() {
         eventName: String,
         params: Map<String, Any>?
     ) {
-        cb?.logEvent(eventName, params.toString())
+        firebaseIosCallback?.logEvent(eventName, params.toString())
     }
 
     private fun Map<String, Any>?.toString(): String {
@@ -23,7 +23,8 @@ interface FirebaseIosCallback {
     fun logEvent(eventId: String, params: String)
 }
 
-var cb: FirebaseIosCallback? = null
+private var firebaseIosCallback: FirebaseIosCallback? = null
+@Suppress("unused")
 fun firebaseCallback(callback: FirebaseIosCallback) {
-    cb = callback
+    firebaseIosCallback = callback
 }
