@@ -168,4 +168,99 @@ object CustomIcons {
             }.build()
         }
     }
+    @Composable
+    fun vibration(): ImageVector {
+        return remember {
+            ImageVector.Builder(
+                name = "vibration",
+                defaultWidth = 40.0.dp,
+                defaultHeight = 40.0.dp,
+                viewportWidth = 40.0f,
+                viewportHeight = 40.0f
+            ).apply {
+                path(
+                    fill = SolidColor(Color.Black),
+                    fillAlpha = 1f,
+                    stroke = null,
+                    strokeAlpha = 1f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(1.667f, 24.75f)
+                    quadToRelative(-0.542f, 0f, -0.917f, -0.375f)
+                    reflectiveQuadToRelative(-0.375f, -0.958f)
+                    verticalLineToRelative(-6.875f)
+                    quadToRelative(0f, -0.542f, 0.375f, -0.917f)
+                    reflectiveQuadToRelative(0.958f, -0.375f)
+                    quadToRelative(0.542f, 0f, 0.917f, 0.375f)
+                    reflectiveQuadToRelative(0.375f, 0.917f)
+                    verticalLineToRelative(6.875f)
+                    quadToRelative(0f, 0.583f, -0.396f, 0.958f)
+                    reflectiveQuadToRelative(-0.937f, 0.375f)
+                    close()
+                    moveToRelative(4.916f, 3.542f)
+                    quadToRelative(-0.541f, 0f, -0.916f, -0.396f)
+                    reflectiveQuadToRelative(-0.375f, -0.938f)
+                    verticalLineTo(13.042f)
+                    quadToRelative(0f, -0.542f, 0.375f, -0.938f)
+                    quadToRelative(0.375f, -0.396f, 0.958f, -0.396f)
+                    quadToRelative(0.542f, 0f, 0.917f, 0.396f)
+                    reflectiveQuadToRelative(0.375f, 0.938f)
+                    verticalLineToRelative(13.916f)
+                    quadToRelative(0f, 0.542f, -0.396f, 0.938f)
+                    quadToRelative(-0.396f, 0.396f, -0.938f, 0.396f)
+                    close()
+                    moveToRelative(31.75f, -3.542f)
+                    quadToRelative(-0.583f, 0f, -0.958f, -0.375f)
+                    reflectiveQuadTo(37f, 23.417f)
+                    verticalLineToRelative(-6.875f)
+                    quadToRelative(0f, -0.542f, 0.396f, -0.917f)
+                    reflectiveQuadToRelative(0.937f, -0.375f)
+                    quadToRelative(0.542f, 0f, 0.917f, 0.375f)
+                    reflectiveQuadToRelative(0.375f, 0.917f)
+                    verticalLineToRelative(6.875f)
+                    quadToRelative(0f, 0.583f, -0.375f, 0.958f)
+                    reflectiveQuadToRelative(-0.917f, 0.375f)
+                    close()
+                    moveToRelative(-4.916f, 3.542f)
+                    quadToRelative(-0.584f, 0f, -0.959f, -0.396f)
+                    reflectiveQuadToRelative(-0.375f, -0.938f)
+                    verticalLineTo(13.042f)
+                    quadToRelative(0f, -0.542f, 0.396f, -0.938f)
+                    quadToRelative(0.396f, -0.396f, 0.938f, -0.396f)
+                    quadToRelative(0.541f, 0f, 0.916f, 0.396f)
+                    reflectiveQuadToRelative(0.375f, 0.938f)
+                    verticalLineToRelative(13.916f)
+                    quadToRelative(0f, 0.542f, -0.375f, 0.938f)
+                    quadToRelative(-0.375f, 0.396f, -0.916f, 0.396f)
+                    close()
+                    moveTo(12.333f, 34.75f)
+                    quadToRelative(-0.875f, 0f, -1.5f, -0.625f)
+                    reflectiveQuadToRelative(-0.625f, -1.5f)
+                    verticalLineTo(7.375f)
+                    quadToRelative(0f, -0.917f, 0.625f, -1.521f)
+                    quadToRelative(0.625f, -0.604f, 1.5f, -0.604f)
+                    horizontalLineToRelative(15.334f)
+                    quadToRelative(0.875f, 0f, 1.5f, 0.604f)
+                    reflectiveQuadToRelative(0.625f, 1.521f)
+                    verticalLineToRelative(25.25f)
+                    quadToRelative(0f, 0.875f, -0.625f, 1.5f)
+                    reflectiveQuadToRelative(-1.5f, 0.625f)
+                    close()
+                    moveToRelative(0.5f, -2.625f)
+                    horizontalLineToRelative(14.334f)
+                    verticalLineTo(7.875f)
+                    horizontalLineTo(12.833f)
+                    close()
+                    moveToRelative(0f, -24.25f)
+                    verticalLineToRelative(24.25f)
+                    close()
+                }
+            }.build()
+        }
+    }
 }
+

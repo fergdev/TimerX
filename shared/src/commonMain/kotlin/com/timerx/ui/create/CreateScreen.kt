@@ -58,6 +58,8 @@ import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepPicker
+import com.timerx.ui.common.VibrationPicker
+import com.timerx.vibration.Vibration
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
@@ -67,6 +69,7 @@ import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.finish_alert
 import timerx.shared.generated.resources.finish_color
+import timerx.shared.generated.resources.vibration
 
 private const val TWO_HUNDRED_SEVENTY_DEG = 270f
 private const val FOCUS_REQUEST_DELAY: Long = 300
@@ -189,6 +192,38 @@ private fun CreateContent(
         }
         item {
             FinishAlertPicker(state.finishAlert, viewModel.interactions.updateFinishAlert)
+        }
+        item {
+            FinishVibrationPicker(
+                state.finishVibration,
+                viewModel.interactions.updateFinishVibration
+            )
+        }
+    }
+}
+
+@Composable
+private fun FinishVibrationPicker(
+    finishVibration: Vibration,
+    updateFinishVibration: (Vibration) -> Unit
+) {
+    var vibrationPickerVisible by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
+            .clickable { vibrationPickerVisible = true },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(Res.string.vibration))
+        Spacer(modifier = Modifier.width(16.dp))
+        Box(modifier = Modifier)
+        Text(text = finishVibration.displayName)
+        if (vibrationPickerVisible) {
+            VibrationPicker {
+                if (it != null) {
+                    updateFinishVibration(it)
+                }
+                vibrationPickerVisible = false
+            }
         }
     }
 }

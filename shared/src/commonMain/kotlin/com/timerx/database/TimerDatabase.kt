@@ -8,6 +8,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.vibration.Vibration
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
@@ -52,7 +53,8 @@ private class RealmTimer : RealmObject {
     var name: String = ""
     var sets: RealmList<RealmSet> = realmListOf()
     var finishColor: RealmColor? = null
-    var finishBeepId: Int = 0
+    var finishBeepId: Int = Beep.Alert.ordinal
+    var finishVibration: Int = Vibration.Heavy.ordinal
 }
 
 private class RealmSet : RealmObject {
@@ -71,13 +73,15 @@ private class RealmInterval : RealmObject {
     var skipOnLastSet: Boolean = false
     var countUp: Boolean = false
     var manualNext: Boolean = false
-    var beepId: Int = 0
+    var beepId: Int = Beep.Alert.ordinal
+    var vibrationId: Int = Vibration.Soft.ordinal
     var finalCountDown: RealmFinalCountDown? = null
 }
 
 private class RealmFinalCountDown : EmbeddedRealmObject {
     var duration: Int = 3
     var beepId: Int = Beep.Alert.ordinal
+    var vibrationId = Vibration.Medium.ordinal
 }
 
 private fun Color.toRealmColor(): RealmColor {
@@ -136,33 +140,6 @@ class RealmTimerRepository : ITimerRepository {
         return realm.query<RealmTimerContainer>().find().first().timers
     }
 
-    private fun realmTimerToTimer(realmTimer: RealmTimer): Timer {
-        return Timer(
-            realmTimer.id.toHexString(),
-            realmTimer.name,
-            realmTimer.sets.map { realmSet ->
-                TimerSet(
-                    realmSet.id.toHexString(),
-                    realmSet.repetitions,
-                    realmSet.intervals.map { realmInterval ->
-                        TimerInterval(
-                            realmInterval.id.toHexString(),
-                            realmInterval.name,
-                            realmInterval.duration,
-                            realmInterval.color.toComposeColor(),
-                            realmInterval.skipOnLastSet,
-                            realmInterval.countUp,
-                            realmInterval.manualNext,
-                            Beep.entries[realmInterval.beepId],
-                            realmInterval.finalCountDown.toFinalCountDown()
-                        )
-                    }.toPersistentList()
-                )
-            }.toPersistentList(),
-            realmTimer.finishColor.toComposeColor(),
-            Beep.entries[realmTimer.finishBeepId],
-        )
-    }
 
     override fun insertTimer(timer: Timer) {
         val realmTimer = RealmTimer()
@@ -180,35 +157,6 @@ class RealmTimerRepository : ITimerRepository {
             val index = realmTimerContainer.timers.first { it.id.toHexString() == timer.id }
             index.setTimer(timer)
             copyToRealm(index)
-        }
-    }
-
-    private fun RealmTimer.setTimer(timer: Timer) {
-        this.apply {
-            name = timer.name
-            sets = timer.sets.map {
-                RealmSet().apply {
-                    this.repetitions = it.repetitions
-                    this.intervals = it.intervals.map {
-                        RealmInterval().apply {
-                            this.name = it.name
-                            this.duration = it.duration
-                            this.color = it.color.toRealmColor()
-                            this.skipOnLastSet = it.skipOnLastSet
-                            this.countUp = it.countUp
-                            this.manualNext = it.manualNext
-                            this.beepId = it.beep.ordinal
-                            this.finalCountDown = RealmFinalCountDown().apply {
-                                this.duration = it.finalCountDown.duration
-                                this.beepId = it.finalCountDown.beep.ordinal
-                            }
-                        }
-                    }.toRealmList()
-                }
-            }.toRealmList()
-
-            this.finishColor = timer.finishColor.toRealmColor()
-            this.finishBeepId = timer.finishBeep.ordinal
         }
     }
 
@@ -240,4 +188,67 @@ class RealmTimerRepository : ITimerRepository {
             copyToRealm(realmTimerContainer)
         }
     }
+
+    private fun RealmTimer.setTimer(timer: Timer) {
+        this.apply {
+            name = timer.name
+            sets = timer.sets.map {
+                RealmSet().apply {
+                    this.repetitions = it.repetitions
+                    this.intervals = it.intervals.map {
+                        RealmInterval().apply {
+                            this.name = it.name
+                            this.duration = it.duration
+                            this.color = it.color.toRealmColor()
+                            this.skipOnLastSet = it.skipOnLastSet
+                            this.countUp = it.countUp
+                            this.manualNext = it.manualNext
+                            this.beepId = it.beep.ordinal
+                            this.vibrationId = it.vibration.ordinal
+                            this.finalCountDown = RealmFinalCountDown().apply {
+                                this.duration = it.finalCountDown.duration
+                                this.beepId = it.finalCountDown.beep.ordinal
+                                this.vibrationId = it.vibration.ordinal
+                            }
+                        }
+                    }.toRealmList()
+                }
+            }.toRealmList()
+
+            this.finishColor = timer.finishColor.toRealmColor()
+            this.finishBeepId = timer.finishBeep.ordinal
+            this.finishVibration = timer.finishVibration.ordinal
+        }
+    }
+
+    private fun realmTimerToTimer(realmTimer: RealmTimer): Timer {
+        return Timer(
+            realmTimer.id.toHexString(),
+            realmTimer.name,
+            realmTimer.sets.map { realmSet ->
+                TimerSet(
+                    realmSet.id.toHexString(),
+                    realmSet.repetitions,
+                    realmSet.intervals.map { realmInterval ->
+                        TimerInterval(
+                            realmInterval.id.toHexString(),
+                            realmInterval.name,
+                            realmInterval.duration,
+                            realmInterval.color.toComposeColor(),
+                            realmInterval.skipOnLastSet,
+                            realmInterval.countUp,
+                            realmInterval.manualNext,
+                            Beep.entries[realmInterval.beepId],
+                            Vibration.entries[realmInterval.vibrationId],
+                            realmInterval.finalCountDown.toFinalCountDown()
+                        )
+                    }.toPersistentList()
+                )
+            }.toPersistentList(),
+            realmTimer.finishColor.toComposeColor(),
+            Beep.entries[realmTimer.finishBeepId],
+            Vibration.entries[realmTimer.finishVibration]
+        )
+    }
+
 }

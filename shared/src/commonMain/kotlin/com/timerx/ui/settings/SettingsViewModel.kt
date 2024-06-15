@@ -7,11 +7,13 @@ import kotlinx.coroutines.flow.update
 import moe.tlaster.precompose.viewmodel.ViewModel
 
 data class SettingsScreenState(
-    val volume: Float = 1.0F
+    val volume: Float = 1.0F,
+    val vibration: Boolean
 )
 
 class SettingsInteractions(
-    val updateVolume: (Float) -> Unit
+    val updateVolume: (Float) -> Unit,
+    val updateVibration: (Boolean) -> Unit
 )
 
 class SettingsViewModel(
@@ -20,13 +22,21 @@ class SettingsViewModel(
 
     private val _state = MutableStateFlow(
         SettingsScreenState(
-            volume = timerXSettings.volume
+            volume = timerXSettings.volume,
+            vibration = timerXSettings.vibrationEnabled
         )
     )
     val state: StateFlow<SettingsScreenState> = _state
     val interactions = SettingsInteractions(
-        updateVolume = ::updateVolume
+        updateVolume = ::updateVolume,
+        updateVibration = ::updateVibration
     )
+
+    private fun updateVibration(enabled: Boolean){
+        timerXSettings.vibrationEnabled = enabled
+        _state.update { it.copy(vibration = enabled) }
+
+    }
 
     private fun updateVolume(volume: Float) {
         timerXSettings.volume = volume

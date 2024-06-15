@@ -11,6 +11,7 @@ import com.timerx.domain.TimerState
 import com.timerx.domain.TimerStateMachineImpl
 import com.timerx.notification.TimerXNotificationManager
 import com.timerx.settings.TimerXSettings
+import com.timerx.vibration.VibrationManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -22,6 +23,7 @@ data class RunScreenState(
     val timerState: TimerState = TimerState.Running,
     val backgroundColor: Color = Color.Transparent,
     val volume: Float,
+    val vibrationEnabled: Boolean,
     val index: String? = "",
     val time: Int = 0,
     val name: String = "",
@@ -35,7 +37,8 @@ class RunViewModel(
     private val beepMaker: BeepMaker,
     private val notificationManager: TimerXNotificationManager,
     private val timerXSettings: TimerXSettings,
-    private val timerXAnalytics: TimerXAnalytics
+    private val timerXAnalytics: TimerXAnalytics,
+    private val vibrationManager: VibrationManager
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
@@ -43,6 +46,7 @@ class RunViewModel(
     private val _state = MutableStateFlow(
         RunScreenState(
             volume = timerXSettings.volume,
+            vibrationEnabled = timerXSettings.vibrationEnabled,
             timerName = timer.name.uppercase()
         )
     )
@@ -56,7 +60,8 @@ class RunViewModel(
         val previousInterval: () -> Unit,
         val onManualNext: () -> Unit,
         val restartTimer: () -> Unit,
-        val updateVolume: (Float) -> Unit
+        val updateVolume: (Float) -> Unit,
+        val updateVibrationEnabled: (Boolean) -> Unit
     )
 
     val interactions = Interactions(
@@ -66,7 +71,8 @@ class RunViewModel(
         previousInterval = timerStateMachine::previousInterval,
         onManualNext = ::onManualNext,
         restartTimer = ::initTimer,
-        updateVolume = ::updateVolume
+        updateVolume = ::updateVolume,
+        updateVibrationEnabled = ::updateVibrationEnabled
     )
 
     init {
@@ -81,9 +87,12 @@ class RunViewModel(
                 updateRunState(timerEvent.runState)
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
-                        timerXAnalytics.logEvent("Ticker", mapOf(Pair("elapsed", timerEvent.runState.elapsed)))
+                        timerXAnalytics.logEvent(
+                            "Ticker",
+                            mapOf(Pair("elapsed", timerEvent.runState.elapsed))
+                        )
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
-                        timerEvent.beep?.let{
+                        timerEvent.beep?.let {
                             beepMaker.beep(it)
                         }
                     }
@@ -91,18 +100,22 @@ class RunViewModel(
                     is TimerEvent.Finished -> {
                         beepMaker.beep(timerEvent.beep)
                         notificationManager.stop()
+                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.NextInterval -> {
                         beepMaker.beep(timerEvent.beep)
+                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.PreviousInterval -> {
                         beepMaker.beep(timerEvent.beep)
+                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.Started -> {
                         beepMaker.beep(timerEvent.beep)
+                        vibrationManager.vibrate(timerEvent.vibration)
                         notificationManager.start()
                     }
 
@@ -165,6 +178,11 @@ class RunViewModel(
         } else {
             timerStateMachine.resume()
         }
+    }
+
+    private fun updateVibrationEnabled(enabled: Boolean) {
+        timerXSettings.vibrationEnabled = enabled
+        _state.update { it.copy(vibrationEnabled = enabled) }
     }
 
     override fun onCleared() {

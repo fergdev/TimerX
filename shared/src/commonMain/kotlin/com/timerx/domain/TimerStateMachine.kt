@@ -2,6 +2,7 @@ package com.timerx.domain
 
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
+import com.timerx.vibration.Vibration
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -12,13 +13,33 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed class TimerEvent(val runState: RunState) {
-    class Started(runState: RunState, val beep: Beep) : TimerEvent(runState)
+    class Started(
+        runState: RunState,
+        val beep: Beep,
+        val vibration: Vibration
+    ) :
+        TimerEvent(runState)
+
+    class NextInterval(
+        runState: RunState,
+        val beep: Beep,
+        val vibration: Vibration
+    ) : TimerEvent(runState)
+
+    class PreviousInterval(
+        runState: RunState,
+        val beep: Beep,
+        val vibration: Vibration
+    ) : TimerEvent(runState)
+
+    class Finished(
+        runState: RunState,
+        val beep: Beep,
+        val vibration: Vibration
+    ) : TimerEvent(runState)
+
     class Paused(runState: RunState) : TimerEvent(runState)
     class Resumed(runState: RunState) : TimerEvent(runState)
-
-    class NextInterval(runState: RunState, val beep: Beep) : TimerEvent(runState)
-    class PreviousInterval(runState: RunState, val beep: Beep) : TimerEvent(runState)
-    class Finished(runState: RunState, val beep: Beep) : TimerEvent(runState)
 
     class Ticker(runState: RunState, val beep: Beep?) : TimerEvent(runState)
 }
@@ -74,7 +95,13 @@ interface TimerStateMachine {
 class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
     private val runState = MutableStateFlow(RunState())
     private val _eventState =
-        MutableStateFlow<TimerEvent>(TimerEvent.Started(runState.value, getCurrentInterval().beep))
+        MutableStateFlow<TimerEvent>(
+            TimerEvent.Started(
+                runState.value,
+                getCurrentInterval().beep,
+                getCurrentInterval().vibration
+            )
+        )
 
     private var tickerJob: Job? = null
 
@@ -86,7 +113,8 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
         updateState(0, 0, 0)
         _eventState.value = TimerEvent.Started(
             runState.value,
-            getCurrentInterval().beep
+            getCurrentInterval().beep,
+            getCurrentInterval().vibration
         )
         startTicker()
     }
@@ -157,7 +185,8 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
             )
             _eventState.value = TimerEvent.NextInterval(
                 runState.value,
-                getCurrentInterval().beep
+                getCurrentInterval().beep,
+                getCurrentInterval().vibration
             )
         }
     }
@@ -174,7 +203,11 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
         if (runState.value.elapsed != 0) {
             runState.value = runState.value.copy(elapsed = 0)
             _eventState.value =
-                TimerEvent.PreviousInterval(runState.value, getCurrentInterval().beep)
+                TimerEvent.PreviousInterval(
+                    runState.value,
+                    getCurrentInterval().beep,
+                    getCurrentInterval().vibration
+                )
             return
         }
 
@@ -216,7 +249,11 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
             repetitionIndex,
             intervalIndex,
         )
-        _eventState.value = TimerEvent.PreviousInterval(runState.value, getCurrentInterval().beep)
+        _eventState.value = TimerEvent.PreviousInterval(
+            runState.value,
+            getCurrentInterval().beep,
+            getCurrentInterval().vibration
+        )
     }
 
     override fun destroy() {
@@ -301,7 +338,8 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
             backgroundColor = timer.finishColor
         )
         tickerJob?.cancel()
-        _eventState.value = TimerEvent.Finished(runState.value, timer.finishBeep)
+        _eventState.value =
+            TimerEvent.Finished(runState.value, timer.finishBeep, timer.finishVibration)
     }
 
     companion object {

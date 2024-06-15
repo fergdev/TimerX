@@ -144,7 +144,7 @@ private fun RunView(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(controlsVisible) {
-                TopControls(interactions, contrastDisplayColor, state.volume) {
+                TopControls(interactions, contrastDisplayColor, state.volume, state.vibrationEnabled) {
                     controlsVisible = true
                     touchCounter++
                 }
@@ -231,6 +231,7 @@ private fun TopControls(
     interactions: RunViewModel.Interactions,
     displayColor: Color,
     volume: Float,
+    vibrationEnabled: Boolean,
     incrementTouchCounter: () -> Unit,
 ) {
     Row {
@@ -257,6 +258,17 @@ private fun TopControls(
                 activeTrackColor = displayColor
             )
         )
+        IconButton(onClick = {
+            incrementTouchCounter()
+            interactions.updateVibrationEnabled(vibrationEnabled.not())
+        }) {
+            Icon(
+                modifier = Modifier.size(CORNER_ICON_SIZE),
+                imageVector = CustomIcons.vibration(),
+                contentDescription = stringResource(Res.string.next),
+                tint = if (vibrationEnabled) displayColor else displayColor.copy(alpha = 0.5f)
+            )
+        }
         IconButton(onClick = {
             incrementTouchCounter()
             interactions.nextInterval()

@@ -9,6 +9,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -28,9 +29,7 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 import timerx.shared.generated.resources.Res
-import timerx.shared.generated.resources.create_timer
 import timerx.shared.generated.resources.created_value
-import timerx.shared.generated.resources.edit_timer
 import timerx.shared.generated.resources.prepare
 import timerx.shared.generated.resources.rest
 import timerx.shared.generated.resources.work
@@ -53,11 +52,13 @@ class CreateViewModel(
                     name = workString,
                     duration = 30,
                     color = Color.Green,
+                    vibration = Vibration.Medium,
                     beep = Beep.Alert
                 ), TimerInterval(
                     id = "${defaultIdGenerator++}",
                     name = restString,
                     duration = 30,
+                    vibration = Vibration.Medium,
                     color = Color.Blue,
                     beep = Beep.Alert2
                 )
@@ -72,6 +73,7 @@ class CreateViewModel(
             name = workString,
             duration = 30,
             color = Color.Green,
+            vibration = Vibration.Medium,
             beep = Beep.Alert
         )
     }
@@ -86,7 +88,6 @@ class CreateViewModel(
         val moveDown: (TimerSet) -> Unit,
         val duplicate: (TimerSet) -> Unit,
         val delete: (TimerSet) -> Unit,
-
         val update: UpdateSetInteractions
     )
 
@@ -100,7 +101,6 @@ class CreateViewModel(
         val moveDown: (TimerInterval) -> Unit,
         val delete: (TimerInterval) -> Unit,
         val duplicate: (TimerInterval) -> Unit,
-
         val update: UpdateIntervalInteractions
     )
 
@@ -112,7 +112,8 @@ class CreateViewModel(
         val updateCountUp: (TimerInterval, Boolean) -> Unit,
         val updateManualNext: (TimerInterval, Boolean) -> Unit,
         val updateAlert: (TimerInterval, Beep) -> Unit,
-        val updateFinalCountDown: (TimerInterval, FinalCountDown) -> Unit
+        val updateFinalCountDown: (TimerInterval, FinalCountDown) -> Unit,
+        val updateVibration: (TimerInterval, Vibration) -> Unit
     )
 
     class Interactions(
@@ -120,6 +121,7 @@ class CreateViewModel(
         val addSet: () -> Unit,
         val updateFinishColor: (Color) -> Unit,
         val updateFinishAlert: (Beep) -> Unit,
+        val updateFinishVibration: (Vibration) -> Unit,
         val save: () -> Unit,
 
         val set: SetInteractions,
@@ -131,6 +133,7 @@ class CreateViewModel(
         addSet = ::addSet,
         updateFinishColor = ::onFinishColor,
         updateFinishAlert = ::updateFinishAlert,
+        updateFinishVibration = ::updateFinishVibration,
         save = ::save,
 
         set = SetInteractions(
@@ -157,16 +160,17 @@ class CreateViewModel(
                 updateCountUp = ::updateCountUp,
                 updateManualNext = ::updateManualNext,
                 updateAlert = ::updateAlert,
-                updateFinalCountDown = ::updateFinalCountDown
+                updateFinalCountDown = ::updateFinalCountDown,
+                updateVibration = ::updateVibration
             ),
         )
     )
 
     data class State(
-        val screenTitle: String = "",
         val timerName: String = "",
         val finishColor: Color = Color.Red,
         val finishAlert: Beep = Beep.End,
+        val finishVibration: Vibration = Vibration.Heavy,
         val sets: ImmutableList<TimerSet> = persistentListOf()
     )
 
@@ -183,11 +187,11 @@ class CreateViewModel(
             _state.update {
                 runBlocking {
                     it.copy(
-                        screenTitle = getString(Res.string.edit_timer),
                         timerName = timerEditing.name,
                         sets = sets.toPersistentList(),
                         finishColor = timerEditing.finishColor,
-                        finishAlert = timerEditing.finishBeep
+                        finishAlert = timerEditing.finishBeep,
+                        finishVibration = timerEditing.finishVibration
                     )
                 }
             }
@@ -210,8 +214,10 @@ class CreateViewModel(
             _state.update {
                 runBlocking {
                     it.copy(
-                        screenTitle = getString(Res.string.create_timer),
-                        sets = sets.toPersistentList()
+                        sets = sets.toPersistentList(),
+                        finishColor = Color.Red,
+                        finishAlert = Beep.End,
+                        finishVibration = Vibration.Heavy
                     )
                 }
             }
@@ -478,6 +484,10 @@ class CreateViewModel(
         _state.update { it.copy(finishAlert = beep) }
     }
 
+    private fun updateFinishVibration(vibration: Vibration) {
+        _state.update { it.copy(finishVibration = vibration) }
+    }
+
     private fun updateFinalCountDown(
         timerInterval: TimerInterval,
         finalCountDown: FinalCountDown
@@ -495,4 +505,17 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
+    private fun updateVibration(timerInterval: TimerInterval, vibration: Vibration) {
+        sets = sets.map { (_, repetitions, intervals) ->
+            TimerSet("", repetitions, intervals.map {
+                if (it.id == timerInterval.id) {
+                    it.copy(vibration = vibration)
+                } else {
+                    it
+                }
+            }.toPersistentList())
+        }.toMutableList()
+
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
 }

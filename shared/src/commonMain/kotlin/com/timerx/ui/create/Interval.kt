@@ -37,6 +37,7 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.BeepPicker
 import com.timerx.ui.common.NumberIncrement
+import com.timerx.ui.common.VibrationPicker
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.alert
@@ -49,6 +50,7 @@ import timerx.shared.generated.resources.interval
 import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.skip_on_last_set
 import timerx.shared.generated.resources.up
+import timerx.shared.generated.resources.vibration
 
 @Composable
 internal fun Interval(
@@ -156,10 +158,10 @@ private fun IntervalSwitches(
         )
     }
 
-    var alertPickerVisible by remember { mutableStateOf(false) }
-    if (alertPickerVisible) {
+    var beepPickerVisible by remember { mutableStateOf(false) }
+    if (beepPickerVisible) {
         BeepPicker {
-            alertPickerVisible = false
+            beepPickerVisible = false
             it?.let {
                 interactions.interval.update.updateAlert(interval, it)
             }
@@ -167,12 +169,36 @@ private fun IntervalSwitches(
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { alertPickerVisible = true },
+        modifier = Modifier.fillMaxWidth().clickable { beepPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = stringResource(Res.string.alert))
         Spacer(modifier = Modifier.weight(1f))
         Text(text = interval.beep.displayName)
+    }
+
+    var vibrationPickerVisible by remember { mutableStateOf(false) }
+    if (vibrationPickerVisible) {
+        VibrationPicker {
+            vibrationPickerVisible = false
+            it?.let {
+                interactions.interval.update.updateVibration(interval, it)
+            }
+        }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable { beepPickerVisible = true },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(Res.string.vibration))
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            modifier = Modifier.clickable {
+                vibrationPickerVisible = true
+            },
+            text = interval.vibration.displayName
+        )
     }
 
     FinalCountDownRow(interval.finalCountDown) {

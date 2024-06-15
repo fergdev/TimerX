@@ -15,9 +15,9 @@
     <string name="down">Down</string>
     <string name="edit">Edit</string>
     <string name="edit_timer">Edit timer</string>
-    <string name="finish_color">Finish color</string>
-    <string name="finish_alert">Finish alert</string>
     <string name="final_count_down">Final count down</string>
+    <string name="finish_alert">Finish alert</string>
+    <string name="finish_color">Finish color</string>
     <string name="finished">Finished</string>
     <string name="interval">Interval</string>
     <string name="manual_next">Manual next</string>
@@ -35,5 +35,7 @@
     <string name="timer_name">Timer name</string>
     <string name="total_value">Total %1$s</string>
     <string name="up">Up</string>
+    <string name="vibration">Vibration</string>
+    <string name="volume">Volume</string>
     <string name="work">Work</string>
 </resources>
