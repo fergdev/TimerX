@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,12 +41,14 @@ import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.VibrationPicker
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
-import timerx.shared.generated.resources.alert
+import timerx.shared.generated.resources.beep
 import timerx.shared.generated.resources.copy
+import timerx.shared.generated.resources.count_down
+import timerx.shared.generated.resources.count_down_beep
+import timerx.shared.generated.resources.count_down_vibration
 import timerx.shared.generated.resources.count_up
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.down
-import timerx.shared.generated.resources.final_count_down
 import timerx.shared.generated.resources.interval
 import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.skip_on_last_set
@@ -169,10 +172,10 @@ private fun IntervalSwitches(
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { beepPickerVisible = true },
+        modifier = Modifier.height(32.dp).fillMaxWidth().clickable { beepPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(Res.string.alert))
+        Text(text = stringResource(Res.string.beep))
         Spacer(modifier = Modifier.weight(1f))
         Text(text = interval.beep.displayName)
     }
@@ -188,26 +191,21 @@ private fun IntervalSwitches(
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { beepPickerVisible = true },
+        modifier = Modifier.height(32.dp).fillMaxWidth().clickable { beepPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = stringResource(Res.string.vibration))
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            modifier = Modifier.clickable {
-                vibrationPickerVisible = true
-            },
-            text = interval.vibration.displayName
-        )
+        Text(text = interval.vibration.displayName)
     }
 
-    FinalCountDownRow(interval.finalCountDown) {
+    IntervalCountDown(interval.finalCountDown) {
         interactions.interval.update.updateFinalCountDown(interval, it)
     }
 }
 
 @Composable
-private fun FinalCountDownRow(
+private fun IntervalCountDown(
     finalCountDown: FinalCountDown,
     update: (FinalCountDown) -> Unit
 ) {
@@ -216,30 +214,53 @@ private fun FinalCountDownRow(
         BeepPicker {
             beepPickerVisible = false
             it?.let {
-                update(FinalCountDown(finalCountDown.duration, it))
+                update(finalCountDown.copy(beep = it))
             }
         }
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { beepPickerVisible = true },
+        modifier = Modifier.height(32.dp).fillMaxWidth().clickable { beepPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(Res.string.final_count_down))
+        Text(text = stringResource(Res.string.count_down_beep))
+        Spacer(modifier = Modifier.weight(1f))
+        Text(text = finalCountDown.beep.displayName)
+    }
+
+    var vibrationPickerVisible by remember { mutableStateOf(false) }
+    if (vibrationPickerVisible) {
+        VibrationPicker {
+            vibrationPickerVisible = false
+            it?.let {
+                update(finalCountDown.copy(vibration = it))
+            }
+        }
+    }
+
+    Row(
+        modifier = Modifier.height(32.dp).fillMaxWidth()
+            .clickable { vibrationPickerVisible = true },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(Res.string.count_down_vibration))
+        Spacer(modifier = Modifier.weight(1f))
+        Text(text = finalCountDown.vibration.displayName)
+    }
+
+    Row(
+        modifier = Modifier.height(32.dp).fillMaxWidth()
+            .clickable { vibrationPickerVisible = true },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(Res.string.count_down))
         Spacer(modifier = Modifier.weight(1f))
         NumberIncrement(
             value = finalCountDown.duration,
             negativeButtonEnabled = finalCountDown.duration > 0,
-            positiveButtonEnabled = true
-        ) {
-            update(FinalCountDown(it, finalCountDown.beep))
+            formatter = { "$it" }) {
+            update(finalCountDown.copy(duration = it))
         }
-        Text(
-            modifier = Modifier.clickable {
-                beepPickerVisible = true
-            },
-            text = finalCountDown.beep.displayName
-        )
     }
 }
 

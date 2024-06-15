@@ -29,13 +29,14 @@ data class TimerInterval(
     val countUp: Boolean = false,
     val manualNext: Boolean = false,
     val beep: Beep = Beep.Alert,
-    val vibration: Vibration = Vibration.Soft,
+    val vibration: Vibration = Vibration.Medium,
     val finalCountDown: FinalCountDown = FinalCountDown()
 )
 
 data class FinalCountDown(
     val duration: Int = 3,
     val beep: Beep = Beep.Alert,
+    val vibration: Vibration = Vibration.Light
 )
 
 fun Int.timeFormatted(): String {

@@ -5,10 +5,10 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFAudio.AVAudioPlayer
 import platform.Foundation.NSBundle
 
-actual fun getBeepMaker(timerXSettings: TimerXSettings): BeepMaker = BeepMakerImpl(timerXSettings)
+actual fun getBeepManager(timerXSettings: TimerXSettings): IBeepManager = BeepManager(timerXSettings)
 
 @OptIn(ExperimentalForeignApi::class)
-class BeepMakerImpl(private val timerXSettings: TimerXSettings) : BeepMaker {
+class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
 
     override fun beep(beep: Beep) {
         val soundURL = NSBundle.mainBundle.URLForResource(beep.path, "mp3")

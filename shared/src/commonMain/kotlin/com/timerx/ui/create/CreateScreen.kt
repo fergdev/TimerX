@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
@@ -67,7 +66,7 @@ import org.koin.core.parameter.parametersOf
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
-import timerx.shared.generated.resources.finish_alert
+import timerx.shared.generated.resources.finish_beep
 import timerx.shared.generated.resources.finish_color
 import timerx.shared.generated.resources.vibration
 
@@ -188,18 +187,16 @@ private fun CreateContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
         item {
-            FinishColorPicker(state.finishColor, viewModel.interactions.updateFinishColor)
-        }
-        item {
-            FinishAlertPicker(state.finishAlert, viewModel.interactions.updateFinishAlert)
-        }
-        item {
-            FinishVibrationPicker(
-                state.finishVibration,
-                viewModel.interactions.updateFinishVibration
-            )
+            FinishControls(state, viewModel.interactions)
         }
     }
+}
+
+@Composable
+fun FinishControls(state: CreateViewModel.State, interactions: CreateViewModel.Interactions) {
+    FinishColorPicker(state.finishColor, interactions.updateFinishColor)
+    FinishBeepPicker(state.finishAlert, interactions.updateFinishAlert)
+    FinishVibrationPicker(state.finishVibration, interactions.updateFinishVibration)
 }
 
 @Composable
@@ -208,23 +205,23 @@ private fun FinishVibrationPicker(
     updateFinishVibration: (Vibration) -> Unit
 ) {
     var vibrationPickerVisible by remember { mutableStateOf(false) }
+    if (vibrationPickerVisible) {
+        VibrationPicker {
+            if (it != null) {
+                updateFinishVibration(it)
+            }
+            vibrationPickerVisible = false
+        }
+    }
     Row(
         modifier = Modifier.fillMaxWidth().padding(16.dp)
             .clickable { vibrationPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = stringResource(Res.string.vibration))
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.weight(1f))
         Box(modifier = Modifier)
         Text(text = finishVibration.displayName)
-        if (vibrationPickerVisible) {
-            VibrationPicker {
-                if (it != null) {
-                    updateFinishVibration(it)
-                }
-                vibrationPickerVisible = false
-            }
-        }
     }
 }
 
@@ -233,18 +230,16 @@ private fun FinishColorPicker(
     finishColor: Color,
     updateFinishColor: (Color) -> Unit
 ) {
+    var colorPickerVisible by remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = Modifier.fillMaxWidth()
+            .padding(16.dp)
+            .clickable { colorPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = stringResource(Res.string.finish_color))
-        Spacer(modifier = Modifier.width(16.dp))
-        var colorPickerVisible by remember { mutableStateOf(false) }
-        Box(
-            modifier = Modifier.size(48.dp).background(finishColor)
-                .clickable {
-                    colorPickerVisible = true
-                })
+        Spacer(modifier = Modifier.weight(1f))
+        Box(modifier = Modifier.size(48.dp).background(finishColor))
 
         if (colorPickerVisible) {
             ColorPicker {
@@ -258,9 +253,9 @@ private fun FinishColorPicker(
 }
 
 @Composable
-private fun FinishAlertPicker(
+private fun FinishBeepPicker(
     beep: Beep,
-    updateFinishAlert: (Beep) -> Unit
+    updateFinishBeep: (Beep) -> Unit
 ) {
     var alertPickerVisible by remember { mutableStateOf(false) }
     Row(
@@ -268,13 +263,13 @@ private fun FinishAlertPicker(
             .clickable { alertPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(Res.string.finish_alert))
-        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = stringResource(Res.string.finish_beep))
+        Spacer(modifier = Modifier.weight(1f))
         Text(text = beep.displayName)
 
         if (alertPickerVisible) {
             BeepPicker {
-                it?.let { updateFinishAlert(it) }
+                it?.let { updateFinishBeep(it) }
                 alertPickerVisible = false
             }
         }

@@ -6,9 +6,9 @@ import com.timerx.R
 import com.timerx.settings.TimerXSettings
 import org.koin.mp.KoinPlatform
 
-actual fun getBeepMaker(timerXSettings: TimerXSettings): BeepMaker = BeepMakerImpl(timerXSettings)
+actual fun getBeepManager(timerXSettings: TimerXSettings): IBeepManager = BeepManager(timerXSettings)
 
-class BeepMakerImpl(private val timerXSettings: TimerXSettings) : BeepMaker {
+class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private var mediaPlayer: MediaPlayer? = null
 

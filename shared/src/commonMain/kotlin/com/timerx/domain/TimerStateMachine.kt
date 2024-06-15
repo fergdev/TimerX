@@ -41,7 +41,7 @@ sealed class TimerEvent(val runState: RunState) {
     class Paused(runState: RunState) : TimerEvent(runState)
     class Resumed(runState: RunState) : TimerEvent(runState)
 
-    class Ticker(runState: RunState, val beep: Beep?) : TimerEvent(runState)
+    class Ticker(runState: RunState, val beep: Beep?, val vibration: Vibration?) : TimerEvent(runState)
 }
 
 enum class TimerState {
@@ -277,7 +277,13 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
                     } else {
                         null
                     }
-                _eventState.value = TimerEvent.Ticker(runState.value, beep)
+                val vibration =
+                    if (timeLeft <= currentInterval.finalCountDown.duration && timeLeft != 0) {
+                        currentInterval.finalCountDown.vibration
+                    } else {
+                        null
+                    }
+                _eventState.value = TimerEvent.Ticker(runState.value, beep, vibration)
                 if (nextElapsed == runState.value.intervalDuration) {
                     if (runState.value.manualNext) {
                         break

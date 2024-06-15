@@ -74,14 +74,14 @@ private class RealmInterval : RealmObject {
     var countUp: Boolean = false
     var manualNext: Boolean = false
     var beepId: Int = Beep.Alert.ordinal
-    var vibrationId: Int = Vibration.Soft.ordinal
+    var vibrationId: Int = Vibration.Medium.ordinal
     var finalCountDown: RealmFinalCountDown? = null
 }
 
 private class RealmFinalCountDown : EmbeddedRealmObject {
     var duration: Int = 3
     var beepId: Int = Beep.Alert.ordinal
-    var vibrationId = Vibration.Medium.ordinal
+    var vibrationId = Vibration.Soft.ordinal
 }
 
 private fun Color.toRealmColor(): RealmColor {
@@ -100,7 +100,7 @@ private fun RealmColor?.toComposeColor(): Color {
 
 private fun RealmFinalCountDown?.toFinalCountDown(): FinalCountDown {
     if (this == null) return FinalCountDown()
-    return FinalCountDown(duration, Beep.entries[beepId])
+    return FinalCountDown(duration, Beep.entries[beepId], Vibration.entries[vibrationId])
 }
 
 class RealmTimerRepository : ITimerRepository {

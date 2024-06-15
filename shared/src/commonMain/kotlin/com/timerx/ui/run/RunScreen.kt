@@ -247,7 +247,7 @@ private fun TopControls(
             )
         }
         Slider(
-            modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+            modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
             value = volume,
             valueRange = 0f..1f,
             onValueChange = {
@@ -255,10 +255,11 @@ private fun TopControls(
             },
             colors = SliderDefaults.colors(
                 thumbColor = displayColor,
-                activeTrackColor = displayColor
+                activeTrackColor = displayColor,
+                inactiveTrackColor = displayColor.copy(alpha = 0.3F)
             )
         )
-        IconButton(onClick = {
+        IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
             incrementTouchCounter()
             interactions.updateVibrationEnabled(vibrationEnabled.not())
         }) {

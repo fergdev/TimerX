@@ -4,6 +4,7 @@ package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
+import com.timerx.beep.IBeepManager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
@@ -35,7 +36,9 @@ import timerx.shared.generated.resources.rest
 import timerx.shared.generated.resources.work
 
 class CreateViewModel(
-    timerName: String = "", private val timerDatabase: ITimerRepository
+    timerName: String = "",
+    private val timerDatabase: ITimerRepository,
+    private val beepManager: IBeepManager
 ) : ViewModel() {
 
     private val workString: String = runBlocking { getString(Res.string.work) }
@@ -53,14 +56,24 @@ class CreateViewModel(
                     duration = 30,
                     color = Color.Green,
                     vibration = Vibration.Medium,
-                    beep = Beep.Alert
+                    beep = Beep.Alert,
+                    finalCountDown = FinalCountDown(
+                        duration = 3,
+                        beep = Beep.Alert,
+                        vibration = Vibration.Medium
+                    )
                 ), TimerInterval(
                     id = "${defaultIdGenerator++}",
                     name = restString,
                     duration = 30,
                     vibration = Vibration.Medium,
                     color = Color.Blue,
-                    beep = Beep.Alert2
+                    beep = Beep.Alert2,
+                    finalCountDown = FinalCountDown(
+                        duration = 3,
+                        beep = Beep.Alert,
+                        vibration = Vibration.Medium
+                    )
                 )
             )
         )
@@ -74,7 +87,12 @@ class CreateViewModel(
             duration = 30,
             color = Color.Green,
             vibration = Vibration.Medium,
-            beep = Beep.Alert
+            beep = Beep.Alert,
+            finalCountDown = FinalCountDown(
+                duration = 3,
+                beep = Beep.Alert,
+                vibration = Vibration.Medium
+            )
         )
     }
 
@@ -132,7 +150,7 @@ class CreateViewModel(
         updateTimerName = ::updateTimerName,
         addSet = ::addSet,
         updateFinishColor = ::onFinishColor,
-        updateFinishAlert = ::updateFinishAlert,
+        updateFinishAlert = ::updateFinishBeep,
         updateFinishVibration = ::updateFinishVibration,
         save = ::save,
 
@@ -159,7 +177,7 @@ class CreateViewModel(
                 updateSkipOnLastSet = ::updateSkipOnLastSet,
                 updateCountUp = ::updateCountUp,
                 updateManualNext = ::updateManualNext,
-                updateAlert = ::updateAlert,
+                updateAlert = ::updateBeep,
                 updateFinalCountDown = ::updateFinalCountDown,
                 updateVibration = ::updateVibration
             ),
@@ -191,36 +209,38 @@ class CreateViewModel(
                         sets = sets.toPersistentList(),
                         finishColor = timerEditing.finishColor,
                         finishAlert = timerEditing.finishBeep,
-                        finishVibration = timerEditing.finishVibration
+                        finishVibration = timerEditing.finishVibration,
                     )
                 }
             }
         } else {
             timerEditing = null
-
             sets = runBlocking {
                 mutableListOf(
                     TimerSet(
-                        repetitions = 1, intervals = persistentListOf(
+                        repetitions = 1,
+                        intervals = persistentListOf(
                             TimerInterval(
                                 name = getString(Res.string.prepare),
                                 duration = 10,
-                                color = Color.Yellow
+                                color = Color.Yellow,
+                                skipOnLastSet = false,
+                                countUp = false,
+                                manualNext = false,
+                                beep = Beep.Alert,
+                                vibration = Vibration.Medium,
+                                finalCountDown = FinalCountDown(
+                                    duration = 3,
+                                    beep = Beep.Alert,
+                                    vibration = Vibration.Medium
+                                )
                             )
                         )
-                    ), defaultTimerSet()
+                    ),
+                    defaultTimerSet()
                 )
             }
-            _state.update {
-                runBlocking {
-                    it.copy(
-                        sets = sets.toPersistentList(),
-                        finishColor = Color.Red,
-                        finishAlert = Beep.End,
-                        finishVibration = Vibration.Heavy
-                    )
-                }
-            }
+            _state.update { runBlocking { it.copy(sets = sets.toPersistentList()) } }
         }
     }
 
@@ -245,7 +265,8 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor,
-                    finishBeep = state.value.finishAlert
+                    finishBeep = state.value.finishAlert,
+                    finishVibration = Vibration.Heavy
                 )
             )
         } else {
@@ -254,7 +275,8 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor,
-                    finishBeep = state.value.finishAlert
+                    finishBeep = state.value.finishAlert,
+                    finishVibration = state.value.finishVibration
                 )
             )
         }
@@ -466,7 +488,7 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    private fun updateAlert(timerInterval: TimerInterval, beep: Beep) {
+    private fun updateBeep(timerInterval: TimerInterval, beep: Beep) {
         sets = sets.map { (_, repetitions, intervals) ->
             TimerSet("", repetitions, intervals.map {
                 if (it.id == timerInterval.id) {
@@ -478,10 +500,12 @@ class CreateViewModel(
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
+        beepManager.beep(beep)
     }
 
-    private fun updateFinishAlert(beep: Beep) {
+    private fun updateFinishBeep(beep: Beep) {
         _state.update { it.copy(finishAlert = beep) }
+        beepManager.beep(beep)
     }
 
     private fun updateFinishVibration(vibration: Vibration) {
