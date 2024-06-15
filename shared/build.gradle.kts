@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.androidJunit5)
     alias(libs.plugins.mokkery)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
@@ -66,6 +67,10 @@ kotlin {
                 implementation(libs.koin.android)
                 api(libs.koin.android)
                 api(libs.androidx.activity.compose)
+                //noinspection BomWithoutPlatform
+                implementation(libs.firebase.bom)
+                implementation(libs.firebase.analytics)
+                implementation(libs.firebase.crashlytics)
             }
         }
         val androidUnitTest by getting {

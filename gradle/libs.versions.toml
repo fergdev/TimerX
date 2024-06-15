@@ -1,11 +1,16 @@
 [versions]
 agp = "8.5.0"
 android-test-extensions = "1.4.0"
-androidx-activityCompose = "1.9.0"
 androidJunit5Plugin = "1.10.0.0"
+androidx-activityCompose = "1.9.0"
 compose = "1.6.8"
 compose-material3 = "1.2.1"
+crashlytics = "3.0.1"
 detekt = "1.23.6"
+firebaseBom = "33.1.0"
+firebaseAnalytics = "22.0.1"
+firebaseCrashlytics = "19.0.1"
+googleServices = "4.4.2"
 jetbrains-compose = "1.6.11"
 junit = "5.10.2"
 koin = "3.5.6"
@@ -27,6 +32,9 @@ compose-material3 = { module = "androidx.compose.material3:material3", version.r
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
@@ -52,7 +60,9 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidJunit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+crashlytics = {id ="com.google.firebase.crashlytics", version.ref = "crashlytics" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+googleServices = {id ="com.google.gms.google-services", version.ref = "googleServices" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
