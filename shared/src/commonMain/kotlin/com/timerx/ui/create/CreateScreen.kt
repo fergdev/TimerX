@@ -57,10 +57,8 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
-import com.timerx.ui.common.VibrationPicker
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.contrastColor
-import com.timerx.vibration.Vibration
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
@@ -69,7 +67,6 @@ import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.finish_color
-import timerx.shared.generated.resources.vibration
 
 private const val TWO_HUNDRED_SEVENTY_DEG = 270f
 private const val FOCUS_REQUEST_DELAY: Long = 300
@@ -157,7 +154,7 @@ private fun CreateContent(
     state: CreateViewModel.State,
     viewModel: CreateViewModel,
 ) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(state.sets, key = { it.id }) {
             Set(
                 timerSet = it,
@@ -179,9 +176,13 @@ private fun CreateContent(
         }
         item {
             Box(
-                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                AnimatedNumber(state.sets.length()) { it.timeFormatted() }
+                AnimatedNumber(
+                    value = state.sets.length(),
+                    textStyle = MaterialTheme.typography.displayMedium
+                ) { it.timeFormatted() }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -202,41 +203,9 @@ fun FinishControls(
         BeepSelector(modifier = Modifier.padding(horizontal = 16.dp), selected = state.finishBeep) {
             interactions.updateFinishAlert(it)
         }
-        VibrationSelector(modifier = Modifier.padding(16.dp), selected = state.finishVibration){
+        VibrationSelector(modifier = Modifier.padding(16.dp), selected = state.finishVibration) {
             interactions.updateFinishVibration(it)
         }
-    }
-}
-
-@Composable
-private fun FinishVibrationPicker(
-    finishVibration: Vibration,
-    updateFinishVibration: (Vibration) -> Unit,
-    contrastColor: Color
-) {
-    var vibrationPickerVisible by remember { mutableStateOf(false) }
-    if (vibrationPickerVisible) {
-        VibrationPicker {
-            if (it != null) {
-                updateFinishVibration(it)
-            }
-            vibrationPickerVisible = false
-        }
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
-            .clickable { vibrationPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(Res.string.vibration),
-            color = contrastColor
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = finishVibration.displayName,
-            color = contrastColor
-        )
     }
 }
 

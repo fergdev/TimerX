@@ -108,12 +108,11 @@ class CreateViewModel(
 
     class UpdateSetInteractions(
         val newInterval: (TimerSet) -> Unit,
+        val moveInterval: (TimerSet, Int, Int) -> Unit,
         val updateRepetitions: (TimerSet, Int) -> Unit,
     )
 
     class IntervalInteractions(
-        val moveUp: (TimerInterval) -> Unit,
-        val moveDown: (TimerInterval) -> Unit,
         val delete: (TimerInterval) -> Unit,
         val duplicate: (TimerInterval) -> Unit,
         val update: UpdateIntervalInteractions
@@ -158,15 +157,14 @@ class CreateViewModel(
             delete = ::deleteSet,
             update = UpdateSetInteractions(
                 newInterval = ::newInterval,
-                updateRepetitions = ::updateRepetitions
+                updateRepetitions = ::updateRepetitions,
+                moveInterval = ::moveInterval,
             )
         ),
 
         interval = IntervalInteractions(
             delete = ::deleteInterval,
             duplicate = ::duplicateInterval,
-            moveUp = ::moveIntervalUp,
-            moveDown = ::moveIntervalDown,
             update = UpdateIntervalInteractions(
                 updateDuration = ::updateIntervalDuration,
                 updateName = ::updateIntervalName,
@@ -403,29 +401,12 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    private fun moveIntervalUp(timerInterval: TimerInterval) {
+    private fun moveInterval(timerSet: TimerSet, from: Int, to: Int) {
         sets = sets.map { set ->
-            val index = set.intervals.indexOf(timerInterval)
-            if (index > 0) {
+            if (timerSet == set) {
                 val mutable = set.intervals.toMutableList()
-                mutable.removeAt(index)
-                mutable.add(index - 1, timerInterval)
-                set.copy(intervals = mutable.toPersistentList())
-            } else {
-                set
-            }
-        }.toMutableList()
-
-        _state.value = state.value.copy(sets = sets.toPersistentList())
-    }
-
-    private fun moveIntervalDown(timerInterval: TimerInterval) {
-        sets = sets.map { set ->
-            val index = set.intervals.indexOf(timerInterval)
-            if (index != -1 && index != set.intervals.size - 1) {
-                val mutable = set.intervals.toMutableList()
-                mutable.removeAt(index)
-                mutable.add(index + 1, timerInterval)
+                val toMove = mutable.removeAt(from)
+                mutable.add(to, toMove)
                 set.copy(intervals = mutable.toPersistentList())
             } else {
                 set

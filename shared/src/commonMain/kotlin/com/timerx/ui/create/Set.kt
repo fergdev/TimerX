@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.NumberIncrement
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableColumn
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.copy
@@ -41,26 +43,32 @@ internal fun Set(
     timerSet: TimerSet,
     interactions: CreateViewModel.Interactions
 ) {
-    Column(
+    SetTopControls(interactions, timerSet)
+    ReorderableColumn(
+        list = timerSet.intervals,
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        SetTopControls(interactions, timerSet)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        onSettle = { from, to ->
+            interactions.set.update.moveInterval(timerSet, from, to)
+        },
+    ) { _, timerInterval, _ ->
 
-        timerSet.intervals.forEach { interval ->
-            key(interval.id) {
-                Interval(
-                    interval = interval,
-                    canSkipOnLastSet = timerSet.repetitions > 1,
-                    interactions
-                )
-            }
+        key(timerInterval.id) {
+            Interval(
+                interval = timerInterval,
+                canSkipOnLastSet = timerSet.repetitions > 1,
+                interactions = interactions,
+                scope = this
+            )
         }
-
-        AnimatedNumber(timerSet.length()) { it.timeFormatted() }
-        SetBottomControls(interactions, timerSet)
-        HorizontalDivider(modifier = Modifier.fillMaxWidth())
     }
+
+    AnimatedNumber(
+        value = timerSet.length(),
+        textStyle = MaterialTheme.typography.displayMedium
+    ) { it.timeFormatted() }
+    SetBottomControls(interactions, timerSet)
+    HorizontalDivider(modifier = Modifier.fillMaxWidth())
 }
 
 @Composable

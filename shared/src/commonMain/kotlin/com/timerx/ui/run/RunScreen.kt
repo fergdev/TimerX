@@ -197,7 +197,7 @@ private fun TimerInformation(
         Spacer(modifier = Modifier.height(24.dp))
         AnimatedNumber(
             value = state.time,
-            style = typography.displayLarge,
+            textStyle = typography.displayLarge,
             color = displayColor,
             formatter = { it.timeFormatted() },
         )

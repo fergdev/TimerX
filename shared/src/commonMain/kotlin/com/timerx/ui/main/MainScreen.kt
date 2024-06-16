@@ -97,9 +97,9 @@ internal fun MainScreen(
                     contentDescription = stringResource(Res.string.add)
                 )
             }
-        }) {
+        }) { paddingValues ->
 
-        Box(modifier = Modifier.padding(it)) {
+        Box(modifier = Modifier.padding(paddingValues)) {
             if (state.timers.isEmpty()) {
                 Text(
                     modifier = Modifier.padding(16.dp),

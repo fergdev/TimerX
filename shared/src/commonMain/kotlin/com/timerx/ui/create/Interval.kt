@@ -13,15 +13,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,26 +37,28 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.NumberIncrement
+import com.timerx.ui.common.UnderlinedTextBox
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.contrastColor
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableScope
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.copy
+import timerx.shared.generated.resources.count_down
 import timerx.shared.generated.resources.count_up
 import timerx.shared.generated.resources.delete
-import timerx.shared.generated.resources.down
-import timerx.shared.generated.resources.interval
+import timerx.shared.generated.resources.finish
 import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.skip_on_last_set
-import timerx.shared.generated.resources.up
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Interval(
     interval: TimerInterval,
     canSkipOnLastSet: Boolean,
-    interactions: CreateViewModel.Interactions
+    interactions: CreateViewModel.Interactions,
+    scope: ReorderableScope
 ) {
     val contrastColor = interval.color.contrastColor()
     Column(
@@ -69,12 +68,13 @@ internal fun Interval(
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
+        UnderlinedTextBox(
             modifier = Modifier.fillMaxWidth(),
             value = interval.name,
             maxLines = 1,
+            textStyle = MaterialTheme.typography.titleLarge,
+            color = interval.color.contrastColor(),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            label = { Text(text = stringResource(Res.string.interval)) },
             onValueChange = {
                 interactions.interval.update.updateName(
                     interval,
@@ -109,6 +109,7 @@ internal fun Interval(
                 value = interval.duration,
                 negativeButtonEnabled = interval.duration > 1,
                 color = contrastColor,
+                textStyle = MaterialTheme.typography.titleLarge,
                 formatter = { it.timeFormatted() },
             ) {
                 interactions.interval.update.updateDuration(
@@ -121,6 +122,17 @@ internal fun Interval(
                 Icon(
                     modifier = Modifier.size(CustomIcons.defaultIconSize),
                     imageVector = Icons.Filled.Settings,
+                    contentDescription = stringResource(Res.string.settings),
+                    tint = contrastColor
+                )
+            }
+            IconButton(onClick = {}) {
+                Icon(
+                    modifier = with(scope) {
+                        Modifier.size(CustomIcons.defaultIconSize)
+                            .draggableHandle()
+                    },
+                    imageVector = CustomIcons.dragHandle(),
                     contentDescription = stringResource(Res.string.settings),
                     tint = contrastColor
                 )
@@ -185,7 +197,7 @@ private fun IntervalSwitches(
         )
     }
 
-    Text(text = "Finish")
+    Text(text = stringResource(Res.string.finish))
     BeepSelector(selected = interval.beep) {
         interactions.interval.update.updateBeep(interval, it)
     }
@@ -193,7 +205,7 @@ private fun IntervalSwitches(
         interactions.interval.update.updateVibration(interval, it)
     }
 
-    Text(text = "Countdown")
+    Text(text = stringResource(Res.string.count_down))
     IntervalCountDown(interval.finalCountDown) {
         interactions.interval.update.updateFinalCountDown(interval, it)
     }
@@ -247,12 +259,6 @@ private fun IntervalBottomControls(
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        IconButton(onClick = { interactions.interval.moveDown(interval) }) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = stringResource(Res.string.down)
-            )
-        }
         IconButton(onClick = { interactions.interval.duplicate(interval) }) {
             Icon(
                 modifier = Modifier.size(24.dp),
@@ -264,12 +270,6 @@ private fun IntervalBottomControls(
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = stringResource(Res.string.delete)
-            )
-        }
-        IconButton(onClick = { interactions.interval.moveUp(interval) }) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowUp,
-                contentDescription = stringResource(Res.string.up)
             )
         }
     }

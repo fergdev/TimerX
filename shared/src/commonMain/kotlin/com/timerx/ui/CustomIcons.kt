@@ -343,5 +343,53 @@ object CustomIcons {
             }.build()
         }
     }
+
+    @Composable
+    fun dragHandle(): ImageVector {
+        return remember {
+            ImageVector.Builder(
+                name = "drag_handle",
+                defaultWidth = 40.0.dp,
+                defaultHeight = 40.0.dp,
+                viewportWidth = 40.0f,
+                viewportHeight = 40.0f
+            ).apply {
+                path(
+                    fill = SolidColor(Color.Black),
+                    fillAlpha = 1f,
+                    stroke = null,
+                    strokeAlpha = 1f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(8.167f, 18.667f)
+                    quadToRelative(-0.542f, 0f, -0.938f, -0.396f)
+                    quadToRelative(-0.396f, -0.396f, -0.396f, -0.938f)
+                    quadToRelative(0f, -0.541f, 0.396f, -0.916f)
+                    reflectiveQuadToRelative(0.938f, -0.375f)
+                    horizontalLineToRelative(23.666f)
+                    quadToRelative(0.542f, 0f, 0.917f, 0.375f)
+                    reflectiveQuadToRelative(0.375f, 0.916f)
+                    quadToRelative(0f, 0.584f, -0.375f, 0.959f)
+                    reflectiveQuadToRelative(-0.917f, 0.375f)
+                    close()
+                    moveToRelative(0f, 5.291f)
+                    quadToRelative(-0.542f, 0f, -0.938f, -0.396f)
+                    quadToRelative(-0.396f, -0.395f, -0.396f, -0.937f)
+                    reflectiveQuadToRelative(0.396f, -0.937f)
+                    quadToRelative(0.396f, -0.396f, 0.938f, -0.396f)
+                    horizontalLineToRelative(23.666f)
+                    quadToRelative(0.542f, 0f, 0.917f, 0.396f)
+                    quadToRelative(0.375f, 0.395f, 0.375f, 0.937f)
+                    reflectiveQuadToRelative(-0.375f, 0.937f)
+                    quadToRelative(-0.375f, 0.396f, -0.917f, 0.396f)
+                    close()
+                }
+            }.build()
+        }
+    }
 }
 

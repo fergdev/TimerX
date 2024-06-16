@@ -21,6 +21,7 @@
     <string name="finish_beep">Finish beep</string>
     <string name="finish_color">Finish color</string>
     <string name="finished">Finished</string>
+    <string name="finish">Finish</string>
     <string name="interval">Interval</string>
     <string name="manual_next">Manual next</string>
     <string name="minus">Minus</string>

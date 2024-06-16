@@ -46,6 +46,7 @@ fun NumberIncrement(
     negativeButtonEnabled: Boolean = true,
     positiveButtonEnabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.onSurface,
+    textStyle: TextStyle = LocalTextStyle.current,
     onChange: (Int) -> Unit,
 ) {
     Row(
@@ -74,7 +75,12 @@ fun NumberIncrement(
                 tint = color
             )
         }
-        AnimatedNumber(value = value, formatter = formatter, color = color)
+        AnimatedNumber(
+            value = value,
+            formatter = formatter,
+            color = color,
+            textStyle = textStyle
+        )
         IconButton(
             onClick = {},
             enabled = positiveButtonEnabled
@@ -103,7 +109,7 @@ fun NumberIncrement(
 @Composable
 fun AnimatedNumber(
     value: Int,
-    style: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
     formatter: (Int) -> String
 ) {
@@ -115,7 +121,9 @@ fun AnimatedNumber(
         }
     }) { count ->
         Text(
-            text = formatter(count), style = style, color = color
+            text = formatter(count),
+            style = textStyle,
+            color = color
         )
     }
 }
