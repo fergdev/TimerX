@@ -52,12 +52,14 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.timerx.beep.Beep
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
-import com.timerx.ui.common.BeepPicker
+import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.VibrationPicker
+import com.timerx.ui.common.VibrationSelector
+import com.timerx.ui.common.contrastColor
 import com.timerx.vibration.Vibration
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
@@ -66,7 +68,6 @@ import org.koin.core.parameter.parametersOf
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
-import timerx.shared.generated.resources.finish_beep
 import timerx.shared.generated.resources.finish_color
 import timerx.shared.generated.resources.vibration
 
@@ -142,7 +143,7 @@ private fun TimerName(
             keyboardController?.hide()
             text = TextFieldValue(text.text)
             focusManager.clearFocus()
-        })
+        }),
     )
     LaunchedEffect(Unit) {
         delay(FOCUS_REQUEST_DELAY)
@@ -156,19 +157,17 @@ private fun CreateContent(
     state: CreateViewModel.State,
     viewModel: CreateViewModel,
 ) {
-    LazyColumn(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(state.sets, key = { it.hashCode() }) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        items(state.sets, key = { it.id }) {
             Set(
                 timerSet = it,
-                viewModel.interactions
+                interactions = viewModel.interactions
             )
         }
         item {
             Box(
-                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
                 FilledIconButton(onClick = { viewModel.interactions.addSet() }) {
                     Icon(
@@ -193,16 +192,27 @@ private fun CreateContent(
 }
 
 @Composable
-fun FinishControls(state: CreateViewModel.State, interactions: CreateViewModel.Interactions) {
-    FinishColorPicker(state.finishColor, interactions.updateFinishColor)
-    FinishBeepPicker(state.finishAlert, interactions.updateFinishAlert)
-    FinishVibrationPicker(state.finishVibration, interactions.updateFinishVibration)
+fun FinishControls(
+    state: CreateViewModel.State,
+    interactions: CreateViewModel.Interactions
+) {
+    Column(modifier = Modifier.background(state.finishColor)) {
+        val contrastColor = state.finishColor.contrastColor()
+        FinishColorPicker(interactions.updateFinishColor, contrastColor)
+        BeepSelector(modifier = Modifier.padding(horizontal = 16.dp), selected = state.finishBeep) {
+            interactions.updateFinishAlert(it)
+        }
+        VibrationSelector(modifier = Modifier.padding(16.dp), selected = state.finishVibration){
+            interactions.updateFinishVibration(it)
+        }
+    }
 }
 
 @Composable
 private fun FinishVibrationPicker(
     finishVibration: Vibration,
-    updateFinishVibration: (Vibration) -> Unit
+    updateFinishVibration: (Vibration) -> Unit,
+    contrastColor: Color
 ) {
     var vibrationPickerVisible by remember { mutableStateOf(false) }
     if (vibrationPickerVisible) {
@@ -218,17 +228,22 @@ private fun FinishVibrationPicker(
             .clickable { vibrationPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(Res.string.vibration))
+        Text(
+            text = stringResource(Res.string.vibration),
+            color = contrastColor
+        )
         Spacer(modifier = Modifier.weight(1f))
-        Box(modifier = Modifier)
-        Text(text = finishVibration.displayName)
+        Text(
+            text = finishVibration.displayName,
+            color = contrastColor
+        )
     }
 }
 
 @Composable
 private fun FinishColorPicker(
-    finishColor: Color,
-    updateFinishColor: (Color) -> Unit
+    updateFinishColor: (Color) -> Unit,
+    contrastColor: Color
 ) {
     var colorPickerVisible by remember { mutableStateOf(false) }
     Row(
@@ -237,9 +252,17 @@ private fun FinishColorPicker(
             .clickable { colorPickerVisible = true },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(Res.string.finish_color))
+        Text(
+            text = stringResource(Res.string.finish_color),
+            color = contrastColor
+        )
         Spacer(modifier = Modifier.weight(1f))
-        Box(modifier = Modifier.size(48.dp).background(finishColor))
+        Icon(
+            modifier = Modifier.size(CustomIcons.defaultIconSize),
+            imageVector = CustomIcons.colorFill(),
+            contentDescription = null,
+            tint = contrastColor
+        )
 
         if (colorPickerVisible) {
             ColorPicker {
@@ -247,30 +270,6 @@ private fun FinishColorPicker(
                     updateFinishColor(it)
                 }
                 colorPickerVisible = false
-            }
-        }
-    }
-}
-
-@Composable
-private fun FinishBeepPicker(
-    beep: Beep,
-    updateFinishBeep: (Beep) -> Unit
-) {
-    var alertPickerVisible by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
-            .clickable { alertPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.finish_beep))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = beep.displayName)
-
-        if (alertPickerVisible) {
-            BeepPicker {
-                it?.let { updateFinishBeep(it) }
-                alertPickerVisible = false
             }
         }
     }

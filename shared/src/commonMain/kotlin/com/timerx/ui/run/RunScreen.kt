@@ -43,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerState
@@ -52,6 +51,7 @@ import com.timerx.ui.CustomIcons
 import com.timerx.ui.KeepScreenOn
 import com.timerx.ui.SetStatusBarColor
 import com.timerx.ui.common.AnimatedNumber
+import com.timerx.ui.common.contrastColor
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.BackHandler
@@ -134,7 +134,7 @@ private fun RunView(
             .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
-        val contrastDisplayColor = contrastColor(backgroundColor)
+        val contrastDisplayColor = backgroundColor.contrastColor()
         Column(
             modifier = Modifier.padding(16.dp)
                 .safeDrawingPadding(),
@@ -361,13 +361,4 @@ private fun TogglePlayButton(
             }
         }
     }
-}
-
-private const val HALF_LUMINANCE = 0.5F
-fun contrastColor(backgroundColor: Color): Color {
-    return if (isColorDark(backgroundColor)) Color.White else Color.Black
-}
-
-fun isColorDark(color: Color): Boolean {
-    return color.luminance() < HALF_LUMINANCE
 }

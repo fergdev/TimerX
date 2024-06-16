@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,6 +45,7 @@ fun NumberIncrement(
     formatter: (Int) -> String = { "$it" },
     negativeButtonEnabled: Boolean = true,
     positiveButtonEnabled: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.onSurface,
     onChange: (Int) -> Unit,
 ) {
     Row(
@@ -68,10 +70,11 @@ fun NumberIncrement(
                         }
                     },
                 imageVector = CustomIcons.checkIndeterminateSmall(),
-                contentDescription = stringResource(Res.string.minus)
+                contentDescription = stringResource(Res.string.minus),
+                tint = color
             )
         }
-        AnimatedNumber(value = value, formatter = formatter)
+        AnimatedNumber(value = value, formatter = formatter, color = color)
         IconButton(
             onClick = {},
             enabled = positiveButtonEnabled
@@ -90,7 +93,8 @@ fun NumberIncrement(
                         }
                     },
                 imageVector = Icons.Default.Add,
-                contentDescription = stringResource(Res.string.add)
+                contentDescription = stringResource(Res.string.add),
+                tint = color
             )
         }
     }

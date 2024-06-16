@@ -3,9 +3,7 @@ package com.timerx.ui.create
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -14,8 +12,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,27 +41,25 @@ internal fun Set(
     timerSet: TimerSet,
     interactions: CreateViewModel.Interactions
 ) {
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            SetTopControls(interactions, timerSet)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        SetTopControls(interactions, timerSet)
 
-            timerSet.intervals.forEach { interval ->
-                key(interval.id) {
-                    Interval(
-                        interval = interval,
-                        canSkipOnLastSet = timerSet.repetitions > 1,
-                        interactions
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
+        timerSet.intervals.forEach { interval ->
+            key(interval.id) {
+                Interval(
+                    interval = interval,
+                    canSkipOnLastSet = timerSet.repetitions > 1,
+                    interactions
+                )
             }
-
-            AnimatedNumber(timerSet.length()) { it.timeFormatted() }
-
-            SetBottomControls(interactions, timerSet)
         }
+
+        AnimatedNumber(timerSet.length()) { it.timeFormatted() }
+        SetBottomControls(interactions, timerSet)
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
     }
 }
 
@@ -108,7 +104,7 @@ private fun SetTopControls(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Absolute.SpaceBetween
     ) {

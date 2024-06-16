@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.timerx.ui.run.isColorDark
+import com.timerx.ui.common.isColorDark
 
 @Composable
 actual fun SetStatusBarColor(color: Color) {

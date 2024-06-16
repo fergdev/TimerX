@@ -2,9 +2,7 @@ package com.timerx.ui.create
 
 import ColorPicker
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +15,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -30,61 +31,84 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
-import com.timerx.ui.common.BeepPicker
+import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.NumberIncrement
-import com.timerx.ui.common.VibrationPicker
+import com.timerx.ui.common.VibrationSelector
+import com.timerx.ui.common.contrastColor
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
-import timerx.shared.generated.resources.beep
 import timerx.shared.generated.resources.copy
-import timerx.shared.generated.resources.count_down
-import timerx.shared.generated.resources.count_down_beep
-import timerx.shared.generated.resources.count_down_vibration
 import timerx.shared.generated.resources.count_up
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.down
 import timerx.shared.generated.resources.interval
 import timerx.shared.generated.resources.manual_next
+import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.skip_on_last_set
 import timerx.shared.generated.resources.up
-import timerx.shared.generated.resources.vibration
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Interval(
     interval: TimerInterval,
     canSkipOnLastSet: Boolean,
     interactions: CreateViewModel.Interactions
 ) {
-    ElevatedCard {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = interval.name,
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                label = { Text(text = stringResource(Res.string.interval)) },
-                onValueChange = {
-                    interactions.interval.update.updateName(
+    val contrastColor = interval.color.contrastColor()
+    Column(
+        modifier = Modifier
+            .background(interval.color)
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = interval.name,
+            maxLines = 1,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            label = { Text(text = stringResource(Res.string.interval)) },
+            onValueChange = {
+                interactions.interval.update.updateName(
+                    interval,
+                    it
+                )
+            }
+        )
+
+        var settingsBottomSheetVisible by remember { mutableStateOf(false) }
+        if (settingsBottomSheetVisible) {
+            ModalBottomSheet(onDismissRequest = { settingsBottomSheetVisible = false }) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    IntervalSwitches(
+                        canSkipOnLastSet,
                         interval,
-                        it
+                        interactions,
+                    )
+
+                    IntervalBottomControls(
+                        interactions,
+                        interval,
                     )
                 }
-            )
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IntervalColorSwitches(interval, interactions, contrastColor)
+            Spacer(modifier = Modifier.weight(1F))
 
             NumberIncrement(
                 value = interval.duration,
                 negativeButtonEnabled = interval.duration > 1,
+                color = contrastColor,
                 formatter = { it.timeFormatted() },
             ) {
                 interactions.interval.update.updateDuration(
@@ -92,19 +116,15 @@ internal fun Interval(
                     it
                 )
             }
-
-            IntervalColorSwitches(interval, interactions)
-
-            IntervalSwitches(
-                canSkipOnLastSet,
-                interval,
-                interactions,
-            )
-
-            IntervalBottomControls(
-                interactions,
-                interval,
-            )
+            Spacer(modifier = Modifier.weight(1F))
+            IconButton(onClick = { settingsBottomSheetVisible = true }) {
+                Icon(
+                    modifier = Modifier.size(CustomIcons.defaultIconSize),
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = stringResource(Res.string.settings),
+                    tint = contrastColor
+                )
+            }
         }
     }
 }
@@ -113,13 +133,17 @@ internal fun Interval(
 private fun IntervalColorSwitches(
     interval: TimerInterval,
     interactions: CreateViewModel.Interactions,
+    contrastColor: Color
 ) {
     var colorPickerVisible by remember { mutableStateOf(false) }
-    Box(modifier = Modifier.size(48.dp)
-        .background(interval.color)
-        .clickable {
-            colorPickerVisible = true
-        })
+    IconButton(onClick = { colorPickerVisible = true }) {
+        Icon(
+            modifier = Modifier.size(CustomIcons.defaultIconSize),
+            imageVector = CustomIcons.colorFill(),
+            contentDescription = null,
+            tint = contrastColor
+        )
+    }
 
     if (colorPickerVisible) {
         ColorPicker {
@@ -161,44 +185,15 @@ private fun IntervalSwitches(
         )
     }
 
-    var beepPickerVisible by remember { mutableStateOf(false) }
-    if (beepPickerVisible) {
-        BeepPicker {
-            beepPickerVisible = false
-            it?.let {
-                interactions.interval.update.updateAlert(interval, it)
-            }
-        }
+    Text(text = "Finish")
+    BeepSelector(selected = interval.beep) {
+        interactions.interval.update.updateBeep(interval, it)
+    }
+    VibrationSelector(selected = interval.vibration) {
+        interactions.interval.update.updateVibration(interval, it)
     }
 
-    Row(
-        modifier = Modifier.height(32.dp).fillMaxWidth().clickable { beepPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.beep))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = interval.beep.displayName)
-    }
-
-    var vibrationPickerVisible by remember { mutableStateOf(false) }
-    if (vibrationPickerVisible) {
-        VibrationPicker {
-            vibrationPickerVisible = false
-            it?.let {
-                interactions.interval.update.updateVibration(interval, it)
-            }
-        }
-    }
-
-    Row(
-        modifier = Modifier.height(32.dp).fillMaxWidth().clickable { beepPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.vibration))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = interval.vibration.displayName)
-    }
-
+    Text(text = "Countdown")
     IntervalCountDown(interval.finalCountDown) {
         interactions.interval.update.updateFinalCountDown(interval, it)
     }
@@ -209,58 +204,23 @@ private fun IntervalCountDown(
     finalCountDown: FinalCountDown,
     update: (FinalCountDown) -> Unit
 ) {
-    var beepPickerVisible by remember { mutableStateOf(false) }
-    if (beepPickerVisible) {
-        BeepPicker {
-            beepPickerVisible = false
-            it?.let {
-                update(finalCountDown.copy(beep = it))
-            }
-        }
-    }
-
     Row(
-        modifier = Modifier.height(32.dp).fillMaxWidth().clickable { beepPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.height(32.dp).fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
     ) {
-        Text(text = stringResource(Res.string.count_down_beep))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = finalCountDown.beep.displayName)
-    }
-
-    var vibrationPickerVisible by remember { mutableStateOf(false) }
-    if (vibrationPickerVisible) {
-        VibrationPicker {
-            vibrationPickerVisible = false
-            it?.let {
-                update(finalCountDown.copy(vibration = it))
-            }
-        }
-    }
-
-    Row(
-        modifier = Modifier.height(32.dp).fillMaxWidth()
-            .clickable { vibrationPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.count_down_vibration))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = finalCountDown.vibration.displayName)
-    }
-
-    Row(
-        modifier = Modifier.height(32.dp).fillMaxWidth()
-            .clickable { vibrationPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(Res.string.count_down))
-        Spacer(modifier = Modifier.weight(1f))
         NumberIncrement(
             value = finalCountDown.duration,
             negativeButtonEnabled = finalCountDown.duration > 0,
+            color = MaterialTheme.colorScheme.onSurface,
             formatter = { "$it" }) {
             update(finalCountDown.copy(duration = it))
         }
+    }
+    BeepSelector(selected = finalCountDown.beep) {
+        update(finalCountDown.copy(beep = it))
+    }
+    VibrationSelector(selected = finalCountDown.vibration) {
+        update(finalCountDown.copy(vibration = it))
     }
 }
 

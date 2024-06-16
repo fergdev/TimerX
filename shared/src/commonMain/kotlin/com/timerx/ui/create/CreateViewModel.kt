@@ -126,7 +126,7 @@ class CreateViewModel(
         val updateSkipOnLastSet: (TimerInterval, Boolean) -> Unit,
         val updateCountUp: (TimerInterval, Boolean) -> Unit,
         val updateManualNext: (TimerInterval, Boolean) -> Unit,
-        val updateAlert: (TimerInterval, Beep) -> Unit,
+        val updateBeep: (TimerInterval, Beep) -> Unit,
         val updateFinalCountDown: (TimerInterval, FinalCountDown) -> Unit,
         val updateVibration: (TimerInterval, Vibration) -> Unit
     )
@@ -174,7 +174,7 @@ class CreateViewModel(
                 updateSkipOnLastSet = ::updateSkipOnLastSet,
                 updateCountUp = ::updateCountUp,
                 updateManualNext = ::updateManualNext,
-                updateAlert = ::updateBeep,
+                updateBeep = ::updateBeep,
                 updateFinalCountDown = ::updateFinalCountDown,
                 updateVibration = ::updateVibration
             ),
@@ -184,7 +184,7 @@ class CreateViewModel(
     data class State(
         val timerName: String = "",
         val finishColor: Color = Color.Red,
-        val finishAlert: Beep = Beep.End,
+        val finishBeep: Beep = Beep.End,
         val finishVibration: Vibration = Vibration.Heavy,
         val sets: ImmutableList<TimerSet> = persistentListOf()
     )
@@ -205,7 +205,7 @@ class CreateViewModel(
                         timerName = timerEditing.name,
                         sets = sets.toPersistentList(),
                         finishColor = timerEditing.finishColor,
-                        finishAlert = timerEditing.finishBeep,
+                        finishBeep = timerEditing.finishBeep,
                         finishVibration = timerEditing.finishVibration,
                     )
                 }
@@ -215,6 +215,7 @@ class CreateViewModel(
             sets = runBlocking {
                 mutableListOf(
                     TimerSet(
+                        id = "${defaultIdGenerator++}",
                         repetitions = 1,
                         intervals = persistentListOf(
                             TimerInterval(
@@ -262,7 +263,7 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor,
-                    finishBeep = state.value.finishAlert,
+                    finishBeep = state.value.finishBeep,
                     finishVibration = Vibration.Heavy
                 )
             )
@@ -272,7 +273,7 @@ class CreateViewModel(
                     name = name,
                     sets = state.value.sets,
                     finishColor = state.value.finishColor,
-                    finishBeep = state.value.finishAlert,
+                    finishBeep = state.value.finishBeep,
                     finishVibration = state.value.finishVibration
                 )
             )
@@ -314,7 +315,15 @@ class CreateViewModel(
 
     private fun duplicateSet(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it.id == timerSet.id }
-        sets.add(index, sets[index].copy())
+        sets.add(
+            index,
+            sets[index].copy(
+                id = "${defaultIdGenerator++}",
+                intervals = timerSet.intervals.map {
+                    it.copy(id = "${defaultIdGenerator++}")
+                }.toPersistentList()
+            )
+        )
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
@@ -339,26 +348,27 @@ class CreateViewModel(
     }
 
     private fun duplicateInterval(interval: TimerInterval) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            val newIntervals: List<TimerInterval> = if (intervals.contains(interval)) {
-                val index = intervals.indexOf(interval)
-                val mutableIntervals = intervals.toMutableList()
-                mutableIntervals.add(index, intervals[index].copy())
+        sets = sets.map { set ->
+            val newIntervals: List<TimerInterval> = if (set.intervals.contains(interval)) {
+                val index = set.intervals.indexOf(interval)
+                val mutableIntervals = set.intervals.toMutableList()
+                mutableIntervals.add(
+                    index,
+                    set.intervals[index].copy(id = "${defaultIdGenerator++}")
+                )
                 mutableIntervals
             } else {
-                intervals
+                set.intervals
             }
-            TimerSet("", repetitions, newIntervals.toPersistentList())
+            set.copy(intervals = newIntervals.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
     private fun deleteInterval(interval: TimerInterval) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.filter {
-                interval !== it
-            }.toPersistentList())
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.filter { interval != it }.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -366,8 +376,8 @@ class CreateViewModel(
 
     private fun updateIntervalDuration(timerInterval: TimerInterval, duration: Int) {
         if (duration < 1) return
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(duration = duration)
                 } else {
@@ -380,8 +390,8 @@ class CreateViewModel(
     }
 
     private fun updateIntervalName(timerInterval: TimerInterval, name: String) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(name = name)
                 } else {
@@ -400,7 +410,7 @@ class CreateViewModel(
                 val mutable = set.intervals.toMutableList()
                 mutable.removeAt(index)
                 mutable.add(index - 1, timerInterval)
-                TimerSet("", set.repetitions, mutable.toPersistentList())
+                set.copy(intervals = mutable.toPersistentList())
             } else {
                 set
             }
@@ -416,7 +426,7 @@ class CreateViewModel(
                 val mutable = set.intervals.toMutableList()
                 mutable.removeAt(index)
                 mutable.add(index + 1, timerInterval)
-                TimerSet("", set.repetitions, mutable.toPersistentList())
+                set.copy(intervals = mutable.toPersistentList())
             } else {
                 set
             }
@@ -426,8 +436,8 @@ class CreateViewModel(
     }
 
     private fun updateIntervalColor(timerInterval: TimerInterval, color: Color) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(color = color)
                 } else {
@@ -444,8 +454,8 @@ class CreateViewModel(
     }
 
     private fun updateSkipOnLastSet(timerInterval: TimerInterval, skipOnLastSet: Boolean) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(skipOnLastSet = skipOnLastSet)
                 } else {
@@ -458,8 +468,8 @@ class CreateViewModel(
     }
 
     private fun updateCountUp(timerInterval: TimerInterval, countUp: Boolean) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(countUp = countUp)
                 } else {
@@ -472,8 +482,8 @@ class CreateViewModel(
     }
 
     private fun updateManualNext(timerInterval: TimerInterval, manualNext: Boolean) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(manualNext = manualNext)
                 } else {
@@ -486,8 +496,8 @@ class CreateViewModel(
     }
 
     private fun updateBeep(timerInterval: TimerInterval, beep: Beep) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(beep = beep)
                 } else {
@@ -501,7 +511,7 @@ class CreateViewModel(
     }
 
     private fun updateFinishBeep(beep: Beep) {
-        _state.update { it.copy(finishAlert = beep) }
+        _state.update { it.copy(finishBeep = beep) }
         beepManager.beep(beep)
     }
 
@@ -513,8 +523,8 @@ class CreateViewModel(
         timerInterval: TimerInterval,
         finalCountDown: FinalCountDown
     ) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(finalCountDown = finalCountDown)
                 } else {
@@ -527,8 +537,8 @@ class CreateViewModel(
     }
 
     private fun updateVibration(timerInterval: TimerInterval, vibration: Vibration) {
-        sets = sets.map { (_, repetitions, intervals) ->
-            TimerSet("", repetitions, intervals.map {
+        sets = sets.map { set ->
+            set.copy(intervals = set.intervals.map {
                 if (it.id == timerInterval.id) {
                     it.copy(vibration = vibration)
                 } else {
