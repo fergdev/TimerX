@@ -2,6 +2,9 @@ package com.timerx.beep
 
 import com.timerx.settings.TimerXSettings
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import platform.AVFAudio.AVAudioPlayer
 import platform.Foundation.NSBundle
 
@@ -16,8 +19,14 @@ class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
             println("Sound not found ${beep}")
             return
         }
-        val avAudioPlayer = AVAudioPlayer(contentsOfURL = soundURL, error = null)
-        avAudioPlayer.setVolume(timerXSettings.volume)
-        avAudioPlayer.play()
+
+        GlobalScope.launch {
+            repeat(beep.repeat){
+                val avAudioPlayer = AVAudioPlayer(contentsOfURL = soundURL, error = null)
+                avAudioPlayer.setVolume(timerXSettings.volume)
+                avAudioPlayer.play()
+                delay(beepDelay)
+            }
+        }
     }
 }
