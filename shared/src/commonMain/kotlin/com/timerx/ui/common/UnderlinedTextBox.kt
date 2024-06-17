@@ -21,9 +21,8 @@ fun UnderlinedTextBox(
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     onValueChange: (String) -> Unit
 ) {
-    Column {
+    Column(modifier = modifier) {
         BasicTextField(
-            modifier = modifier,
             value = value,
             maxLines = maxLines,
             textStyle = textStyle.merge(color = color),

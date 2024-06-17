@@ -1,6 +1,7 @@
 package com.timerx.ui.create
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +42,7 @@ internal fun Set(
     interactions: CreateViewModel.Interactions,
     reorderableScope: ReorderableScope
 ) {
-    Column {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         SetTopControls(interactions, timerSet, reorderableScope)
         ReorderableColumn(
             list = timerSet.intervals,
@@ -110,14 +111,15 @@ private fun SetTopControls(
     timerSet: TimerSet,
     reorderableScope: ReorderableScope,
 ) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Absolute.SpaceBetween
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(text = stringResource(Res.string.sets))
             NumberIncrement(
                 value = timerSet.repetitions,
@@ -133,7 +135,7 @@ private fun SetTopControls(
             imageVector = CustomIcons.dragHandle(),
             contentDescription = stringResource(Res.string.down),
             modifier = with(reorderableScope) {
-                Modifier.size(CustomIcons.defaultIconSize).draggableHandle()
+                Modifier.align(Alignment.TopEnd).size(CustomIcons.defaultIconSize).draggableHandle()
             }
         )
     }

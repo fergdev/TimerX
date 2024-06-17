@@ -41,6 +41,7 @@ import timerx.shared.generated.resources.minus
 
 @Composable
 fun NumberIncrement(
+    modifier: Modifier = Modifier,
     value: Int,
     formatter: (Int) -> String = { "$it" },
     negativeButtonEnabled: Boolean = true,
@@ -50,6 +51,7 @@ fun NumberIncrement(
     onChange: (Int) -> Unit,
 ) {
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

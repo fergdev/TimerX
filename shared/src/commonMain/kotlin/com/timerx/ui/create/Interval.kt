@@ -61,15 +61,15 @@ internal fun Interval(
     scope: ReorderableScope
 ) {
     val contrastColor = interval.color.contrastColor()
-    Column(
+    Row(
         modifier = Modifier
             .background(interval.color)
             .fillMaxWidth()
             .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalAlignment = Alignment.CenterVertically
     ) {
         UnderlinedTextBox(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.weight(1f),
             value = interval.name,
             maxLines = 1,
             textStyle = MaterialTheme.typography.titleLarge,
@@ -101,23 +101,21 @@ internal fun Interval(
             }
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        NumberIncrement(
+            modifier = Modifier.weight(1f),
+            value = interval.duration,
+            negativeButtonEnabled = interval.duration > 1,
+            color = contrastColor,
+            textStyle = MaterialTheme.typography.titleLarge,
+            formatter = { it.timeFormatted() },
+        ) {
+            interactions.interval.update.updateDuration(
+                interval,
+                it
+            )
+        }
+        Row(modifier = Modifier.weight(1f)) {
             IntervalColorSwitches(interval, interactions, contrastColor)
-            Spacer(modifier = Modifier.weight(1F))
-
-            NumberIncrement(
-                value = interval.duration,
-                negativeButtonEnabled = interval.duration > 1,
-                color = contrastColor,
-                textStyle = MaterialTheme.typography.titleLarge,
-                formatter = { it.timeFormatted() },
-            ) {
-                interactions.interval.update.updateDuration(
-                    interval,
-                    it
-                )
-            }
-            Spacer(modifier = Modifier.weight(1F))
             IconButton(onClick = { settingsBottomSheetVisible = true }) {
                 Icon(
                     modifier = Modifier.size(CustomIcons.defaultIconSize),
