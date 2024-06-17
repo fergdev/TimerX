@@ -23,9 +23,9 @@ val sharedModule = module {
     single { getTimerXNotificationManager() }
     factory { MainViewModel(get()) }
     factory { (timerName: String) -> CreateViewModel(timerName, get(), get(), get()) }
-    factory { (timerName: String) ->
+    factory { (timerId: String) ->
         RunViewModel(
-            timerName,
+            timerId,
             get(),
             get(),
             get(),

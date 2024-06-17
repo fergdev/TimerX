@@ -38,7 +38,7 @@ class RunViewModel(
     private val notificationManager: ITimerXNotificationManager,
     private val timerXSettings: TimerXSettings,
     private val timerXAnalytics: ITimerXAnalytics,
-    private val IVibrationManager: IVibrationManager
+    private val vibrationManager: IVibrationManager
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
@@ -93,28 +93,28 @@ class RunViewModel(
                         )
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
                         timerEvent.beep?.let { beepManager.beep(it) }
-                        timerEvent.vibration?.let { IVibrationManager.vibrate(it) }
+                        timerEvent.vibration?.let { vibrationManager.vibrate(it) }
                     }
 
                     is TimerEvent.Finished -> {
                         beepManager.beep(timerEvent.beep)
                         notificationManager.stop()
-                        IVibrationManager.vibrate(timerEvent.vibration)
+                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.NextInterval -> {
                         beepManager.beep(timerEvent.beep)
-                        IVibrationManager.vibrate(timerEvent.vibration)
+                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.PreviousInterval -> {
                         beepManager.beep(timerEvent.beep)
-                        IVibrationManager.vibrate(timerEvent.vibration)
+                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.Started -> {
                         beepManager.beep(timerEvent.beep)
-                        IVibrationManager.vibrate(timerEvent.vibration)
+                        vibrationManager.vibrate(timerEvent.vibration)
                         notificationManager.start()
                     }
 
