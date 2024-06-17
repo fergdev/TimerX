@@ -9,13 +9,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -30,45 +27,48 @@ import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.NumberIncrement
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
+import sh.calvin.reorderable.ReorderableScope
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.copy
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.down
 import timerx.shared.generated.resources.sets
-import timerx.shared.generated.resources.up
 
 @Composable
 internal fun Set(
     timerSet: TimerSet,
-    interactions: CreateViewModel.Interactions
+    interactions: CreateViewModel.Interactions,
+    reorderableScope: ReorderableScope
 ) {
-    SetTopControls(interactions, timerSet)
-    ReorderableColumn(
-        list = timerSet.intervals,
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        onSettle = { from, to ->
-            interactions.set.update.moveInterval(timerSet, from, to)
-        },
-    ) { _, timerInterval, _ ->
+    Column {
+        SetTopControls(interactions, timerSet, reorderableScope)
+        ReorderableColumn(
+            list = timerSet.intervals,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            onSettle = { from, to ->
+                interactions.set.update.moveInterval(timerSet, from, to)
+            },
+        ) { _, timerInterval, _ ->
 
-        key(timerInterval.id) {
-            Interval(
-                interval = timerInterval,
-                canSkipOnLastSet = timerSet.repetitions > 1,
-                interactions = interactions,
-                scope = this
-            )
+            key(timerInterval.id) {
+                Interval(
+                    interval = timerInterval,
+                    canSkipOnLastSet = timerSet.repetitions > 1,
+                    interactions = interactions,
+                    scope = this
+                )
+            }
         }
-    }
 
-    AnimatedNumber(
-        value = timerSet.length(),
-        textStyle = MaterialTheme.typography.displayMedium
-    ) { it.timeFormatted() }
-    SetBottomControls(interactions, timerSet)
-    HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        AnimatedNumber(
+            value = timerSet.length(),
+            textStyle = MaterialTheme.typography.displayMedium
+        ) { it.timeFormatted() }
+        SetBottomControls(interactions, timerSet)
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+    }
 }
 
 @Composable
@@ -108,6 +108,7 @@ private fun SetBottomControls(
 private fun SetTopControls(
     interactions: CreateViewModel.Interactions,
     timerSet: TimerSet,
+    reorderableScope: ReorderableScope,
 ) {
     Row(
         modifier = Modifier
@@ -116,12 +117,6 @@ private fun SetTopControls(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Absolute.SpaceBetween
     ) {
-        OutlinedIconButton(onClick = { interactions.set.moveDown(timerSet) }) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowDown,
-                contentDescription = stringResource(Res.string.down)
-            )
-        }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = stringResource(Res.string.sets))
             NumberIncrement(
@@ -134,11 +129,12 @@ private fun SetTopControls(
                     )
                 })
         }
-        OutlinedIconButton(onClick = { interactions.set.moveUp(timerSet) }) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowUp,
-                contentDescription = stringResource(Res.string.up)
-            )
-        }
+        Icon(
+            imageVector = CustomIcons.dragHandle(),
+            contentDescription = stringResource(Res.string.down),
+            modifier = with(reorderableScope) {
+                Modifier.size(CustomIcons.defaultIconSize).draggableHandle()
+            }
+        )
     }
 }

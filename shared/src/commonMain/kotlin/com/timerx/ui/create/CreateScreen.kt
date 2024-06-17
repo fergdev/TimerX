@@ -14,11 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,6 +64,7 @@ import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
+import sh.calvin.reorderable.ReorderableColumn
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
@@ -154,41 +156,45 @@ private fun CreateContent(
     state: CreateViewModel.State,
     viewModel: CreateViewModel,
 ) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(state.sets, key = { it.id }) {
-            Set(
-                timerSet = it,
-                interactions = viewModel.interactions
-            )
-        }
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                FilledIconButton(onClick = { viewModel.interactions.addSet() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = stringResource(Res.string.add)
-                    )
-                }
+    val scrollState by mutableStateOf(rememberScrollState())
+    Column(modifier = Modifier.verticalScroll(scrollState)) {
+        ReorderableColumn(
+            list = state.sets,
+            onSettle = { from, to ->
+                viewModel.interactions.swapSet(from, to)
+            },
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) { _, set, _ ->
+            key(set.id) {
+                Set(
+                    timerSet = set,
+                    interactions = viewModel.interactions,
+                    this
+                )
             }
         }
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                AnimatedNumber(
-                    value = state.sets.length(),
-                    textStyle = MaterialTheme.typography.displayMedium
-                ) { it.timeFormatted() }
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            FilledIconButton(onClick = { viewModel.interactions.addSet() }) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(Res.string.add)
+                )
             }
-            Spacer(modifier = Modifier.height(16.dp))
         }
-        item {
-            FinishControls(state, viewModel.interactions)
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            AnimatedNumber(
+                value = state.sets.length(),
+                textStyle = MaterialTheme.typography.displayMedium
+            ) { it.timeFormatted() }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        FinishControls(state, viewModel.interactions)
     }
 }
 

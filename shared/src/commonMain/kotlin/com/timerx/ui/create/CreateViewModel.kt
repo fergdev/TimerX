@@ -99,8 +99,6 @@ class CreateViewModel(
     private var sets: MutableList<TimerSet>
 
     class SetInteractions(
-        val moveUp: (TimerSet) -> Unit,
-        val moveDown: (TimerSet) -> Unit,
         val duplicate: (TimerSet) -> Unit,
         val delete: (TimerSet) -> Unit,
         val update: UpdateSetInteractions
@@ -133,6 +131,7 @@ class CreateViewModel(
     class Interactions(
         val updateTimerName: (String) -> Unit,
         val addSet: () -> Unit,
+        val swapSet: (Int, Int) -> Unit,
         val updateFinishColor: (Color) -> Unit,
         val updateFinishAlert: (Beep) -> Unit,
         val updateFinishVibration: (Vibration) -> Unit,
@@ -145,14 +144,13 @@ class CreateViewModel(
     val interactions = Interactions(
         updateTimerName = ::updateTimerName,
         addSet = ::addSet,
+        swapSet = ::swapSet,
         updateFinishColor = ::onFinishColor,
         updateFinishAlert = ::updateFinishBeep,
         updateFinishVibration = ::updateFinishVibration,
         save = ::save,
 
         set = SetInteractions(
-            moveUp = ::moveSetUp,
-            moveDown = ::moveSetDown,
             duplicate = ::duplicateSet,
             delete = ::deleteSet,
             update = UpdateSetInteractions(
@@ -288,6 +286,13 @@ class CreateViewModel(
         sets[index] = timerSet.copy(
             intervals = (timerSet.intervals + defaultInterval()).toPersistentList()
         )
+        _state.value = state.value.copy(sets = sets.toPersistentList())
+    }
+
+    private fun swapSet(from: Int, to: Int) {
+        val set = sets.removeAt(from)
+        sets.add(to, set)
+
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
