@@ -110,6 +110,10 @@ private fun RunView(
     var controlsVisible by remember { mutableStateOf(false) }
     var touchCounter by remember { mutableIntStateOf(1) }
 
+    if (state.timerState == TimerState.Paused) {
+        controlsVisible = true
+    }
+
     LaunchedEffect(touchCounter) {
         delay(CONTROLS_HIDE_DELAY)
         if (state.timerState != TimerState.Paused) {
@@ -141,7 +145,12 @@ private fun RunView(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(controlsVisible) {
-                TopControls(interactions, contrastDisplayColor, state.volume, state.vibrationEnabled) {
+                TopControls(
+                    interactions,
+                    contrastDisplayColor,
+                    state.volume,
+                    state.vibrationEnabled
+                ) {
                     controlsVisible = true
                     touchCounter++
                 }

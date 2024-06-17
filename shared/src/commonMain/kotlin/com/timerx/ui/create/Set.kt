@@ -102,6 +102,7 @@ private fun SetTopControls(
         NumberIncrement(
             modifier = Modifier.align(Alignment.Center),
             value = timerSet.repetitions,
+            textStyle = MaterialTheme.typography.titleLarge,
             negativeButtonEnabled = timerSet.repetitions > 1,
             onChange = {
                 interactions.set.update.updateRepetitions(

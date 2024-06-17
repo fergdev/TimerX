@@ -21,15 +21,17 @@ import com.timerx.vibration.Vibration.RigidX3
 import com.timerx.vibration.Vibration.Soft
 import com.timerx.vibration.Vibration.SoftX2
 import com.timerx.vibration.Vibration.SoftX3
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 
-class VibrationManagerImpl(private val timerXSettings: TimerXSettings) : VibrationManager {
+class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun vibrate(vibration: Vibration) {
         if (timerXSettings.vibrationEnabled.not()) {
             return
@@ -57,6 +59,6 @@ class VibrationManagerImpl(private val timerXSettings: TimerXSettings) : Vibrati
     }
 }
 
-actual fun getVibrationManager(timerXSettings: TimerXSettings): VibrationManager {
-    return VibrationManagerImpl(timerXSettings)
+actual fun getVibrationManager(timerXSettings: TimerXSettings): IVibrationManager {
+    return VibrationManager(timerXSettings)
 }

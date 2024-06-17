@@ -18,13 +18,15 @@ import com.timerx.vibration.Vibration.RigidX3
 import com.timerx.vibration.Vibration.Soft
 import com.timerx.vibration.Vibration.SoftX2
 import com.timerx.vibration.Vibration.SoftX3
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import platform.UIKit.UIImpactFeedbackGenerator
 import platform.UIKit.UIImpactFeedbackStyle
 
-class VibrationManagerImpl(private val timerXSettings: TimerXSettings) : VibrationManager {
+class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationManager {
+    @OptIn(DelicateCoroutinesApi::class)
     override fun vibrate(vibration: Vibration) {
         if (timerXSettings.vibrationEnabled.not()) {
             return
@@ -47,5 +49,5 @@ class VibrationManagerImpl(private val timerXSettings: TimerXSettings) : Vibrati
     }
 }
 
-actual fun getVibrationManager(timerXSettings: TimerXSettings): VibrationManager =
-    VibrationManagerImpl(timerXSettings)
+actual fun getVibrationManager(timerXSettings: TimerXSettings): IVibrationManager =
+    VibrationManager(timerXSettings)

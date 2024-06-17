@@ -8,6 +8,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -35,7 +36,8 @@ import timerx.shared.generated.resources.work
 class CreateViewModel(
     timerName: String = "",
     private val timerDatabase: ITimerRepository,
-    private val beepManager: IBeepManager
+    private val beepManager: IBeepManager,
+    private val vibrationManger: IVibrationManager
 ) : ViewModel() {
 
     private val workString: String = runBlocking { getString(Res.string.work) }
@@ -296,26 +298,6 @@ class CreateViewModel(
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
-    private fun moveSetUp(timerSet: TimerSet) {
-        val index = sets.indexOfFirst { it.id == timerSet.id }
-        if (index == 0) return
-
-        sets.removeAt(index)
-        sets.add(index - 1, timerSet)
-
-        _state.value = state.value.copy(sets = sets.toPersistentList())
-    }
-
-    private fun moveSetDown(timerSet: TimerSet) {
-        val index = sets.indexOfFirst { it.id == timerSet.id }
-        if (index == sets.size - 1) return
-
-        sets.removeAt(index)
-        sets.add(index + 1, timerSet)
-
-        _state.value = state.value.copy(sets = sets.toPersistentList())
-    }
-
     private fun duplicateSet(timerSet: TimerSet) {
         val index = sets.indexOfFirst { it.id == timerSet.id }
         sets.add(
@@ -503,6 +485,7 @@ class CreateViewModel(
 
     private fun updateFinishVibration(vibration: Vibration) {
         _state.update { it.copy(finishVibration = vibration) }
+        vibrationManger.vibrate(vibration)
     }
 
     private fun updateFinalCountDown(
@@ -534,5 +517,6 @@ class CreateViewModel(
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
+        vibrationManger.vibrate(vibration)
     }
 }

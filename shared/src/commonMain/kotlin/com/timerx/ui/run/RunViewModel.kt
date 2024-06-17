@@ -11,7 +11,7 @@ import com.timerx.domain.TimerState
 import com.timerx.domain.TimerStateMachineImpl
 import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.settings.TimerXSettings
-import com.timerx.vibration.VibrationManager
+import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -38,7 +38,7 @@ class RunViewModel(
     private val notificationManager: ITimerXNotificationManager,
     private val timerXSettings: TimerXSettings,
     private val timerXAnalytics: ITimerXAnalytics,
-    private val vibrationManager: VibrationManager
+    private val IVibrationManager: IVibrationManager
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
@@ -93,28 +93,28 @@ class RunViewModel(
                         )
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
                         timerEvent.beep?.let { beepManager.beep(it) }
-                        timerEvent.vibration?.let { vibrationManager.vibrate(it) }
+                        timerEvent.vibration?.let { IVibrationManager.vibrate(it) }
                     }
 
                     is TimerEvent.Finished -> {
                         beepManager.beep(timerEvent.beep)
                         notificationManager.stop()
-                        vibrationManager.vibrate(timerEvent.vibration)
+                        IVibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.NextInterval -> {
                         beepManager.beep(timerEvent.beep)
-                        vibrationManager.vibrate(timerEvent.vibration)
+                        IVibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.PreviousInterval -> {
                         beepManager.beep(timerEvent.beep)
-                        vibrationManager.vibrate(timerEvent.vibration)
+                        IVibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.Started -> {
                         beepManager.beep(timerEvent.beep)
-                        vibrationManager.vibrate(timerEvent.vibration)
+                        IVibrationManager.vibrate(timerEvent.vibration)
                         notificationManager.start()
                     }
 
