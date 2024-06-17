@@ -4,8 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +33,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.CustomIcons
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -144,26 +144,23 @@ fun Modifier.repeatingClickable(
 ): Modifier = composed {
 
     val currentClickListener by rememberUpdatedState(onClick)
+    val coroutineScope = rememberCoroutineScope()
 
     pointerInput(interactionSource, enabled) {
-        forEachGesture {
-            coroutineScope {
-                awaitPointerEventScope {
-                    val down = awaitFirstDown(requireUnconsumed = false)
-                    val heldButtonJob = launch {
-                        var currentDelayMillis = maxDelayMillis
-                        while (enabled && down.pressed) {
-                            currentClickListener()
-                            delay(currentDelayMillis)
-                            val nextMillis =
-                                currentDelayMillis - (currentDelayMillis * delayDecayFactor)
-                            currentDelayMillis = nextMillis.toLong().coerceAtLeast(minDelayMillis)
-                        }
-                    }
-                    waitForUpOrCancellation()
-                    heldButtonJob.cancel()
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            val heldButtonJob = coroutineScope.launch {
+                var currentDelayMillis = maxDelayMillis
+                while (enabled && down.pressed) {
+                    currentClickListener()
+                    delay(currentDelayMillis)
+                    val nextMillis =
+                        currentDelayMillis - (currentDelayMillis * delayDecayFactor)
+                    currentDelayMillis = nextMillis.toLong().coerceAtLeast(minDelayMillis)
                 }
             }
+            waitForUpOrCancellation()
+            heldButtonJob.cancel()
         }
     }
 }
