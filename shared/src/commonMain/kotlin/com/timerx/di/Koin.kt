@@ -22,7 +22,7 @@ val sharedModule = module {
     single<ITimerRepository> { RealmTimerRepository() }
     single { getTimerXNotificationManager() }
     factory { MainViewModel(get()) }
-    factory { (timerName: String) -> CreateViewModel(timerName, get(), get()) }
+    factory { (timerName: String) -> CreateViewModel(timerName, get(), get(), get()) }
     factory { (timerName: String) ->
         RunViewModel(
             timerName,
