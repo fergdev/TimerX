@@ -26,13 +26,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.Timer
 import com.timerx.domain.length
@@ -72,10 +70,8 @@ internal fun MainScreen(
     SetStatusBarColor(MaterialTheme.colorScheme.surface)
 
     val state by viewModel.state.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(Res.string.app_name)) },
@@ -87,7 +83,6 @@ internal fun MainScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {

@@ -321,13 +321,15 @@ class CreateViewModel(
         if (repetitions < 1) return
         val index = sets.indexOfFirst { it.id == timerSet.id }
         sets[index] =
-            timerSet.copy(repetitions = repetitions, intervals = if (repetitions == 1) {
-                timerSet.intervals.map {
-                    it.copy(skipOnLastSet = false)
-                }
-            } else {
-                timerSet.intervals
-            }.toImmutableList())
+            timerSet.copy(
+                repetitions = repetitions,
+                intervals = if (repetitions == 1) {
+                    timerSet.intervals.map {
+                        it.copy(skipOnLastSet = false)
+                    }
+                } else {
+                    timerSet.intervals
+                }.toImmutableList())
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 

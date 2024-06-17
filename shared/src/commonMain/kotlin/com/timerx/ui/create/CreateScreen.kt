@@ -1,6 +1,8 @@
 package com.timerx.ui.create
 
 import ColorPicker
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
@@ -73,7 +73,6 @@ internal fun CreateScreen(
         koinViewModel(vmClass = CreateViewModel::class) { parametersOf(timerId) }
 
     val state by viewModel.state.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Surface(modifier = Modifier.navigationBarsPadding()) {
         Column {
             TopAppBar(
@@ -105,14 +104,9 @@ internal fun CreateScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 CreateContent(state, viewModel)
             }
         }
@@ -166,8 +160,16 @@ fun FinishControls(
     state: CreateViewModel.State,
     interactions: CreateViewModel.Interactions
 ) {
-    Column(modifier = Modifier.background(state.finishColor)) {
-        val contrastColor = state.finishColor.contrastColor()
+    val backgroundColor by animateColorAsState(
+        targetValue = state.finishColor,
+        animationSpec = tween(400)
+    )
+    val contrastColor by animateColorAsState(
+        targetValue = state.finishColor.contrastColor(),
+        animationSpec = tween(400)
+    )
+
+    Column(modifier = Modifier.background(backgroundColor)) {
         FinishColorPicker(interactions.updateFinishColor, contrastColor)
         BeepSelector(modifier = Modifier.padding(horizontal = 16.dp), selected = state.finishBeep) {
             interactions.updateFinishAlert(it)
@@ -184,30 +186,31 @@ private fun FinishColorPicker(
     contrastColor: Color
 ) {
     var colorPickerVisible by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier.fillMaxWidth()
-            .padding(16.dp)
-            .clickable { colorPickerVisible = true },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(Res.string.finish_color),
-            color = contrastColor
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            modifier = Modifier.size(CustomIcons.defaultIconSize),
-            imageVector = CustomIcons.colorFill(),
-            contentDescription = null,
-            tint = contrastColor
-        )
+    Box(modifier = Modifier.clickable { colorPickerVisible = true }) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(Res.string.finish_color),
+                color = contrastColor
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                modifier = Modifier.size(CustomIcons.defaultIconSize),
+                imageVector = CustomIcons.colorFill(),
+                contentDescription = null,
+                tint = contrastColor
+            )
 
-        if (colorPickerVisible) {
-            ColorPicker {
-                if (it != null) {
-                    updateFinishColor(it)
+            if (colorPickerVisible) {
+                ColorPicker {
+                    if (it != null) {
+                        updateFinishColor(it)
+                    }
+                    colorPickerVisible = false
                 }
-                colorPickerVisible = false
             }
         }
     }

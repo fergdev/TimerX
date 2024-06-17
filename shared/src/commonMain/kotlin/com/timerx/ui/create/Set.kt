@@ -1,5 +1,10 @@
 package com.timerx.ui.create
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +21,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,6 +36,7 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.NumberIncrement
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
 import sh.calvin.reorderable.ReorderableScope
@@ -53,14 +64,32 @@ internal fun Set(
                     interactions.set.update.moveInterval(timerSet, from, to)
                 },
             ) { _, timerInterval, _ ->
-
                 key(timerInterval.id) {
-                    Interval(
-                        interval = timerInterval,
-                        canSkipOnLastSet = timerSet.repetitions > 1,
-                        interactions = interactions,
-                        scope = this
-                    )
+                    var visible by remember { mutableStateOf(true) }
+
+                    LaunchedEffect(Unit) {
+                        delay(100)
+                        visible = true
+                    }
+                    LaunchedEffect(visible) {
+                        if (!visible) {
+                            delay(400)
+                            interactions.interval.delete(timerInterval)
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = visible,
+                        enter = expandIn(animationSpec = tween(400)),
+                        exit = shrinkOut(animationSpec = tween((400)))
+                    ) {
+                        Interval(
+                            interval = timerInterval,
+                            canSkipOnLastSet = timerSet.repetitions > 1,
+                            interactions = interactions,
+                            scope = this@ReorderableColumn
+                        ) { visible = false }
+                    }
                 }
             }
 
@@ -93,7 +122,7 @@ private fun SetTopControls(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 8.dp, vertical = 8.dp),
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -112,7 +141,8 @@ private fun SetTopControls(
             })
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             FilledTonalIconButton(onClick = { interactions.set.duplicate(timerSet) }) {
                 Icon(

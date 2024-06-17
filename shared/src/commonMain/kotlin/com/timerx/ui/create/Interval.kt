@@ -1,6 +1,8 @@
 package com.timerx.ui.create
 
 import ColorPicker
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -55,18 +57,28 @@ import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.skip_on_last_set
 
+private val colorAnimationDuration = 400
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Interval(
     interval: TimerInterval,
     canSkipOnLastSet: Boolean,
     interactions: CreateViewModel.Interactions,
-    scope: ReorderableScope
+    scope: ReorderableScope,
+    animateOutInterval: () -> Unit
 ) {
-    val contrastColor = interval.color.contrastColor()
+    val backgroundColor by animateColorAsState(
+        interval.color,
+        animationSpec = tween(colorAnimationDuration)
+    )
+    val contrastColor by animateColorAsState(
+        interval.color.contrastColor(),
+        animationSpec = tween(colorAnimationDuration)
+    )
     Row(
         modifier = Modifier
-            .background(interval.color)
+            .background(backgroundColor)
             .fillMaxWidth()
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -98,6 +110,7 @@ internal fun Interval(
                     IntervalBottomControls(
                         interactions,
                         interval,
+                        animateOutInterval
                     )
                     HorizontalDivider()
                     IntervalSwitches(
@@ -122,7 +135,11 @@ internal fun Interval(
                 it
             )
         }
-        Row(modifier = Modifier.weight(1f)) {
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             IntervalColorSwitches(interval, interactions, contrastColor)
             IconButton(onClick = { settingsBottomSheetVisible = true }) {
                 Icon(
@@ -132,17 +149,15 @@ internal fun Interval(
                     tint = contrastColor
                 )
             }
-            IconButton(onClick = {}) {
-                Icon(
-                    modifier = with(scope) {
-                        Modifier.size(CustomIcons.defaultIconSize)
-                            .draggableHandle()
-                    },
-                    imageVector = CustomIcons.dragHandle(),
-                    contentDescription = stringResource(Res.string.settings),
-                    tint = contrastColor
-                )
-            }
+            Icon(
+                modifier = with(scope) {
+                    Modifier.size(CustomIcons.defaultIconSize)
+                        .draggableHandle()
+                },
+                imageVector = CustomIcons.dragHandle(),
+                contentDescription = stringResource(Res.string.settings),
+                tint = contrastColor
+            )
         }
     }
 }
@@ -263,6 +278,7 @@ private fun RowSwitch(label: String, value: Boolean, onValueChange: (Boolean) ->
 private fun IntervalBottomControls(
     interactions: CreateViewModel.Interactions,
     interval: TimerInterval,
+    animateOutInterval: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
@@ -274,7 +290,7 @@ private fun IntervalBottomControls(
                 contentDescription = stringResource(Res.string.copy)
             )
         }
-        IconButton(onClick = { interactions.interval.delete(interval) }) {
+        IconButton(onClick = { animateOutInterval() }) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = stringResource(Res.string.delete)
