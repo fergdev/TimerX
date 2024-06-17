@@ -1,6 +1,5 @@
 package com.timerx.ui.create
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -42,65 +42,44 @@ internal fun Set(
     interactions: CreateViewModel.Interactions,
     reorderableScope: ReorderableScope
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        SetTopControls(interactions, timerSet, reorderableScope)
-        ReorderableColumn(
-            list = timerSet.intervals,
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            onSettle = { from, to ->
-                interactions.set.update.moveInterval(timerSet, from, to)
-            },
-        ) { _, timerInterval, _ ->
+    Surface {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            SetTopControls(interactions, timerSet, reorderableScope)
+            ReorderableColumn(
+                list = timerSet.intervals,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                onSettle = { from, to ->
+                    interactions.set.update.moveInterval(timerSet, from, to)
+                },
+            ) { _, timerInterval, _ ->
 
-            key(timerInterval.id) {
-                Interval(
-                    interval = timerInterval,
-                    canSkipOnLastSet = timerSet.repetitions > 1,
-                    interactions = interactions,
-                    scope = this
-                )
+                key(timerInterval.id) {
+                    Interval(
+                        interval = timerInterval,
+                        canSkipOnLastSet = timerSet.repetitions > 1,
+                        interactions = interactions,
+                        scope = this
+                    )
+                }
             }
-        }
 
-        AnimatedNumber(
-            value = timerSet.length(),
-            textStyle = MaterialTheme.typography.displayMedium
-        ) { it.timeFormatted() }
-        SetBottomControls(interactions, timerSet)
-        HorizontalDivider(modifier = Modifier.fillMaxWidth())
-    }
-}
-
-@Composable
-private fun SetBottomControls(
-    interactions: CreateViewModel.Interactions,
-    timerSet: TimerSet,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        FilledTonalIconButton(onClick = { interactions.set.duplicate(timerSet) }) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = CustomIcons.contentCopy(),
-                contentDescription = stringResource(Res.string.copy)
-            )
-        }
-        FilledTonalIconButton(onClick = { interactions.set.update.newInterval(timerSet) }) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(Res.string.add)
-            )
-        }
-        FilledTonalIconButton(onClick = { interactions.set.delete(timerSet) }) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(Res.string.delete)
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                AnimatedNumber(
+                    modifier = Modifier.align(Alignment.Center),
+                    value = timerSet.length(),
+                    textStyle = MaterialTheme.typography.titleLarge
+                ) { it.timeFormatted() }
+                FilledTonalIconButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    onClick = { interactions.set.update.newInterval(timerSet) }) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.add)
+                    )
+                }
+            }
+            HorizontalDivider(modifier = Modifier.fillMaxWidth())
         }
     }
 }
@@ -116,27 +95,45 @@ private fun SetTopControls(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = stringResource(Res.string.sets))
-            NumberIncrement(
-                value = timerSet.repetitions,
-                negativeButtonEnabled = timerSet.repetitions > 1,
-                onChange = {
-                    interactions.set.update.updateRepetitions(
-                        timerSet,
-                        it
-                    )
-                })
-        }
-        Icon(
-            imageVector = CustomIcons.dragHandle(),
-            contentDescription = stringResource(Res.string.down),
-            modifier = with(reorderableScope) {
-                Modifier.align(Alignment.TopEnd).size(CustomIcons.defaultIconSize).draggableHandle()
-            }
+        Text(
+            modifier = Modifier.align(Alignment.CenterStart),
+            text = stringResource(Res.string.sets)
         )
+        NumberIncrement(
+            modifier = Modifier.align(Alignment.Center),
+            value = timerSet.repetitions,
+            negativeButtonEnabled = timerSet.repetitions > 1,
+            onChange = {
+                interactions.set.update.updateRepetitions(
+                    timerSet,
+                    it
+                )
+            })
+        Row(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FilledTonalIconButton(onClick = { interactions.set.duplicate(timerSet) }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = CustomIcons.contentCopy(),
+                    contentDescription = stringResource(Res.string.copy)
+                )
+            }
+            FilledTonalIconButton(onClick = { interactions.set.delete(timerSet) }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.delete)
+                )
+            }
+            Icon(
+                imageVector = CustomIcons.dragHandle(),
+                contentDescription = stringResource(Res.string.down),
+                modifier = with(reorderableScope) {
+                    Modifier.size(CustomIcons.defaultIconSize)
+                        .draggableHandle()
+                }
+            )
+        }
     }
 }

@@ -15,12 +15,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.FinalCountDown
@@ -37,7 +40,7 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.NumberIncrement
-import com.timerx.ui.common.UnderlinedTextBox
+import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.contrastColor
 import org.jetbrains.compose.resources.stringResource
@@ -68,7 +71,7 @@ internal fun Interval(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        UnderlinedTextBox(
+        UnderlinedField(
             modifier = Modifier.weight(1f),
             value = interval.name,
             maxLines = 1,
@@ -80,22 +83,27 @@ internal fun Interval(
                     interval,
                     it
                 )
-            }
+            },
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface)
         )
 
         var settingsBottomSheetVisible by remember { mutableStateOf(false) }
         if (settingsBottomSheetVisible) {
-            ModalBottomSheet(onDismissRequest = { settingsBottomSheetVisible = false }) {
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            ModalBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = { settingsBottomSheetVisible = false }
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
+                    IntervalBottomControls(
+                        interactions,
+                        interval,
+                    )
+                    HorizontalDivider()
                     IntervalSwitches(
                         canSkipOnLastSet,
                         interval,
                         interactions,
-                    )
-
-                    IntervalBottomControls(
-                        interactions,
-                        interval,
                     )
                 }
             }
@@ -195,6 +203,7 @@ private fun IntervalSwitches(
         )
     }
 
+    HorizontalDivider()
     Text(text = stringResource(Res.string.finish))
     BeepSelector(selected = interval.beep) {
         interactions.interval.update.updateBeep(interval, it)
@@ -203,6 +212,7 @@ private fun IntervalSwitches(
         interactions.interval.update.updateVibration(interval, it)
     }
 
+    HorizontalDivider()
     Text(text = stringResource(Res.string.count_down))
     IntervalCountDown(interval.finalCountDown) {
         interactions.interval.update.updateFinalCountDown(interval, it)

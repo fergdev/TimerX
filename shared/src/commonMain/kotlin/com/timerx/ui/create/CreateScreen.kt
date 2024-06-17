@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -32,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -42,25 +39,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
+import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.contrastColor
-import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
@@ -71,7 +62,6 @@ import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.finish_color
 
 private const val TWO_HUNDRED_SEVENTY_DEG = 270f
-private const val FOCUS_REQUEST_DELAY: Long = 300
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,7 +78,19 @@ internal fun CreateScreen(
         Column {
             TopAppBar(
                 title = {
-                    TimerName(state, viewModel.interactions)
+                    UnderlinedField(
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 1,
+                        value = state.timerName,
+                        onValueChange = {
+                            viewModel.interactions.updateTimerName(it)
+                        },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        textStyle = MaterialTheme.typography.headlineSmall.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+                    )
                 },
                 navigationIcon = {
                     IconButton(
@@ -118,40 +120,6 @@ internal fun CreateScreen(
 }
 
 @Composable
-private fun TimerName(
-    state: CreateViewModel.State,
-    interactions: CreateViewModel.Interactions
-) {
-    val focusRequester = remember { FocusRequester() }
-    var text by remember { mutableStateOf(TextFieldValue(state.timerName)) }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    BasicTextField(
-        modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
-        maxLines = 1,
-        value = text,
-        onValueChange = {
-            text = it
-            interactions.updateTimerName(it.text)
-        },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
-        keyboardActions = KeyboardActions(onAny = {
-            keyboardController?.hide()
-            text = TextFieldValue(text.text)
-            focusManager.clearFocus()
-        }),
-    )
-    LaunchedEffect(Unit) {
-        delay(FOCUS_REQUEST_DELAY)
-        text = text.copy(selection = TextRange(0, text.text.length))
-        focusRequester.requestFocus()
-    }
-}
-
-@Composable
 private fun CreateContent(
     state: CreateViewModel.State,
     viewModel: CreateViewModel,
@@ -173,22 +141,17 @@ private fun CreateContent(
                 )
             }
         }
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            FilledIconButton(onClick = { viewModel.interactions.addSet() }) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            FilledIconButton(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                onClick = { viewModel.interactions.addSet() }) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = stringResource(Res.string.add)
                 )
             }
-        }
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
             AnimatedNumber(
+                modifier = Modifier.align(Alignment.TopCenter),
                 value = state.sets.length(),
                 textStyle = MaterialTheme.typography.displayMedium
             ) { it.timeFormatted() }

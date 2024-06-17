@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -110,23 +111,26 @@ fun NumberIncrement(
 
 @Composable
 fun AnimatedNumber(
+    modifier: Modifier = Modifier,
     value: Int,
     textStyle: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
     formatter: (Int) -> String
 ) {
-    AnimatedContent(targetState = value, transitionSpec = {
-        if (targetState > initialState) {
-            slideInVertically { -it } togetherWith slideOutVertically { it }
-        } else {
-            slideInVertically { it } togetherWith slideOutVertically { -it }
+    Box(modifier = modifier) {
+        AnimatedContent(targetState = value, transitionSpec = {
+            if (targetState > initialState) {
+                slideInVertically { -it } togetherWith slideOutVertically { it }
+            } else {
+                slideInVertically { it } togetherWith slideOutVertically { -it }
+            }
+        }) { count ->
+            Text(
+                text = formatter(count),
+                style = textStyle,
+                color = color
+            )
         }
-    }) { count ->
-        Text(
-            text = formatter(count),
-            style = textStyle,
-            color = color
-        )
     }
 }
 
