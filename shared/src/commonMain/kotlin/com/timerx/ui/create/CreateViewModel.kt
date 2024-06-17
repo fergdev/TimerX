@@ -78,10 +78,9 @@ class CreateViewModel(
         )
     }
 
-    private val defaultIntervalIdGenerator = 0
     private fun defaultInterval(): TimerInterval {
         return TimerInterval(
-            id = "$defaultIntervalIdGenerator++",
+            id = "${defaultIdGenerator++}",
             name = workString,
             duration = 30,
             color = Color.Green,
@@ -353,7 +352,7 @@ class CreateViewModel(
 
     private fun deleteInterval(interval: TimerInterval) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.filter { interval != it }.toPersistentList())
+            set.copy(intervals = set.intervals.filter { interval.id != it.id }.toPersistentList())
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
