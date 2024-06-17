@@ -5,8 +5,10 @@ import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNTimeIntervalNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
 
-actual class TimerXNotificationManager actual constructor() {
-    actual fun start() {
+actual fun getTimerXNotificationManager(): ITimerXNotificationManager = TimerXNotificationManager()
+
+class TimerXNotificationManager : ITimerXNotificationManager {
+    override fun start() {
         val center = UNUserNotificationCenter.currentNotificationCenter()
         val content = UNMutableNotificationContent()
         content.setTitle("Title")
@@ -14,19 +16,20 @@ actual class TimerXNotificationManager actual constructor() {
         content.setSound(null)
 
         val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
-        val request = UNNotificationRequest.requestWithIdentifier("LocalNotification1", content, trigger)
+        val request =
+            UNNotificationRequest.requestWithIdentifier("LocalNotification1", content, trigger)
 
         center.addNotificationRequest(request) { error ->
             error?.let { println("Error: $it") }
         }
     }
 
-    actual fun stop() {
+    override fun stop() {
         val center = UNUserNotificationCenter.currentNotificationCenter()
         center.removeAllDeliveredNotifications()
     }
 
-    actual fun updateNotification(info: String) {
+    override fun updateNotification(info: String) {
         println("Update notification $info")
         val content = UNMutableNotificationContent().apply {
             setTitle("Title")
@@ -34,7 +37,8 @@ actual class TimerXNotificationManager actual constructor() {
             setSound(null)
         }
 
-        val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, repeats = false)
+        val trigger =
+            UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, repeats = false)
         val request = UNNotificationRequest.requestWithIdentifier(NOTIFICATION_ID, content, trigger)
 
         UNUserNotificationCenter.currentNotificationCenter()
@@ -43,6 +47,7 @@ actual class TimerXNotificationManager actual constructor() {
                 else println("Success")
             }
     }
+
     companion object {
         private const val NOTIFICATION_ID = "1"
     }

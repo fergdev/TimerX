@@ -1,5 +1,7 @@
 package com.timerx.analytics
 
-expect class TimerXAnalytics() {
+expect fun getTimerXAnalytics() : ITimerXAnalytics
+
+interface ITimerXAnalytics {
     fun logEvent(eventName: String, params: Map<String, Any>?)
 }

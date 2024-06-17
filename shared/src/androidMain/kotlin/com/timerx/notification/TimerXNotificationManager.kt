@@ -6,24 +6,27 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import org.koin.mp.KoinPlatform
 
-actual class TimerXNotificationManager {
+actual fun getTimerXNotificationManager(): ITimerXNotificationManager = TimerXNotificationManager()
+
+class TimerXNotificationManager : ITimerXNotificationManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private val notificationManager =
         ContextCompat.getSystemService(context, NotificationManager::class.java)!!
-    actual fun start() {
+
+    override fun start() {
         context.startForegroundService(
             Intent(context, NotificationService::class.java)
         )
     }
 
-    actual fun updateNotification(info: String) {
+    override fun updateNotification(info: String) {
         notificationManager.notify(
             NotificationService.NOTIFICATION_ID,
             createNotification(context, info)
         )
     }
 
-    actual fun stop() {
+    override fun stop() {
         context.stopService(
             Intent(context, NotificationService::class.java)
         )

@@ -1,6 +1,8 @@
 package com.timerx.notification
 
-expect class TimerXNotificationManager() {
+expect fun getTimerXNotificationManager(): ITimerXNotificationManager
+
+interface ITimerXNotificationManager {
 
     fun start()
 

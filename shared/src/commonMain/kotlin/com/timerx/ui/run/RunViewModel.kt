@@ -1,7 +1,7 @@
 package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.analytics.TimerXAnalytics
+import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.beep.IBeepManager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.RunState
@@ -9,7 +9,7 @@ import com.timerx.domain.Timer
 import com.timerx.domain.TimerEvent
 import com.timerx.domain.TimerState
 import com.timerx.domain.TimerStateMachineImpl
-import com.timerx.notification.TimerXNotificationManager
+import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.settings.TimerXSettings
 import com.timerx.vibration.VibrationManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,10 +34,10 @@ data class RunScreenState(
 class RunViewModel(
     private val timerId: String,
     timerRepository: ITimerRepository,
-    private val IBeepManager: IBeepManager,
-    private val notificationManager: TimerXNotificationManager,
+    private val beepManager: IBeepManager,
+    private val notificationManager: ITimerXNotificationManager,
     private val timerXSettings: TimerXSettings,
-    private val timerXAnalytics: TimerXAnalytics,
+    private val timerXAnalytics: ITimerXAnalytics,
     private val vibrationManager: VibrationManager
 ) : ViewModel() {
 
@@ -92,28 +92,28 @@ class RunViewModel(
                             mapOf(Pair("elapsed", timerEvent.runState.elapsed))
                         )
                         notificationManager.updateNotification(notificationState(timerEvent.runState))
-                        timerEvent.beep?.let { IBeepManager.beep(it) }
+                        timerEvent.beep?.let { beepManager.beep(it) }
                         timerEvent.vibration?.let { vibrationManager.vibrate(it) }
                     }
 
                     is TimerEvent.Finished -> {
-                        IBeepManager.beep(timerEvent.beep)
+                        beepManager.beep(timerEvent.beep)
                         notificationManager.stop()
                         vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.NextInterval -> {
-                        IBeepManager.beep(timerEvent.beep)
+                        beepManager.beep(timerEvent.beep)
                         vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.PreviousInterval -> {
-                        IBeepManager.beep(timerEvent.beep)
+                        beepManager.beep(timerEvent.beep)
                         vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.Started -> {
-                        IBeepManager.beep(timerEvent.beep)
+                        beepManager.beep(timerEvent.beep)
                         vibrationManager.vibrate(timerEvent.vibration)
                         notificationManager.start()
                     }

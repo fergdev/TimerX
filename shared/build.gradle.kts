@@ -1,6 +1,6 @@
+
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -15,12 +15,6 @@ plugins {
 }
 
 kotlin {
-    // Prevents warning from using actual classes, remove when this is fully supported
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
-
     applyDefaultHierarchyTemplate()
 
     androidTarget()

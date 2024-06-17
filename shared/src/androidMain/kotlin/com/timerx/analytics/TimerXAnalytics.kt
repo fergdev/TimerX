@@ -5,13 +5,12 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.koin.mp.KoinPlatform
 
-actual class TimerXAnalytics {
+class TimerXAnalytics : ITimerXAnalytics {
     private val context: Context = KoinPlatform.getKoin().get()
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
-    actual fun logEvent(eventName: String, params: Map<String, Any>?) {
-        println("Logging $eventName")
-        val bundle :Bundle? = params?.run {
+    override fun logEvent(eventName: String, params: Map<String, Any>?) {
+        val bundle: Bundle? = params?.run {
             val bundle = Bundle()
             this.forEach { (t, u) ->
                 when (u) {
@@ -28,3 +27,5 @@ actual class TimerXAnalytics {
         firebaseAnalytics.logEvent(eventName, bundle)
     }
 }
+
+actual fun getTimerXAnalytics(): ITimerXAnalytics = TimerXAnalytics()

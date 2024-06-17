@@ -1,7 +1,7 @@
 package com.timerx.analytics
 
-actual class TimerXAnalytics actual constructor() {
-    actual fun logEvent(
+class TimerXAnalytics : ITimerXAnalytics {
+    override fun logEvent(
         eventName: String,
         params: Map<String, Any>?
     ) {
@@ -19,11 +19,14 @@ actual class TimerXAnalytics actual constructor() {
     }
 }
 
+actual fun getTimerXAnalytics(): ITimerXAnalytics = TimerXAnalytics()
+
 interface FirebaseIosCallback {
     fun logEvent(eventId: String, params: String)
 }
 
 private var firebaseIosCallback: FirebaseIosCallback? = null
+// Callback from swift that allows settings of firebase callback
 @Suppress("unused")
 fun firebaseCallback(callback: FirebaseIosCallback) {
     firebaseIosCallback = callback
