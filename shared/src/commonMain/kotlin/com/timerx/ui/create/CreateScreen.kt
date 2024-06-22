@@ -107,7 +107,7 @@ internal fun CreateScreen(
             )
 
             Box(modifier = Modifier.fillMaxSize()) {
-                CreateContent(state, viewModel)
+                CreateContent(state, viewModel.interactions)
             }
         }
     }
@@ -116,21 +116,21 @@ internal fun CreateScreen(
 @Composable
 private fun CreateContent(
     state: CreateViewModel.State,
-    viewModel: CreateViewModel,
+    interactions: CreateViewModel.Interactions
 ) {
     val scrollState by mutableStateOf(rememberScrollState())
     Column(modifier = Modifier.verticalScroll(scrollState)) {
         ReorderableColumn(
             list = state.sets,
             onSettle = { from, to ->
-                viewModel.interactions.swapSet(from, to)
+                interactions.swapSet(from, to)
             },
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) { _, set, _ ->
             key(set.id) {
                 Set(
                     timerSet = set,
-                    interactions = viewModel.interactions,
+                    interactions = interactions,
                     this
                 )
             }
@@ -138,7 +138,7 @@ private fun CreateContent(
         Box(modifier = Modifier.fillMaxWidth()) {
             FilledIconButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                onClick = { viewModel.interactions.addSet() }) {
+                onClick = { interactions.addSet() }) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = stringResource(Res.string.add)
@@ -151,7 +151,7 @@ private fun CreateContent(
             ) { it.timeFormatted() }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        FinishControls(state, viewModel.interactions)
+        FinishControls(state, interactions)
     }
 }
 

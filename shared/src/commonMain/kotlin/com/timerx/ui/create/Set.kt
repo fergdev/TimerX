@@ -66,11 +66,6 @@ internal fun Set(
             ) { _, timerInterval, _ ->
                 key(timerInterval.id) {
                     var visible by remember { mutableStateOf(true) }
-
-                    LaunchedEffect(Unit) {
-                        delay(100)
-                        visible = true
-                    }
                     LaunchedEffect(visible) {
                         if (!visible) {
                             delay(400)
