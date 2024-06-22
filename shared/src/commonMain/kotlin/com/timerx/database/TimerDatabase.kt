@@ -24,13 +24,13 @@ import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.copy_parenthesis
 
 interface ITimerRepository {
-    fun getTimers(): List<Timer>
-    fun insertTimer(timer: Timer)
-    fun updateTimer(timer: Timer)
-    fun deleteTimer(timer: Timer)
-    fun duplicate(timer: Timer)
-    fun getTimer(timerId: String): Timer
-    fun swapTimers(from: Int, to: Int)
+    suspend fun getTimers(): List<Timer>
+    suspend fun insertTimer(timer: Timer)
+    suspend fun updateTimer(timer: Timer)
+    suspend fun deleteTimer(timer: Timer)
+    suspend fun duplicate(timer: Timer)
+    suspend fun getTimer(timerId: String): Timer
+    suspend fun swapTimers(from: Int, to: Int)
 }
 
 private class RealmColor : RealmObject {
@@ -125,7 +125,7 @@ class RealmTimerRepository : ITimerRepository {
         }
     }
 
-    override fun getTimers(): List<Timer> {
+    override suspend fun getTimers(): List<Timer> {
         return getRealmTimers().map(::realmTimerToTimer)
     }
 
@@ -134,7 +134,7 @@ class RealmTimerRepository : ITimerRepository {
     }
 
 
-    override fun insertTimer(timer: Timer) {
+    override suspend fun insertTimer(timer: Timer) {
         val realmTimer = RealmTimer()
         realmTimer.setTimer(timer)
         realm.writeBlocking {
@@ -144,7 +144,7 @@ class RealmTimerRepository : ITimerRepository {
         }
     }
 
-    override fun updateTimer(timer: Timer) {
+    override suspend fun updateTimer(timer: Timer) {
         realm.writeBlocking {
             val realmTimerContainer = this.query<RealmTimerContainer>().find().first()
             val index = realmTimerContainer.timers.first { it.id.toHexString() == timer.id }
@@ -153,7 +153,7 @@ class RealmTimerRepository : ITimerRepository {
         }
     }
 
-    override fun deleteTimer(timer: Timer) {
+    override suspend fun deleteTimer(timer: Timer) {
         realm.writeBlocking {
             val realmTimerContainer = this.query<RealmTimerContainer>().find().first()
             realmTimerContainer.timers.remove(realmTimerContainer.timers.first { it.id.toHexString() == timer.id })
@@ -161,17 +161,17 @@ class RealmTimerRepository : ITimerRepository {
         }
     }
 
-    override fun duplicate(timer: Timer) {
+    override suspend fun duplicate(timer: Timer) {
         runBlocking {
             insertTimer(timer.copy(name = timer.name + getString(Res.string.copy_parenthesis)))
         }
     }
 
-    override fun getTimer(timerId: String): Timer {
+    override suspend fun getTimer(timerId: String): Timer {
         return realmTimerToTimer(realm.query<RealmTimer>().find().first { it.id.toHexString() == timerId })
     }
 
-    override fun swapTimers(from: Int, to: Int) {
+    override suspend fun swapTimers(from: Int, to: Int) {
         realm.writeBlocking {
             val realmTimerContainer = this.query<RealmTimerContainer>().find().first()
             val fromTimer = realmTimerContainer.timers[from]
@@ -243,5 +243,4 @@ class RealmTimerRepository : ITimerRepository {
             Vibration.entries[realmTimer.finishVibration]
         )
     }
-
 }

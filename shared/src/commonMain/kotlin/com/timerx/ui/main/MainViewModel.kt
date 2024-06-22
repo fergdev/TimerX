@@ -8,7 +8,9 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel() {
 
@@ -35,18 +37,24 @@ class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel()
     }
 
     private fun refreshData() {
-        _stateFlow.update {
-            State(timerRepository.getTimers().toPersistentList())
+        viewModelScope.launch {
+            _stateFlow.update {
+                State(timerRepository.getTimers().toPersistentList())
+            }
         }
     }
 
     private fun deleteTimer(timer: Timer) {
-        timerRepository.deleteTimer(timer)
+        viewModelScope.launch {
+            timerRepository.deleteTimer(timer)
+        }
         refreshData()
     }
 
     private fun duplicateTimer(timer: Timer) {
-        timerRepository.duplicate(timer)
+        viewModelScope.launch {
+            timerRepository.duplicate(timer)
+        }
         refreshData()
     }
 
@@ -57,6 +65,8 @@ class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel()
         timers[from] = toTimer
         timers[to] = fromTimer
         _stateFlow.update { it.copy(timers = timers.toPersistentList()) }
-        timerRepository.swapTimers(from, to)
+        viewModelScope.launch {
+            timerRepository.swapTimers(from, to)
+        }
     }
 }

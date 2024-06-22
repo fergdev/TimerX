@@ -8,6 +8,7 @@ import com.timerx.domain.RunState
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerEvent
 import com.timerx.domain.TimerState
+import com.timerx.domain.TimerStateMachine
 import com.timerx.domain.TimerStateMachineImpl
 import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.settings.TimerXSettings
@@ -22,8 +23,8 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 data class RunScreenState(
     val timerState: TimerState = TimerState.Running,
     val backgroundColor: Color = Color.Transparent,
-    val volume: Float,
-    val vibrationEnabled: Boolean,
+    val volume: Float = 1F,
+    val vibrationEnabled: Boolean = true,
     val index: String? = "",
     val time: Int = 0,
     val name: String = "",
@@ -41,16 +42,10 @@ class RunViewModel(
     private val vibrationManager: IVibrationManager
 ) : ViewModel() {
 
-    private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
-    private var timerStateMachine = TimerStateMachineImpl(timer, viewModelScope)
+    private lateinit var timer: Timer
+    private lateinit var timerStateMachine: TimerStateMachine
 
-    private val _state = MutableStateFlow(
-        RunScreenState(
-            volume = 1F,
-            vibrationEnabled = true,
-            timerName = timer.name.uppercase()
-        )
-    )
+    private val _state = MutableStateFlow(RunScreenState())
 
     val state: StateFlow<RunScreenState> = _state
 
@@ -65,19 +60,24 @@ class RunViewModel(
         val updateVibrationEnabled: (Boolean) -> Unit
     )
 
-    val interactions = Interactions(
-        play = ::play,
-        pause = timerStateMachine::pause,
-        nextInterval = timerStateMachine::nextInterval,
-        previousInterval = timerStateMachine::previousInterval,
-        onManualNext = ::onManualNext,
-        restartTimer = ::initTimer,
-        updateVolume = ::updateVolume,
-        updateVibrationEnabled = ::updateVibrationEnabled
-    )
+    lateinit var interactions: Interactions
 
     init {
-        initTimer()
+        viewModelScope.launch {
+            this@RunViewModel.timer = timerRepository.getTimers().first { it.id == timerId }
+            timerStateMachine = TimerStateMachineImpl(timer, viewModelScope)
+            interactions = Interactions(
+                play = ::play,
+                pause = timerStateMachine::pause,
+                nextInterval = timerStateMachine::nextInterval,
+                previousInterval = timerStateMachine::previousInterval,
+                onManualNext = ::onManualNext,
+                restartTimer = ::initTimer,
+                updateVolume = ::updateVolume,
+                updateVibrationEnabled = ::updateVibrationEnabled
+            )
+            initTimer()
+        }
         timerXAnalytics.logEvent("TimerStart", null)
         viewModelScope.launch {
             timerXSettings.settings.collect { settings ->
@@ -154,6 +154,7 @@ class RunViewModel(
         }
         _state.update {
             it.copy(
+                timerName = timer.name,
                 timerState = runState.timerState,
                 backgroundColor = runState.backgroundColor,
                 index = index,

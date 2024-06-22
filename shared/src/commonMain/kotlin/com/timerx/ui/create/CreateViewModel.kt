@@ -99,7 +99,7 @@ class CreateViewModel(
     @OptIn(FormatStringsInDatetimeFormats::class)
     private val dateTimeFormat = LocalDateTime.Format { byUnicodePattern("yyyy-MM-dd HH:mm:ss") }
 
-    private var sets: MutableList<TimerSet>
+    private var sets: MutableList<TimerSet> = mutableListOf()
 
     class SetInteractions(
         val duplicate: (TimerSet) -> Unit,
@@ -191,22 +191,25 @@ class CreateViewModel(
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
 
-    private val timerEditing: Timer?
+    private var timerEditing: Timer? = null
 
     init {
         if (timerName != "") {
-            timerEditing = timerDatabase.getTimer(timerName)
-            sets = timerEditing.sets.toMutableList()
+            viewModelScope.launch {
+                val timer = timerDatabase.getTimer(timerName)
+                timerEditing = timer
+                sets = timer.sets.toMutableList()
 
-            _state.update {
-                runBlocking {
-                    it.copy(
-                        timerName = timerEditing.name,
-                        sets = sets.toPersistentList(),
-                        finishColor = timerEditing.finishColor,
-                        finishBeep = timerEditing.finishBeep,
-                        finishVibration = timerEditing.finishVibration,
-                    )
+                _state.update {
+                    runBlocking {
+                        it.copy(
+                            timerName = timer.name,
+                            sets = sets.toPersistentList(),
+                            finishColor = timer.finishColor,
+                            finishBeep = timer.finishBeep,
+                            finishVibration = timer.finishVibration,
+                        )
+                    }
                 }
             }
         } else {
@@ -255,27 +258,30 @@ class CreateViewModel(
                 )
             }
         }
-        if (timerEditing != null) {
-            timerDatabase.updateTimer(
-                Timer(
-                    id = timerEditing.id,
-                    name = name,
-                    sets = state.value.sets,
-                    finishColor = state.value.finishColor,
-                    finishBeep = state.value.finishBeep,
-                    finishVibration = Vibration.Heavy
+        viewModelScope.launch {
+            val timerEditing = this@CreateViewModel.timerEditing
+            if (timerEditing != null) {
+                timerDatabase.updateTimer(
+                    Timer(
+                        id = timerEditing.id,
+                        name = name,
+                        sets = state.value.sets,
+                        finishColor = state.value.finishColor,
+                        finishBeep = state.value.finishBeep,
+                        finishVibration = Vibration.Heavy
+                    )
                 )
-            )
-        } else {
-            timerDatabase.insertTimer(
-                Timer(
-                    name = name,
-                    sets = state.value.sets,
-                    finishColor = state.value.finishColor,
-                    finishBeep = state.value.finishBeep,
-                    finishVibration = state.value.finishVibration
+            } else {
+                timerDatabase.insertTimer(
+                    Timer(
+                        name = name,
+                        sets = state.value.sets,
+                        finishColor = state.value.finishColor,
+                        finishBeep = state.value.finishBeep,
+                        finishVibration = state.value.finishVibration
+                    )
                 )
-            )
+            }
         }
     }
 
