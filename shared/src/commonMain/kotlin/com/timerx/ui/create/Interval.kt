@@ -84,6 +84,7 @@ internal fun Interval(
             modifier = Modifier.weight(1f),
             value = interval.name,
             maxLines = 1,
+            singleLine = true,
             textStyle = MaterialTheme.typography.titleLarge,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             onValueChange = {
