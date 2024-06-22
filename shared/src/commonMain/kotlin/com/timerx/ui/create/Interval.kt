@@ -44,7 +44,7 @@ import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
-import com.timerx.ui.common.contrastColor
+import com.timerx.ui.common.lightDisplayColor
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableScope
 import timerx.shared.generated.resources.Res
@@ -57,7 +57,7 @@ import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.skip_on_last_set
 
-private val colorAnimationDuration = 400
+private const val colorAnimationDuration = 400
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,13 +69,10 @@ internal fun Interval(
     animateOutInterval: () -> Unit
 ) {
     val backgroundColor by animateColorAsState(
-        interval.color,
+        interval.color.lightDisplayColor(),
         animationSpec = tween(colorAnimationDuration)
     )
-    val contrastColor by animateColorAsState(
-        interval.color.contrastColor(),
-        animationSpec = tween(colorAnimationDuration)
-    )
+    val contrastColor = MaterialTheme.colorScheme.onSurface
     Row(
         modifier = Modifier
             .background(backgroundColor)
@@ -88,7 +85,6 @@ internal fun Interval(
             value = interval.name,
             maxLines = 1,
             textStyle = MaterialTheme.typography.titleLarge,
-            color = interval.color.contrastColor(),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             onValueChange = {
                 interactions.interval.update.updateName(

@@ -51,7 +51,7 @@ import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
-import com.timerx.ui.common.contrastColor
+import com.timerx.ui.common.lightDisplayColor
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
@@ -161,16 +161,11 @@ fun FinishControls(
     interactions: CreateViewModel.Interactions
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = state.finishColor,
+        targetValue = state.finishColor.lightDisplayColor(),
         animationSpec = tween(400)
     )
-    val contrastColor by animateColorAsState(
-        targetValue = state.finishColor.contrastColor(),
-        animationSpec = tween(400)
-    )
-
     Column(modifier = Modifier.background(backgroundColor)) {
-        FinishColorPicker(interactions.updateFinishColor, contrastColor)
+        FinishColorPicker(interactions.updateFinishColor)
         BeepSelector(modifier = Modifier.padding(horizontal = 16.dp), selected = state.finishBeep) {
             interactions.updateFinishAlert(it)
         }
@@ -183,7 +178,6 @@ fun FinishControls(
 @Composable
 private fun FinishColorPicker(
     updateFinishColor: (Color) -> Unit,
-    contrastColor: Color
 ) {
     var colorPickerVisible by remember { mutableStateOf(false) }
     Box(modifier = Modifier.clickable { colorPickerVisible = true }) {
@@ -194,14 +188,12 @@ private fun FinishColorPicker(
         ) {
             Text(
                 text = stringResource(Res.string.finish_color),
-                color = contrastColor
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 modifier = Modifier.size(CustomIcons.defaultIconSize),
                 imageVector = CustomIcons.colorFill(),
                 contentDescription = null,
-                tint = contrastColor
             )
 
             if (colorPickerVisible) {
