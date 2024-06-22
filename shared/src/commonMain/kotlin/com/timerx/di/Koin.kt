@@ -6,16 +6,26 @@ import com.timerx.database.ITimerRepository
 import com.timerx.database.RealmTimerRepository
 import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.settings.TimerXSettings
-import com.timerx.settings.getSettingsManager
+import com.timerx.settings.dataStorePreferences
 import com.timerx.ui.create.CreateViewModel
 import com.timerx.ui.main.MainViewModel
 import com.timerx.ui.run.RunViewModel
 import com.timerx.ui.settings.SettingsViewModel
 import com.timerx.vibration.getVibrationManager
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import org.koin.dsl.module
 
+
+@OptIn(DelicateCoroutinesApi::class)
 val sharedModule = module {
-    single { TimerXSettings(getSettingsManager()) }
+    single {
+        dataStorePreferences(
+            corruptionHandler = null,
+            coroutineScope = GlobalScope
+        )
+    }
+    single { TimerXSettings(get()) }
     single { getBeepManager(get()) }
     single { getTimerXAnalytics() }
     single { getVibrationManager(get()) }

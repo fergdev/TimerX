@@ -3,8 +3,7 @@ package com.timerx.domain
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
 import com.timerx.vibration.Vibration
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,7 +91,7 @@ interface TimerStateMachine {
     fun resume()
 }
 
-class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
+class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope: CoroutineScope) : TimerStateMachine {
     private val runState = MutableStateFlow(RunState())
     private val _eventState =
         MutableStateFlow<TimerEvent>(
@@ -260,9 +259,8 @@ class TimerStateMachineImpl(private val timer: Timer) : TimerStateMachine {
         tickerJob?.cancel()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun startTicker() {
-        tickerJob = GlobalScope.launch {
+        tickerJob = coroutineScope.launch {
             while (true) {
                 delay(TICKER_DELAY)
                 val nextElapsed = runState.value.elapsed + 1

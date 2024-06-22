@@ -6,6 +6,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import platform.AVFAudio.AVAudioPlayer
 import platform.Foundation.NSBundle
@@ -26,7 +27,7 @@ class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
         GlobalScope.launch {
             repeat(beep.repeat){
                 val avAudioPlayer = AVAudioPlayer(contentsOfURL = soundURL, error = null)
-                avAudioPlayer.setVolume(timerXSettings.volume)
+                avAudioPlayer.setVolume(timerXSettings.settings.last().volume)
                 avAudioPlayer.play()
                 delay(beepVibrationDelay)
             }

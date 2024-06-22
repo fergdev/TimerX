@@ -42,11 +42,12 @@ class RunViewModel(
 ) : ViewModel() {
 
     private val timer: Timer = timerRepository.getTimers().first { it.id == timerId }
-    private var timerStateMachine = TimerStateMachineImpl(timer)
+    private var timerStateMachine = TimerStateMachineImpl(timer, viewModelScope)
+
     private val _state = MutableStateFlow(
         RunScreenState(
-            volume = timerXSettings.volume,
-            vibrationEnabled = timerXSettings.vibrationEnabled,
+            volume = 1F,
+            vibrationEnabled = true,
             timerName = timer.name.uppercase()
         )
     )
@@ -78,6 +79,16 @@ class RunViewModel(
     init {
         initTimer()
         timerXAnalytics.logEvent("TimerStart", null)
+        viewModelScope.launch {
+            timerXSettings.settings.collect { settings ->
+                _state.update {
+                    it.copy(
+                        volume = settings.volume,
+                        vibrationEnabled = settings.vibrationEnabled
+                    )
+                }
+            }
+        }
     }
 
     private fun initTimer() {
@@ -168,8 +179,9 @@ class RunViewModel(
     }
 
     private fun updateVolume(volume: Float) {
-        timerXSettings.volume = volume
-        _state.update { it.copy(volume = volume) }
+        viewModelScope.launch {
+            timerXSettings.setVolume(volume)
+        }
     }
 
     private fun play() {
@@ -181,8 +193,9 @@ class RunViewModel(
     }
 
     private fun updateVibrationEnabled(enabled: Boolean) {
-        timerXSettings.vibrationEnabled = enabled
-        _state.update { it.copy(vibrationEnabled = enabled) }
+        viewModelScope.launch {
+            timerXSettings.setVibrationEnabled(enabled)
+        }
     }
 
     override fun onCleared() {

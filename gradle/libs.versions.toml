@@ -3,6 +3,7 @@ agp = "8.5.0"
 android-test-extensions = "1.4.0"
 androidJunit5Plugin = "1.10.0.0"
 androidx-activityCompose = "1.9.0"
+androidx-data-store = "1.1.1"
 compose = "1.6.8"
 compose-material3 = "1.2.1"
 crashlytics = "3.0.2"
@@ -25,6 +26,7 @@ reorderable = "2.1.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-data-store-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-data-store" }
 android-test-extensions = { module = "de.mannodermaus.junit5:android-test-extensions", version.ref = "android-test-extensions" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }

@@ -4,7 +4,9 @@ import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 data class SettingsScreenState(
     val volume: Float = 1.0F,
@@ -22,8 +24,8 @@ class SettingsViewModel(
 
     private val _state = MutableStateFlow(
         SettingsScreenState(
-            volume = timerXSettings.volume,
-            vibration = timerXSettings.vibrationEnabled
+            volume = 1F,
+            vibration = true,
         )
     )
     val state: StateFlow<SettingsScreenState> = _state
@@ -32,14 +34,28 @@ class SettingsViewModel(
         updateVibration = ::updateVibration
     )
 
-    private fun updateVibration(enabled: Boolean){
-        timerXSettings.vibrationEnabled = enabled
-        _state.update { it.copy(vibration = enabled) }
+    init {
+        viewModelScope.launch {
+            timerXSettings.settings.collect { settings ->
+                _state.update {
+                    it.copy(
+                        volume = settings.volume,
+                        vibration = settings.vibrationEnabled
+                    )
+                }
+            }
+        }
+    }
 
+    private fun updateVibration(enabled: Boolean) {
+        viewModelScope.launch {
+            timerXSettings.setVibrationEnabled(enabled)
+        }
     }
 
     private fun updateVolume(volume: Float) {
-        timerXSettings.volume = volume
-        _state.update { it.copy(volume = volume) }
+        viewModelScope.launch {
+            timerXSettings.setVolume(volume)
+        }
     }
 }

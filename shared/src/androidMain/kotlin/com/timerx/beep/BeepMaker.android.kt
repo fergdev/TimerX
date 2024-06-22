@@ -8,6 +8,7 @@ import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 
@@ -27,7 +28,7 @@ class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
                     it.reset()
                     it.release()
                 }
-                val volume = timerXSettings.volume
+                val volume = timerXSettings.settings.last().volume
                 mediaPlayer?.setVolume(volume, volume)
                 mediaPlayer?.start()
                 delay(beepVibrationDelay)

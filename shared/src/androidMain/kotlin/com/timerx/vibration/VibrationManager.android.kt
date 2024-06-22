@@ -24,6 +24,7 @@ import com.timerx.vibration.Vibration.SoftX3
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 
@@ -33,19 +34,19 @@ class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationM
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun vibrate(vibration: Vibration) {
-        if (timerXSettings.vibrationEnabled.not()) {
-            return
-        }
-        val millis = when (vibration) {
-            Heavy, HeavyX2, HeavyX3 -> 1000L
-            Medium, MediumX2, MediumX3 -> 750L
-            Rigid, RigidX2, RigidX3 -> 500L
-            Light, LightX2, LightX3 -> 250L
-            Soft, SoftX2, SoftX3 -> 100L
-            None -> return
-        }
-
         GlobalScope.launch {
+            if (timerXSettings.settings.last().vibrationEnabled.not()) {
+                return@launch
+            }
+            val millis = when (vibration) {
+                Heavy, HeavyX2, HeavyX3 -> 1000L
+                Medium, MediumX2, MediumX3 -> 750L
+                Rigid, RigidX2, RigidX3 -> 500L
+                Light, LightX2, LightX3 -> 250L
+                Soft, SoftX2, SoftX3 -> 100L
+                None -> return@launch
+            }
+
             repeat(vibration.repeat) {
                 vibrator.vibrate(
                     VibrationEffect.createOneShot(

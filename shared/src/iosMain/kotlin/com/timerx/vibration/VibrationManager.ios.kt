@@ -21,6 +21,7 @@ import com.timerx.vibration.Vibration.SoftX3
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import platform.UIKit.UIImpactFeedbackGenerator
 import platform.UIKit.UIImpactFeedbackStyle
@@ -28,22 +29,24 @@ import platform.UIKit.UIImpactFeedbackStyle
 class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationManager {
     @OptIn(DelicateCoroutinesApi::class)
     override fun vibrate(vibration: Vibration) {
-        if (timerXSettings.vibrationEnabled.not()) {
-            return
-        }
-        val style = when (vibration) {
-            Heavy, HeavyX2, HeavyX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleHeavy
-            Medium, MediumX2, MediumX3   -> UIImpactFeedbackStyle.UIImpactFeedbackStyleMedium
-            Rigid, RigidX2, RigidX3   -> UIImpactFeedbackStyle.UIImpactFeedbackStyleRigid
-            Light, LightX2, LightX3   -> UIImpactFeedbackStyle.UIImpactFeedbackStyleLight
-            Soft, SoftX2, SoftX3   -> UIImpactFeedbackStyle.UIImpactFeedbackStyleSoft
-            None -> return
-        }
-        val generator = UIImpactFeedbackGenerator(style)
         GlobalScope.launch {
-            repeat(vibration.repeat){
-                generator.impactOccurred()
-                delay(beepVibrationDelay)
+            if (timerXSettings.settings.last().vibrationEnabled.not()) {
+                return@launch
+            }
+            val style = when (vibration) {
+                Heavy, HeavyX2, HeavyX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleHeavy
+                Medium, MediumX2, MediumX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleMedium
+                Rigid, RigidX2, RigidX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleRigid
+                Light, LightX2, LightX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleLight
+                Soft, SoftX2, SoftX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleSoft
+                None -> return@launch
+            }
+            val generator = UIImpactFeedbackGenerator(style)
+            GlobalScope.launch {
+                repeat(vibration.repeat) {
+                    generator.impactOccurred()
+                    delay(beepVibrationDelay)
+                }
             }
         }
     }

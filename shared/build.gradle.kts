@@ -48,6 +48,7 @@ kotlin {
                 implementation(libs.realm.library.base)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.reorderable)
+                implementation(libs.androidx.data.store.core)
             }
         }
         val commonTest by getting {
