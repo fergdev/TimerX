@@ -62,7 +62,7 @@ internal fun MainScreen(
     navigateRunScreen: (String) -> Unit
 ) {
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
-    // TODO REMOVE this hack. This was put in here to refresh the data after adding a timer in the create screen
+
     LaunchedEffect(Unit) {
         viewModel.interactions.refreshData()
     }
@@ -140,7 +140,12 @@ private fun Timer(
     ) {
         ListItem(
             modifier = Modifier.clickable { navigateRunScreen(timer.id) },
-            headlineContent = { Text(text = timer.name) },
+            headlineContent = {
+                Text(
+                    text = timer.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
             supportingContent = { Text(text = timer.length().timeFormatted()) },
             trailingContent = {
                 Row {

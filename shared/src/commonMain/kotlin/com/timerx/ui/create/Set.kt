@@ -88,7 +88,7 @@ internal fun Set(
                 }
             }
 
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
                 AnimatedNumber(
                     modifier = Modifier.align(Alignment.Center),
                     value = timerSet.length(),
@@ -121,7 +121,8 @@ private fun SetTopControls(
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
-            text = stringResource(Res.string.sets)
+            text = stringResource(Res.string.sets),
+            style = MaterialTheme.typography.titleMedium
         )
         NumberIncrement(
             modifier = Modifier.align(Alignment.Center),

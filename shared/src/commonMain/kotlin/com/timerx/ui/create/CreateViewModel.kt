@@ -97,7 +97,9 @@ class CreateViewModel(
     }
 
     @OptIn(FormatStringsInDatetimeFormats::class)
-    private val dateTimeFormat = LocalDateTime.Format { byUnicodePattern("yyyy-MM-dd HH:mm:ss") }
+    private val dateTimeFormat = LocalDateTime.Format {
+        byUnicodePattern("yyyy-MM-dd HH:mm:ss")
+    }
 
     private var sets: MutableList<TimerSet> = mutableListOf()
 

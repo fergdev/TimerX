@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -135,7 +134,7 @@ private fun CreateContent(
                 )
             }
         }
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             FilledIconButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 onClick = { interactions.addSet() }) {
@@ -150,7 +149,6 @@ private fun CreateContent(
                 textStyle = MaterialTheme.typography.displayMedium
             ) { it.timeFormatted() }
         }
-        Spacer(modifier = Modifier.height(16.dp))
         FinishControls(state, interactions)
     }
 }
