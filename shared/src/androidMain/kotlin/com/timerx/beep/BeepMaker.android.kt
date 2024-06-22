@@ -5,11 +5,8 @@ import android.media.MediaPlayer
 import com.timerx.R
 import com.timerx.beepVibrationDelay
 import com.timerx.settings.TimerXSettings
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import org.koin.mp.KoinPlatform
 
 actual fun getBeepManager(timerXSettings: TimerXSettings): IBeepManager =
@@ -19,20 +16,17 @@ class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private var mediaPlayer: MediaPlayer? = null
 
-    @OptIn(DelicateCoroutinesApi::class)
-    override fun beep(beep: Beep) {
-        GlobalScope.launch {
-            repeat(beep.repeat) {
-                mediaPlayer = MediaPlayer.create(context, beep.toResource())
-                mediaPlayer?.setOnCompletionListener {
-                    it.reset()
-                    it.release()
-                }
-                val volume = timerXSettings.settings.last().volume
-                mediaPlayer?.setVolume(volume, volume)
-                mediaPlayer?.start()
-                delay(beepVibrationDelay)
+    override suspend fun beep(beep: Beep) {
+        repeat(beep.repeat) {
+            mediaPlayer = MediaPlayer.create(context, beep.toResource())
+            mediaPlayer?.setOnCompletionListener {
+                it.reset()
+                it.release()
             }
+            val volume = timerXSettings.settings.first().volume
+            mediaPlayer?.setVolume(volume, volume)
+            mediaPlayer?.start()
+            delay(beepVibrationDelay)
         }
     }
 }

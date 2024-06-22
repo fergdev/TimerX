@@ -5,7 +5,7 @@ import com.timerx.settings.TimerXSettings
 expect fun getBeepManager(timerXSettings: TimerXSettings): IBeepManager
 
 interface IBeepManager {
-    fun beep(beep: Beep)
+    suspend fun beep(beep: Beep)
 }
 
 enum class Beep(val displayName: String, val path: String, val repeat: Int) {

@@ -3,7 +3,7 @@ package com.timerx.vibration
 import com.timerx.settings.TimerXSettings
 
 interface IVibrationManager {
-    fun vibrate(vibration: Vibration)
+    suspend fun vibrate(vibration: Vibration)
 }
 
 expect fun getVibrationManager(timerXSettings: TimerXSettings): IVibrationManager

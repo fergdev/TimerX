@@ -21,41 +21,37 @@ import com.timerx.vibration.Vibration.RigidX3
 import com.timerx.vibration.Vibration.Soft
 import com.timerx.vibration.Vibration.SoftX2
 import com.timerx.vibration.Vibration.SoftX3
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import org.koin.mp.KoinPlatform
 
 class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 
-    @OptIn(DelicateCoroutinesApi::class)
-    override fun vibrate(vibration: Vibration) {
-        GlobalScope.launch {
-            if (timerXSettings.settings.last().vibrationEnabled.not()) {
-                return@launch
-            }
-            val millis = when (vibration) {
-                Heavy, HeavyX2, HeavyX3 -> 1000L
-                Medium, MediumX2, MediumX3 -> 750L
-                Rigid, RigidX2, RigidX3 -> 500L
-                Light, LightX2, LightX3 -> 250L
-                Soft, SoftX2, SoftX3 -> 100L
-                None -> return@launch
-            }
+    override suspend fun vibrate(vibration: Vibration) {
+        println("pre")
+        if (timerXSettings.settings.first().vibrationEnabled.not()) {
+            return
+        }
+        println("post")
+        val millis = when (vibration) {
+            Heavy, HeavyX2, HeavyX3 -> 1000L
+            Medium, MediumX2, MediumX3 -> 750L
+            Rigid, RigidX2, RigidX3 -> 500L
+            Light, LightX2, LightX3 -> 250L
+            Soft, SoftX2, SoftX3 -> 100L
+            None -> return
+        }
 
-            repeat(vibration.repeat) {
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(
-                        millis,
-                        VibrationEffect.DEFAULT_AMPLITUDE
-                    )
+        repeat(vibration.repeat) {
+            vibrator.vibrate(
+                VibrationEffect.createOneShot(
+                    millis,
+                    VibrationEffect.DEFAULT_AMPLITUDE
                 )
-                delay(beepVibrationDelay)
-            }
+            )
+            delay(beepVibrationDelay)
         }
     }
 }

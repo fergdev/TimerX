@@ -17,7 +17,7 @@ expect fun dataStorePreferences(
     migrations: List<DataMigration<Preferences>> = emptyList(),
 ): DataStore<Preferences>
 
-internal const val SETTINGS_PREFERENCES = "settings_preferences.preferences_pb"
+internal const val SETTINGS_PREFERENCES = "timerx.preferences_pb"
 
 internal fun createDataStoreWithDefaults(
     corruptionHandler: ReplaceFileCorruptionHandler<Preferences>? = null,

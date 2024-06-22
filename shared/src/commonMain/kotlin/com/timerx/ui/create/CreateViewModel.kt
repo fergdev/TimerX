@@ -17,6 +17,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -26,6 +27,7 @@ import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toLocalDateTime
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.jetbrains.compose.resources.getString
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.created_value
@@ -476,17 +478,23 @@ class CreateViewModel(
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
-        beepManager.beep(beep)
+        viewModelScope.launch {
+            beepManager.beep(beep)
+        }
     }
 
     private fun updateFinishBeep(beep: Beep) {
         _state.update { it.copy(finishBeep = beep) }
-        beepManager.beep(beep)
+        viewModelScope.launch {
+            beepManager.beep(beep)
+        }
     }
 
     private fun updateFinishVibration(vibration: Vibration) {
         _state.update { it.copy(finishVibration = vibration) }
-        vibrationManger.vibrate(vibration)
+        viewModelScope.launch {
+            vibrationManger.vibrate(vibration)
+        }
     }
 
     private fun updateFinalCountDown(
@@ -518,6 +526,8 @@ class CreateViewModel(
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
-        vibrationManger.vibrate(vibration)
+        viewModelScope.launch {
+            vibrationManger.vibrate(vibration)
+        }
     }
 }
