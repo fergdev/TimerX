@@ -5,18 +5,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -30,15 +31,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.Timer
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.SetStatusBarColor
+import com.timerx.ui.common.RevealDirection
+import com.timerx.ui.common.RevealSwipe
+import com.timerx.ui.common.rememberRevealState
+import com.timerx.ui.common.reset
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import timerx.shared.generated.resources.Res
@@ -111,11 +120,11 @@ internal fun MainScreen(
                     items(state.timers, key = { it.id }) { timer ->
                         ReorderableItem(reorderableLazyListState, key = timer.id) {
                             Timer(
-                                modifier = Modifier.longPressDraggableHandle(),
                                 timer = timer,
                                 interactions = viewModel.interactions,
                                 navigateRunScreen = navigateRunScreen,
                                 navigateEditScreen = navigateEditScreen,
+                                reorderableScope = this
                             )
                         }
                     }
@@ -127,16 +136,69 @@ internal fun MainScreen(
 
 @Composable
 private fun Timer(
-    modifier: Modifier,
     timer: Timer,
     interactions: MainViewModel.Interactions,
     navigateRunScreen: (String) -> Unit,
     navigateEditScreen: (String) -> Unit,
+    reorderableScope: ReorderableCollectionItemScope,
 ) {
-    ElevatedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+    val revealState = rememberRevealState(
+        200.dp,
+        directions = setOf(RevealDirection.EndToStart)
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val hideReveal = {
+        coroutineScope.launch {
+            revealState.reset()
+        }
+    }
+    RevealSwipe(
+        state = revealState,
+        shape = RoundedCornerShape(8.dp),
+        backgroundCardStartColor = Color.Red,
+        backgroundCardEndColor = Color.Green,
+        card = { shape, content ->
+            Card(
+                modifier = Modifier.matchParentSize(),
+                colors = CardDefaults.cardColors(
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    containerColor = Color.Transparent
+                ),
+                shape = shape,
+                content = content
+            )
+        },
+        hiddenContentEnd = {
+            Row {
+                IconButton(
+                    onClick = {
+                        interactions.duplicateTimer(timer)
+                        hideReveal()
+                    }) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = CustomIcons.contentCopy(),
+                        contentDescription = stringResource(Res.string.copy)
+                    )
+                }
+                IconButton(
+                    onClick = { navigateEditScreen(timer.id) }) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(Res.string.edit)
+                    )
+                }
+                IconButton(
+                    onClick = { interactions.deleteTimer(timer) }) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.delete)
+                    )
+                }
+            }
+        },
     ) {
         ListItem(
             modifier = Modifier.clickable { navigateRunScreen(timer.id) },
@@ -148,32 +210,11 @@ private fun Timer(
             },
             supportingContent = { Text(text = timer.length().timeFormatted()) },
             trailingContent = {
-                Row {
-                    IconButton(
-                        onClick = { interactions.duplicateTimer(timer) }) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = CustomIcons.contentCopy(),
-                            contentDescription = stringResource(Res.string.copy)
-                        )
-                    }
-                    IconButton(
-                        onClick = { navigateEditScreen(timer.id) }) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(Res.string.edit)
-                        )
-                    }
-                    IconButton(
-                        onClick = { interactions.deleteTimer(timer) }) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.delete)
-                        )
-                    }
-                }
+                Icon(
+                    modifier = with(reorderableScope) { Modifier.size(24.dp).draggableHandle() },
+                    imageVector = CustomIcons.dragHandle(),
+                    contentDescription = stringResource(Res.string.copy)
+                )
             }
         )
     }
