@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
-import com.timerx.ui.CustomIcons
+import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection

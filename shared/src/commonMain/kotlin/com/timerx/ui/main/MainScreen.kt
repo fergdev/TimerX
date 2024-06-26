@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import com.timerx.domain.Timer
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
-import com.timerx.ui.CustomIcons
-import com.timerx.ui.SetStatusBarColor
+import com.timerx.ui.common.CustomIcons
+import com.timerx.ui.common.SetStatusBarColor
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.rememberRevealState

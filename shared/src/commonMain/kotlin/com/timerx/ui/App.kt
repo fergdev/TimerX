@@ -5,6 +5,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import com.timerx.ui.common.TimerXTheme
 import com.timerx.ui.create.CreateScreen
 import com.timerx.ui.main.MainScreen
 import com.timerx.ui.run.RunScreen

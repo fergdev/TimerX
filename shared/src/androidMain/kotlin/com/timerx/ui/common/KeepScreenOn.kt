@@ -1,4 +1,4 @@
-package com.timerx.ui
+package com.timerx.ui.common
 
 import android.app.Activity
 import android.view.WindowManager

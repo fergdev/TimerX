@@ -45,7 +45,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
-import com.timerx.ui.CustomIcons
+import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.UnderlinedField
