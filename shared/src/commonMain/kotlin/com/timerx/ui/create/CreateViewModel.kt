@@ -36,7 +36,7 @@ import timerx.shared.generated.resources.rest
 import timerx.shared.generated.resources.work
 
 class CreateViewModel(
-    timerName: String = "",
+    timerId: Long,
     private val timerDatabase: ITimerRepository,
     private val beepManager: IBeepManager,
     private val vibrationManger: IVibrationManager
@@ -45,14 +45,14 @@ class CreateViewModel(
     private val workString: String = runBlocking { getString(Res.string.work) }
     private val restString: String = runBlocking { getString(Res.string.rest) }
 
-    private var defaultIdGenerator = 0
+    private var defaultIdGenerator = 0L
     private fun defaultTimerSet(): TimerSet {
         return TimerSet(
-            id = "${defaultIdGenerator++}",
+            id = defaultIdGenerator++,
             repetitions = 5,
             intervals = persistentListOf(
                 TimerInterval(
-                    id = "${defaultIdGenerator++}",
+                    id = defaultIdGenerator++,
                     name = workString,
                     duration = 30,
                     color = Color.Green,
@@ -64,7 +64,7 @@ class CreateViewModel(
                         vibration = Vibration.Medium
                     )
                 ), TimerInterval(
-                    id = "${defaultIdGenerator++}",
+                    id = defaultIdGenerator++,
                     name = restString,
                     duration = 30,
                     vibration = Vibration.Medium,
@@ -82,7 +82,7 @@ class CreateViewModel(
 
     private fun defaultInterval(): TimerInterval {
         return TimerInterval(
-            id = "${defaultIdGenerator++}",
+            id = defaultIdGenerator++,
             name = workString,
             duration = 30,
             color = Color.Green,
@@ -196,9 +196,9 @@ class CreateViewModel(
     private var timerEditing: Timer? = null
 
     init {
-        if (timerName != "") {
+        if (timerId != -1L) {
             viewModelScope.launch {
-                val timer = timerDatabase.getTimer(timerName)
+                val timer = timerDatabase.getTimer(timerId)
                 timerEditing = timer
                 sets = timer.sets.toMutableList()
 
@@ -219,7 +219,7 @@ class CreateViewModel(
             sets = runBlocking {
                 mutableListOf(
                     TimerSet(
-                        id = "${defaultIdGenerator++}",
+                        id = defaultIdGenerator++,
                         repetitions = 1,
                         intervals = persistentListOf(
                             TimerInterval(
@@ -261,28 +261,45 @@ class CreateViewModel(
             }
         }
         viewModelScope.launch {
-            val timerEditing = this@CreateViewModel.timerEditing
-            if (timerEditing != null) {
-                timerDatabase.updateTimer(
-                    Timer(
-                        id = timerEditing.id,
-                        name = name,
-                        sets = state.value.sets,
-                        finishColor = state.value.finishColor,
-                        finishBeep = state.value.finishBeep,
-                        finishVibration = Vibration.Heavy
+            runBlocking {
+                val timerEditing = this@CreateViewModel.timerEditing
+                if (timerEditing != null) {
+                    timerDatabase.updateTimer(
+                        Timer(
+                            id = timerEditing.id,
+                            name = name,
+                            sets = state.value.sets
+                                .filter { it.intervals.isNotEmpty() }.map {
+                                it.copy(
+                                    id = 0,
+                                    intervals = it.intervals.map { it.copy(id = 0) }
+                                        .toPersistentList()
+                                )
+                            }.toPersistentList(),
+                            finishColor = state.value.finishColor,
+                            finishBeep = state.value.finishBeep,
+                            finishVibration = Vibration.Heavy
+                        )
                     )
-                )
-            } else {
-                timerDatabase.insertTimer(
-                    Timer(
-                        name = name,
-                        sets = state.value.sets,
-                        finishColor = state.value.finishColor,
-                        finishBeep = state.value.finishBeep,
-                        finishVibration = state.value.finishVibration
+                } else {
+                    timerDatabase.insertTimer(
+                        Timer(
+                            name = name,
+                            sets = state.value.sets.filter {
+                                it.intervals.isNotEmpty()
+                            }.map {
+                                it.copy(
+                                    id = 0,
+                                    intervals = it.intervals.map { it.copy(id = 0) }
+                                        .toPersistentList()
+                                )
+                            }.toPersistentList(),
+                            finishColor = state.value.finishColor,
+                            finishBeep = state.value.finishBeep,
+                            finishVibration = state.value.finishVibration
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -312,9 +329,9 @@ class CreateViewModel(
         sets.add(
             index,
             sets[index].copy(
-                id = "${defaultIdGenerator++}",
+                id = defaultIdGenerator++,
                 intervals = timerSet.intervals.map {
-                    it.copy(id = "${defaultIdGenerator++}")
+                    it.copy(id = defaultIdGenerator++)
                 }.toPersistentList()
             )
         )
@@ -350,7 +367,7 @@ class CreateViewModel(
                 val mutableIntervals = set.intervals.toMutableList()
                 mutableIntervals.add(
                     index,
-                    set.intervals[index].copy(id = "${defaultIdGenerator++}")
+                    set.intervals[index].copy(id = defaultIdGenerator++)
                 )
                 mutableIntervals
             } else {

@@ -6,7 +6,8 @@ import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.ImmutableList
 
 data class Timer(
-    val id: String = "",
+    val id: Long = 0L,
+    val sortOrder: Long = 0L,
     val name: String,
     val sets: ImmutableList<TimerSet>,
     val finishColor: Color = Color.Red,
@@ -15,13 +16,13 @@ data class Timer(
 )
 
 data class TimerSet(
-    val id: String = "",
+    val id: Long = 0L,
     val repetitions: Int = 1,
     val intervals: ImmutableList<TimerInterval>
 )
 
 data class TimerInterval(
-    val id: String = "",
+    val id: Long = 0L,
     val name: String,
     val duration: Int,
     val color: Color = Color.Blue,

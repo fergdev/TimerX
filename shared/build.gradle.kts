@@ -1,16 +1,21 @@
+
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.realm)
     alias(libs.plugins.detekt)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.androidJunit5)
     alias(libs.plugins.mokkery)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -25,11 +30,22 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
+            isStatic = true
+            linkerOpts.add("-lsqlite3")
         }
     }
 
     sourceSets {
         val commonMain by getting {
+            sourceSets.commonMain {
+                kotlin.srcDir("build/generated/ksp/metadata")
+            }
+
+            @OptIn(ExperimentalKotlinGradlePluginApi::class)
+            compilerOptions {
+                languageVersion.set(KotlinVersion.KOTLIN_2_0)
+            }
+
             dependencies {
                 implementation(libs.koin)
                 api(libs.koin.compose)
@@ -45,10 +61,13 @@ kotlin {
                 implementation(libs.pre.compose)
                 implementation(libs.pre.compose.viewmodel)
                 implementation(libs.pre.compose.koin)
-                implementation(libs.realm.library.base)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.reorderable)
                 implementation(libs.androidx.data.store.core)
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.sqlite.bundled)
+                implementation(libs.kotlinx.serialization)
+
             }
         }
         val commonTest by getting {
@@ -65,6 +84,7 @@ kotlin {
                 implementation(libs.firebase.bom)
                 api(libs.firebase.analytics)
                 implementation(libs.firebase.crashlytics)
+//                implementation(libs.androidx.room.runtime.android)
             }
         }
         val androidUnitTest by getting {
@@ -87,9 +107,7 @@ kotlin {
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
-        val iosMain by getting {
-            dependencies { }
-        }
+        val iosMain by getting
     }
 }
 
@@ -110,6 +128,7 @@ android {
         jvmToolchain(17)
     }
 }
+
 junitPlatform {
     // Using local dependency instead of Maven coordinates
     instrumentationTests.enabled = false
@@ -161,5 +180,19 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         }
         freeCompilerArgs.add("-P")
         freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${rootDir}/shared/compose_compiler_config.conf")
+    }
+}
+
+dependencies {
+    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+    if (name != "kspCommonMainKotlinMetadata" ) {
+        dependsOn("kspCommonMainKotlinMetadata")
     }
 }

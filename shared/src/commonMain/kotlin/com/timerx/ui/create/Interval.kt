@@ -5,6 +5,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -30,10 +32,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -43,9 +45,14 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.NumberIncrement
+import com.timerx.ui.common.RevealDirection
+import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.lightDisplayColor
+import com.timerx.ui.common.rememberRevealState
+import com.timerx.ui.common.reset
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableScope
 import timerx.shared.generated.resources.Res
@@ -74,117 +81,137 @@ internal fun Interval(
         animationSpec = tween(colorAnimationDuration)
     )
     val contrastColor = MaterialTheme.colorScheme.onSurface
-    Row(
-        modifier = Modifier
-            .background(backgroundColor, RoundedCornerShape(8.dp))
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        UnderlinedField(
-            modifier = Modifier.weight(1f),
-            value = interval.name,
-            maxLines = 1,
-            singleLine = true,
-            textStyle = MaterialTheme.typography.titleLarge,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            onValueChange = {
-                interactions.interval.update.updateName(
-                    interval,
-                    it
-                )
-            },
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface)
-        )
-
-        var settingsBottomSheetVisible by remember { mutableStateOf(false) }
-        if (settingsBottomSheetVisible) {
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            ModalBottomSheet(
-                sheetState = sheetState,
-                onDismissRequest = { settingsBottomSheetVisible = false }
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    IntervalBottomControls(
-                        interactions,
-                        interval,
-                        animateOutInterval
+    val revealState = rememberRevealState(200.dp, setOf(RevealDirection.EndToStart))
+    val coroutineScope = rememberCoroutineScope()
+    val hideReveal = {
+        coroutineScope.launch {
+            revealState.reset()
+        }
+    }
+    RevealSwipe(
+        state = revealState,
+        backgroundCardEndColor = MaterialTheme.colorScheme.surface,
+        hiddenContentEnd = {
+            var settingsBottomSheetVisible by remember { mutableStateOf(false) }
+            if (settingsBottomSheetVisible) {
+                val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+                ModalBottomSheet(
+                    sheetState = sheetState,
+                    onDismissRequest = { settingsBottomSheetVisible = false }
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        HorizontalDivider()
+                        IntervalSwitches(
+                            canSkipOnLastSet,
+                            interval,
+                            interactions,
+                        )
+                    }
+                }
+            }
+            Row {
+                var colorPickerVisible by remember { mutableStateOf(false) }
+                IconButton(onClick = {
+                    colorPickerVisible = true
+                    hideReveal()
+                }) {
+                    Icon(
+                        modifier = Modifier.size(CustomIcons.defaultIconSize),
+                        imageVector = CustomIcons.colorFill(),
+                        contentDescription = null,
+                        tint = contrastColor
                     )
-                    HorizontalDivider()
-                    IntervalSwitches(
-                        canSkipOnLastSet,
-                        interval,
-                        interactions,
+                }
+
+                if (colorPickerVisible) {
+                    ColorPicker {
+                        if (it != null) {
+                            interactions.interval.update.updateColor(
+                                interval,
+                                it
+                            )
+                        }
+                        colorPickerVisible = false
+                    }
+                }
+                IconButton(onClick = { interactions.interval.duplicate(interval) }) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = CustomIcons.contentCopy(),
+                        contentDescription = stringResource(Res.string.copy),
+                        tint = contrastColor
+                    )
+                }
+                IconButton(onClick = { animateOutInterval() }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.delete),
+                        tint = contrastColor
+                    )
+                }
+                IconButton(onClick = {
+                    hideReveal()
+                    settingsBottomSheetVisible = true
+                }) {
+                    Icon(
+                        modifier = Modifier.size(CustomIcons.defaultIconSize),
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = stringResource(Res.string.settings),
+                        tint = contrastColor
                     )
                 }
             }
-        }
-
-        NumberIncrement(
-            modifier = Modifier.weight(1f),
-            value = interval.duration,
-            negativeButtonEnabled = interval.duration > 1,
-            color = contrastColor,
-            textStyle = MaterialTheme.typography.titleLarge,
-            formatter = { it.timeFormatted() },
-        ) {
-            interactions.interval.update.updateDuration(
-                interval,
-                it
-            )
-        }
-        Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IntervalColorSwitches(interval, interactions, contrastColor)
-            IconButton(onClick = { settingsBottomSheetVisible = true }) {
-                Icon(
-                    modifier = Modifier.size(CustomIcons.defaultIconSize),
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = stringResource(Res.string.settings),
-                    tint = contrastColor
+        }) {
+        Surface {
+            Row(
+                modifier = Modifier
+                    .background(backgroundColor, RoundedCornerShape(8.dp))
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                UnderlinedField(
+                    modifier = Modifier.weight(1f),
+                    value = interval.name,
+                    maxLines = 1,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.titleLarge,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    onValueChange = {
+                        interactions.interval.update.updateName(
+                            interval,
+                            it
+                        )
+                    },
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface)
                 )
-            }
-            Icon(
-                modifier = with(scope) {
-                    Modifier.size(CustomIcons.defaultIconSize)
-                        .draggableHandle()
-                },
-                imageVector = CustomIcons.dragHandle(),
-                contentDescription = stringResource(Res.string.settings),
-                tint = contrastColor
-            )
-        }
-    }
-}
 
-@Composable
-private fun IntervalColorSwitches(
-    interval: TimerInterval,
-    interactions: CreateViewModel.Interactions,
-    contrastColor: Color
-) {
-    var colorPickerVisible by remember { mutableStateOf(false) }
-    IconButton(onClick = { colorPickerVisible = true }) {
-        Icon(
-            modifier = Modifier.size(CustomIcons.defaultIconSize),
-            imageVector = CustomIcons.colorFill(),
-            contentDescription = null,
-            tint = contrastColor
-        )
-    }
-
-    if (colorPickerVisible) {
-        ColorPicker {
-            if (it != null) {
-                interactions.interval.update.updateColor(
-                    interval,
-                    it
-                )
+                NumberIncrement(
+                    modifier = Modifier.weight(1f),
+                    value = interval.duration,
+                    negativeButtonEnabled = interval.duration > 1,
+                    color = contrastColor,
+                    textStyle = MaterialTheme.typography.titleLarge,
+                    formatter = { it.timeFormatted() },
+                ) {
+                    interactions.interval.update.updateDuration(
+                        interval,
+                        it
+                    )
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    Icon(
+                        modifier = with(scope) {
+                            Modifier.size(CustomIcons.defaultIconSize)
+                                .align(Alignment.TopEnd)
+                                .draggableHandle()
+                        },
+                        imageVector = CustomIcons.dragHandle(),
+                        contentDescription = stringResource(Res.string.settings),
+                        tint = contrastColor
+                    )
+                }
             }
-            colorPickerVisible = false
         }
     }
 }
@@ -269,30 +296,5 @@ private fun RowSwitch(label: String, value: Boolean, onValueChange: (Boolean) ->
             checked = value,
             onCheckedChange = onValueChange
         )
-    }
-}
-
-@Composable
-private fun IntervalBottomControls(
-    interactions: CreateViewModel.Interactions,
-    interval: TimerInterval,
-    animateOutInterval: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        IconButton(onClick = { interactions.interval.duplicate(interval) }) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = CustomIcons.contentCopy(),
-                contentDescription = stringResource(Res.string.copy)
-            )
-        }
-        IconButton(onClick = { animateOutInterval() }) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(Res.string.delete)
-            )
-        }
     }
 }

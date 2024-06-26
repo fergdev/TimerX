@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
@@ -36,6 +39,9 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.NumberIncrement
+import com.timerx.ui.common.RevealDirection
+import com.timerx.ui.common.RevealSwipe
+import com.timerx.ui.common.rememberRevealState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
@@ -53,57 +59,96 @@ internal fun Set(
     interactions: CreateViewModel.Interactions,
     reorderableScope: ReorderableScope
 ) {
-    Surface {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            SetTopControls(interactions, timerSet, reorderableScope)
-            ReorderableColumn(
-                list = timerSet.intervals,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                onSettle = { from, to ->
-                    interactions.set.update.moveInterval(timerSet, from, to)
-                },
-            ) { _, timerInterval, _ ->
-                key(timerInterval.id) {
-                    var visible by remember { mutableStateOf(true) }
-                    LaunchedEffect(visible) {
-                        if (!visible) {
-                            delay(400)
-                            interactions.interval.delete(timerInterval)
-                        }
-                    }
-
-                    AnimatedVisibility(
-                        visible = visible,
-                        enter = expandIn(animationSpec = tween(400)),
-                        exit = shrinkOut(animationSpec = tween((400)))
-                    ) {
-                        Interval(
-                            interval = timerInterval,
-                            canSkipOnLastSet = timerSet.repetitions > 1,
-                            interactions = interactions,
-                            scope = this@ReorderableColumn
-                        ) { visible = false }
-                    }
-                }
-            }
-
-            Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                AnimatedNumber(
-                    modifier = Modifier.align(Alignment.Center),
-                    value = timerSet.length(),
-                    textStyle = MaterialTheme.typography.titleLarge
-                ) { it.timeFormatted() }
-                FilledTonalIconButton(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    onClick = { interactions.set.update.newInterval(timerSet) }) {
+    val revealState = rememberRevealState(
+        maxRevealDp = 100.dp,
+        directions = setOf(
+            RevealDirection.EndToStart
+        )
+    )
+    RevealSwipe(
+        state = revealState,
+        backgroundCardEndColor = MaterialTheme.colorScheme.surface,
+        card = { shape, content ->
+            Card(
+                modifier = Modifier.matchParentSize(),
+                colors = CardDefaults.cardColors(
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    containerColor = Color.Transparent
+                ),
+                shape = shape,
+                content = content
+            )
+        },
+        hiddenContentEnd = {
+            Row {
+                FilledTonalIconButton(onClick = { interactions.set.duplicate(timerSet) }) {
                     Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(Res.string.add)
+                        modifier = Modifier.size(24.dp),
+                        imageVector = CustomIcons.contentCopy(),
+                        contentDescription = stringResource(Res.string.copy)
+                    )
+                }
+                FilledTonalIconButton(onClick = { interactions.set.delete(timerSet) }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.delete)
                     )
                 }
             }
-            HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        }
+    ) {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                SetTopControls(interactions, timerSet, reorderableScope)
+                ReorderableColumn(
+                    list = timerSet.intervals,
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    onSettle = { from, to ->
+                        interactions.set.update.moveInterval(timerSet, from, to)
+                    },
+                ) { _, timerInterval, _ ->
+                    key(timerInterval.id) {
+                        var visible by remember { mutableStateOf(true) }
+                        LaunchedEffect(visible) {
+                            if (!visible) {
+                                delay(400)
+                                interactions.interval.delete(timerInterval)
+                            }
+                        }
+
+                        AnimatedVisibility(
+                            visible = visible,
+                            enter = expandIn(animationSpec = tween(400)),
+                            exit = shrinkOut(animationSpec = tween((400)))
+                        ) {
+                            Interval(
+                                interval = timerInterval,
+                                canSkipOnLastSet = timerSet.repetitions > 1,
+                                interactions = interactions,
+                                scope = this@ReorderableColumn
+                            ) { visible = false }
+                        }
+                    }
+                }
+
+                Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                    AnimatedNumber(
+                        modifier = Modifier.align(Alignment.Center),
+                        value = timerSet.length(),
+                        textStyle = MaterialTheme.typography.titleLarge
+                    ) { it.timeFormatted() }
+                    FilledTonalIconButton(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        onClick = { interactions.set.update.newInterval(timerSet) }) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(Res.string.add)
+                        )
+                    }
+                }
+                HorizontalDivider(modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }
@@ -140,19 +185,6 @@ private fun SetTopControls(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            FilledTonalIconButton(onClick = { interactions.set.duplicate(timerSet) }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = CustomIcons.contentCopy(),
-                    contentDescription = stringResource(Res.string.copy)
-                )
-            }
-            FilledTonalIconButton(onClick = { interactions.set.delete(timerSet) }) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.delete)
-                )
-            }
             Icon(
                 imageVector = CustomIcons.dragHandle(),
                 contentDescription = stringResource(Res.string.down),

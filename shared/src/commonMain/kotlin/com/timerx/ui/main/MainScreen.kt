@@ -67,8 +67,8 @@ import timerx.shared.generated.resources.settings
 internal fun MainScreen(
     navigateSettingsScreen: () -> Unit,
     navigateAddScreen: () -> Unit,
-    navigateEditScreen: (String) -> Unit,
-    navigateRunScreen: (String) -> Unit
+    navigateEditScreen: (Long) -> Unit,
+    navigateRunScreen: (Long) -> Unit
 ) {
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
 
@@ -138,8 +138,8 @@ internal fun MainScreen(
 private fun Timer(
     timer: Timer,
     interactions: MainViewModel.Interactions,
-    navigateRunScreen: (String) -> Unit,
-    navigateEditScreen: (String) -> Unit,
+    navigateRunScreen: (Long) -> Unit,
+    navigateEditScreen: (Long) -> Unit,
     reorderableScope: ReorderableCollectionItemScope,
 ) {
     val revealState = rememberRevealState(

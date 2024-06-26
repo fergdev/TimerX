@@ -4,6 +4,7 @@ import com.timerx.analytics.getTimerXAnalytics
 import com.timerx.beep.getBeepManager
 import com.timerx.database.ITimerRepository
 import com.timerx.database.RealmTimerRepository
+import com.timerx.database.createRoomDatabaseFactory
 import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.settings.TimerXSettings
 import com.timerx.settings.dataStorePreferences
@@ -29,13 +30,14 @@ val sharedModule = module {
     single { getBeepManager(get()) }
     single { getTimerXAnalytics() }
     single { getVibrationManager(get()) }
-    single<ITimerRepository> { RealmTimerRepository() }
+    single<ITimerRepository> { RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase()) }
     single { getTimerXNotificationManager() }
     factory { MainViewModel(get()) }
-    factory { (timerName: String) -> CreateViewModel(timerName, get(), get(), get()) }
+    factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->
+        println("TimerId $timerId")
         RunViewModel(
-            timerId,
+            timerId.idToLong(),
             get(),
             get(),
             get(),
@@ -48,3 +50,8 @@ val sharedModule = module {
 }
 
 fun appModule() = listOf(sharedModule)
+
+private fun String.idToLong(): Long {
+    if (this.isEmpty()) return -1L
+    return this.toLong()
+}

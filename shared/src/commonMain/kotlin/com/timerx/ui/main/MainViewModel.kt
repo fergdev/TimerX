@@ -62,11 +62,11 @@ class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel()
         val timers = _stateFlow.value.timers.toMutableList()
         val fromTimer = timers[from]
         val toTimer = timers[to]
-        timers[from] = toTimer
-        timers[to] = fromTimer
+        timers[from] = toTimer.copy(sortOrder = fromTimer.sortOrder)
+        timers[to] = fromTimer.copy(sortOrder = toTimer.sortOrder)
         _stateFlow.update { it.copy(timers = timers.toPersistentList()) }
         viewModelScope.launch {
-            timerRepository.swapTimers(from, to)
+            timerRepository.swapTimers(timers[from], timers[to])
         }
     }
 }

@@ -28,14 +28,14 @@ sealed class Screen(val route: String) {
             return route.replace("/$TIMER_ID_OPTIONAL", "")
         }
 
-        fun editRoute(id: String): String {
-            return route.replace(TIMER_ID_OPTIONAL, id)
+        fun editRoute(id: Long): String {
+            return route.replace(TIMER_ID_OPTIONAL, id.toString())
         }
     }
 
     data object RunScreen : Screen("run/{timerId}") {
-        fun withParam(id: String): String {
-            return route.replace(TIMER_ID, id)
+        fun withParam(id: Long): String {
+            return route.replace(TIMER_ID, id.toString())
         }
     }
 }

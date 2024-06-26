@@ -33,7 +33,7 @@ data class RunScreenState(
 )
 
 class RunViewModel(
-    private val timerId: String,
+    private val timerId: Long,
     timerRepository: ITimerRepository,
     private val beepManager: IBeepManager,
     private val notificationManager: ITimerXNotificationManager,
@@ -60,22 +60,21 @@ class RunViewModel(
         val updateVibrationEnabled: (Boolean) -> Unit
     )
 
-    lateinit var interactions: Interactions
+    val interactions: Interactions = Interactions(
+        play = ::play,
+        pause = ::pause,
+        nextInterval = ::nextInterval,
+        previousInterval = ::previousInterval,
+        onManualNext = ::onManualNext,
+        restartTimer = ::initTimer,
+        updateVolume = ::updateVolume,
+        updateVibrationEnabled = ::updateVibrationEnabled
+    )
 
     init {
         viewModelScope.launch {
-            this@RunViewModel.timer = timerRepository.getTimers().first { it.id == timerId }
+            this@RunViewModel.timer = timerRepository.getTimer(timerId)
             timerStateMachine = TimerStateMachineImpl(timer, viewModelScope)
-            interactions = Interactions(
-                play = ::play,
-                pause = timerStateMachine::pause,
-                nextInterval = timerStateMachine::nextInterval,
-                previousInterval = timerStateMachine::previousInterval,
-                onManualNext = ::onManualNext,
-                restartTimer = ::initTimer,
-                updateVolume = ::updateVolume,
-                updateVibrationEnabled = ::updateVibrationEnabled
-            )
             initTimer()
         }
         timerXAnalytics.logEvent("TimerStart", null)
@@ -89,6 +88,10 @@ class RunViewModel(
                 }
             }
         }
+    }
+
+    private fun previousInterval() {
+        timerStateMachine.previousInterval()
     }
 
     private fun initTimer() {
@@ -197,6 +200,14 @@ class RunViewModel(
         viewModelScope.launch {
             timerXSettings.setVibrationEnabled(enabled)
         }
+    }
+
+    private fun pause() {
+        timerStateMachine.pause()
+    }
+
+    private fun nextInterval() {
+        timerStateMachine.nextInterval()
     }
 
     override fun onCleared() {

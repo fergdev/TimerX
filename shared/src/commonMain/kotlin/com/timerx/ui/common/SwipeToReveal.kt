@@ -30,6 +30,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,14 +80,24 @@ fun RevealSwipe(
     onBackgroundEndClick: () -> Boolean = { true },
     closeOnContentClick: Boolean = true,
     closeOnBackgroundClick: Boolean = true,
-    shape: CornerBasedShape,
+    shape: CornerBasedShape = RoundedCornerShape(0.dp),
     alphaEasing: Easing = CubicBezierEasing(0.4f, 0.4f, 0.17f, 0.9f),
-    backgroundCardStartColor: Color,
-    backgroundCardEndColor: Color,
+    backgroundCardStartColor: Color = Color.Transparent,
+    backgroundCardEndColor: Color = Color.Transparent,
     card: @Composable BoxScope.(
         shape: Shape,
         content: @Composable ColumnScope.() -> Unit
-    ) -> Unit,
+    ) -> Unit = { cardShape, cardContent ->
+        Card(
+            modifier = Modifier.matchParentSize(),
+            colors = CardDefaults.cardColors(
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                containerColor = Color.Transparent
+            ),
+            shape = cardShape,
+            content = cardContent
+        )
+    },
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     state: RevealState = rememberRevealState(
         maxRevealDp = 75.dp,
@@ -195,6 +209,7 @@ fun RevealSwipe(
                         }
                     )
                 }
+
                 onContentClick == null && closeOnContentClick -> {
                     // if no onContentClick handler passed, add click handler with no indication to enable close on content click
                     Modifier.combinedClickable(
@@ -209,6 +224,7 @@ fun RevealSwipe(
                         interactionSource = remember { MutableInteractionSource() }
                     )
                 }
+
                 onContentClick != null && closeOnContentClick -> {
                     // decide based on state:
                     // 1. if open, just close without indication
@@ -236,6 +252,7 @@ fun RevealSwipe(
                         interactionSource = remember { MutableInteractionSource() }
                     )
                 }
+
                 else -> Modifier
             }
 
@@ -320,12 +337,14 @@ fun BaseRevealSwipe(
             kotlin.math.max(cornerRadiusTopEnd, cornerRadiusBottomEnd)
 
         val cornerFactorEnd =
-            (-state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero().coerceIn(0f, 1f).or(0f) {
+            (-state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero()
+                .coerceIn(0f, 1f).or(0f) {
                 state.directions.contains(RevealDirection.EndToStart).not()
             }
 
         val cornerFactorStart =
-            (state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero().coerceIn(0f, 1f).or(0f) {
+            (state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero()
+                .coerceIn(0f, 1f).or(0f) {
                 state.directions.contains(RevealDirection.StartToEnd).not()
             }
 
@@ -333,7 +352,8 @@ fun BaseRevealSwipe(
         val animatedCornerRadiusBottomEnd: Float = lerp(cornerRadiusBottomEnd, 0f, cornerFactorEnd)
 
         val animatedCornerRadiusTopStart: Float = lerp(cornerRadiusTopStart, 0f, cornerFactorStart)
-        val animatedCornerRadiusBottomStart: Float = lerp(cornerRadiusBottomStart, 0f, cornerFactorStart)
+        val animatedCornerRadiusBottomStart: Float =
+            lerp(cornerRadiusBottomStart, 0f, cornerFactorStart)
 
         val animatedShape = shape.copy(
             bottomStart = CornerSize(animatedCornerRadiusBottomStart),
@@ -344,18 +364,24 @@ fun BaseRevealSwipe(
 
         // alpha for background
         val maxRevealPx = with(LocalDensity.current) { state.maxRevealDp.toPx() }
-        val draggedRatio = (state.anchoredDraggableState.offset.absoluteValue / maxRevealPx.absoluteValue).coerceIn(0f, 1f)
+        val draggedRatio =
+            (state.anchoredDraggableState.offset.absoluteValue / maxRevealPx.absoluteValue).coerceIn(
+                0f,
+                1f
+            )
 
         // cubic parameters can be evaluated here https://cubic-bezier.com/
         val alpha = alphaEasing.transform(draggedRatio)
 
-        val animatedBackgroundEndColor = if (alpha in 0f..1f && animateBackgroundCardColor) backgroundCardEndColor.copy(
-            alpha = alpha
-        ) else backgroundCardEndColor
+        val animatedBackgroundEndColor =
+            if (alpha in 0f..1f && animateBackgroundCardColor) backgroundCardEndColor.copy(
+                alpha = alpha
+            ) else backgroundCardEndColor
 
-        val animatedBackgroundStartColor = if (alpha in 0f..1f && animateBackgroundCardColor) backgroundCardStartColor.copy(
-            alpha = alpha
-        ) else backgroundCardStartColor
+        val animatedBackgroundStartColor =
+            if (alpha in 0f..1f && animateBackgroundCardColor) backgroundCardStartColor.copy(
+                alpha = alpha
+            ) else backgroundCardStartColor
 
         // non swipeable with hidden content
         card(shape) {
@@ -474,12 +500,15 @@ enum class RevealValue {
 @Composable
 fun rememberRevealState(
     maxRevealDp: Dp = 75.dp,
-    directions: Set<RevealDirection> = setOf(RevealDirection.StartToEnd, RevealDirection.EndToStart),
+    directions: Set<RevealDirection> = setOf(
+        RevealDirection.StartToEnd,
+        RevealDirection.EndToStart
+    ),
     initialValue: RevealValue = RevealValue.Default,
     positionalThreshold: (totalDistance: Float) -> Float = { distance: Float -> distance * 0.5f },
     velocityThreshold: (() -> Float)? = null,
     animationSpec: AnimationSpec<Float> = tween(),
-    decayAnimationSpec:DecayAnimationSpec<Float> = exponentialDecay(),
+    decayAnimationSpec: DecayAnimationSpec<Float> = exponentialDecay(),
     confirmValueChange: (newValue: RevealValue) -> Boolean = { true }
 ): RevealState {
     val density = LocalDensity.current
@@ -515,13 +544,16 @@ data class RevealState(
         initialValue = initialValue,
         anchors = DraggableAnchors {
             RevealValue.Default at 0f
-            if (RevealDirection.StartToEnd in directions) RevealValue.FullyRevealedEnd at with(density) { maxRevealDp.toPx() }
-            if (RevealDirection.EndToStart in directions) RevealValue.FullyRevealedStart at -with(density) { maxRevealDp.toPx() }
+            if (RevealDirection.StartToEnd in directions) RevealValue.FullyRevealedEnd at with(
+                density
+            ) { maxRevealDp.toPx() }
+            if (RevealDirection.EndToStart in directions) RevealValue.FullyRevealedStart at -with(
+                density
+            ) { maxRevealDp.toPx() }
         },
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold ?: { with(density) { 10.dp.toPx() } },
         animationSpec = animationSpec,
-//        decayAnimationSpec = decayAnimationSpec,
         confirmValueChange = confirmValueChange
     )
 }
