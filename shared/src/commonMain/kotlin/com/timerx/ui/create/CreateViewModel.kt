@@ -267,6 +267,7 @@ class CreateViewModel(
                     timerDatabase.updateTimer(
                         Timer(
                             id = timerEditing.id,
+                            sortOrder = timerEditing.sortOrder,
                             name = name,
                             sets = state.value.sets
                                 .filter { it.intervals.isNotEmpty() }.map {

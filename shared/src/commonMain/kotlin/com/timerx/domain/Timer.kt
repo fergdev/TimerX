@@ -5,9 +5,10 @@ import com.timerx.beep.Beep
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.ImmutableList
 
+internal const val NO_SORT_ORDER = -1L
 data class Timer(
     val id: Long = 0L,
-    val sortOrder: Long = 0L,
+    val sortOrder: Long = NO_SORT_ORDER,
     val name: String,
     val sets: ImmutableList<TimerSet>,
     val finishColor: Color = Color.Red,

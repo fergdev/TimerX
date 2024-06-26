@@ -15,6 +15,7 @@ import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import com.timerx.beep.Beep
 import com.timerx.domain.FinalCountDown
+import com.timerx.domain.NO_SORT_ORDER
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
@@ -57,7 +58,11 @@ interface RoomTimerDao {
         roomTimer: RoomTimer,
         roomTimerSets: Map<RoomSet, List<RoomInterval>>,
     ) {
-        val insertSortOrder = getMaxSortOrder().first() + 1L
+        val insertSortOrder = if (roomTimer.sortOrder == NO_SORT_ORDER) {
+            getMaxSortOrder().first() + 1L
+        } else {
+            roomTimer.sortOrder
+        }
         val timerPrimaryKey = insert(roomTimer.copy(sortOrder = insertSortOrder))
         roomTimerSets.map { entry ->
             val setPrimaryKey = insert(entry.key)
@@ -77,7 +82,7 @@ interface RoomTimerDao {
     fun getMaxSortOrder(): Flow<Long>
 
     @Query("UPDATE RoomTimer SET SortOrder = :sortOrder WHERE id = :timerId")
-    suspend fun updateSortOrder(timerId : Long, sortOrder: Long)
+    suspend fun updateSortOrder(timerId: Long, sortOrder: Long)
 
     @Query(value = "DELETE FROM RoomTimer WHERE id IS (:id)")
     suspend fun deleteTimer(id: Long)
@@ -157,7 +162,8 @@ abstract class AppDatabase : RoomDatabase(), DB {
 // Class 'AppDatabase_Impl' is not abstract and does not implement abstract base class member 'clearAllTables'.
 interface DB {
     @Suppress("RedundantUnitReturnType")
-    fun clearAllTables(): Unit {}
+    fun clearAllTables(): Unit {
+    }
 }
 
 internal const val dbFileName = "timerx.db"
