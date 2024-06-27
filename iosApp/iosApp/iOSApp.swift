@@ -3,12 +3,15 @@ import FirebaseCrashlytics
 import FirebaseAnalytics
 import Firebase
 import shared
+import GoogleMobileAds
+
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
         return true
     }
 }
@@ -45,7 +48,7 @@ class FirebaseLoggingCallback: FirebaseIosCallback {
 @main
 struct iOSApp: App {
       @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
+ 
     init() {
        let notificationCenter = UNUserNotificationCenter.current()
          notificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in

@@ -2,7 +2,6 @@ package com.timerx.android
 
 import android.app.Application
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.timerx.di.appModule
 import kotlinx.coroutines.CoroutineScope
@@ -24,11 +23,6 @@ class App : Application() {
         }
         CoroutineScope(Dispatchers.IO).launch {
             MobileAds.initialize(this@App) {}
-            MobileAds.setRequestConfiguration(
-                RequestConfiguration.Builder().setTestDeviceIds(
-                    listOf("ABCDEF012345")
-                ).build()
-            )
         }
     }
 }
