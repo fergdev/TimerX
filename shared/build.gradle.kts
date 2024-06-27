@@ -84,7 +84,8 @@ kotlin {
                 implementation(libs.firebase.bom)
                 api(libs.firebase.analytics)
                 implementation(libs.firebase.crashlytics)
-//                implementation(libs.androidx.room.runtime.android)
+                api("com.google.android.gms:play-services-ads:23.1.0")
+
             }
         }
         val androidUnitTest by getting {

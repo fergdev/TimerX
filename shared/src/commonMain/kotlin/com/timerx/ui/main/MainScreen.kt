@@ -3,10 +3,13 @@ package com.timerx.ui.main
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -35,13 +38,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.timerx.ads.getAd
 import com.timerx.domain.Timer
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.CustomIcons
-import com.timerx.ui.common.SetStatusBarColor
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
+import com.timerx.ui.common.SetStatusBarColor
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import kotlinx.coroutines.launch
@@ -80,59 +84,66 @@ internal fun MainScreen(
 
     val state by viewModel.state.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(Res.string.app_name)) },
-                actions = {
-                    IconButton(onClick = navigateSettingsScreen) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = stringResource(Res.string.settings)
-                        )
-                    }
-                },
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = navigateAddScreen) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(Res.string.add)
-                )
-            }
-        }) { paddingValues ->
-
-        Box(modifier = Modifier.padding(paddingValues)) {
-            if (state.timers.isEmpty()) {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = stringResource(Res.string.no_timers)
-                )
-            } else {
-                val lazyListState = rememberLazyListState()
-                val reorderableLazyListState =
-                    rememberReorderableLazyListState(lazyListState) { from, to ->
-                        viewModel.interactions.swapTimers(from.index, to.index)
-                    }
-
-                LazyColumn(modifier = Modifier.fillMaxSize(), state = lazyListState) {
-                    items(state.timers, key = { it.id }) { timer ->
-                        ReorderableItem(reorderableLazyListState, key = timer.id) {
-                            Timer(
-                                timer = timer,
-                                interactions = viewModel.interactions,
-                                navigateRunScreen = navigateRunScreen,
-                                navigateEditScreen = navigateEditScreen,
-                                reorderableScope = this
+    Column(modifier = Modifier.safeDrawingPadding()) {
+        Scaffold(
+            modifier = Modifier.weight(1F),
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = stringResource(Res.string.app_name)) },
+                    actions = {
+                        IconButton(onClick = navigateSettingsScreen) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = stringResource(Res.string.settings)
                             )
+                        }
+                    },
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = navigateAddScreen) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.add)
+                    )
+                }
+            }) { paddingValues ->
+
+            Box(modifier = Modifier.padding(paddingValues)) {
+                if (state.timers.isEmpty()) {
+                    Text(
+                        modifier = Modifier.padding(16.dp),
+                        text = stringResource(Res.string.no_timers)
+                    )
+                } else {
+                    val lazyListState = rememberLazyListState()
+                    val reorderableLazyListState =
+                        rememberReorderableLazyListState(lazyListState) { from, to ->
+                            viewModel.interactions.swapTimers(from.index, to.index)
+                        }
+
+                    LazyColumn(modifier = Modifier.fillMaxSize(), state = lazyListState) {
+                        items(state.timers, key = { it.id }) { timer ->
+                            ReorderableItem(reorderableLazyListState, key = timer.id) {
+                                Timer(
+                                    timer = timer,
+                                    interactions = viewModel.interactions,
+                                    navigateRunScreen = navigateRunScreen,
+                                    navigateEditScreen = navigateEditScreen,
+                                    reorderableScope = this
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+        Box(modifier = Modifier.wrapContentSize()) {
+            getAd()
+        }
     }
 }
+
 
 @Composable
 private fun Timer(

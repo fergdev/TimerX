@@ -30,7 +30,9 @@ val sharedModule = module {
     single { getBeepManager(get()) }
     single { getTimerXAnalytics() }
     single { getVibrationManager(get()) }
-    single<ITimerRepository> { RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase()) }
+    single<ITimerRepository> {
+        RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase())
+    }
     single { getTimerXNotificationManager() }
     factory { MainViewModel(get()) }
     factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
