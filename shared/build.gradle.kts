@@ -1,8 +1,8 @@
-
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -73,6 +73,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0-RC")
             }
         }
         val androidMain by getting {
@@ -84,7 +85,7 @@ kotlin {
                 implementation(libs.firebase.bom)
                 api(libs.firebase.analytics)
                 implementation(libs.firebase.crashlytics)
-                api("com.google.android.gms:play-services-ads:23.1.0")
+                api(libs.play.services.ads)
 
             }
         }
@@ -190,7 +191,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         freeCompilerArgs.add("-P")
         freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${rootDir}/shared/compose_compiler_config.conf")
     }
-    if (name != "kspCommonMainKotlinMetadata" ) {
+    if (name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
     }
+}
+
+tasks.withType<KotlinNativeCompile>().configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
 }

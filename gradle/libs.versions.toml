@@ -21,6 +21,7 @@ kotlinx-serialization = "1.7.0"
 kotlinxDatetime = "0.6.0"
 ksp = "2.0.0-1.0.21"
 mokkery = "2.1.0"
+playServicesAds = "23.2.0"
 pre-compose = "1.6.0"
 reorderable = "2.1.1"
 sqlite = "2.5.0-SNAPSHOT"
@@ -46,6 +47,7 @@ kotlin-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutab
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 pre-compose = { module = "moe.tlaster:precompose", version.ref = "pre-compose" }
 pre-compose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "pre-compose" }
 pre-compose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "pre-compose" }
