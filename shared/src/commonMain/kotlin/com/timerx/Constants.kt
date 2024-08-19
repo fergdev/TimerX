@@ -1,3 +1,3 @@
 package com.timerx
 
-const val beepVibrationDelay: Long = 500L
+const val BEEP_VIBRATION_DELAY: Long = 500L

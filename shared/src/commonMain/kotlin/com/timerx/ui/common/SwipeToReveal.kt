@@ -66,7 +66,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RevealSwipe(
@@ -248,7 +247,11 @@ fun RevealSwipe(
                             }
                         },
                         // no indication if just closing
-                        indication = if (state.anchoredDraggableState.targetValue != RevealValue.Default) null else LocalIndication.current,
+                        indication = if (state.anchoredDraggableState.targetValue != RevealValue.Default) {
+                            null
+                        } else {
+                            LocalIndication.current
+                        },
                         interactionSource = remember { MutableInteractionSource() }
                     )
                 }
@@ -339,14 +342,14 @@ fun BaseRevealSwipe(
         val cornerFactorEnd =
             (-state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero()
                 .coerceIn(0f, 1f).or(0f) {
-                state.directions.contains(RevealDirection.EndToStart).not()
-            }
+                    state.directions.contains(RevealDirection.EndToStart).not()
+                }
 
         val cornerFactorStart =
             (state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero()
                 .coerceIn(0f, 1f).or(0f) {
-                state.directions.contains(RevealDirection.StartToEnd).not()
-            }
+                    state.directions.contains(RevealDirection.StartToEnd).not()
+                }
 
         val animatedCornerRadiusTopEnd: Float = lerp(cornerRadiusTopEnd, 0f, cornerFactorEnd)
         val animatedCornerRadiusBottomEnd: Float = lerp(cornerRadiusBottomEnd, 0f, cornerFactorEnd)

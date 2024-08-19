@@ -3,7 +3,7 @@ package com.timerx.beep
 import android.content.Context
 import android.media.MediaPlayer
 import com.timerx.R
-import com.timerx.beepVibrationDelay
+import com.timerx.BEEP_VIBRATION_DELAY
 import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -26,7 +26,7 @@ class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
             val volume = timerXSettings.settings.first().volume
             mediaPlayer?.setVolume(volume, volume)
             mediaPlayer?.start()
-            delay(beepVibrationDelay)
+            delay(BEEP_VIBRATION_DELAY)
         }
     }
 }

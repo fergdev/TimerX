@@ -7,7 +7,7 @@ style:
   active: true
   MagicNumber:
     active: true
-    excludes: ['**/CustomIcons.kt', '**/commonTest/**']
+    excludes: ['**/CustomIcons.kt', '**/commonTest/**', '**/VibrationManager.android.kt']
   ReturnCount:
     max: 3
   NewLineAtEndOfFile:

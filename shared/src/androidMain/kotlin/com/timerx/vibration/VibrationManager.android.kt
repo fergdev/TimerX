@@ -3,7 +3,7 @@ package com.timerx.vibration
 import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
-import com.timerx.beepVibrationDelay
+import com.timerx.BEEP_VIBRATION_DELAY
 import com.timerx.settings.TimerXSettings
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
@@ -30,11 +30,9 @@ class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationM
     private val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 
     override suspend fun vibrate(vibration: Vibration) {
-        println("pre")
         if (timerXSettings.settings.first().vibrationEnabled.not()) {
             return
         }
-        println("post")
         val millis = when (vibration) {
             Heavy, HeavyX2, HeavyX3 -> 1000L
             Medium, MediumX2, MediumX3 -> 750L
@@ -51,7 +49,7 @@ class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationM
                     VibrationEffect.DEFAULT_AMPLITUDE
                 )
             )
-            delay(beepVibrationDelay)
+            delay(BEEP_VIBRATION_DELAY)
         }
     }
 }

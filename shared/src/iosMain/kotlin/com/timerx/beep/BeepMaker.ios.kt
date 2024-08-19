@@ -1,6 +1,6 @@
 package com.timerx.beep
 
-import com.timerx.beepVibrationDelay
+import com.timerx.BEEP_VIBRATION_DELAY
 import com.timerx.settings.TimerXSettings
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.delay
@@ -25,7 +25,7 @@ class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
             val avAudioPlayer = AVAudioPlayer(contentsOfURL = soundURL, error = null)
             avAudioPlayer.setVolume(timerXSettings.settings.first().volume)
             avAudioPlayer.play()
-            delay(beepVibrationDelay)
+            delay(BEEP_VIBRATION_DELAY)
         }
     }
 }

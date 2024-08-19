@@ -151,14 +151,14 @@ interface RoomTimerDao {
 abstract class AppDatabase : RoomDatabase(), DB {
     abstract fun timerDao(): RoomTimerDao
 
-    // FIXME: See hack comment below
+    // See hack comment below
     @Suppress("RedundantOverride")
     override fun clearAllTables() {
         super.clearAllTables()
     }
 }
 
-// FIXME: Added a hack to resolve below issue:
+// Added a hack to resolve below issue:
 // Class 'AppDatabase_Impl' is not abstract and does not implement abstract base class member 'clearAllTables'.
 interface DB {
     @Suppress("RedundantUnitReturnType")
@@ -204,8 +204,8 @@ data class RoomTimer(
 )
 class RoomTimerSet(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(name = "timer_id") val timerId: Long,
-    @ColumnInfo(name = "set_id") val setId: Long
+    @ColumnInfo(name = "timer_id", index = true) val timerId: Long,
+    @ColumnInfo(name = "set_id", index = true) val setId: Long
 )
 
 @Entity
@@ -236,8 +236,8 @@ class RoomSet(
 )
 class RoomSetInterval(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(name = "set_id") val setId: Long,
-    @ColumnInfo(name = "interval_id") val intervalId: Long
+    @ColumnInfo(name = "set_id", index = true) val setId: Long,
+    @ColumnInfo(name = "interval_id", index = true) val intervalId: Long
 )
 
 @Entity
