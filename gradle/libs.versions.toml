@@ -8,7 +8,7 @@ androidx-room = "2.7.0-alpha07"
 crashlytics = "3.0.2"
 detekt = "1.23.6"
 firebaseAnalytics = "22.0.2"
-firebaseBom = "33.1.1"
+firebaseBom = "33.1.2"
 firebaseCrashlytics = "19.0.3"
 googleServices = "4.4.2"
 jetbrains-compose = "1.6.11"
@@ -68,4 +68,5 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
-room = { id = "androidx.room", version.ref = "androidx-room" }
+# Add this back in when the plugin is supported
+#room = { id = "androidx.room", version.ref = "androidx-room" }
