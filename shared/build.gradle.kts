@@ -2,7 +2,6 @@ import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,7 +13,8 @@ plugins {
     alias(libs.plugins.mokkery)
     alias(libs.plugins.googleServices)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.room)
+    // TODO add plugin back in when this is supported again
+//    alias(libs.plugins.room)
     alias(libs.plugins.kotlinx.serialization)
 }
 
@@ -37,13 +37,12 @@ kotlin {
 
     sourceSets {
         val commonMain by getting {
-            sourceSets.commonMain {
-                kotlin.srcDir("build/generated/ksp/metadata")
-            }
 
             @OptIn(ExperimentalKotlinGradlePluginApi::class)
             compilerOptions {
                 languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                // Common compiler options applied to all Kotlin source sets
+                freeCompilerArgs.add("-Xexpect-actual-classes")
             }
 
             dependencies {
@@ -113,6 +112,7 @@ kotlin {
     }
 }
 
+
 android {
     namespace = "com.timerx"
     compileSdk = 34
@@ -170,12 +170,23 @@ tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "1.8"
 }
 
-dependencies {
-    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+// TODO renable room plugin when it works properly
+//room {
+//    schemaDirectory("$projectDir/schemas")
+//}
+ksp {
+    arg("room.schemaLocation", "${projectDir}/schemas")
 }
 
-room {
-    schemaDirectory("$projectDir/schemas")
+dependencies {
+    listOf(
+        "kspAndroid",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64"
+    ).forEach {
+        add(it, libs.androidx.room.compiler)
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -191,11 +202,4 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         freeCompilerArgs.add("-P")
         freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${rootDir}/shared/compose_compiler_config.conf")
     }
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
-
-tasks.withType<KotlinNativeCompile>().configureEach {
-    dependsOn("kspCommonMainKotlinMetadata")
 }

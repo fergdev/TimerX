@@ -15,7 +15,6 @@ class Factory : RoomDataBaseFactory {
         val dbFile = "${fileDirectory()}/$dbFileName"
         return Room.databaseBuilder<AppDatabase>(
             name = dbFile,
-            factory =  { AppDatabase::class.instantiateImpl() }
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()

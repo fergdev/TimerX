@@ -3,6 +3,7 @@ package com.timerx.database
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.room.ColumnInfo
+import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -148,6 +149,7 @@ interface RoomTimerDao {
         RoomInterval::class,
     ], version = 1
 )
+@ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase(), DB {
     abstract fun timerDao(): RoomTimerDao
 
