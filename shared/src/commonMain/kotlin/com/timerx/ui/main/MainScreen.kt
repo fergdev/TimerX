@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -121,10 +122,15 @@ internal fun MainScreen(
                 }
             }) { paddingValues ->
 
-            Box(modifier = Modifier.padding(paddingValues)) {
-                if (state.timers.isEmpty()) {
+            Box(
+                modifier = Modifier.padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                if (state.loadingTimers) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                } else if (state.timers.isEmpty()) {
                     Text(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(16.dp).align(Alignment.Center),
                         text = stringResource(Res.string.no_timers)
                     )
                 } else {

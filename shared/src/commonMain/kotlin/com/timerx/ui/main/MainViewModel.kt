@@ -23,6 +23,7 @@ class MainViewModel(
 ) : ViewModel() {
 
     data class State(
+        val loadingTimers: Boolean = false,
         val timers: ImmutableList<Timer> = persistentListOf(),
         val showNotificationsPermissionRequest: Boolean = false
     )
@@ -56,8 +57,9 @@ class MainViewModel(
 
     private fun refreshData() {
         viewModelScope.launch {
+            _stateFlow.update { it.copy(loadingTimers = true) }
             val timers = timerRepository.getTimers().toPersistentList()
-            _stateFlow.update { it.copy(timers = timers) }
+            _stateFlow.update { it.copy(timers = timers, loadingTimers = false) }
         }
         viewModelScope.launch {
             timerXSettings.settings.collect {
