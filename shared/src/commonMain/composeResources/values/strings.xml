@@ -6,6 +6,7 @@
     <string name="back">Back</string>
     <string name="beep">Beep</string>
     <string name="close">Close</string>
+    <string name="completed_value">Completed: %1$s</string>
     <string name="copy">Copy</string>
     <string name="copy_parenthesis">(copy)</string>
     <string name="count_down">Count down</string>
@@ -37,6 +38,7 @@
     <string name="prepare">Prepare</string>
     <string name="rest">Rest</string>
     <string name="restart">Restart</string>
+    <string name="started_value">Start: %1$s</string>
     <string name="save">Save</string>
     <string name="sets">Sets</string>
     <string name="settings">Settings</string>

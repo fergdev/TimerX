@@ -61,11 +61,13 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.app_name
+import timerx.shared.generated.resources.completed_value
 import timerx.shared.generated.resources.copy
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.edit
 import timerx.shared.generated.resources.no_timers
 import timerx.shared.generated.resources.settings
+import timerx.shared.generated.resources.started_value
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -242,8 +244,13 @@ private fun Timer(
             supportingContent = {
                 Column {
                     Text(text = timer.length().timeFormatted())
-                    Text(text = "Started: ${timer.stats.startedCount}")
-                    Text(text = "Completed: ${timer.stats.completedCount}")
+                    Text(text = stringResource(Res.string.started_value, timer.stats.startedCount))
+                    Text(
+                        text = stringResource(
+                            Res.string.completed_value,
+                            timer.stats.completedCount
+                        )
+                    )
                 }
             },
             trailingContent = {
