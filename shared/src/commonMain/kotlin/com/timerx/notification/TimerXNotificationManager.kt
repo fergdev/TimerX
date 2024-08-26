@@ -8,5 +8,5 @@ interface ITimerXNotificationManager {
 
     fun stop()
 
-    fun updateNotification(info: String)
+    fun updateNotification(isRunning: Boolean, info: String, backgroundColor: Int)
 }

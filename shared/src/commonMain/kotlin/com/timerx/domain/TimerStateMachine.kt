@@ -40,7 +40,10 @@ sealed class TimerEvent(val runState: RunState) {
     class Paused(runState: RunState) : TimerEvent(runState)
     class Resumed(runState: RunState) : TimerEvent(runState)
 
-    class Ticker(runState: RunState, val beep: Beep?, val vibration: Vibration?) : TimerEvent(runState)
+    class Ticker(runState: RunState, val beep: Beep?, val vibration: Vibration?) :
+        TimerEvent(runState)
+
+    class Destroy(runState: RunState) : TimerEvent(runState)
 }
 
 enum class TimerState {
@@ -50,6 +53,7 @@ enum class TimerState {
 }
 
 data class RunState(
+    val timerName: String = "",
     val timerState: TimerState = TimerState.Running,
 
     val setIndex: Int = 0,
@@ -91,7 +95,8 @@ interface TimerStateMachine {
     fun resume()
 }
 
-class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope: CoroutineScope) : TimerStateMachine {
+class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope: CoroutineScope) :
+    TimerStateMachine {
     private val runState = MutableStateFlow(RunState())
     private val _eventState =
         MutableStateFlow<TimerEvent>(
@@ -108,7 +113,10 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
         get() = _eventState
 
     override fun start() {
-        runState.update { it.copy(timerState = TimerState.Running) }
+        runState.update { it.copy(
+            timerName = timer.name,
+            timerState = TimerState.Running)
+        }
         updateState(0, 0, 0)
         _eventState.value = TimerEvent.Started(
             runState.value,
@@ -256,6 +264,7 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
     }
 
     override fun destroy() {
+        _eventState.value = TimerEvent.Destroy(_eventState.value.runState)
         tickerJob?.cancel()
     }
 
@@ -268,7 +277,6 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
 
                 val currentInterval = getCurrentInterval()
                 val timeLeft = currentInterval.duration - nextElapsed
-                println(timeLeft)
                 val beep =
                     if (timeLeft <= currentInterval.finalCountDown.duration && timeLeft != 0) {
                         currentInterval.finalCountDown.beep

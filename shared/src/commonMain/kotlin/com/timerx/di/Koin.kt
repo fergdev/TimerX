@@ -5,6 +5,7 @@ import com.timerx.beep.getBeepManager
 import com.timerx.database.ITimerRepository
 import com.timerx.database.RealmTimerRepository
 import com.timerx.database.createRoomDatabaseFactory
+import com.timerx.domain.TimerManager
 import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.permissions.permissionsHandler
 import com.timerx.settings.TimerXSettings
@@ -32,6 +33,7 @@ val sharedModule = module {
     single { getTimerXAnalytics() }
     single { getVibrationManager(get()) }
     single { permissionsHandler() }
+    single { TimerManager(get(), get(), get(), get()) }
     single<ITimerRepository> {
         RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase())
     }
@@ -39,15 +41,12 @@ val sharedModule = module {
     factory { MainViewModel(get(), get()) }
     factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->
-        println("TimerId $timerId")
         RunViewModel(
             timerId.idToLong(),
             get(),
             get(),
             get(),
             get(),
-            get(),
-            get()
         )
     }
     factory { SettingsViewModel(get(), get()) }

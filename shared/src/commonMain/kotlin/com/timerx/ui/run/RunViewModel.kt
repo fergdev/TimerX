@@ -2,17 +2,13 @@ package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
 import com.timerx.analytics.ITimerXAnalytics
-import com.timerx.beep.IBeepManager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.RunState
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerEvent
+import com.timerx.domain.TimerManager
 import com.timerx.domain.TimerState
-import com.timerx.domain.TimerStateMachine
-import com.timerx.domain.TimerStateMachineImpl
-import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.settings.TimerXSettings
-import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -29,22 +25,19 @@ data class RunScreenState(
     val time: Int = 0,
     val name: String = "",
     val manualNext: Boolean = false,
-    val timerName: String = ""
+    val timerName: String = "",
+    val destroyed: Boolean = false
 )
 
 class RunViewModel(
     private val timerId: Long,
     timerRepository: ITimerRepository,
-    private val beepManager: IBeepManager,
-    private val notificationManager: ITimerXNotificationManager,
     private val timerXSettings: TimerXSettings,
     private val timerXAnalytics: ITimerXAnalytics,
-    private val vibrationManager: IVibrationManager
+    private val timerManager: TimerManager
 ) : ViewModel() {
 
     private lateinit var timer: Timer
-    private lateinit var timerStateMachine: TimerStateMachine
-
     private val _state = MutableStateFlow(RunScreenState())
 
     val state: StateFlow<RunScreenState> = _state
@@ -74,7 +67,7 @@ class RunViewModel(
     init {
         viewModelScope.launch {
             this@RunViewModel.timer = timerRepository.getTimer(timerId)
-            timerStateMachine = TimerStateMachineImpl(timer, viewModelScope)
+            timerManager.startTimer(timer)
             initTimer()
         }
         timerXAnalytics.logEvent("TimerStart", null)
@@ -91,54 +84,15 @@ class RunViewModel(
     }
 
     private fun previousInterval() {
-        timerStateMachine.previousInterval()
+        timerManager.previousInterval()
     }
 
     private fun initTimer() {
-        timerStateMachine.start()
         viewModelScope.launch {
-            timerStateMachine.eventState.collect { timerEvent ->
+            timerManager.eventState.collect { timerEvent ->
                 updateRunState(timerEvent.runState)
-                when (timerEvent) {
-                    is TimerEvent.Ticker -> {
-                        timerXAnalytics.logEvent(
-                            "Ticker",
-                            mapOf(Pair("elapsed", timerEvent.runState.elapsed))
-                        )
-                        notificationManager.updateNotification(notificationState(timerEvent.runState))
-                        timerEvent.beep?.let { beepManager.beep(it) }
-                        timerEvent.vibration?.let { vibrationManager.vibrate(it) }
-                    }
-
-                    is TimerEvent.Finished -> {
-                        beepManager.beep(timerEvent.beep)
-                        notificationManager.stop()
-                        vibrationManager.vibrate(timerEvent.vibration)
-                    }
-
-                    is TimerEvent.NextInterval -> {
-                        beepManager.beep(timerEvent.beep)
-                        vibrationManager.vibrate(timerEvent.vibration)
-                    }
-
-                    is TimerEvent.PreviousInterval -> {
-                        beepManager.beep(timerEvent.beep)
-                        vibrationManager.vibrate(timerEvent.vibration)
-                    }
-
-                    is TimerEvent.Started -> {
-                        beepManager.beep(timerEvent.beep)
-                        vibrationManager.vibrate(timerEvent.vibration)
-                        notificationManager.start()
-                    }
-
-                    is TimerEvent.Resumed -> {
-                        notificationManager.start()
-                    }
-
-                    is TimerEvent.Paused -> {
-                        notificationManager.stop()
-                    }
+                if (timerEvent is TimerEvent.Destroy) {
+                    _state.update { it.copy(destroyed = true) }
                 }
             }
         }
@@ -168,18 +122,8 @@ class RunViewModel(
         }
     }
 
-    private fun notificationState(runState: RunState): String {
-        val set = runState.setIndex + 1
-        val setCount = runState.setCount
-        val interval = runState.intervalIndex + 1
-        val intervalCount = runState.intervalCount
-        val elapsed = runState.elapsed
-        val intervalDuration = runState.intervalDuration
-        return "($set / $setCount) - ($interval / $intervalCount) - ($elapsed / $intervalDuration)"
-    }
-
     private fun onManualNext() {
-        timerStateMachine.nextInterval()
+        timerManager.nextInterval()
     }
 
     private fun updateVolume(volume: Float) {
@@ -189,10 +133,10 @@ class RunViewModel(
     }
 
     private fun play() {
-        if (timerStateMachine.eventState.value.runState.timerState == TimerState.Finished) {
+        if (timerManager.eventState.value.runState.timerState == TimerState.Finished) {
             initTimer()
         } else {
-            timerStateMachine.resume()
+            timerManager.playPause()
         }
     }
 
@@ -203,16 +147,15 @@ class RunViewModel(
     }
 
     private fun pause() {
-        timerStateMachine.pause()
+        timerManager.playPause()
     }
 
     private fun nextInterval() {
-        timerStateMachine.nextInterval()
+        timerManager.nextInterval()
     }
 
     override fun onCleared() {
         super.onCleared()
-        timerStateMachine.destroy()
-        notificationManager.stop()
+        timerManager.destroy()
     }
 }

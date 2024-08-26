@@ -15,10 +15,10 @@ class TimerXNotificationManager : ITimerXNotificationManager {
         context.startForegroundService(Intent(context, NotificationService::class.java))
     }
 
-    override fun updateNotification(info: String) {
+    override fun updateNotification(isRunning: Boolean, info: String, backgroundColor: Int) {
         notificationManager.notify(
             NotificationService.NOTIFICATION_ID,
-            createNotification(context, info)
+            createNotification(context, isRunning, info, backgroundColor)
         )
     }
 

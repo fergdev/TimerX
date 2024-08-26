@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
@@ -70,7 +71,7 @@ class NotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createNotification(this, ""))
+        startForeground(NOTIFICATION_ID, createNotification(this, true, "", Color.TRANSPARENT))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

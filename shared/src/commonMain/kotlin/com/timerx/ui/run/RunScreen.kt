@@ -47,10 +47,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerState
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.KeepScreenOn
 import com.timerx.ui.common.SetStatusBarColor
-import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.contrastColor
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.koin.koinViewModel
@@ -76,6 +76,10 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val viewModel: RunViewModel =
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
+
+    if (state.destroyed) {
+        navigateUp()
+    }
 
     val backgroundColor = if (state.timerState == TimerState.Paused) {
         MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
