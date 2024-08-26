@@ -32,9 +32,10 @@ data class RunScreenState(
 class RunViewModel(
     private val timerId: Long,
     timerRepository: ITimerRepository,
+    timerXAnalytics: ITimerXAnalytics,
     private val timerXSettings: TimerXSettings,
-    private val timerXAnalytics: ITimerXAnalytics,
-    private val timerManager: TimerManager
+    private val timerManager: TimerManager,
+    private val timerDatabase: ITimerRepository
 ) : ViewModel() {
 
     private lateinit var timer: Timer
@@ -93,8 +94,21 @@ class RunViewModel(
                 updateRunState(timerEvent.runState)
                 if (timerEvent is TimerEvent.Destroy) {
                     _state.update { it.copy(destroyed = true) }
+                } else if(timerEvent is TimerEvent.Finished){
+                    viewModelScope.launch {
+                        timerDatabase.updateTimerStats(
+                            timer,
+                            timer.stats.copy(completedCount = timer.stats.completedCount + 1)
+                        )
+                    }
                 }
             }
+        }
+        viewModelScope.launch {
+            timerDatabase.updateTimerStats(
+                timer,
+                timer.stats.copy(startedCount = timer.stats.startedCount + 1)
+            )
         }
     }
 

@@ -47,6 +47,7 @@ val sharedModule = module {
             get(),
             get(),
             get(),
+            get()
         )
     }
     factory { SettingsViewModel(get(), get()) }

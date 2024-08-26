@@ -8,6 +8,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.domain.TimerStats
 import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.ImmutableList
@@ -279,7 +280,8 @@ class CreateViewModel(
                             }.toPersistentList(),
                             finishColor = state.value.finishColor,
                             finishBeep = state.value.finishBeep,
-                            finishVibration = Vibration.Heavy
+                            finishVibration = Vibration.Heavy,
+                            stats = timerEditing.stats
                         )
                     )
                 } else {
@@ -297,7 +299,8 @@ class CreateViewModel(
                             }.toPersistentList(),
                             finishColor = state.value.finishColor,
                             finishBeep = state.value.finishBeep,
-                            finishVibration = state.value.finishVibration
+                            finishVibration = state.value.finishVibration,
+                            stats = TimerStats()
                         )
                     )
                 }

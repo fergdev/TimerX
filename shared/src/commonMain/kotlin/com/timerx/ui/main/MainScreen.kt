@@ -239,7 +239,13 @@ private fun Timer(
                     style = MaterialTheme.typography.titleLarge
                 )
             },
-            supportingContent = { Text(text = timer.length().timeFormatted()) },
+            supportingContent = {
+                Column {
+                    Text(text = timer.length().timeFormatted())
+                    Text(text = "Started: ${timer.stats.startedCount}")
+                    Text(text = "Completed: ${timer.stats.completedCount}")
+                }
+            },
             trailingContent = {
                 Icon(
                     modifier = with(reorderableScope) { Modifier.size(24.dp).draggableHandle() },

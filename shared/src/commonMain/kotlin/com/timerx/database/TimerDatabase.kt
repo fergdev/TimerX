@@ -20,6 +20,7 @@ import com.timerx.domain.NO_SORT_ORDER
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.domain.TimerStats
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.firstOrNull
 interface ITimerRepository {
     suspend fun getTimers(): List<Timer>
     suspend fun insertTimer(timer: Timer)
+    suspend fun updateTimerStats(timer: Timer, timerStats: TimerStats)
     suspend fun updateTimer(timer: Timer)
     suspend fun deleteTimer(timer: Timer)
     suspend fun duplicate(timer: Timer)
@@ -41,6 +43,9 @@ interface RoomTimerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(timer: RoomTimer): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(timer: RoomTimerStats): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(set: RoomSet): Long
@@ -77,6 +82,7 @@ interface RoomTimerDao {
                 insert(RoomSetInterval(0, setPrimaryKey, intervalPrimaryKey))
             }
         }
+        insert(RoomTimerStats(timerId = timerPrimaryKey))
     }
 
     @Query("SELECT sortOrder FROM RoomTimer ORDER BY sortOrder DESC LIMIT 1")
@@ -85,8 +91,14 @@ interface RoomTimerDao {
     @Query("UPDATE RoomTimer SET SortOrder = :sortOrder WHERE id = :timerId")
     suspend fun updateSortOrder(timerId: Long, sortOrder: Long)
 
+    @Query("UPDATE RoomTimerStats SET started_count = :startedCount, completed_count = :completedCount WHERE timer_id = :timerId")
+    suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long)
+
     @Query(value = "DELETE FROM RoomTimer WHERE id IS (:id)")
     suspend fun deleteTimer(id: Long)
+
+    @Query(value = "DELETE FROM RoomTimerStats WHERE timer_id IS (:id)")
+    suspend fun deleteTimerStats(id: Long)
 
     @Query(value = "DELETE FROM RoomSet WHERE id IS (:id)")
     suspend fun deleteSet(id: Long)
@@ -110,6 +122,7 @@ interface RoomTimerDao {
         }
 
         deleteTimer(timerId)
+        deleteTimerStats(timerId)
     }
 
     @Transaction
@@ -123,6 +136,9 @@ interface RoomTimerDao {
 
     @Query("SELECT * FROM RoomTimer")
     fun getTimers(): Flow<List<RoomTimer>>
+
+    @Query("SELECT * FROM RoomTimerStats WHERE timer_id IS (:timerId)")
+    fun getTimerStats(timerId: Long): Flow<RoomTimerStats>
 
     @Query("SELECT * FROM RoomTimer WHERE id IS (:timerId)")
     fun getTimer(timerId: Long): Flow<RoomTimer>
@@ -147,6 +163,7 @@ interface RoomTimerDao {
         RoomSet::class,
         RoomSetInterval::class,
         RoomInterval::class,
+        RoomTimerStats::class
     ], version = 1
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -270,6 +287,24 @@ class RoomInterval(
     val finalCountDownVibrationId: Int,
 )
 
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = RoomTimer::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("timer_id"),
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+class RoomTimerStats(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "timer_id", index = true) val timerId: Long,
+    @ColumnInfo(name = "started_count", index = true) val startedCount: Long = 0,
+    @ColumnInfo(name = "completed_count", index = true) val completedCount: Long = 0,
+)
+
 class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     private val timerDao = appDatabase.timerDao()
 
@@ -282,6 +317,15 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
             timer.toRoomTimer(),
             roomSetsAndIntervals(timer)
         )
+    }
+
+    override suspend fun updateTimerStats(timer: Timer, timerStats: TimerStats) {
+        appDatabase.timerDao()
+            .updateTimerStats(
+                timer.id,
+                timerStats.startedCount,
+                timerStats.completedCount
+            )
     }
 
     override suspend fun updateTimer(timer: Timer) {
@@ -332,6 +376,7 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
             timerDao.getTimerSet(roomTimer.id).first()
                 .map { roomTimerSet -> roomTimerSet.setId }
         ).firstOrNull() ?: emptyList()
+        val timerStats = timerDao.getTimerStats(roomTimer.id)
         return Timer(
             id = roomTimer.id,
             sortOrder = roomTimer.sortOrder,
@@ -366,7 +411,11 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
             }.toPersistentList(),
             finishColor = Color(color = roomTimer.finishColor),
             finishBeep = Beep.entries[roomTimer.finishBeepId],
-            finishVibration = Vibration.entries[roomTimer.finishVibration]
+            finishVibration = Vibration.entries[roomTimer.finishVibration],
+            TimerStats(
+                startedCount = timerStats.first().startedCount,
+                completedCount = timerStats.first().completedCount
+            )
         )
     }
 }
