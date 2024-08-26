@@ -23,6 +23,7 @@
     <string name="finished">Finished</string>
     <string name="finish">Finish</string>
     <string name="interval">Interval</string>
+    <string name="interval_name">Interval name</string>
     <string name="manual_next">Manual next</string>
     <string name="minus">Minus</string>
     <string name="next">Next</string>

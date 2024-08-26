@@ -37,13 +37,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
-import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.BeepSelector
+import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
@@ -61,6 +62,7 @@ import timerx.shared.generated.resources.count_down
 import timerx.shared.generated.resources.count_up
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.finish
+import timerx.shared.generated.resources.interval_name
 import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.skip_on_last_set
@@ -181,6 +183,12 @@ internal fun Interval(
                         interactions.interval.update.updateName(
                             interval,
                             it
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            text = stringResource(Res.string.interval_name),
+                            fontStyle = FontStyle.Italic
                         )
                     },
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface)

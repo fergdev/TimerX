@@ -1,5 +1,6 @@
 package com.timerx.ui.common
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
@@ -23,19 +24,25 @@ fun UnderlinedField(
     color: Color = MaterialTheme.colorScheme.onSurface,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     onValueChange: (String) -> Unit,
+    placeholder: @Composable (() ->Unit)? = null,
     cursorBrush: SolidColor
 ) {
     Column(modifier = modifier) {
-        BasicTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = value,
-            maxLines = maxLines,
-            singleLine = singleLine,
-            textStyle = textStyle.merge(color = color),
-            keyboardOptions = keyboardOptions,
-            onValueChange = onValueChange,
-            cursorBrush = cursorBrush
-        )
+        Box(modifier= Modifier.fillMaxWidth()) {
+            if (placeholder != null && value.isEmpty()) {
+                placeholder()
+            }
+            BasicTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = value,
+                maxLines = maxLines,
+                singleLine = singleLine,
+                textStyle = textStyle.merge(color = color),
+                keyboardOptions = keyboardOptions,
+                onValueChange = onValueChange,
+                cursorBrush = cursorBrush
+            )
+        }
         HorizontalDivider(color = color)
     }
 }

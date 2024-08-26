@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
@@ -59,6 +60,7 @@ import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.finish_color
+import timerx.shared.generated.resources.timer_name
 
 private const val TWO_HUNDRED_SEVENTY_DEG = 270f
 
@@ -87,6 +89,12 @@ internal fun CreateScreen(
                         textStyle = MaterialTheme.typography.headlineSmall.copy(
                             color = MaterialTheme.colorScheme.onSurface
                         ),
+                        placeholder = {
+                            Text(
+                                text = stringResource(Res.string.timer_name),
+                                fontStyle = FontStyle.Italic
+                            )
+                        },
                         cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                     )
                 },
