@@ -15,7 +15,7 @@
         android:layout_height="match_parent" />
 
     <TextView
-        android:text="Here is some large text"
+        android:text="Heads up"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

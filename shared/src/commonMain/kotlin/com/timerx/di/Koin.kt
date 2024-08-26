@@ -6,6 +6,7 @@ import com.timerx.database.ITimerRepository
 import com.timerx.database.RealmTimerRepository
 import com.timerx.database.createRoomDatabaseFactory
 import com.timerx.notification.getTimerXNotificationManager
+import com.timerx.permissions.permissionsHandler
 import com.timerx.settings.TimerXSettings
 import com.timerx.settings.dataStorePreferences
 import com.timerx.ui.create.CreateViewModel
@@ -30,11 +31,12 @@ val sharedModule = module {
     single { getBeepManager(get()) }
     single { getTimerXAnalytics() }
     single { getVibrationManager(get()) }
+    single { permissionsHandler() }
     single<ITimerRepository> {
         RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase())
     }
     single { getTimerXNotificationManager() }
-    factory { MainViewModel(get()) }
+    factory { MainViewModel(get(), get()) }
     factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->
         println("TimerId $timerId")
@@ -48,7 +50,7 @@ val sharedModule = module {
             get()
         )
     }
-    factory { SettingsViewModel(get()) }
+    factory { SettingsViewModel(get(), get()) }
 }
 
 fun appModule() = listOf(sharedModule)

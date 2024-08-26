@@ -2,6 +2,9 @@ package com.timerx.ui.main
 
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
+import com.timerx.permissions.IPermissionsHandler
+import com.timerx.permissions.Permission
+import com.timerx.permissions.PermissionState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -12,14 +15,23 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
-class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel() {
+class MainViewModel(
+    private val timerRepository: ITimerRepository,
+    private val permissionsHandler: IPermissionsHandler
+) : ViewModel() {
 
-    data class State(val timers: ImmutableList<Timer> = persistentListOf())
+    data class State(
+        val timers: ImmutableList<Timer> = persistentListOf(),
+        val showPermissionsMessage: Boolean = false
+    )
+
     class Interactions(
         val refreshData: () -> Unit,
         val deleteTimer: (Timer) -> Unit,
         val duplicateTimer: (Timer) -> Unit,
         val swapTimers: (Int, Int) -> Unit,
+        val hidePermissionsDialog: () -> Unit,
+        val requestNotificationsPermission: () -> Unit
     )
 
     val interactions = Interactions(
@@ -27,6 +39,8 @@ class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel()
         deleteTimer = ::deleteTimer,
         duplicateTimer = ::duplicateTimer,
         swapTimers = ::swapTimer,
+        hidePermissionsDialog = ::hidePermissionsDialog,
+        requestNotificationsPermission = ::requestNotificationsPermission
     )
 
     private val _stateFlow = MutableStateFlow(State())
@@ -38,8 +52,12 @@ class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel()
 
     private fun refreshData() {
         viewModelScope.launch {
-            _stateFlow.update {
-                State(timerRepository.getTimers().toPersistentList())
+            val timers = timerRepository.getTimers().toPersistentList()
+            _stateFlow.update { it.copy(timers = timers) }
+        }
+        viewModelScope.launch {
+            if (permissionsHandler.getPermissionState(Permission.Notification) != PermissionState.Granted) {
+                _stateFlow.update { it.copy(showPermissionsMessage = true) }
             }
         }
     }
@@ -69,4 +87,16 @@ class MainViewModel(private val timerRepository: ITimerRepository) : ViewModel()
             timerRepository.swapTimers(timers[from], timers[to])
         }
     }
+
+    private fun hidePermissionsDialog() {
+        _stateFlow.update { it.copy(showPermissionsMessage = false) }
+    }
+
+    private fun requestNotificationsPermission() {
+        viewModelScope.launch {
+            permissionsHandler.requestPermission(Permission.Notification)
+            hidePermissionsDialog()
+        }
+    }
 }
+

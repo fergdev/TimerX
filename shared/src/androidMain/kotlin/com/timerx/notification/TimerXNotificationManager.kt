@@ -3,20 +3,16 @@ package com.timerx.notification
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.ContextCompat
 import org.koin.mp.KoinPlatform
 
 actual fun getTimerXNotificationManager(): ITimerXNotificationManager = TimerXNotificationManager()
 
 class TimerXNotificationManager : ITimerXNotificationManager {
     private val context: Context = KoinPlatform.getKoin().get()
-    private val notificationManager =
-        ContextCompat.getSystemService(context, NotificationManager::class.java)!!
+    private val notificationManager by lazy { context.getSystemService(NotificationManager::class.java) }
 
     override fun start() {
-        context.startForegroundService(
-            Intent(context, NotificationService::class.java)
-        )
+        context.startForegroundService(Intent(context, NotificationService::class.java))
     }
 
     override fun updateNotification(info: String) {
@@ -27,9 +23,7 @@ class TimerXNotificationManager : ITimerXNotificationManager {
     }
 
     override fun stop() {
-        context.stopService(
-            Intent(context, NotificationService::class.java)
-        )
+        context.stopService(Intent(context, NotificationService::class.java))
         notificationManager.cancelAll()
     }
 }
