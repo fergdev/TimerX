@@ -15,7 +15,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,10 +36,6 @@ private const val NINETY_DEGREES = 90f
 fun SettingsScreen(navigateUp: () -> Unit) {
     val viewModel: SettingsViewModel =
         koinViewModel(vmClass = SettingsViewModel::class)
-
-    LaunchedEffect(Unit) {
-        viewModel.interactions.refresh()
-    }
 
     Column {
         TopAppBar(
@@ -71,7 +66,6 @@ fun SettingsScreen(navigateUp: () -> Unit) {
                     state.vibration,
                     onCheckedChange = { viewModel.interactions.updateVibration(it) })
             }
-
 
             Row(
                 modifier = Modifier.padding(vertical = 16.dp),

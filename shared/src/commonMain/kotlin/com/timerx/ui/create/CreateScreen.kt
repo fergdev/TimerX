@@ -162,7 +162,7 @@ private fun CreateContent(
 }
 
 @Composable
-fun FinishControls(
+private fun FinishControls(
     state: CreateViewModel.State,
     interactions: CreateViewModel.Interactions
 ) {
