@@ -6,14 +6,19 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.compose.ui.graphics.toArgb
 import com.timerx.R
+import com.timerx.domain.TimerManager
+import com.timerx.domain.generateNotificationMessage
+import org.koin.mp.KoinPlatform
+
 
 class NotificationService : Service() {
     private val notificationManager by lazy { getSystemService(NotificationManager::class.java) }
+    private val timerManager = KoinPlatform.getKoin().get<TimerManager>()
 
     private val notificationLayoutSmall by lazy {
         RemoteViews(
@@ -54,14 +59,6 @@ class NotificationService : Service() {
                 "Here is an update large " + Math.random().toString()
             )
         }
-        // re use notification builder
-//        createNotification().let {
-//            it.setCustomBigContentView(notificationLayoutExpanded)
-//            notificationManager.notify(
-//                ((orderId.toString().reversed().toLong()) / 1000).toInt(),
-//                it.build()
-//            )
-//        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -71,7 +68,13 @@ class NotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createNotification(this, true, "", Color.TRANSPARENT))
+        val backgroundColor = timerManager.eventState.value.runState.backgroundColor
+        val generateNotificationMessage =
+            generateNotificationMessage(timerManager.eventState.value.runState)
+        startForeground(
+            NOTIFICATION_ID,
+            createNotification(this, true, generateNotificationMessage, backgroundColor.toArgb())
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -81,20 +84,17 @@ class NotificationService : Service() {
     private fun createNotificationChannel() {
         val serviceChannel = NotificationChannel(
             CHANNEL_ID,
-            "TimerX Notification Channel",
+            TIMER_X,
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "This is a silent notification channel"
+            description = TIMER_X
             setSound(null, null)
         }
         notificationManager.createNotificationChannel(serviceChannel)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     companion object {
+        private const val TIMER_X = "TimerX"
         const val CHANNEL_ID = "TimerXServiceChannel"
         const val NOTIFICATION_ID = 1
     }

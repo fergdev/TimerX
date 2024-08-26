@@ -25,6 +25,9 @@
             android:enabled="true"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
+
+        <receiver android:name="com.timerx.notification.NotificationBroadcastReceiver"/>
+
         <property
             android:name="android.adservices.AD_SERVICES_CONFIG"
             android:resource="@xml/gma_ad_services_config"

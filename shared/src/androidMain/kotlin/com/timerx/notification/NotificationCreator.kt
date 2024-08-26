@@ -9,7 +9,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
-import android.os.Bundle
 import android.widget.RemoteViews
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -34,25 +33,24 @@ fun createNotification(
     val playPausePendingIntent = playPausePendingIntent(context)
     val stopPendingIntent = destroyPendingIntent(context)
 
-    val playPauseIcon = getTintedBitmap(
-        context,
-        if (isRunning) R.drawable.pause else R.drawable.play_arrow,
-        contrastColor
-    )
-    val cancelIcon = getTintedBitmap(
-        context,
-        R.drawable.close,
-        contrastColor
-    )
     val customLayout = RemoteViews(context.packageName, R.layout.custom_notification).apply {
 
         setTextViewText(R.id.notification_text, info)
         setTextColor(R.id.notification_text, contrastColor)
-        setImageViewIcon(R.id.notification_pause, playPauseIcon)
-        setImageViewIcon(R.id.notification_cancel, cancelIcon)
-//        setImageViewResource(
-//            R.id.notification_pause,
-//        )
+        setImageViewIcon(
+            R.id.notification_pause, getTintedBitmap(
+                context,
+                if (isRunning) R.drawable.pause else R.drawable.play_arrow,
+                contrastColor
+            )
+        )
+        setImageViewIcon(
+            R.id.notification_cancel, getTintedBitmap(
+                context,
+                R.drawable.close,
+                contrastColor
+            )
+        )
         setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
         setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
     }
@@ -87,30 +85,27 @@ fun createNotification(
 }
 
 private fun destroyPendingIntent(context: Context): PendingIntent {
-    val stopIntent = Intent(context, MainActivity::class.java).apply {
+    val stopIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
         putExtra(NOTIFICATION_KEY, NOTIFICATION_STOP)
     }
-    val stopPendingIntent = PendingIntent.getActivity(
+    val stopPendingIntent = PendingIntent.getBroadcast(
         context,
-        2,
+        0,
         stopIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
-        Bundle().apply {
-            putBoolean(NOTIFICATION_STOP, true)
-        }
+        PendingIntent.FLAG_MUTABLE,
     )
     return stopPendingIntent
 }
 
 private fun playPausePendingIntent(context: Context): PendingIntent {
-    val playPauseIntent = Intent(context, MainActivity::class.java).apply {
+    val playPauseIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
         putExtra(NOTIFICATION_KEY, NOTIFICATION_PLAY)
     }
-    val playPausePendingIntent = PendingIntent.getActivity(
+    val playPausePendingIntent = PendingIntent.getBroadcast(
         context,
-        1,
+        0,
         playPauseIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+        PendingIntent.FLAG_IMMUTABLE
     )
     return playPausePendingIntent
 }
@@ -140,3 +135,4 @@ private fun getTintedBitmap(context: Context, drawableId: Int, color: Int): Icon
     icon.setTint(color)
     return icon
 }
+

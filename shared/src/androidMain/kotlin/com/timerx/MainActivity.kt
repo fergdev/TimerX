@@ -29,11 +29,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.extras?.getString(NOTIFICATION_KEY) == NOTIFICATION_PLAY) {
-            KoinPlatform.getKoin().get<TimerManager>().playPause()
-        } else if (intent.extras?.getString(NOTIFICATION_KEY) == NOTIFICATION_STOP) {
-            KoinPlatform.getKoin().get<TimerManager>().destroy()
-        }
     }
 
     override fun onStop() {

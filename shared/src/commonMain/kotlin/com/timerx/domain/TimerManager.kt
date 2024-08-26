@@ -36,11 +36,6 @@ class TimerManager(
                             TICKER,
                             mapOf(Pair(ELAPSED, timerEvent.runState.elapsed))
                         )
-                        notificationManager.updateNotification(
-                            true,
-                            notificationState(timerEvent.runState),
-                            timerEvent.runState.backgroundColor.toArgb()
-                        )
                         timerEvent.beep?.let { beepManager.beep(it) }
                         timerEvent.vibration?.let { vibrationManager.vibrate(it) }
                     }
@@ -67,27 +62,28 @@ class TimerManager(
                     }
 
                     is TimerEvent.Resumed -> {
-                        notificationManager.start()
+                        // This might not be needed
+//                        notificationManager.start()
                     }
 
                     is TimerEvent.Paused -> {
-                        notificationManager.updateNotification(
-                            false,
-                            notificationState(timerEvent.runState),
-                            timerEvent.runState.backgroundColor.toArgb()
-                        )
+                        // noop
                     }
 
                     is TimerEvent.Destroy -> {
                         notificationManager.stop()
                     }
                 }
+
+                if (timerEvent !is TimerEvent.Destroy) {
+                    notificationManager.updateNotification(
+                        timerEvent.runState.timerState == TimerState.Running,
+                        generateNotificationMessage(timerEvent.runState),
+                        timerEvent.runState.backgroundColor.toArgb()
+                    )
+                }
             }
         }
-    }
-
-    private fun notificationState(runState: RunState): String {
-        return "${runState.intervalName} - ${runState.intervalDuration - runState.elapsed}"
     }
 
     fun playPause() {
@@ -116,4 +112,8 @@ class TimerManager(
         private const val TICKER = "Ticker"
         private const val ELAPSED = "elapsed"
     }
+}
+
+fun generateNotificationMessage(runState: RunState): String {
+    return "${runState.intervalName} - ${runState.intervalDuration - runState.elapsed}"
 }
