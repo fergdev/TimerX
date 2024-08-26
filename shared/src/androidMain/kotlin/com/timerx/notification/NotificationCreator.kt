@@ -20,7 +20,7 @@ import com.timerx.ui.common.contrastColor
 
 const val NOTIFICATION_PLAY = "play"
 const val NOTIFICATION_STOP = "stop"
-const val NOTIFICATION_KEY = "key"
+const val NOTIFICATION_KEY = "notification_key"
 
 fun createNotification(
     context: Context,
@@ -54,23 +54,11 @@ fun createNotification(
         setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
         setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
     }
-//    val notificationLayoutExpanded =
-//        RemoteViews(context.packageName, R.layout.custom_notification_large).apply {
-//            setTextViewText(R.id.notification_title, "TimerX running")
-//            setTextViewText(R.id.notification_text, info)
-//        }
-//    val headsUpRemoteView =
-//        RemoteViews(context.packageName, R.layout.custom_notification_large).apply {
-//            setTextViewText(R.id.notification_title, "TimerX running")
-//            setTextViewText(R.id.notification_text, info)
-//        }
-//
+
     return NotificationCompat.Builder(context, NotificationService.CHANNEL_ID).apply {
         setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         setCustomContentView(customLayout)
-//        setCustomHeadsUpContentView(headsUpRemoteView)
-//        setCustomBigContentView(customLayout)
-        setSmallIcon(androidx.core.R.drawable.notification_template_icon_bg)
+        setSmallIcon(R.drawable.av_timer)
         setColor(backgroundColor)
         setColorized(true)
         setStyle(NotificationCompat.DecoratedCustomViewStyle())
@@ -135,4 +123,3 @@ private fun getTintedBitmap(context: Context, drawableId: Int, color: Int): Icon
     icon.setTint(color)
     return icon
 }
-

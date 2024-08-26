@@ -29,7 +29,7 @@ class TimerXNotificationManager : ITimerXNotificationManager {
         center.removeAllDeliveredNotifications()
     }
 
-    override fun updateNotification(info: String) {
+    override fun updateNotification(isRunning: Boolean, info: String, backgroundColor: Int) {
         println("Update notification $info")
         val content = UNMutableNotificationContent().apply {
             setTitle("Title")

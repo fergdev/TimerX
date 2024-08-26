@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -60,6 +61,7 @@ import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.finish_color
+import timerx.shared.generated.resources.save
 import timerx.shared.generated.resources.timer_name
 
 private const val TWO_HUNDRED_SEVENTY_DEG = 270f
@@ -102,7 +104,6 @@ internal fun CreateScreen(
                     IconButton(
                         modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),
                         onClick = {
-                            viewModel.interactions.save()
                             navigateUp()
                         }) {
                         Icon(
@@ -111,6 +112,19 @@ internal fun CreateScreen(
                         )
                     }
                 },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            viewModel.interactions.save()
+                            navigateUp()
+                        }) {
+                        Icon(
+                            modifier = Modifier.size(CustomIcons.defaultIconSize),
+                            imageVector = Icons.Default.Done,
+                            contentDescription = stringResource(Res.string.save)
+                        )
+                    }
+                }
             )
 
             Box(modifier = Modifier.fillMaxSize()) {

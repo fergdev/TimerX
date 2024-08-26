@@ -37,6 +37,7 @@
     <string name="prepare">Prepare</string>
     <string name="rest">Rest</string>
     <string name="restart">Restart</string>
+    <string name="save">Save</string>
     <string name="sets">Sets</string>
     <string name="settings">Settings</string>
     <string name="skip_on_last_set">Skip on last set</string>
