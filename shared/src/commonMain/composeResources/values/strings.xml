@@ -2,6 +2,7 @@
 <resources>
     <string name="add">Add</string>
     <string name="app_name">TimerX</string>
+    <string name="app_os_settings">App OS Settings</string>
     <string name="back">Back</string>
     <string name="beep">Beep</string>
     <string name="close">Close</string>
@@ -18,6 +19,8 @@
     <string name="down">Down</string>
     <string name="edit">Edit</string>
     <string name="edit_timer">Edit timer</string>
+    <string name="enable">Enable</string>
+    <string name="enabled">Enabled</string>
     <string name="finish_beep">Finish beep</string>
     <string name="finish_color">Finish color</string>
     <string name="finished">Finished</string>
@@ -27,6 +30,7 @@
     <string name="manual_next">Manual next</string>
     <string name="minus">Minus</string>
     <string name="next">Next</string>
+    <string name="notifications">Notifications</string>
     <string name="no_timers">No timers</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>

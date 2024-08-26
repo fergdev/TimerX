@@ -24,7 +24,11 @@ import androidx.compose.ui.unit.dp
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.app_os_settings
 import timerx.shared.generated.resources.back
+import timerx.shared.generated.resources.enable
+import timerx.shared.generated.resources.enabled
+import timerx.shared.generated.resources.notifications
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.vibration
 import timerx.shared.generated.resources.volume
@@ -71,19 +75,19 @@ fun SettingsScreen(navigateUp: () -> Unit) {
                 modifier = Modifier.padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Notifications")
+                Text(text = stringResource(Res.string.notifications))
                 Spacer(modifier = Modifier.weight(1f))
                 if (state.notificationsEnabled) {
-                    Text("Enabled")
+                    Text(stringResource(Res.string.enabled))
                 } else {
                     Button(onClick = { viewModel.interactions.enableNotifications() }) {
-                        Text(text = "Enable")
+                        Text(stringResource(Res.string.enable))
                     }
                 }
             }
 
             Button(onClick = { viewModel.interactions.openAppSettings() }) {
-                Text(text = "App OS Settings")
+                Text(text = stringResource(Res.string.app_os_settings))
             }
         }
     }
