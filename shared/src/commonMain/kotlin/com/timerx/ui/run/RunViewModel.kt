@@ -8,6 +8,7 @@ import com.timerx.domain.Timer
 import com.timerx.domain.TimerEvent
 import com.timerx.domain.TimerManager
 import com.timerx.domain.TimerState
+import com.timerx.domain.TimerStats
 import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +40,7 @@ class RunViewModel(
 ) : ViewModel() {
 
     private lateinit var timer: Timer
+    private lateinit var timerStats: TimerStats
     private val _state = MutableStateFlow(RunScreenState())
 
     val state: StateFlow<RunScreenState> = _state
@@ -68,7 +70,7 @@ class RunViewModel(
     init {
         viewModelScope.launch {
             this@RunViewModel.timer = timerRepository.getTimer(timerId)
-            timerManager.startTimer(timer)
+            this@RunViewModel.timerStats = timer.stats
             initTimer()
         }
         timerXAnalytics.logEvent("TimerStart", null)
@@ -89,25 +91,26 @@ class RunViewModel(
     }
 
     private fun initTimer() {
+        timerManager.startTimer(timer)
         viewModelScope.launch {
             timerManager.eventState.collect { timerEvent ->
                 updateRunState(timerEvent.runState)
                 if (timerEvent is TimerEvent.Destroy) {
                     _state.update { it.copy(destroyed = true) }
-                } else if(timerEvent is TimerEvent.Finished){
-                    viewModelScope.launch {
-                        timerDatabase.updateTimerStats(
-                            timer,
-                            timer.stats.copy(completedCount = timer.stats.completedCount + 1)
-                        )
-                    }
+                } else if (timerEvent is TimerEvent.Finished) {
+                   timerStats = timerStats.copy(completedCount = timerStats.completedCount + 1)
+                    timerDatabase.updateTimerStats(
+                        timer,
+                        timerStats
+                    )
                 }
             }
         }
         viewModelScope.launch {
+            timerStats = timerStats.copy(startedCount = timerStats.startedCount + 1)
             timerDatabase.updateTimerStats(
                 timer,
-                timer.stats.copy(startedCount = timer.stats.startedCount + 1)
+                timerStats
             )
         }
     }

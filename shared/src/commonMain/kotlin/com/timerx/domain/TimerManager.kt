@@ -43,6 +43,7 @@ class TimerManager(
                     is TimerEvent.Finished -> {
                         beepManager.beep(timerEvent.beep)
                         vibrationManager.vibrate(timerEvent.vibration)
+                        notificationManager.stop()
                     }
 
                     is TimerEvent.NextInterval -> {
@@ -62,8 +63,7 @@ class TimerManager(
                     }
 
                     is TimerEvent.Resumed -> {
-                        // This might not be needed
-//                        notificationManager.start()
+                        // Noop
                     }
 
                     is TimerEvent.Paused -> {
@@ -75,7 +75,7 @@ class TimerManager(
                     }
                 }
 
-                if (timerEvent !is TimerEvent.Destroy) {
+                if (timerEvent.shouldNotify()) {
                     notificationManager.updateNotification(
                         timerEvent.runState.timerState == TimerState.Running,
                         generateNotificationMessage(timerEvent.runState),
@@ -84,6 +84,10 @@ class TimerManager(
                 }
             }
         }
+    }
+
+    private fun TimerEvent.shouldNotify() : Boolean{
+        return this !is TimerEvent.Destroy && this !is TimerEvent.Finished
     }
 
     fun playPause() {
