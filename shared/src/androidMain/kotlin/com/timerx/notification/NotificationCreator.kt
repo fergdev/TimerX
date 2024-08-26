@@ -18,9 +18,10 @@ import com.timerx.MainActivity
 import com.timerx.R
 import com.timerx.ui.common.contrastColor
 
-const val NOTIFICATION_PLAY = "play"
+const val NOTIFICATION_PLAY_PAUSE = "play_pause"
 const val NOTIFICATION_STOP = "stop"
 const val NOTIFICATION_KEY = "notification_key"
+const val NOTIFICATION_REQUEST_CODE = 0
 
 fun createNotification(
     context: Context,
@@ -34,7 +35,6 @@ fun createNotification(
     val stopPendingIntent = destroyPendingIntent(context)
 
     val customLayout = RemoteViews(context.packageName, R.layout.custom_notification).apply {
-
         setTextViewText(R.id.notification_text, info)
         setTextColor(R.id.notification_text, contrastColor)
         setImageViewIcon(
@@ -62,8 +62,6 @@ fun createNotification(
         setColor(backgroundColor)
         setColorized(true)
         setStyle(NotificationCompat.DecoratedCustomViewStyle())
-
-
         setContentIntent(appPendingIntent)
         setOnlyAlertOnce(true)
         setOngoing(true)
@@ -78,7 +76,7 @@ private fun destroyPendingIntent(context: Context): PendingIntent {
     }
     val stopPendingIntent = PendingIntent.getBroadcast(
         context,
-        0,
+        NOTIFICATION_REQUEST_CODE,
         stopIntent,
         PendingIntent.FLAG_MUTABLE,
     )
@@ -87,11 +85,11 @@ private fun destroyPendingIntent(context: Context): PendingIntent {
 
 private fun playPausePendingIntent(context: Context): PendingIntent {
     val playPauseIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
-        putExtra(NOTIFICATION_KEY, NOTIFICATION_PLAY)
+        putExtra(NOTIFICATION_KEY, NOTIFICATION_PLAY_PAUSE)
     }
     val playPausePendingIntent = PendingIntent.getBroadcast(
         context,
-        0,
+        NOTIFICATION_REQUEST_CODE,
         playPauseIntent,
         PendingIntent.FLAG_IMMUTABLE
     )
@@ -102,7 +100,7 @@ private fun appPendingIntent(context: Context): PendingIntent {
     val appIntent = Intent(context, MainActivity::class.java)
     val appPendingIntent = PendingIntent.getActivity(
         context,
-        0,
+        NOTIFICATION_REQUEST_CODE,
         appIntent,
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
     )

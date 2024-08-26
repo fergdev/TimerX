@@ -10,7 +10,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     private val timerManager = KoinPlatform.getKoin().get<TimerManager>()
 
     override fun onReceive(context: Context, intent: Intent?) {
-        if (intent?.extras?.getString(NOTIFICATION_KEY) == NOTIFICATION_PLAY) {
+        if (intent?.extras?.getString(NOTIFICATION_KEY) == NOTIFICATION_PLAY_PAUSE) {
             timerManager.playPause()
         } else if (intent?.extras?.getString(NOTIFICATION_KEY) == NOTIFICATION_STOP) {
             timerManager.destroy()
