@@ -149,7 +149,7 @@ private fun CreateContent(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) { _, set, _ ->
             key(set.id) {
-                Set(
+                CreateSet(
                     timerSet = set,
                     interactions = interactions,
                     this

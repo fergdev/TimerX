@@ -71,7 +71,7 @@ private const val colorAnimationDuration = 400
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun Interval(
+internal fun CreateInterval(
     interval: TimerInterval,
     canSkipOnLastSet: Boolean,
     interactions: CreateViewModel.Interactions,

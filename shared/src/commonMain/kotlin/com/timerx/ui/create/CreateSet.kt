@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
-import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.AnimatedNumber
+import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
@@ -54,7 +54,7 @@ import timerx.shared.generated.resources.down
 import timerx.shared.generated.resources.sets
 
 @Composable
-internal fun Set(
+internal fun CreateSet(
     timerSet: TimerSet,
     interactions: CreateViewModel.Interactions,
     reorderableScope: ReorderableScope
@@ -122,7 +122,7 @@ internal fun Set(
                             enter = expandIn(animationSpec = tween(400)),
                             exit = shrinkOut(animationSpec = tween((400)))
                         ) {
-                            Interval(
+                            CreateInterval(
                                 interval = timerInterval,
                                 canSkipOnLastSet = timerSet.repetitions > 1,
                                 interactions = interactions,

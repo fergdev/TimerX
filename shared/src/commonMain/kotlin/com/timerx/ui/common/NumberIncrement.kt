@@ -93,8 +93,8 @@ fun NumberIncrement(
                         interactionSource = remember { MutableInteractionSource() },
                         enabled = true,
                         maxDelayMillis = 500,
-                        minDelayMillis = 100,
-                        delayDecayFactor = .4f
+                        minDelayMillis = 50,
+                        delayDecayFactor = .5f
                     ) {
                         if (positiveButtonEnabled) {
                             onChange(value + 1)
