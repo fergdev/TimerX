@@ -38,7 +38,7 @@ val sharedModule = module {
         RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase())
     }
     single { getTimerXNotificationManager() }
-    factory { MainViewModel(get(), get()) }
+    factory { MainViewModel(get(), get(), get()) }
     factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->
         RunViewModel(
