@@ -128,11 +128,11 @@ fun createNotification(
         setOnlyAlertOnce(true)
         setSilent(true)
         setSmallIcon(R.drawable.av_timer)
-        setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
         setPriority(NotificationCompat.PRIORITY_MAX)
 
+        setShowWhen(false)
+
         setSound(Uri.EMPTY)
-        setStyle(NotificationCompat.DecoratedCustomViewStyle())
         setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
     }.build()
 }
