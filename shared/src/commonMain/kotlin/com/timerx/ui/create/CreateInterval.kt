@@ -119,7 +119,7 @@ internal fun CreateInterval(
                 }) {
                     Icon(
                         modifier = Modifier.size(CustomIcons.defaultIconSize),
-                        imageVector = CustomIcons.colorFill(),
+                        imageVector = CustomIcons.colorFill,
                         contentDescription = null,
                         tint = contrastColor
                     )
@@ -139,7 +139,7 @@ internal fun CreateInterval(
                 IconButton(onClick = { interactions.interval.duplicate(interval) }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = CustomIcons.contentCopy(),
+                        imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy),
                         tint = contrastColor
                     )
@@ -214,7 +214,7 @@ internal fun CreateInterval(
                                 .align(Alignment.TopEnd)
                                 .draggableHandle()
                         },
-                        imageVector = CustomIcons.dragHandle(),
+                        imageVector = CustomIcons.dragHandle,
                         contentDescription = stringResource(Res.string.settings),
                         tint = contrastColor
                     )

@@ -1,7 +1,7 @@
+@file:Suppress("ObjectPropertyName")
+
 package com.timerx.ui.common
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.SolidColor
@@ -16,10 +16,14 @@ object CustomIcons {
 
     val defaultIconSize: Dp = 24.dp
 
-    @Composable
-    fun checkIndeterminateSmall(): ImageVector {
-        return remember {
-            ImageVector.Builder(
+    private var _checkIntermediateSmall: ImageVector? = null
+    val checkIntermediateSmall: ImageVector
+        get() {
+            if (_checkIntermediateSmall != null) {
+                return _checkIntermediateSmall!!
+            }
+
+            _checkIntermediateSmall = ImageVector.Builder(
                 name = "check_indeterminate_small",
                 defaultWidth = 40.0.dp,
                 defaultHeight = 40.0.dp,
@@ -50,13 +54,16 @@ object CustomIcons {
                     close()
                 }
             }.build()
+            return _checkIntermediateSmall!!
         }
-    }
 
-    @Composable
-    fun contentCopy(): ImageVector {
-        return remember {
-            ImageVector.Builder(
+    private var _contentCopy: ImageVector? = null
+    val contentCopy: ImageVector
+        get() {
+            if (_contentCopy != null) {
+                return _contentCopy!!
+            }
+            _contentCopy = ImageVector.Builder(
                 name = "content_copy",
                 defaultWidth = 40.0.dp,
                 defaultHeight = 40.0.dp,
@@ -114,13 +121,16 @@ object CustomIcons {
                     close()
                 }
             }.build()
+            return _contentCopy!!
         }
-    }
 
-    @Composable
-    fun pause(): ImageVector {
-        return remember {
-            ImageVector.Builder(
+    private var _pause: ImageVector? = null
+    val pause: ImageVector
+        get() {
+            if (_pause != null) {
+                return _pause!!
+            }
+            _pause = ImageVector.Builder(
                 name = "pause",
                 defaultWidth = 40.0.dp,
                 defaultHeight = 40.0.dp,
@@ -166,13 +176,16 @@ object CustomIcons {
                     close()
                 }
             }.build()
+            return _pause!!
         }
-    }
 
-    @Composable
-    fun vibration(): ImageVector {
-        return remember {
-            ImageVector.Builder(
+    private var _vibration: ImageVector? = null
+    val vibration: ImageVector
+        get() {
+            if (_vibration != null) {
+                return _vibration!!
+            }
+            _vibration = ImageVector.Builder(
                 name = "vibration",
                 defaultWidth = 40.0.dp,
                 defaultHeight = 40.0.dp,
@@ -261,13 +274,16 @@ object CustomIcons {
                     close()
                 }
             }.build()
+            return _vibration!!
         }
-    }
 
-    @Composable
-    fun colorFill(): ImageVector {
-        return remember {
-            ImageVector.Builder(
+    private var _colorFill: ImageVector? = null
+    val colorFill: ImageVector
+        get() {
+            if (_colorFill != null) {
+                return _colorFill!!
+            }
+            _colorFill = ImageVector.Builder(
                 name = "format_color_fill",
                 defaultWidth = 40.0.dp,
                 defaultHeight = 40.0.dp,
@@ -341,13 +357,17 @@ object CustomIcons {
                     close()
                 }
             }.build()
-        }
-    }
 
-    @Composable
-    fun dragHandle(): ImageVector {
-        return remember {
-            ImageVector.Builder(
+            return _colorFill!!
+        }
+
+    private var _dragHandle: ImageVector? = null
+    val dragHandle: ImageVector
+        get() {
+            if (_dragHandle != null) {
+                return _dragHandle!!
+            }
+            _dragHandle = ImageVector.Builder(
                 name = "drag_handle",
                 defaultWidth = 40.0.dp,
                 defaultHeight = 40.0.dp,
@@ -389,6 +409,90 @@ object CustomIcons {
                     close()
                 }
             }.build()
+            return _dragHandle!!
         }
-    }
+
+    private var _skipNext: ImageVector? = null
+    val skipNext: ImageVector
+        get() {
+            if (_skipNext != null) {
+                return _skipNext!!
+            }
+            _skipNext = ImageVector.Builder(
+                name = "skip_next",
+                defaultWidth = 24.dp,
+                defaultHeight = 24.dp,
+                viewportWidth = 960f,
+                viewportHeight = 960f
+            ).apply {
+                path(
+                    fill = SolidColor(Color.Black),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(660f, 720f)
+                    verticalLineToRelative(-480f)
+                    horizontalLineToRelative(80f)
+                    verticalLineToRelative(480f)
+                    close()
+                    moveToRelative(-440f, 0f)
+                    verticalLineToRelative(-480f)
+                    lineToRelative(360f, 240f)
+                    close()
+                    moveToRelative(80f, -150f)
+                    lineToRelative(136f, -90f)
+                    lineToRelative(-136f, -90f)
+                    close()
+                }
+            }.build()
+            return _skipNext!!
+        }
+
+    private var _skipPrevious: ImageVector? = null
+    val skipPrevious: ImageVector
+        get() {
+            if (_skipPrevious != null) {
+                return _skipPrevious!!
+            }
+            _skipPrevious = ImageVector.Builder(
+                name = "skip_previous",
+                defaultWidth = 24.dp,
+                defaultHeight = 24.dp,
+                viewportWidth = 960f,
+                viewportHeight = 960f
+            ).apply {
+                path(
+                    fill = SolidColor(Color.Black),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(220f, 720f)
+                    verticalLineToRelative(-480f)
+                    horizontalLineToRelative(80f)
+                    verticalLineToRelative(480f)
+                    close()
+                    moveToRelative(520f, 0f)
+                    lineTo(380f, 480f)
+                    lineToRelative(360f, -240f)
+                    close()
+                    moveToRelative(-80f, -150f)
+                    verticalLineToRelative(-180f)
+                    lineToRelative(-136f, 90f)
+                    close()
+                }
+            }.build()
+            return _skipPrevious!!
+        }
 }

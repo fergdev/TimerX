@@ -212,7 +212,7 @@ private fun FinishColorPicker(
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 modifier = Modifier.size(CustomIcons.defaultIconSize),
-                imageVector = CustomIcons.colorFill(),
+                imageVector = CustomIcons.colorFill,
                 contentDescription = null,
             )
 

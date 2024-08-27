@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -58,13 +55,14 @@ import moe.tlaster.precompose.navigation.BackHandler
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
 import timerx.shared.generated.resources.Res
-import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.close
 import timerx.shared.generated.resources.finished
 import timerx.shared.generated.resources.next
 import timerx.shared.generated.resources.pause
 import timerx.shared.generated.resources.play
 import timerx.shared.generated.resources.restart
+import timerx.shared.generated.resources.skip_next
+import timerx.shared.generated.resources.skip_previous
 
 private const val CONTROLS_HIDE_DELAY = 3000L
 private val CORNER_ICON_SIZE = 48.dp
@@ -251,8 +249,8 @@ private fun TopControls(
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(Res.string.back),
+                imageVector = CustomIcons.skipPrevious,
+                contentDescription = stringResource(Res.string.skip_previous),
                 tint = displayColor
             )
         }
@@ -275,7 +273,7 @@ private fun TopControls(
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
-                imageVector = CustomIcons.vibration(),
+                imageVector = CustomIcons.vibration,
                 contentDescription = stringResource(Res.string.next),
                 tint = if (vibrationEnabled) displayColor else displayColor.copy(alpha = 0.5f)
             )
@@ -286,8 +284,8 @@ private fun TopControls(
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = stringResource(Res.string.next),
+                imageVector = CustomIcons.skipNext,
+                contentDescription = stringResource(Res.string.skip_next),
                 tint = displayColor
             )
         }
@@ -307,7 +305,7 @@ private fun BottomControls(
             IconButton(onClick = { navigateUp() }) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),
-                    imageVector = Icons.Default.Close,
+                    imageVector = CustomIcons.skipPrevious,
                     contentDescription = stringResource(Res.string.close),
                     tint = displayColor
                 )
@@ -339,7 +337,7 @@ private fun TogglePlayButton(
             IconButton(onClick = interactions.pause) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),
-                    imageVector = CustomIcons.pause(),
+                    imageVector = CustomIcons.pause,
                     contentDescription = stringResource(Res.string.pause),
                     tint = displayColor
                 )

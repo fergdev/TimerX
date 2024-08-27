@@ -84,7 +84,7 @@ internal fun CreateSet(
                 FilledTonalIconButton(onClick = { interactions.set.duplicate(timerSet) }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = CustomIcons.contentCopy(),
+                        imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
@@ -186,7 +186,7 @@ private fun SetTopControls(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
-                imageVector = CustomIcons.dragHandle(),
+                imageVector = CustomIcons.dragHandle,
                 contentDescription = stringResource(Res.string.down),
                 modifier = with(reorderableScope) {
                     Modifier.size(CustomIcons.defaultIconSize)

@@ -72,7 +72,7 @@ fun NumberIncrement(
                             onChange(value - 1)
                         }
                     },
-                imageVector = CustomIcons.checkIndeterminateSmall(),
+                imageVector = CustomIcons.checkIntermediateSmall,
                 contentDescription = stringResource(Res.string.minus),
                 tint = color
             )

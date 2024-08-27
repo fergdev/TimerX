@@ -240,7 +240,7 @@ private fun Timer(
                     }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = CustomIcons.contentCopy(),
+                        imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
@@ -286,7 +286,7 @@ private fun Timer(
             trailingContent = {
                 Icon(
                     modifier = with(reorderableScope) { Modifier.size(24.dp).draggableHandle() },
-                    imageVector = CustomIcons.dragHandle(),
+                    imageVector = CustomIcons.dragHandle,
                     contentDescription = stringResource(Res.string.copy)
                 )
             }
