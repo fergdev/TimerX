@@ -1,14 +1,13 @@
 package com.timerx.notification
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.IBinder
-import androidx.compose.ui.graphics.toArgb
 import com.timerx.domain.TimerManager
-import com.timerx.domain.generateNotificationMessage
 import org.koin.mp.KoinPlatform
 
 class NotificationService : Service() {
@@ -22,12 +21,9 @@ class NotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        val backgroundColor = timerManager.eventState.value.runState.backgroundColor
-        val generateNotificationMessage =
-            generateNotificationMessage(timerManager.eventState.value.runState)
         startForeground(
             NOTIFICATION_ID,
-            createNotification(this, true, generateNotificationMessage, backgroundColor.toArgb()),
+            createNotification(this, timerManager.eventState.value),
             ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
         )
     }
@@ -44,6 +40,10 @@ class NotificationService : Service() {
         ).apply {
             description = TIMER_X
             setSound(null, null)
+            setShowBadge(false)
+            enableVibration(false)
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            importance = NotificationManager.IMPORTANCE_HIGH
         }
         notificationManager.createNotificationChannel(serviceChannel)
     }

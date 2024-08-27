@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="play">Play</string>
+    <string name="stop">Stop</string>
+    <string name="skip_next">Skip next</string>
+    <string name="skip_previous">Skip previous</string>
 </resources>

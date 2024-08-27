@@ -3,6 +3,7 @@ package com.timerx.notification
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import com.timerx.domain.TimerEvent
 import org.koin.mp.KoinPlatform
 
 actual fun getTimerXNotificationManager(): ITimerXNotificationManager = TimerXNotificationManager()
@@ -15,10 +16,12 @@ class TimerXNotificationManager : ITimerXNotificationManager {
         context.startForegroundService(Intent(context, NotificationService::class.java))
     }
 
-    override fun updateNotification(isRunning: Boolean, info: String, backgroundColor: Int) {
+    override fun updateNotification(
+        timerEvent: TimerEvent
+    ) {
         notificationManager.notify(
             NotificationService.NOTIFICATION_ID,
-            createNotification(context, isRunning, info, backgroundColor)
+            createNotification(context, timerEvent)
         )
     }
 

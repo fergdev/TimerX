@@ -16,36 +16,54 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.timerx.MainActivity
 import com.timerx.R
+import com.timerx.domain.TimerEvent
+import com.timerx.domain.TimerState
+import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.contrastColor
 
+const val NOTIFICATION_APP_REQUEST_CODE = 0
 const val NOTIFICATION_PLAY_PAUSE = "play_pause"
+const val NOTIFICATION_PLAY_PAUSE_ID = 1
+const val NOTIFICATION_SKIP_PREVIOUS = "skip_previous"
+const val NOTIFICATION_SKIP_PREVIOUS_ID = 2
+const val NOTIFICATION_SKIP_NEXT = "skip_next"
+const val NOTIFICATION_SKIP_NEXT_ID = 3
 const val NOTIFICATION_STOP = "stop"
+const val NOTIFICATION_STOP_ID = 4
 const val NOTIFICATION_KEY = "notification_key"
-const val NOTIFICATION_REQUEST_CODE = 0
 
 fun createNotification(
     context: Context,
-    isRunning: Boolean,
-    info: String,
-    backgroundColor: Int
+    timerEvent: TimerEvent,
 ): Notification {
+    val backgroundColor = timerEvent.runState.backgroundColor.toArgb()
+    val isRunning = timerEvent.runState.timerState == TimerState.Running
     val contrastColor = Color(backgroundColor).contrastColor().toArgb()
+    val time = (timerEvent.runState.intervalDuration - timerEvent.runState.elapsed).timeFormatted()
+
     val appPendingIntent = appPendingIntent(context)
     val playPausePendingIntent = playPausePendingIntent(context)
     val stopPendingIntent = destroyPendingIntent(context)
 
+    val skipPreviousPendingIntent = skipPreviousPendingIntent(context)
+    val skipNextPendingIntent = skipNextPendingIntent(context)
+
     val customLayout = RemoteViews(context.packageName, R.layout.custom_notification).apply {
-        setTextViewText(R.id.notification_text, info)
-        setTextColor(R.id.notification_text, contrastColor)
+        setTextViewText(R.id.notification_interval, timerEvent.runState.intervalName)
+        setTextColor(R.id.notification_interval, contrastColor)
+
+        setTextViewText(R.id.notification_time, time)
+        setTextColor(R.id.notification_time, contrastColor)
+
         setImageViewIcon(
-            R.id.notification_pause, getTintedBitmap(
+            R.id.notification_pause, getTintedIcon(
                 context,
                 if (isRunning) R.drawable.pause else R.drawable.play_arrow,
                 contrastColor
             )
         )
         setImageViewIcon(
-            R.id.notification_cancel, getTintedBitmap(
+            R.id.notification_cancel, getTintedIcon(
                 context,
                 R.drawable.close,
                 contrastColor
@@ -55,20 +73,67 @@ fun createNotification(
         setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
     }
 
+    val large = RemoteViews(context.packageName, R.layout.custom_notification_large).apply {
+        setTextViewText(R.id.notification_interval, timerEvent.runState.intervalName)
+        setTextColor(R.id.notification_interval, contrastColor)
+
+        setTextViewText(R.id.notification_time, time)
+        setTextColor(R.id.notification_time, contrastColor)
+
+        setImageViewIcon(
+            R.id.notification_pause, getTintedIcon(
+                context,
+                if (isRunning) R.drawable.pause else R.drawable.play_arrow,
+                contrastColor
+            )
+        )
+        setImageViewIcon(
+            R.id.notification_cancel, getTintedIcon(
+                context,
+                R.drawable.close,
+                contrastColor
+            )
+        )
+        setImageViewIcon(
+            R.id.notification_skip_next, getTintedIcon(
+                context,
+                R.drawable.skip_next,
+                contrastColor
+            )
+        )
+        setImageViewIcon(
+            R.id.notification_skip_previous, getTintedIcon(
+                context,
+                R.drawable.skip_previous,
+                contrastColor
+            )
+        )
+        setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
+        setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
+        setOnClickPendingIntent(R.id.notification_skip_next, skipNextPendingIntent)
+        setOnClickPendingIntent(R.id.notification_skip_previous, skipPreviousPendingIntent)
+    }
+
     return NotificationCompat.Builder(context, NotificationService.CHANNEL_ID).apply {
-        setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        setCustomContentView(customLayout)
-        setSmallIcon(R.drawable.av_timer)
+        setAutoCancel(false)
+        setCategory(NotificationCompat.CATEGORY_TRANSPORT)
         setColor(backgroundColor)
         setColorized(true)
-        setStyle(NotificationCompat.DecoratedCustomViewStyle())
         setContentIntent(appPendingIntent)
-        setOnlyAlertOnce(true)
-        setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
-        setSilent(true)
+
+        setCustomContentView(customLayout)
+        setCustomBigContentView(large)
+
         setOngoing(true)
+        setOnlyAlertOnce(true)
+        setSilent(true)
+        setSmallIcon(R.drawable.av_timer)
+        setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
+        setPriority(NotificationCompat.PRIORITY_MAX)
+
         setSound(Uri.EMPTY)
-        setAutoCancel(false)
+        setStyle(NotificationCompat.DecoratedCustomViewStyle())
+        setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
     }.build()
 }
 
@@ -78,7 +143,7 @@ private fun destroyPendingIntent(context: Context): PendingIntent {
     }
     val stopPendingIntent = PendingIntent.getBroadcast(
         context,
-        NOTIFICATION_REQUEST_CODE,
+        NOTIFICATION_STOP_ID,
         stopIntent,
         PendingIntent.FLAG_MUTABLE,
     )
@@ -91,25 +156,51 @@ private fun playPausePendingIntent(context: Context): PendingIntent {
     }
     val playPausePendingIntent = PendingIntent.getBroadcast(
         context,
-        NOTIFICATION_REQUEST_CODE,
+        NOTIFICATION_PLAY_PAUSE_ID,
         playPauseIntent,
         PendingIntent.FLAG_IMMUTABLE
     )
     return playPausePendingIntent
 }
 
+private fun skipPreviousPendingIntent(context: Context): PendingIntent {
+    val skipPreviousIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
+        putExtra(NOTIFICATION_KEY, NOTIFICATION_SKIP_PREVIOUS)
+    }
+    val skipPreviousPendingIntent = PendingIntent.getBroadcast(
+        context,
+        NOTIFICATION_SKIP_PREVIOUS_ID,
+        skipPreviousIntent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
+    return skipPreviousPendingIntent
+}
+
+private fun skipNextPendingIntent(context: Context): PendingIntent {
+    val skipNextIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
+        putExtra(NOTIFICATION_KEY, NOTIFICATION_SKIP_NEXT)
+    }
+    val skipNextPausePendingIntent = PendingIntent.getBroadcast(
+        context,
+        NOTIFICATION_SKIP_NEXT_ID,
+        skipNextIntent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
+    return skipNextPausePendingIntent
+}
+
 private fun appPendingIntent(context: Context): PendingIntent {
     val appIntent = Intent(context, MainActivity::class.java)
     val appPendingIntent = PendingIntent.getActivity(
         context,
-        NOTIFICATION_REQUEST_CODE,
+        NOTIFICATION_APP_REQUEST_CODE,
         appIntent,
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
     )
     return appPendingIntent
 }
 
-private fun getTintedBitmap(context: Context, drawableId: Int, color: Int): Icon {
+private fun getTintedIcon(context: Context, drawableId: Int, color: Int): Icon {
     val drawable: Drawable = ContextCompat.getDrawable(context, drawableId)!!
     val bitmap = Bitmap.createBitmap(
         drawable.intrinsicWidth,

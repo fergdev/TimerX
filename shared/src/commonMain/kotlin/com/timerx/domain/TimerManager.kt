@@ -1,6 +1,5 @@
 package com.timerx.domain
 
-import androidx.compose.ui.graphics.toArgb
 import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.beep.IBeepManager
 import com.timerx.notification.ITimerXNotificationManager
@@ -76,11 +75,7 @@ class TimerManager(
                 }
 
                 if (timerEvent.shouldNotify()) {
-                    notificationManager.updateNotification(
-                        timerEvent.runState.timerState == TimerState.Running,
-                        generateNotificationMessage(timerEvent.runState),
-                        timerEvent.runState.backgroundColor.toArgb()
-                    )
+                    notificationManager.updateNotification(timerEvent)
                 }
             }
         }
@@ -116,8 +111,4 @@ class TimerManager(
         private const val TICKER = "Ticker"
         private const val ELAPSED = "elapsed"
     }
-}
-
-fun generateNotificationMessage(runState: RunState): String {
-    return "${runState.intervalName} - ${runState.intervalDuration - runState.elapsed}"
 }

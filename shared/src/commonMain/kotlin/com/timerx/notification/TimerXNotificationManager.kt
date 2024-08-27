@@ -1,5 +1,7 @@
 package com.timerx.notification
 
+import com.timerx.domain.TimerEvent
+
 expect fun getTimerXNotificationManager(): ITimerXNotificationManager
 
 interface ITimerXNotificationManager {
@@ -8,5 +10,5 @@ interface ITimerXNotificationManager {
 
     fun stop()
 
-    fun updateNotification(isRunning: Boolean, info: String, backgroundColor: Int)
+    fun updateNotification(timerEvent: TimerEvent)
 }
