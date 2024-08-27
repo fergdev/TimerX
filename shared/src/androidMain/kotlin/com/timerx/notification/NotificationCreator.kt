@@ -64,6 +64,8 @@ fun createNotification(
         setStyle(NotificationCompat.DecoratedCustomViewStyle())
         setContentIntent(appPendingIntent)
         setOnlyAlertOnce(true)
+        setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
+        setSilent(true)
         setOngoing(true)
         setSound(Uri.EMPTY)
         setAutoCancel(false)
