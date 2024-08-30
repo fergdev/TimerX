@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -305,7 +306,7 @@ private fun BottomControls(
             IconButton(onClick = { navigateUp() }) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),
-                    imageVector = CustomIcons.skipPrevious,
+                    imageVector = Icons.Default.Close,
                     contentDescription = stringResource(Res.string.close),
                     tint = displayColor
                 )

@@ -10,6 +10,7 @@ import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.permissions.permissionsHandler
 import com.timerx.settings.TimerXSettings
 import com.timerx.settings.dataStorePreferences
+import com.timerx.ui.NavigationProvider
 import com.timerx.ui.create.CreateViewModel
 import com.timerx.ui.main.MainViewModel
 import com.timerx.ui.run.RunViewModel
@@ -38,6 +39,7 @@ val sharedModule = module {
         RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase())
     }
     single { getTimerXNotificationManager() }
+    single { NavigationProvider() }
     factory { MainViewModel(get(), get(), get()) }
     factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->

@@ -66,13 +66,12 @@ kotlin {
                 implementation(libs.androidx.room.runtime)
                 implementation(libs.sqlite.bundled)
                 implementation(libs.kotlinx.serialization)
-
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0-RC")
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
         val androidMain by getting {
@@ -85,6 +84,9 @@ kotlin {
                 api(libs.firebase.analytics)
                 implementation(libs.firebase.crashlytics)
                 api(libs.play.services.ads)
+                implementation(libs.androidx.glance.appwidget)
+                implementation(libs.androidx.glance.material3)
+                implementation(libs.kotlinx.serialization.json)
 
             }
         }

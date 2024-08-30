@@ -52,6 +52,7 @@ import com.timerx.ads.getAd
 import com.timerx.domain.Timer
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.Screen
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
@@ -81,12 +82,7 @@ import timerx.shared.generated.resources.started_value
     ExperimentalFoundationApi::class
 )
 @Composable
-internal fun MainScreen(
-    navigateSettingsScreen: () -> Unit,
-    navigateAddScreen: () -> Unit,
-    navigateEditScreen: (Long) -> Unit,
-    navigateRunScreen: (Long) -> Unit
-) {
+internal fun MainScreen(navigate: (Screen) -> Unit) {
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
 
     LaunchedEffect(Unit) {
@@ -104,7 +100,7 @@ internal fun MainScreen(
                 TopAppBar(
                     title = { Text(text = stringResource(Res.string.app_name)) },
                     actions = {
-                        IconButton(onClick = navigateSettingsScreen) {
+                        IconButton(onClick = { navigate(Screen.SettingsScreen) }) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
                                 contentDescription = stringResource(Res.string.settings)
@@ -114,7 +110,7 @@ internal fun MainScreen(
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = navigateAddScreen) {
+                FloatingActionButton(onClick = { navigate(Screen.CreateScreen()) }) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(Res.string.add)
@@ -146,8 +142,8 @@ internal fun MainScreen(
                                 Timer(
                                     timer = timer,
                                     interactions = viewModel.interactions,
-                                    navigateRunScreen = navigateRunScreen,
-                                    navigateEditScreen = navigateEditScreen,
+                                    navigateRunScreen = { navigate(Screen.RunScreen(timer.id)) },
+                                    navigateEditScreen = { navigate(Screen.CreateScreen(timer.id)) },
                                     reorderableScope = this
                                 )
                             }

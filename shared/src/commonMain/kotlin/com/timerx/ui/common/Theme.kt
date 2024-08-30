@@ -22,23 +22,27 @@ private const val COLOR_PRIMARY_LIGHT = 0xFF6200EEL
 private const val COLOR_SECONDARY_LIGHT = 0xFF6200EEL
 private const val COLOR_TERTIARY_LIGHT = 0xFF6200EEL
 
+val darkColorScheme = darkColorScheme(
+    primary = Color(COLOR_PRIMARY_DARK),
+    secondary = Color(COLOR_SECONDARY_DARK),
+    tertiary = Color(COLOR_TERTIARY_DARK)
+)
+
+val lightColorScheme = lightColorScheme(
+    primary = Color(COLOR_PRIMARY_LIGHT),
+    secondary = Color(COLOR_SECONDARY_LIGHT),
+    tertiary = Color(COLOR_TERTIARY_LIGHT)
+)
+
 @Composable
 fun TimerXTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
-        darkColorScheme(
-            primary = Color(COLOR_PRIMARY_DARK),
-            secondary = Color(COLOR_SECONDARY_DARK),
-            tertiary = Color(COLOR_TERTIARY_DARK)
-        )
+        darkColorScheme
     } else {
-        lightColorScheme(
-            primary = Color(COLOR_PRIMARY_LIGHT),
-            secondary = Color(COLOR_SECONDARY_LIGHT),
-            tertiary = Color(COLOR_TERTIARY_LIGHT)
-        )
+        lightColorScheme
     }
     val typography = Typography(
         bodyMedium = TextStyle(

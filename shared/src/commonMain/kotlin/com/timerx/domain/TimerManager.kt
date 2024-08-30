@@ -24,9 +24,10 @@ class TimerManager(
         get() = timerStateMachine!!.eventState
 
     fun startTimer(timer: Timer) {
-        val timerStateMachine = TimerStateMachineImpl(timer, coroutineScope)
+        val timerStateMachine = TimerStateMachineImpl(timer, coroutineScope).apply {
+            start()
+        }
         this.timerStateMachine = timerStateMachine
-        timerStateMachine.start()
         coroutineScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
                 when (timerEvent) {
