@@ -45,7 +45,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.ads.getAd
@@ -214,16 +213,16 @@ private fun Timer(
     RevealSwipe(
         state = revealState,
         shape = RoundedCornerShape(8.dp),
-        backgroundCardStartColor = Color.Red,
-        backgroundCardEndColor = Color.Green,
+        backgroundCardStartColor = MaterialTheme.colorScheme.surface,
+        backgroundCardEndColor = MaterialTheme.colorScheme.surfaceVariant,
         card = { shape, content ->
             Card(
                 modifier = Modifier.matchParentSize(),
-                colors = CardDefaults.cardColors(
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    containerColor = Color.Transparent
-                ),
                 shape = shape,
+                colors = CardDefaults.cardColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
                 content = content
             )
         },
