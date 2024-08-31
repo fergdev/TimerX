@@ -12,6 +12,7 @@ import com.timerx.domain.TimerStats
 import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
@@ -69,7 +70,7 @@ class RunViewModel(
 
     init {
         viewModelScope.launch {
-            this@RunViewModel.timer = timerRepository.getTimer(timerId)
+            this@RunViewModel.timer = timerRepository.getTimer(timerId).first()
             this@RunViewModel.timerStats = timer.stats
             initTimer()
         }

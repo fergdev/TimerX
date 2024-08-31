@@ -27,6 +27,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 interface ITimerRepository {
     fun getShallowTimers(): Flow<List<RoomTimer>>
@@ -35,7 +36,7 @@ interface ITimerRepository {
     suspend fun updateTimer(timer: Timer)
     suspend fun deleteTimer(timerId: Long)
     suspend fun duplicate(timerId: Long)
-    suspend fun getTimer(timerId: Long): Timer
+    suspend fun getTimer(timerId: Long): Flow<Timer>
     suspend fun swapTimers(
         fromId: Long,
         fromSortOrder: Long,
@@ -367,7 +368,7 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
     }
 
     override suspend fun duplicate(timerId: Long) {
-        val timer = getTimer(timerId)
+        val timer = getTimer(timerId).first()
         val toInsert = timer.copy(
             id = 0,
             name = timer.name + " (copy)",
@@ -383,8 +384,8 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
         insertTimer(toInsert)
     }
 
-    override suspend fun getTimer(timerId: Long): Timer {
-        return getRestOfTimer(timerDao.getTimer(timerId).first())
+    override suspend fun getTimer(timerId: Long): Flow<Timer> {
+        return timerDao.getTimer(timerId).map { getRestOfTimer(it) }
     }
 
     override suspend fun swapTimers(

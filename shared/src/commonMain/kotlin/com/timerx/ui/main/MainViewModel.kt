@@ -1,6 +1,7 @@
 package com.timerx.ui.main
 
 import com.timerx.database.ITimerRepository
+import com.timerx.domain.timeFormatted
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
@@ -71,14 +72,14 @@ class MainViewModel(
                     _stateFlow.update {
                         it.copy(
                             loadingTimers = false,
-                            timers = roomTimers.map {
+                            timers = roomTimers.map { roomTimer ->
                                 TimerInfo(
-                                    id = it.id,
-                                    name = it.name,
-                                    time = "wowo",
+                                    id = roomTimer.id,
+                                    name = roomTimer.name,
+                                    time = roomTimer.duration.toInt().timeFormatted(),
                                     startedCount = 1,
                                     completedCount = 1,
-                                    sortOrder = it.sortOrder
+                                    sortOrder = roomTimer.sortOrder
                                 )
                             }.toPersistentList()
                         )

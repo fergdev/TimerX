@@ -17,6 +17,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -199,7 +200,7 @@ class CreateViewModel(
     init {
         if (timerId != -1L) {
             viewModelScope.launch {
-                val timer = timerDatabase.getTimer(timerId)
+                val timer = timerDatabase.getTimer(timerId).first()
                 timerEditing = timer
                 sets = timer.sets.toMutableList()
 
