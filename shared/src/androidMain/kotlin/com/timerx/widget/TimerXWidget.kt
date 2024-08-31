@@ -2,6 +2,8 @@ package com.timerx.widget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.glance.Button
 import androidx.glance.GlanceId
@@ -12,14 +14,17 @@ import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.width
 import androidx.glance.text.Text
@@ -42,7 +47,7 @@ class TimerXWidget : GlanceAppWidget() {
 
 @Composable
 private fun MyContent() {
-    val prefs = currentState<TimerInfo>()
+    val timerData = currentState<TimerInfo>()
 
     Column(
         modifier = GlanceModifier.fillMaxSize()
@@ -50,24 +55,27 @@ private fun MyContent() {
         verticalAlignment = Alignment.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        when (prefs) {
-            is TimerInfo.Available -> {
-                if (prefs.timers.isEmpty()) {
-                    Text(text = "No timers, add one below!")
-                } else {
-                    prefs.timers.forEach {
-                        GlanceTimer(it)
+        Box(modifier = GlanceModifier.defaultWeight()) {
+            when (timerData) {
+                is TimerInfo.Available -> {
+                    if (timerData.timers.isEmpty()) {
+                        Text(text = "No timers, add one below!")
+                    } else {
+                        LazyColumn {
+                            items(timerData.timers.size) { index ->
+                                GlanceTimer(timerData.timers[index])
+                            }
+                        }
                     }
                 }
-            }
 
-            TimerInfo.Loading -> {
-                Text(text = "Loading")
-            }
+                TimerInfo.Loading -> {
+                    Text(text = "Loading")
+                }
 
-            is TimerInfo.Unavailable -> {
-                Text(text = "Unavailable")
+                is TimerInfo.Unavailable -> {
+                    Text(text = "Unavailable")
+                }
             }
         }
         Row(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -92,7 +100,7 @@ private fun MyContent() {
 @Composable
 private fun GlanceTimer(timerData: TimerData) {
     Row(
-        modifier = GlanceModifier.padding(16.dp)
+        modifier = GlanceModifier.padding(16.dp).fillMaxWidth()
             .clickable(
                 actionStartActivity<MainActivity>(
                     parameters =
@@ -103,10 +111,12 @@ private fun GlanceTimer(timerData: TimerData) {
             ),
     ) {
         Text(
+            modifier = GlanceModifier.defaultWeight(),
             text = timerData.name,
-            style = TextStyle(color = GlanceTheme.colors.onSurface)
+            style = TextStyle(
+                fontSize = TextUnit(26f, TextUnitType.Sp),
+                color = GlanceTheme.colors.onSurface)
         )
-        Spacer(modifier = GlanceModifier.width(16.dp))
         Text(
             text = timerData.length.timeFormatted(),
             style = TextStyle(color = GlanceTheme.colors.onSurface)
