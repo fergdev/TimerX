@@ -4,4 +4,10 @@
     <string name="stop">Stop</string>
     <string name="skip_next">Skip next</string>
     <string name="skip_previous">Skip previous</string>
+
+    <string name="shortcutNewLabel">New timer</string>
+    <string name="shortcutNewLongLabel">New timer</string>
+    <string name="shortcutNewDisabledMessage">New timer disabled</string>
+
+    <string name="timer_no_longer_exists">Timer no longer exists</string>
 </resources>

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.timerx.android">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
             android:supportsRtl="true"
-            android:name=".App"
+            android:name="com.timerx.android.App"
             android:label="@string/appName"
             android:theme="@style/AppTheme"
             android:icon="@mipmap/ic_launcher">
@@ -19,6 +20,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <service
             android:name="com.timerx.notification.NotificationService"
@@ -45,6 +49,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/timerx_widget_info" />
         </receiver>
+
+        <meta-data android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
 
     </application>
 
