@@ -13,7 +13,6 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
-import com.timerx.domain.length
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -47,23 +46,26 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
 
     private fun observeData(context: Context) {
         coroutineScope.launch {
-            val timers = timerRepository.getTimers()
-            val glanceId =
-                GlanceAppWidgetManager(context).getGlanceIds(TimerXWidget::class.java).firstOrNull()
-            glanceId?.let {
-                updateAppWidgetState(context, TimerXWidgetStateDefinition, it) {
-                    TimerInfo.Available(
-                        timers.map { timer ->
-                            TimerData(
-                                id = timer.id,
-                                name = timer.name,
-                                length = timer.length()
+            timerRepository.getShallowTimers()
+                .collect { timers ->
+                    val glanceId =
+                        GlanceAppWidgetManager(context).getGlanceIds(TimerXWidget::class.java)
+                            .firstOrNull()
+                    glanceId?.let {
+                        updateAppWidgetState(context, TimerXWidgetStateDefinition, it) {
+                            TimerInfo.Available(
+                                timers.map { timer ->
+                                    TimerData(
+                                        id = timer.id,
+                                        name = timer.name,
+                                        length = timer.duration.toInt()
+                                    )
+                                }
                             )
                         }
-                    )
+                        glanceAppWidget.update(context, it)
+                    }
                 }
-                glanceAppWidget.update(context, it)
-            }
         }
     }
 }

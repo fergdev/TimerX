@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.firstOrNull
 
 interface ITimerRepository {
     fun getShallowTimers(): Flow<List<RoomTimer>>
-    suspend fun getTimers(): List<Timer>
     suspend fun insertTimer(timer: Timer)
     suspend fun updateTimerStats(timer: Timer, timerStats: TimerStats)
     suspend fun updateTimer(timer: Timer)
@@ -332,10 +331,6 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
         return timerDao.getTimers()
     }
 
-    override suspend fun getTimers(): List<Timer> {
-        return timerDao.getTimers().first().map { getRestOfTimer(it) }.sortedBy { it.sortOrder }
-    }
-
     override suspend fun insertTimer(timer: Timer) {
         appDatabase.timerDao().insertTimerTransaction(
             timer.toRoomTimer(),
@@ -398,7 +393,6 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
         toId: Long,
         toSortOrder: Long
     ) {
-        println("swap timers $fromId $fromSortOrder $toId $toSortOrder")
         timerDao.updateSortOrder(
             fromId,
             fromSortOrder,
@@ -464,7 +458,7 @@ private fun Timer.toRoomTimer(): RoomTimer {
         finishBeepId = this.finishBeep.ordinal,
         finishVibration = this.finishVibration.ordinal,
         sortOrder = this.sortOrder,
-        duration = this.length().toLong()
+        duration = this.length().toLong(),
     )
 }
 
