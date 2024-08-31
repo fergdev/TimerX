@@ -78,7 +78,10 @@ private fun MyContent() {
                 }
             }
         }
-        Row(horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(
+            modifier = GlanceModifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Button(
                 text = "Home",
                 onClick = actionStartActivity<MainActivity>()
@@ -114,12 +117,16 @@ private fun GlanceTimer(timerData: TimerData) {
             modifier = GlanceModifier.defaultWeight(),
             text = timerData.name,
             style = TextStyle(
-                fontSize = TextUnit(26f, TextUnitType.Sp),
-                color = GlanceTheme.colors.onSurface)
+                fontSize = TextUnit(28f, TextUnitType.Sp),
+                color = GlanceTheme.colors.onSurface
+            )
         )
         Text(
             text = timerData.length.timeFormatted(),
-            style = TextStyle(color = GlanceTheme.colors.onSurface)
+            style = TextStyle(
+                fontSize = TextUnit(16f, TextUnitType.Sp),
+                color = GlanceTheme.colors.onSurfaceVariant
+            )
         )
     }
 }
