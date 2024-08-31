@@ -48,9 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.ads.getAd
-import com.timerx.domain.Timer
-import com.timerx.domain.length
-import com.timerx.domain.timeFormatted
 import com.timerx.ui.Screen
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
@@ -136,8 +133,8 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                         }
 
                     LazyColumn(modifier = Modifier.fillMaxSize(), state = lazyListState) {
-                        items(state.timers, key = { it.id }) { timer ->
-                            ReorderableItem(reorderableLazyListState, key = timer.id) {
+                        items(items = state.timers, key = { it.id }) { timer ->
+                            ReorderableItem(state = reorderableLazyListState, key = timer.id) {
                                 Timer(
                                     timer = timer,
                                     interactions = viewModel.interactions,
@@ -194,7 +191,7 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
 
 @Composable
 private fun Timer(
-    timer: Timer,
+    timer: TimerInfo,
     interactions: MainViewModel.Interactions,
     navigateRunScreen: (Long) -> Unit,
     navigateEditScreen: (Long) -> Unit,
@@ -268,12 +265,12 @@ private fun Timer(
             },
             supportingContent = {
                 Column {
-                    Text(text = timer.length().timeFormatted())
-                    Text(text = stringResource(Res.string.started_value, timer.stats.startedCount))
+                    Text(text = timer.time)
+                    Text(text = stringResource(Res.string.started_value, timer.startedCount))
                     Text(
                         text = stringResource(
                             Res.string.completed_value,
-                            timer.stats.completedCount
+                            timer.completedCount
                         )
                     )
                 }
