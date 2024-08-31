@@ -1,5 +1,6 @@
 package com.timerx.notification
 
+import com.timerx.domain.TimerEvent
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNTimeIntervalNotificationTrigger
@@ -29,11 +30,11 @@ class TimerXNotificationManager : ITimerXNotificationManager {
         center.removeAllDeliveredNotifications()
     }
 
-    override fun updateNotification(isRunning: Boolean, info: String, backgroundColor: Int) {
-        println("Update notification $info")
+    override fun updateNotification(timerEvent: TimerEvent) {
+        println("Update notification $timerEvent")
         val content = UNMutableNotificationContent().apply {
             setTitle("Title")
-            setBody(info)
+            setBody(timerEvent.toString())
             setSound(null)
         }
 
