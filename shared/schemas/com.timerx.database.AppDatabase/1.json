@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b5039a94056206cdd822dcfe9b4bdb97",
+    "identityHash": "dd274ec1f60bb9e3fef7a014f2992c58",
     "entities": [
       {
         "tableName": "RoomTimer",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finish_color` INTEGER NOT NULL, `finish_beep_id` INTEGER NOT NULL, `finish_vibration` INTEGER NOT NULL, `sort_order` INTEGER NOT NULL, `duration` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finish_color` INTEGER NOT NULL, `finish_beep_id` INTEGER NOT NULL, `finish_vibration` INTEGER NOT NULL, `sort_order` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `started_count` INTEGER NOT NULL, `completed_count` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -49,6 +49,18 @@
             "columnName": "duration",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "startedCount",
+            "columnName": "started_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completedCount",
+            "columnName": "completed_count",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -56,7 +68,27 @@
           "columnNames": [
             "id"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_RoomTimer_started_count",
+            "unique": false,
+            "columnNames": [
+              "started_count"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimer_started_count` ON `${TABLE_NAME}` (`started_count`)"
+          },
+          {
+            "name": "index_RoomTimer_completed_count",
+            "unique": false,
+            "columnNames": [
+              "completed_count"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimer_completed_count` ON `${TABLE_NAME}` (`completed_count`)"
+          }
+        ]
       },
       {
         "tableName": "RoomTimerSet",
@@ -316,7 +348,7 @@
       },
       {
         "tableName": "RoomTimerStats",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timer_id` INTEGER NOT NULL, `started_count` INTEGER NOT NULL, `completed_count` INTEGER NOT NULL, FOREIGN KEY(`timer_id`) REFERENCES `RoomTimer`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timer_id` INTEGER NOT NULL, FOREIGN KEY(`timer_id`) REFERENCES `RoomTimer`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -327,18 +359,6 @@
           {
             "fieldPath": "timerId",
             "columnName": "timer_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "startedCount",
-            "columnName": "started_count",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "completedCount",
-            "columnName": "completed_count",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -358,24 +378,6 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimerStats_timer_id` ON `${TABLE_NAME}` (`timer_id`)"
-          },
-          {
-            "name": "index_RoomTimerStats_started_count",
-            "unique": false,
-            "columnNames": [
-              "started_count"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimerStats_started_count` ON `${TABLE_NAME}` (`started_count`)"
-          },
-          {
-            "name": "index_RoomTimerStats_completed_count",
-            "unique": false,
-            "columnNames": [
-              "completed_count"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimerStats_completed_count` ON `${TABLE_NAME}` (`completed_count`)"
           }
         ],
         "foreignKeys": [
@@ -395,7 +397,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b5039a94056206cdd822dcfe9b4bdb97')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd274ec1f60bb9e3fef7a014f2992c58')"
     ]
   }
 }

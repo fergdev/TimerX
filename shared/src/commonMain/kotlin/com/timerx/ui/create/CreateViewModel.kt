@@ -8,7 +8,6 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
-import com.timerx.domain.TimerStats
 import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.ImmutableList
@@ -273,16 +272,17 @@ class CreateViewModel(
                             name = name,
                             sets = state.value.sets
                                 .filter { it.intervals.isNotEmpty() }.map {
-                                it.copy(
-                                    id = 0,
-                                    intervals = it.intervals.map { it.copy(id = 0) }
-                                        .toPersistentList()
-                                )
-                            }.toPersistentList(),
+                                    it.copy(
+                                        id = 0,
+                                        intervals = it.intervals.map { it.copy(id = 0) }
+                                            .toPersistentList()
+                                    )
+                                }.toPersistentList(),
                             finishColor = state.value.finishColor,
                             finishBeep = state.value.finishBeep,
                             finishVibration = Vibration.Heavy,
-                            stats = timerEditing.stats
+                            startedCount = timerEditing.startedCount,
+                            completedCount = timerEditing.completedCount
                         )
                     )
                 } else {
@@ -301,7 +301,6 @@ class CreateViewModel(
                             finishColor = state.value.finishColor,
                             finishBeep = state.value.finishBeep,
                             finishVibration = state.value.finishVibration,
-                            stats = TimerStats()
                         )
                     )
                 }

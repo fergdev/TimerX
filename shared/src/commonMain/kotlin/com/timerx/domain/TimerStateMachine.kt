@@ -54,7 +54,7 @@ enum class TimerState {
 
 data class RunState(
     val timerName: String = "",
-    val timerState: TimerState = TimerState.Running,
+    val timerState: TimerState = TimerState.Finished,
 
     val setIndex: Int = 0,
     val setCount: Int = 0,

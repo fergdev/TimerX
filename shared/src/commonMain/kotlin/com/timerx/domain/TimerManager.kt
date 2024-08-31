@@ -82,7 +82,7 @@ class TimerManager(
         }
     }
 
-    private fun TimerEvent.shouldNotify() : Boolean{
+    private fun TimerEvent.shouldNotify(): Boolean {
         return this !is TimerEvent.Destroy && this !is TimerEvent.Finished
     }
 
@@ -106,6 +106,10 @@ class TimerManager(
         notificationManager.stop()
         timerStateMachine?.destroy()
         timerStateMachine = null
+    }
+
+    fun isRunning(): Boolean {
+        return timerStateMachine != null
     }
 
     companion object {

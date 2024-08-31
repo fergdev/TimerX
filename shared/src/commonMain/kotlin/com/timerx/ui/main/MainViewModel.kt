@@ -77,8 +77,8 @@ class MainViewModel(
                                     id = roomTimer.id,
                                     name = roomTimer.name,
                                     time = roomTimer.duration.toInt().timeFormatted(),
-                                    startedCount = 1,
-                                    completedCount = 1,
+                                    startedCount = roomTimer.startedCount,
+                                    completedCount = roomTimer.completedCount,
                                     sortOrder = roomTimer.sortOrder
                                 )
                             }.toPersistentList()

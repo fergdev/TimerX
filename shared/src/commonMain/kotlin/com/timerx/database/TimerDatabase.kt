@@ -20,7 +20,6 @@ import com.timerx.domain.NO_SORT_ORDER
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
-import com.timerx.domain.TimerStats
 import com.timerx.domain.length
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.toPersistentList
@@ -32,7 +31,7 @@ import kotlinx.coroutines.flow.map
 interface ITimerRepository {
     fun getShallowTimers(): Flow<List<RoomTimer>>
     suspend fun insertTimer(timer: Timer)
-    suspend fun updateTimerStats(timer: Timer, timerStats: TimerStats)
+    suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long)
     suspend fun updateTimer(timer: Timer)
     suspend fun deleteTimer(timerId: Long)
     suspend fun duplicate(timerId: Long)
@@ -81,7 +80,9 @@ interface RoomTimerDao {
             val setPrimaryKey = insert(entry.key)
             insert(
                 RoomTimerSet(
-                    id = 0, timerId = timerPrimaryKey, setId = setPrimaryKey
+                    id = 0,
+                    timerId = timerPrimaryKey,
+                    setId = setPrimaryKey
                 )
             )
             entry.value.forEach { roomInterval ->
@@ -109,7 +110,7 @@ interface RoomTimerDao {
     @Query("UPDATE RoomTimer SET sort_order = :sortOrder WHERE id = :timerId")
     suspend fun updateSortOrder(timerId: Long, sortOrder: Long)
 
-    @Query("UPDATE RoomTimerStats SET started_count = :startedCount, completed_count = :completedCount WHERE timer_id = :timerId")
+    @Query("UPDATE RoomTimer SET started_count = :startedCount, completed_count = :completedCount WHERE id = :timerId")
     suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long)
 
     @Query(value = "DELETE FROM RoomTimer WHERE id IS (:id)")
@@ -220,7 +221,11 @@ data class RoomTimer(
     @ColumnInfo("sort_order")
     val sortOrder: Long,
     @ColumnInfo("duration")
-    val duration: Long
+    val duration: Long,
+    @ColumnInfo(name = "started_count", index = true)
+    val startedCount: Long = 0,
+    @ColumnInfo(name = "completed_count", index = true)
+    val completedCount: Long = 0,
 )
 
 @Entity(
@@ -321,8 +326,6 @@ class RoomInterval(
 class RoomTimerStats(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "timer_id", index = true) val timerId: Long,
-    @ColumnInfo(name = "started_count", index = true) val startedCount: Long = 0,
-    @ColumnInfo(name = "completed_count", index = true) val completedCount: Long = 0,
 )
 
 class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
@@ -339,12 +342,12 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
         )
     }
 
-    override suspend fun updateTimerStats(timer: Timer, timerStats: TimerStats) {
+    override suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long) {
         appDatabase.timerDao()
             .updateTimerStats(
-                timer.id,
-                timerStats.startedCount,
-                timerStats.completedCount
+                timerId,
+                startedCount,
+                completedCount
             )
     }
 
@@ -408,7 +411,6 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
             timerDao.getTimerSet(roomTimer.id).first()
                 .map { roomTimerSet -> roomTimerSet.setId }
         ).firstOrNull() ?: emptyList()
-        val timerStats = timerDao.getTimerStats(roomTimer.id)
         return Timer(
             id = roomTimer.id,
             sortOrder = roomTimer.sortOrder,
@@ -444,10 +446,8 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
             finishColor = Color(color = roomTimer.finishColor),
             finishBeep = Beep.entries[roomTimer.finishBeepId],
             finishVibration = Vibration.entries[roomTimer.finishVibration],
-            TimerStats(
-                startedCount = timerStats.first().startedCount,
-                completedCount = timerStats.first().completedCount
-            )
+            startedCount = roomTimer.startedCount,
+            completedCount = roomTimer.completedCount
         )
     }
 }

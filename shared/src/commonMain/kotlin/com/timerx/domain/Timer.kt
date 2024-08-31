@@ -15,10 +15,6 @@ data class Timer(
     val finishColor: Color = Color.Red,
     val finishBeep: Beep = Beep.Alert,
     val finishVibration: Vibration = Vibration.Heavy,
-    val stats: TimerStats
-)
-
-data class TimerStats(
     val startedCount: Long = 0,
     val completedCount: Long = 0
 )
