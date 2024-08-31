@@ -152,7 +152,7 @@ interface RoomTimerDao {
         insertTimerTransaction(roomTimer, roomTimerSets)
     }
 
-    @Query("SELECT * FROM RoomTimer ORDER BY sort_order ASC")
+    @Query("SELECT * FROM RoomTimer ORDER BY sort_order DESC")
     fun getTimers(): Flow<List<RoomTimer>>
 
     @Query("SELECT * FROM RoomTimerStats WHERE timer_id IS (:timerId)")
@@ -379,7 +379,8 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
                         timerInterval.copy(id = 0)
                     }.toPersistentList()
                 )
-            }.toPersistentList()
+            }.toPersistentList(),
+            sortOrder = NO_SORT_ORDER
         )
         insertTimer(toInsert)
     }
