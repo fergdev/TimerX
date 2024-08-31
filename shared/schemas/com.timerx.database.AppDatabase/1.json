@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "64c688e66e264876b65e62333a9ba920",
+    "identityHash": "b5039a94056206cdd822dcfe9b4bdb97",
     "entities": [
       {
         "tableName": "RoomTimer",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finishColor` INTEGER NOT NULL, `finishBeepId` INTEGER NOT NULL, `finishVibration` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finish_color` INTEGER NOT NULL, `finish_beep_id` INTEGER NOT NULL, `finish_vibration` INTEGER NOT NULL, `sort_order` INTEGER NOT NULL, `duration` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -22,25 +22,31 @@
           },
           {
             "fieldPath": "finishColor",
-            "columnName": "finishColor",
+            "columnName": "finish_color",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "finishBeepId",
-            "columnName": "finishBeepId",
+            "columnName": "finish_beep_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "finishVibration",
-            "columnName": "finishVibration",
+            "columnName": "finish_vibration",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "sortOrder",
-            "columnName": "sortOrder",
+            "columnName": "sort_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -226,7 +232,7 @@
       },
       {
         "tableName": "RoomInterval",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `color` INTEGER NOT NULL, `skipOnLastSet` INTEGER NOT NULL, `countUp` INTEGER NOT NULL, `manualNext` INTEGER NOT NULL, `beepId` INTEGER NOT NULL, `vibrationId` INTEGER NOT NULL, `finalCountDownDuration` INTEGER NOT NULL, `finalCountDownBeepId` INTEGER NOT NULL, `finalCountDownVibrationId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `color` INTEGER NOT NULL, `skip_on_last_set` INTEGER NOT NULL, `count_up` INTEGER NOT NULL, `manual_next` INTEGER NOT NULL, `beep_id` INTEGER NOT NULL, `vibration_id` INTEGER NOT NULL, `final_count_down_duration` INTEGER NOT NULL, `final_count_down_beep_id` INTEGER NOT NULL, `final_count_down_vibration_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -254,49 +260,49 @@
           },
           {
             "fieldPath": "skipOnLastSet",
-            "columnName": "skipOnLastSet",
+            "columnName": "skip_on_last_set",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "countUp",
-            "columnName": "countUp",
+            "columnName": "count_up",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "manualNext",
-            "columnName": "manualNext",
+            "columnName": "manual_next",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "beepId",
-            "columnName": "beepId",
+            "columnName": "beep_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "vibrationId",
-            "columnName": "vibrationId",
+            "columnName": "vibration_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "finalCountDownDuration",
-            "columnName": "finalCountDownDuration",
+            "columnName": "final_count_down_duration",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "finalCountDownBeepId",
-            "columnName": "finalCountDownBeepId",
+            "columnName": "final_count_down_beep_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "finalCountDownVibrationId",
-            "columnName": "finalCountDownVibrationId",
+            "columnName": "final_count_down_vibration_id",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -389,7 +395,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '64c688e66e264876b65e62333a9ba920')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b5039a94056206cdd822dcfe9b4bdb97')"
     ]
   }
 }

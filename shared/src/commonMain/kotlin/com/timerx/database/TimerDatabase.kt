@@ -21,6 +21,7 @@ import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.TimerStats
+import com.timerx.domain.length
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
@@ -28,14 +29,20 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 
 interface ITimerRepository {
+    fun getShallowTimers(): Flow<List<RoomTimer>>
     suspend fun getTimers(): List<Timer>
     suspend fun insertTimer(timer: Timer)
     suspend fun updateTimerStats(timer: Timer, timerStats: TimerStats)
     suspend fun updateTimer(timer: Timer)
-    suspend fun deleteTimer(timer: Timer)
-    suspend fun duplicate(timer: Timer)
+    suspend fun deleteTimer(timerId: Long)
+    suspend fun duplicate(timerId: Long)
     suspend fun getTimer(timerId: Long): Timer
-    suspend fun swapTimers(timerFrom: Timer, timerTo: Timer)
+    suspend fun swapTimers(
+        fromId: Long,
+        fromSortOrder: Long,
+        toId: Long,
+        toSortOrder: Long
+    )
 }
 
 @Dao
@@ -85,10 +92,21 @@ interface RoomTimerDao {
         insert(RoomTimerStats(timerId = timerPrimaryKey))
     }
 
-    @Query("SELECT sortOrder FROM RoomTimer ORDER BY sortOrder DESC LIMIT 1")
+    @Query("SELECT sort_order FROM RoomTimer ORDER BY sort_order DESC LIMIT 1")
     fun getMaxSortOrder(): Flow<Long>
 
-    @Query("UPDATE RoomTimer SET SortOrder = :sortOrder WHERE id = :timerId")
+    @Transaction
+    suspend fun updateSortOrder(
+        fromId: Long,
+        fromSortOrder: Long,
+        toId: Long,
+        toSortOrder: Long
+    ) {
+        updateSortOrder(timerId = fromId, sortOrder = toSortOrder)
+        updateSortOrder(timerId = toId, sortOrder = fromSortOrder)
+    }
+
+    @Query("UPDATE RoomTimer SET sort_order = :sortOrder WHERE id = :timerId")
     suspend fun updateSortOrder(timerId: Long, sortOrder: Long)
 
     @Query("UPDATE RoomTimerStats SET started_count = :startedCount, completed_count = :completedCount WHERE timer_id = :timerId")
@@ -134,7 +152,7 @@ interface RoomTimerDao {
         insertTimerTransaction(roomTimer, roomTimerSets)
     }
 
-    @Query("SELECT * FROM RoomTimer")
+    @Query("SELECT * FROM RoomTimer ORDER BY sort_order ASC")
     fun getTimers(): Flow<List<RoomTimer>>
 
     @Query("SELECT * FROM RoomTimerStats WHERE timer_id IS (:timerId)")
@@ -193,14 +211,16 @@ data class RoomTimer(
     val id: Long = 0,
     @ColumnInfo("name")
     val name: String,
-    @ColumnInfo("finishColor")
+    @ColumnInfo("finish_color")
     val finishColor: Long,
-    @ColumnInfo("finishBeepId")
+    @ColumnInfo("finish_beep_id")
     val finishBeepId: Int,
-    @ColumnInfo("finishVibration")
+    @ColumnInfo("finish_vibration")
     val finishVibration: Int,
-    @ColumnInfo("sortOrder")
-    val sortOrder: Long
+    @ColumnInfo("sort_order")
+    val sortOrder: Long,
+    @ColumnInfo("duration")
+    val duration: Long
 )
 
 @Entity(
@@ -269,21 +289,21 @@ class RoomInterval(
     val duration: Int,
     @ColumnInfo("color")
     val color: Long,
-    @ColumnInfo("skipOnLastSet")
+    @ColumnInfo("skip_on_last_set")
     val skipOnLastSet: Boolean,
-    @ColumnInfo("countUp")
+    @ColumnInfo("count_up")
     val countUp: Boolean,
-    @ColumnInfo("manualNext")
+    @ColumnInfo("manual_next")
     val manualNext: Boolean,
-    @ColumnInfo("beepId")
+    @ColumnInfo("beep_id")
     val beepId: Int,
-    @ColumnInfo("vibrationId")
+    @ColumnInfo("vibration_id")
     val vibrationId: Int,
-    @ColumnInfo("finalCountDownDuration")
+    @ColumnInfo("final_count_down_duration")
     val finalCountDownDuration: Int,
-    @ColumnInfo("finalCountDownBeepId")
+    @ColumnInfo("final_count_down_beep_id")
     val finalCountDownBeepId: Int,
-    @ColumnInfo("finalCountDownVibrationId")
+    @ColumnInfo("final_count_down_vibration_id")
     val finalCountDownVibrationId: Int,
 )
 
@@ -308,6 +328,10 @@ class RoomTimerStats(
 class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     private val timerDao = appDatabase.timerDao()
 
+    override fun getShallowTimers(): Flow<List<RoomTimer>> {
+        return timerDao.getTimers()
+    }
+
     override suspend fun getTimers(): List<Timer> {
         return timerDao.getTimers().first().map { getRestOfTimer(it) }.sortedBy { it.sortOrder }
     }
@@ -329,12 +353,12 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
     }
 
     override suspend fun updateTimer(timer: Timer) {
-        deleteTimer(timer)
+        deleteTimer(timer.id)
         insertTimer(timer)
     }
 
-    override suspend fun deleteTimer(timer: Timer) {
-        timerDao.deleteTimerTransaction(timer.id)
+    override suspend fun deleteTimer(timerId: Long) {
+        timerDao.deleteTimerTransaction(timerId)
     }
 
     private fun roomSetsAndIntervals(timer: Timer): MutableMap<RoomSet, List<RoomInterval>> {
@@ -347,9 +371,11 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
         return inputMap
     }
 
-    override suspend fun duplicate(timer: Timer) {
+    override suspend fun duplicate(timerId: Long) {
+        val timer = getTimer(timerId)
         val toInsert = timer.copy(
             id = 0,
+            name = timer.name + " (copy)",
             sets = timer.sets.map { timerSet ->
                 timerSet.copy(
                     id = 0,
@@ -366,9 +392,19 @@ class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerReposit
         return getRestOfTimer(timerDao.getTimer(timerId).first())
     }
 
-    override suspend fun swapTimers(timerFrom: Timer, timerTo: Timer) {
-        timerDao.updateSortOrder(timerFrom.id, timerFrom.sortOrder)
-        timerDao.updateSortOrder(timerTo.id, timerTo.sortOrder)
+    override suspend fun swapTimers(
+        fromId: Long,
+        fromSortOrder: Long,
+        toId: Long,
+        toSortOrder: Long
+    ) {
+        println("swap timers $fromId $fromSortOrder $toId $toSortOrder")
+        timerDao.updateSortOrder(
+            fromId,
+            fromSortOrder,
+            toId,
+            toSortOrder
+        )
     }
 
     private suspend fun getRestOfTimer(roomTimer: RoomTimer): Timer {
@@ -427,7 +463,8 @@ private fun Timer.toRoomTimer(): RoomTimer {
         finishColor = this.finishColor.toArgb().toLong(),
         finishBeepId = this.finishBeep.ordinal,
         finishVibration = this.finishVibration.ordinal,
-        sortOrder = this.sortOrder
+        sortOrder = this.sortOrder,
+        duration = this.length().toLong()
     )
 }
 

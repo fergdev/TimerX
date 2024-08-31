@@ -39,7 +39,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,10 +79,10 @@ import timerx.shared.generated.resources.started_value
 @Composable
 internal fun MainScreen(navigate: (Screen) -> Unit) {
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
-
-    LaunchedEffect(Unit) {
-        viewModel.interactions.refreshData()
-    }
+//
+//    LaunchedEffect(Unit) {
+//        viewModel.interactions.refreshData()
+//    }
 
     SetStatusBarColor(MaterialTheme.colorScheme.surface)
 
@@ -129,7 +128,9 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                     val lazyListState = rememberLazyListState()
                     val reorderableLazyListState =
                         rememberReorderableLazyListState(lazyListState) { from, to ->
-                            viewModel.interactions.swapTimers(from.index, to.index)
+                            viewModel.interactions.swapTimers(
+                                state.timers[from.index], state.timers[to.index]
+                            )
                         }
 
                     LazyColumn(modifier = Modifier.fillMaxSize(), state = lazyListState) {

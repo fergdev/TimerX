@@ -1,15 +1,11 @@
 package com.timerx.ui.main
 
 import com.timerx.database.ITimerRepository
-import com.timerx.domain.Timer
-import com.timerx.domain.length
-import com.timerx.domain.timeFormatted
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.settings.TimerXSettings
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +20,8 @@ data class TimerInfo(
     val name: String,
     val time: String,
     val startedCount: Long,
-    val completedCount: Long
+    val completedCount: Long,
+    val sortOrder: Long
 )
 
 class MainViewModel(
@@ -43,7 +40,7 @@ class MainViewModel(
         val refreshData: () -> Unit,
         val deleteTimer: (TimerInfo) -> Unit,
         val duplicateTimer: (TimerInfo) -> Unit,
-        val swapTimers: (Int, Int) -> Unit,
+        val swapTimers: (TimerInfo, TimerInfo) -> Unit,
         val hidePermissionsDialog: () -> Unit,
         val requestNotificationsPermission: () -> Unit,
         val ignoreNotificationsPermission: () -> Unit
@@ -62,28 +59,31 @@ class MainViewModel(
     private val _stateFlow = MutableStateFlow(State())
     val state: StateFlow<State> = _stateFlow
 
-    private val domainTimers: MutableList<Timer> = mutableListOf()
-
-    private fun MutableList<Timer>.toTimerInfos(): PersistentList<TimerInfo> {
-        return this.map {
-            TimerInfo(
-                id = it.id,
-                name = it.name,
-                time = it.length().timeFormatted(),
-                startedCount = it.stats.startedCount,
-                completedCount = it.stats.completedCount,
-            )
-        }.toPersistentList()
+    init {
+        refreshData()
     }
 
     private fun refreshData() {
         viewModelScope.launch {
             _stateFlow.update { it.copy(loadingTimers = true) }
-            domainTimers.clear()
-            domainTimers.addAll(timerRepository.getTimers())
-            _stateFlow.update {
-                it.copy(timers = domainTimers.toTimerInfos(), loadingTimers = false)
-            }
+            timerRepository.getShallowTimers()
+                .collect { roomTimers ->
+                    _stateFlow.update {
+                        it.copy(
+                            loadingTimers = false,
+                            timers = roomTimers.map {
+                                TimerInfo(
+                                    id = it.id,
+                                    name = it.name,
+                                    time = "wowo",
+                                    startedCount = 1,
+                                    completedCount = 1,
+                                    sortOrder = it.sortOrder
+                                )
+                            }.toPersistentList()
+                        )
+                    }
+                }
         }
         viewModelScope.launch {
             timerXSettings.settings.collect {
@@ -99,36 +99,21 @@ class MainViewModel(
     }
 
     private fun deleteTimer(timerInfo: TimerInfo) {
-        viewModelScope.launch {
-            timerRepository.deleteTimer(domainTimers.first {
-                timerInfo.id == it.id
-            })
-            _stateFlow.update {
-                domainTimers.removeAll { domainTimer ->
-                    timerInfo.id == domainTimer.id
-                }
-                it.copy(timers = domainTimers.toTimerInfos(), loadingTimers = false)
-            }
-        }
+        viewModelScope.launch { timerRepository.deleteTimer(timerInfo.id) }
     }
 
-    private fun duplicateTimer(timer: TimerInfo) {
-        viewModelScope.launch {
-            timerRepository.duplicate(domainTimers.first {
-                timer.id == it.id
-            })
-        }
-        refreshData()
+    private fun duplicateTimer(timerInfo: TimerInfo) {
+        viewModelScope.launch { timerRepository.duplicate(timerInfo.id) }
     }
 
-    private fun swapTimer(from: Int, to: Int) {
-        val fromTimer = domainTimers[from]
-        val toTimer = domainTimers[to]
-        domainTimers[from] = toTimer.copy(sortOrder = fromTimer.sortOrder)
-        domainTimers[to] = fromTimer.copy(sortOrder = toTimer.sortOrder)
-        _stateFlow.update { it.copy(timers = domainTimers.toTimerInfos()) }
+    private fun swapTimer(from: TimerInfo, to: TimerInfo) {
         viewModelScope.launch {
-            timerRepository.swapTimers(domainTimers[from], domainTimers[to])
+            timerRepository.swapTimers(
+                from.id,
+                from.sortOrder,
+                to.id,
+                to.sortOrder
+            )
         }
     }
 
