@@ -172,7 +172,7 @@ tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "1.8"
 }
 
-// TODO renable room plugin when it works properly
+// TODO enable room plugin when it works properly
 //room {
 //    schemaDirectory("$projectDir/schemas")
 //}
@@ -191,17 +191,8 @@ dependencies {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    compilerOptions {
-        if (project.findProperty("composeCompilerReports") == "true") {
-            freeCompilerArgs.add("-P")
-            freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.layout.buildDirectory}/compose_compiler")
-        }
-        if (project.findProperty("composeCompilerMetrics") == "true") {
-            freeCompilerArgs.add("-P")
-            freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.layout.buildDirectory}/compose_compiler")
-        }
-        freeCompilerArgs.add("-P")
-        freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${rootDir}/shared/compose_compiler_config.conf")
-    }
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    metricsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFile = rootProject.file("shared/compose_stability_config.conf")
 }
