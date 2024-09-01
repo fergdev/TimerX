@@ -75,10 +75,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     val viewModel: RunViewModel =
         koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
     val state by viewModel.state.collectAsState()
-
-    if (state.destroyed) {
-        navigateUp()
-    }
+    KeepScreenOn()
 
     val backgroundColor = if (state.timerState == TimerState.Paused) {
         MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
@@ -92,7 +89,6 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         animationSpec = tween(CROSS_FADE_DURATION)
     )
 
-    KeepScreenOn()
     SetStatusBarColor(animatedColor)
 
     RunView(

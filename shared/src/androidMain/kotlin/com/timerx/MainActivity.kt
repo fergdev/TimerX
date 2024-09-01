@@ -13,6 +13,10 @@ import com.timerx.shortcuts.ShortcutManager
 import com.timerx.ui.App
 import com.timerx.ui.navigation.NavigationProvider
 import com.timerx.ui.navigation.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.dsl.module
@@ -60,7 +64,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun splashScreen() {
+        var keepScreenOn = true
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(1000)
+            keepScreenOn = false
+        }
         installSplashScreen().apply {
+            setKeepOnScreenCondition { keepScreenOn }
             setOnExitAnimationListener { viewProvider ->
                 ObjectAnimator.ofFloat(
                     viewProvider.view,
