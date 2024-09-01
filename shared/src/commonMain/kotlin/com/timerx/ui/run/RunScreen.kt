@@ -128,6 +128,9 @@ private fun RunView(
         controlsVisible = true
         touchCounter++
     }
+    BackHandler(state.timerState != TimerState.Running) {
+        navigateUp()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()

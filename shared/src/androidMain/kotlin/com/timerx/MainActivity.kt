@@ -20,7 +20,7 @@ import org.koin.mp.KoinPlatform
 
 const val KEY_RUN_TIMER_ID = "run_timer_id"
 const val KEY_CREATE_TIMER = "create_timer"
-private const val splashScreenExitDuration = 600L
+private const val splashScreenExitDuration = 500L
 
 class MainActivity : ComponentActivity() {
     private val activityModule = module {

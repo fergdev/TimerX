@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.navigation.PopUpTo
 
 internal const val TIMER_ID_OPTIONAL = "{timerId}?"
 internal const val TIMER_ID_RAW = "timerId"
@@ -51,6 +53,7 @@ sealed interface Screen {
 class NavigationProvider {
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     internal val navigator = Navigator()
+
     // TODO provide back stack for navigation flow
     private val _navigationFlow = MutableStateFlow<Screen>(Screen.MainScreen)
     val navigationFlow: StateFlow<Screen?> = _navigationFlow
@@ -66,13 +69,19 @@ class NavigationProvider {
                 // starting notification service.
                 delay(100)
             }
-            doNavigation(screen)
+            val options = if (screen == Screen.MainScreen) {
+                NavOptions(
+                    launchSingleTop = true,
+                    popUpTo = PopUpTo("", true)
+                )
+            } else null
+            doNavigation(screen, options)
         }
     }
 
-    private fun doNavigation(screen: Screen) {
+    private fun doNavigation(screen: Screen, options: NavOptions? = null) {
         _navigationFlow.value = screen
-        navigator.navigate(screen.routeWithParams)
+        navigator.navigate(screen.routeWithParams, options)
     }
 
     fun goBack() {

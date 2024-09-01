@@ -119,7 +119,9 @@ private fun GlanceTimer(timerData: TimerData) {
             style = TextStyle(
                 fontSize = TextUnit(28f, TextUnitType.Sp),
                 color = GlanceTheme.colors.onSurface
-            )
+            ),
+            maxLines = 1
+
         )
         Text(
             text = timerData.length.timeFormatted(),
