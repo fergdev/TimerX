@@ -13,8 +13,8 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 
 data class SettingsScreenState(
     val volume: Float = 1.0F,
-    val vibration: Boolean,
-    val notificationsEnabled: Boolean,
+    val vibration: Boolean = false,
+    val notificationsEnabled: Boolean = false,
 )
 
 class SettingsInteractions(
@@ -22,7 +22,6 @@ class SettingsInteractions(
     val updateVibration: (Boolean) -> Unit,
     val enableNotifications: () -> Unit,
     val openAppSettings: () -> Unit,
-    val refresh: () -> Unit
 )
 
 class SettingsViewModel(
@@ -30,18 +29,14 @@ class SettingsViewModel(
     private val permissionsHandler: IPermissionsHandler,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(
-        SettingsScreenState(
-            volume = 1F, vibration = true, notificationsEnabled = false
-        )
-    )
+    private val _state = MutableStateFlow(SettingsScreenState())
     val state: StateFlow<SettingsScreenState> = _state
+
     val interactions = SettingsInteractions(
         updateVolume = ::updateVolume,
         updateVibration = ::updateVibration,
         enableNotifications = ::enableNotifications,
         openAppSettings = permissionsHandler::openAppSettings,
-        refresh = ::refresh
     )
 
     init {
@@ -55,16 +50,16 @@ class SettingsViewModel(
                     it.copy(
                         volume = settings.volume,
                         vibration = settings.vibrationEnabled,
-                        notificationsEnabled =
-                        isNotificationsEnabled()
+                        notificationsEnabled = isNotificationsEnabled(),
                     )
                 }
             }
         }
     }
 
-    private suspend fun isNotificationsEnabled() = (permissionsHandler.getPermissionState(Permission.Notification)
-            == PermissionState.Granted)
+    private suspend fun isNotificationsEnabled() =
+        (permissionsHandler.getPermissionState(Permission.Notification)
+                == PermissionState.Granted)
 
     private fun updateVibration(enabled: Boolean) {
         viewModelScope.launch {
