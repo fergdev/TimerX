@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TimerXSplashScreen" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/av_timer_animated</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/icon_blue</item>
+        <item name="windowSplashScreenAnimationDuration">10000</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowLightStatusBar">@bool/isLight</item>
+        <item name="android:windowLightNavigationBar">@bool/isLight</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

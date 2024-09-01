@@ -13,7 +13,7 @@ fun App() {
     PreComposeApp {
         TimerXTheme {
             Surface(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation()
+                AppNavigation()
             }
         }
     }

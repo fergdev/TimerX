@@ -5,6 +5,7 @@ androidJunit5Plugin = "1.10.0.0"
 androidx-activityCompose = "1.9.1"
 androidx-data-store = "1.1.1"
 androidx-room = "2.7.0-alpha07"
+coreSplashscreen = "1.0.1"
 crashlytics = "3.0.2"
 detekt = "1.23.6"
 firebaseAnalytics = "22.1.0"
@@ -31,6 +32,7 @@ sqlite = "2.5.0-SNAPSHOT"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-data-store-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-data-store" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }

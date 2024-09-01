@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="icon_blue">#FF3F51B5</color>
+<!--    <color name="status_bar">#00FFFFFF</color>-->
+    <bool name="isLight">true</bool>
+
+</resources>

@@ -4,33 +4,35 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-            android:supportsRtl="true"
-            android:name="com.timerx.android.App"
-            android:label="@string/appName"
-            android:theme="@style/AppTheme"
-            android:icon="@mipmap/ic_launcher">
+        android:name="com.timerx.android.App"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/appName"
+        android:supportsRtl="true"
+        android:theme="@style/TimerXSplashScreen">
         <activity
-                android:name="com.timerx.MainActivity"
-                android:exported="true"
-                android:launchMode="singleInstance">
+            android:name="com.timerx.MainActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/TimerXSplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <meta-data android:name="android.app.shortcuts"
+            <meta-data
+                android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
         <service
             android:name="com.timerx.notification.NotificationService"
             android:enabled="true"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
-        <receiver android:name="com.timerx.notification.NotificationBroadcastReceiver"/>
+        <receiver android:name="com.timerx.notification.NotificationBroadcastReceiver" />
 
         <property
             android:name="android.adservices.AD_SERVICES_CONFIG"
@@ -40,7 +42,8 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2499949091653906~3086757678" />
-        <receiver android:name="com.timerx.widget.TimerXWidgetReceiver"
+        <receiver
+            android:name="com.timerx.widget.TimerXWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -50,7 +53,8 @@
                 android:resource="@xml/timerx_widget_info" />
         </receiver>
 
-        <meta-data android:name="android.app.shortcuts"
+        <meta-data
+            android:name="android.app.shortcuts"
             android:resource="@xml/shortcuts" />
 
     </application>
