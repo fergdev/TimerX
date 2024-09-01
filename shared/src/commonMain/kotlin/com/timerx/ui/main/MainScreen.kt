@@ -47,13 +47,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.ads.getAd
-import com.timerx.ui.Screen
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.SetStatusBarColor
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
+import com.timerx.ui.navigation.Screen
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
@@ -79,10 +79,6 @@ import timerx.shared.generated.resources.started_value
 @Composable
 internal fun MainScreen(navigate: (Screen) -> Unit) {
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
-//
-//    LaunchedEffect(Unit) {
-//        viewModel.interactions.refreshData()
-//    }
 
     SetStatusBarColor(MaterialTheme.colorScheme.surface)
 
@@ -95,7 +91,9 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                 TopAppBar(
                     title = { Text(text = stringResource(Res.string.app_name)) },
                     actions = {
-                        IconButton(onClick = { navigate(Screen.SettingsScreen) }) {
+                        IconButton(onClick = {
+                                navigate(Screen.SettingsScreen)
+                        }) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
                                 contentDescription = stringResource(Res.string.settings)

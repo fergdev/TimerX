@@ -10,9 +10,9 @@ import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.permissions.permissionsHandler
 import com.timerx.settings.TimerXSettings
 import com.timerx.settings.dataStorePreferences
-import com.timerx.ui.NavigationProvider
 import com.timerx.ui.create.CreateViewModel
 import com.timerx.ui.main.MainViewModel
+import com.timerx.ui.navigation.NavigationProvider
 import com.timerx.ui.run.RunViewModel
 import com.timerx.ui.settings.SettingsViewModel
 import com.timerx.vibration.getVibrationManager
@@ -35,9 +35,7 @@ val sharedModule = module {
     single { getVibrationManager(get()) }
     single { permissionsHandler() }
     single { TimerManager(get(), get(), get(), get()) }
-    single<ITimerRepository> {
-        RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase())
-    }
+    single<ITimerRepository> { RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase()) }
     single { getTimerXNotificationManager() }
     single { NavigationProvider() }
     factory { MainViewModel(get(), get(), get()) }

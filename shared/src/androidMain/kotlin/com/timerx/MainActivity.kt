@@ -7,8 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.timerx.shortcuts.ShortcutManager
 import com.timerx.ui.App
-import com.timerx.ui.NavigationProvider
-import com.timerx.ui.Screen
+import com.timerx.ui.navigation.NavigationProvider
+import com.timerx.ui.navigation.Screen
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.dsl.module
@@ -18,16 +18,15 @@ const val KEY_RUN_TIMER_ID = "run_timer_id"
 const val KEY_CREATE_TIMER = "create_timer"
 
 class MainActivity : ComponentActivity() {
-    private val module = module {
+    private val activityModule = module {
         single<ComponentActivity> { this@MainActivity }
-        single(createdAtStart = true) { ShortcutManager(get(), get()) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent { App() }
-        loadKoinModules(module)
+        loadKoinModules(activityModule)
         KoinPlatform.getKoin().get<ShortcutManager>()
         parseIntent(intent)
     }
@@ -41,16 +40,16 @@ class MainActivity : ComponentActivity() {
         intent.extras?.let {
             if (it.containsKey(KEY_RUN_TIMER_ID)) {
                 KoinPlatform.getKoin().get<NavigationProvider>()
-                    .navigationTo(Screen.RunScreen(it.getLong(KEY_RUN_TIMER_ID)))
+                    .navigateTo(Screen.RunScreen(it.getLong(KEY_RUN_TIMER_ID)))
             } else if (it.containsKey(KEY_CREATE_TIMER)) {
                 KoinPlatform.getKoin().get<NavigationProvider>()
-                    .navigationTo(Screen.CreateScreen())
+                    .navigateTo(Screen.CreateScreen())
             }
         }
     }
 
     override fun onStop() {
         super.onStop()
-        unloadKoinModules(module)
+        unloadKoinModules(activityModule)
     }
 }

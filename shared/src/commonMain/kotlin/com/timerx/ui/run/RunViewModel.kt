@@ -11,6 +11,7 @@ import com.timerx.domain.TimerState
 import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
@@ -174,6 +175,7 @@ class RunViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        println("### on cleared")
         timerManager.destroy()
     }
 }
