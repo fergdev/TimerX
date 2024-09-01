@@ -3,10 +3,7 @@ import shared
 import FirebaseAnalytics
 import GoogleMobileAds
 
-
 struct ComposeView: UIViewControllerRepresentable {
-    var bannerView: GADBannerView!
-    
     func makeUIViewController(context: Context) -> UIViewController {
         return Main_iosKt.MainViewController()
     }
@@ -14,15 +11,15 @@ struct ComposeView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
-
 struct ContentView: View {
     var body: some View {
         VStack {
             ComposeView()
-                .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
             BannerView(adUnitID: "ca-app-pub-2499949091653906/4852400953")
-                .frame(width: 320, height: 50, alignment: .center)
-        }
+                .frame(width: GADAdSizeBanner.size.width, height: GADAdSizeBanner.size.height)
+        }.ignoresSafeArea(edges: .horizontal)
+            .ignoresSafeArea(edges: .top)
+            .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
     }
 }
 
