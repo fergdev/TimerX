@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -46,7 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.timerx.ads.getAd
+import com.timerx.ads.GoogleAd
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
@@ -86,7 +85,7 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
 
     Column(modifier = Modifier.systemBarsPadding()) {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.weight(1F),
             topBar = {
                 TopAppBar(
                     title = { Text(text = stringResource(Res.string.app_name)) },
@@ -181,9 +180,7 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                 }
             }
         }
-        Box(modifier = Modifier.wrapContentSize()) {
-            getAd()
-        }
+        GoogleAd()
     }
 }
 
