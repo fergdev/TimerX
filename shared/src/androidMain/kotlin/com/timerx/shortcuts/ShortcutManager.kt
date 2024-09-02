@@ -27,7 +27,6 @@ class ShortcutManager(
     private val dynamicShortcutLimit = 3
 
     init {
-        println("*** init")
         coroutineScope.launch {
             timerRepository.getShallowTimers().collect { roomTimers ->
                 handlePinnedShortcuts(roomTimers)
@@ -70,7 +69,10 @@ class ShortcutManager(
         val pinnedShortcuts = ShortcutManagerCompat.getShortcuts(
             context,
             ShortcutManagerCompat.FLAG_MATCH_PINNED
-        )
+        ).filter {
+            // On my phone manifest shortcuts are included when requesting pinned.
+            it.isDeclaredInManifest.not()
+        }
         val missingPinnedShortcuts = pinnedShortcuts.filter { shortcut ->
             roomTimers.none { roomTimer ->
                 shortcut.id == roomTimer.shortcutId()
