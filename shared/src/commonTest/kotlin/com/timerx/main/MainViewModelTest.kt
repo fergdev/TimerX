@@ -56,29 +56,6 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `refresh timers - updates state`() {
-        // given
-        everySuspend { timerRepository.getTimers() }.returns(listOf())
-        viewModel = MainViewModel(timerRepository)
-        assertEquals(0, viewModel.state.value.timers.size)
-        everySuspend { timerRepository.getTimers() }.returns(
-            listOf(
-                Timer(
-                    id = 3L,
-                    name = "name 3",
-                    sets = persistentListOf()
-                )
-            )
-        )
-
-        // when
-        viewModel.interactions.refreshData()
-
-        // then
-        assertEquals(1, viewModel.state.value.timers.size)
-    }
-
-    @Test
     fun `delete timer - deletes timer`() {
         // given
         everySuspend { timerRepository.getTimers() }.returns(listOf())

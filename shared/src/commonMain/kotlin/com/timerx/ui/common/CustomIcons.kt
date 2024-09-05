@@ -495,4 +495,636 @@ object CustomIcons {
             }.build()
             return _skipPrevious!!
         }
+
+    private var _Sort: ImageVector? = null
+    val sortOrder: ImageVector
+        get() {
+            if (_Sort != null) {
+                return _Sort!!
+            }
+            _Sort = ImageVector.Builder(
+                name = "Sort",
+                defaultWidth = 24.dp,
+                defaultHeight = 24.dp,
+                viewportWidth = 960f,
+                viewportHeight = 960f
+            ).apply {
+                path(
+                    fill = SolidColor(Color.Black),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(120f, 720f)
+                    verticalLineToRelative(-80f)
+                    horizontalLineToRelative(240f)
+                    verticalLineToRelative(80f)
+                    close()
+                    moveToRelative(0f, -200f)
+                    verticalLineToRelative(-80f)
+                    horizontalLineToRelative(480f)
+                    verticalLineToRelative(80f)
+                    close()
+                    moveToRelative(0f, -200f)
+                    verticalLineToRelative(-80f)
+                    horizontalLineToRelative(720f)
+                    verticalLineToRelative(80f)
+                    close()
+                }
+            }.build()
+            return _Sort!!
+        }
+
+    private var _SortAlphaDown: ImageVector? = null
+    val sortAlphaDown: ImageVector
+        get() {
+            if (_SortAlphaDown != null) {
+                return _SortAlphaDown!!
+            }
+            _SortAlphaDown = ImageVector.Builder(
+                name = "SortAlphaDown",
+                defaultWidth = 16.dp,
+                defaultHeight = 16.dp,
+                viewportWidth = 16f,
+                viewportHeight = 16f
+            ).apply {
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.EvenOdd
+                ) {
+                    moveTo(10.082f, 5.629f)
+                    lineTo(9.664f, 7f)
+                    horizontalLineTo(8.598f)
+                    lineToRelative(1.789f, -5.332f)
+                    horizontalLineToRelative(1.234f)
+                    lineTo(13.402f, 7f)
+                    horizontalLineToRelative(-1.12f)
+                    lineToRelative(-0.419f, -1.371f)
+                    close()
+                    moveToRelative(1.57f, -0.785f)
+                    lineTo(11f, 2.687f)
+                    horizontalLineToRelative(-0.047f)
+                    lineToRelative(-0.652f, 2.157f)
+                    close()
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(12.96f, 14f)
+                    horizontalLineTo(9.028f)
+                    verticalLineToRelative(-0.691f)
+                    lineToRelative(2.579f, -3.72f)
+                    verticalLineToRelative(-0.054f)
+                    horizontalLineTo(9.098f)
+                    verticalLineToRelative(-0.867f)
+                    horizontalLineToRelative(3.785f)
+                    verticalLineToRelative(0.691f)
+                    lineToRelative(-2.567f, 3.72f)
+                    verticalLineToRelative(0.054f)
+                    horizontalLineToRelative(2.645f)
+                    close()
+                    moveTo(4.5f, 2.5f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = false, -1f, 0f)
+                    verticalLineToRelative(9.793f)
+                    lineToRelative(-1.146f, -1.147f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = false, -0.708f, 0.708f)
+                    lineToRelative(2f, 1.999f)
+                    lineToRelative(0.007f, 0.007f)
+                    arcToRelative(0.497f, 0.497f, 0f, isMoreThanHalf = false, isPositiveArc = false, 0.7f, -0.006f)
+                    lineToRelative(2f, -2f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = false, -0.707f, -0.708f)
+                    lineTo(4.5f, 12.293f)
+                    close()
+                }
+            }.build()
+            return _SortAlphaDown!!
+        }
+
+    private var _SortAlphaUpAlt: ImageVector? = null
+    val sortAlphaUpAlt: ImageVector
+        get() {
+            if (_SortAlphaUpAlt != null) {
+                return _SortAlphaUpAlt!!
+            }
+            _SortAlphaUpAlt = ImageVector.Builder(
+                name = "SortAlphaUpAlt",
+                defaultWidth = 16.dp,
+                defaultHeight = 16.dp,
+                viewportWidth = 16f,
+                viewportHeight = 16f
+            ).apply {
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(12.96f, 7f)
+                    horizontalLineTo(9.028f)
+                    verticalLineToRelative(-0.691f)
+                    lineToRelative(2.579f, -3.72f)
+                    verticalLineToRelative(-0.054f)
+                    horizontalLineTo(9.098f)
+                    verticalLineToRelative(-0.867f)
+                    horizontalLineToRelative(3.785f)
+                    verticalLineToRelative(0.691f)
+                    lineToRelative(-2.567f, 3.72f)
+                    verticalLineToRelative(0.054f)
+                    horizontalLineToRelative(2.645f)
+                    close()
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.EvenOdd
+                ) {
+                    moveTo(10.082f, 12.629f)
+                    lineTo(9.664f, 14f)
+                    horizontalLineTo(8.598f)
+                    lineToRelative(1.789f, -5.332f)
+                    horizontalLineToRelative(1.234f)
+                    lineTo(13.402f, 14f)
+                    horizontalLineToRelative(-1.12f)
+                    lineToRelative(-0.419f, -1.371f)
+                    close()
+                    moveToRelative(1.57f, -0.785f)
+                    lineTo(11f, 9.688f)
+                    horizontalLineToRelative(-0.047f)
+                    lineToRelative(-0.652f, 2.156f)
+                    close()
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(4.5f, 13.5f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, -1f, 0f)
+                    verticalLineTo(3.707f)
+                    lineTo(2.354f, 4.854f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = true, isPositiveArc = true, -0.708f, -0.708f)
+                    lineToRelative(2f, -1.999f)
+                    lineToRelative(0.007f, -0.007f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 0.7f, 0.006f)
+                    lineToRelative(2f, 2f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = true, isPositiveArc = true, -0.707f, 0.708f)
+                    lineTo(4.5f, 3.707f)
+                    close()
+                }
+            }.build()
+            return _SortAlphaUpAlt!!
+        }
+
+    private var _SortNumericDownAlt: ImageVector? = null
+    val sortNumericDownAlt: ImageVector
+        get() {
+            if (_SortNumericDownAlt != null) {
+                return _SortNumericDownAlt!!
+            }
+            _SortNumericDownAlt = ImageVector.Builder(
+                name = "SortNumericDownAlt",
+                defaultWidth = 16.dp,
+                defaultHeight = 16.dp,
+                viewportWidth = 16f,
+                viewportHeight = 16f
+            ).apply {
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.EvenOdd
+                ) {
+                    moveTo(11.36f, 7.098f)
+                    curveToRelative(-1.1370f, 00f, -1.7080f, -0.6570f, -1.7620f, -1.2780f)
+                    horizontalLineToRelative(1.004f)
+                    curveToRelative(0.0580f, 0.2230f, 0.3430f, 0.450f, 0.7730f, 0.450f)
+                    curveToRelative(0.8240f, 00f, 1.1640f, -0.8290f, 1.1330f, -1.8560f)
+                    horizontalLineToRelative(-0.059f)
+                    curveToRelative(-0.1480f, 0.390f, -0.570f, 0.7420f, -1.2610f, 0.7420f)
+                    curveToRelative(-0.910f, 00f, -1.720f, -0.6130f, -1.720f, -1.7580f)
+                    curveToRelative(00f, -1.1480f, 0.8480f, -1.8360f, 1.9730f, -1.8360f)
+                    curveToRelative(1.090f, 00f, 2.0630f, 0.6370f, 2.0630f, 2.6880f)
+                    curveToRelative(00f, 1.8670f, -0.7230f, 2.8480f, -2.1450f, 2.8480f)
+                    close()
+                    moveToRelative(0.062f, -2.735f)
+                    curveToRelative(0.5040f, 00f, 0.9330f, -0.3360f, 0.9330f, -0.9720f)
+                    curveToRelative(00f, -0.6330f, -0.3980f, -1.0080f, -0.940f, -1.0080f)
+                    curveToRelative(-0.520f, 00f, -0.9270f, 0.3750f, -0.9270f, 10f)
+                    curveToRelative(00f, 0.640f, 0.4180f, 0.980f, 0.9340f, 0.980f)
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(12.438f, 8.668f)
+                    verticalLineTo(14f)
+                    horizontalLineTo(11.39f)
+                    verticalLineTo(9.684f)
+                    horizontalLineToRelative(-0.051f)
+                    lineToRelative(-1.211f, 0.859f)
+                    verticalLineToRelative(-0.969f)
+                    lineToRelative(1.262f, -0.906f)
+                    horizontalLineToRelative(1.046f)
+                    close()
+                    moveTo(4.5f, 2.5f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = false,
+                        -1f,
+                        0f
+                    )
+                    verticalLineToRelative(9.793f)
+                    lineToRelative(-1.146f, -1.147f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = false,
+                        -0.708f,
+                        0.708f
+                    )
+                    lineToRelative(2f, 1.999f)
+                    lineToRelative(0.007f, 0.007f)
+                    arcToRelative(
+                        0.497f,
+                        0.497f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = false,
+                        0.7f,
+                        -0.006f
+                    )
+                    lineToRelative(2f, -2f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = false,
+                        -0.707f,
+                        -0.708f
+                    )
+                    lineTo(4.5f, 12.293f)
+                    close()
+                }
+            }.build()
+            return _SortNumericDownAlt!!
+        }
+
+    private var _CalendarPlus: ImageVector? = null
+    val calendarPlus: ImageVector
+        get() {
+            if (_CalendarPlus != null) {
+                return _CalendarPlus!!
+            }
+            _CalendarPlus = ImageVector.Builder(
+                name = "CalendarPlus",
+                defaultWidth = 16.dp,
+                defaultHeight = 16.dp,
+                viewportWidth = 16f,
+                viewportHeight = 16f
+            ).apply {
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(8f, 7f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        0.5f,
+                        0.5f
+                    )
+                    verticalLineTo(9f)
+                    horizontalLineTo(10f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        0f,
+                        1f
+                    )
+                    horizontalLineTo(8.5f)
+                    verticalLineToRelative(1.5f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        -1f,
+                        0f
+                    )
+                    verticalLineTo(10f)
+                    horizontalLineTo(6f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        0f,
+                        -1f
+                    )
+                    horizontalLineToRelative(1.5f)
+                    verticalLineTo(7.5f)
+                    arcTo(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 8f, 7f)
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(3.5f, 0f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        0.5f,
+                        0.5f
+                    )
+                    verticalLineTo(1f)
+                    horizontalLineToRelative(8f)
+                    verticalLineTo(0.5f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        1f,
+                        0f
+                    )
+                    verticalLineTo(1f)
+                    horizontalLineToRelative(1f)
+                    arcToRelative(2f, 2f, 0f, isMoreThanHalf = false, isPositiveArc = true, 2f, 2f)
+                    verticalLineToRelative(11f)
+                    arcToRelative(2f, 2f, 0f, isMoreThanHalf = false, isPositiveArc = true, -2f, 2f)
+                    horizontalLineTo(2f)
+                    arcToRelative(
+                        2f,
+                        2f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        -2f,
+                        -2f
+                    )
+                    verticalLineTo(3f)
+                    arcToRelative(2f, 2f, 0f, isMoreThanHalf = false, isPositiveArc = true, 2f, -2f)
+                    horizontalLineToRelative(1f)
+                    verticalLineTo(0.5f)
+                    arcToRelative(
+                        0.5f,
+                        0.5f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = true,
+                        0.5f,
+                        -0.5f
+                    )
+                    moveTo(1f, 4f)
+                    verticalLineToRelative(10f)
+                    arcToRelative(1f, 1f, 0f, isMoreThanHalf = false, isPositiveArc = false, 1f, 1f)
+                    horizontalLineToRelative(12f)
+                    arcToRelative(
+                        1f,
+                        1f,
+                        0f,
+                        isMoreThanHalf = false,
+                        isPositiveArc = false,
+                        1f,
+                        -1f
+                    )
+                    verticalLineTo(4f)
+                    close()
+                }
+            }.build()
+            return _CalendarPlus!!
+        }
+
+    private var _CalendarMinus: ImageVector? = null
+    val calendarMinus: ImageVector
+        get() {
+            if (_CalendarMinus != null) {
+                return _CalendarMinus!!
+            }
+            _CalendarMinus = ImageVector.Builder(
+                name = "CalendarMinus",
+                defaultWidth = 16.dp,
+                defaultHeight = 16.dp,
+                viewportWidth = 16f,
+                viewportHeight = 16f
+            ).apply {
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(5.5f, 9.5f)
+                    arcTo(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 6f, 9f)
+                    horizontalLineToRelative(4f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 0f, 1f)
+                    horizontalLineTo(6f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, -0.5f, -0.5f)
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(3.5f, 0f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 0.5f, 0.5f)
+                    verticalLineTo(1f)
+                    horizontalLineToRelative(8f)
+                    verticalLineTo(0.5f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 1f, 0f)
+                    verticalLineTo(1f)
+                    horizontalLineToRelative(1f)
+                    arcToRelative(2f, 2f, 0f, isMoreThanHalf = false, isPositiveArc = true, 2f, 2f)
+                    verticalLineToRelative(11f)
+                    arcToRelative(2f, 2f, 0f, isMoreThanHalf = false, isPositiveArc = true, -2f, 2f)
+                    horizontalLineTo(2f)
+                    arcToRelative(2f, 2f, 0f, isMoreThanHalf = false, isPositiveArc = true, -2f, -2f)
+                    verticalLineTo(3f)
+                    arcToRelative(2f, 2f, 0f, isMoreThanHalf = false, isPositiveArc = true, 2f, -2f)
+                    horizontalLineToRelative(1f)
+                    verticalLineTo(0.5f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 0.5f, -0.5f)
+                    moveTo(1f, 4f)
+                    verticalLineToRelative(10f)
+                    arcToRelative(1f, 1f, 0f, isMoreThanHalf = false, isPositiveArc = false, 1f, 1f)
+                    horizontalLineToRelative(12f)
+                    arcToRelative(1f, 1f, 0f, isMoreThanHalf = false, isPositiveArc = false, 1f, -1f)
+                    verticalLineTo(4f)
+                    close()
+                }
+            }.build()
+            return _CalendarMinus!!
+        }
+
+    private var _SortNumericUpAlt: ImageVector? = null
+    val sortNumericUpAlt: ImageVector
+        get() {
+            if (_SortNumericUpAlt != null) {
+                return _SortNumericUpAlt!!
+            }
+            _SortNumericUpAlt = ImageVector.Builder(
+                name = "SortNumericUpAlt",
+                defaultWidth = 16.dp,
+                defaultHeight = 16.dp,
+                viewportWidth = 16f,
+                viewportHeight = 16f
+            ).apply {
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.EvenOdd
+                ) {
+                    moveTo(11.36f, 7.098f)
+                    curveToRelative(-1.1370f, 00f, -1.7080f, -0.6570f, -1.7620f, -1.2780f)
+                    horizontalLineToRelative(1.004f)
+                    curveToRelative(0.0580f, 0.2230f, 0.3430f, 0.450f, 0.7730f, 0.450f)
+                    curveToRelative(0.8240f, 00f, 1.1640f, -0.8290f, 1.1330f, -1.8560f)
+                    horizontalLineToRelative(-0.059f)
+                    curveToRelative(-0.1480f, 0.390f, -0.570f, 0.7420f, -1.2610f, 0.7420f)
+                    curveToRelative(-0.910f, 00f, -1.720f, -0.6130f, -1.720f, -1.7580f)
+                    curveToRelative(00f, -1.1480f, 0.8480f, -1.8360f, 1.9730f, -1.8360f)
+                    curveToRelative(1.090f, 00f, 2.0630f, 0.6370f, 2.0630f, 2.6880f)
+                    curveToRelative(00f, 1.8670f, -0.7230f, 2.8480f, -2.1450f, 2.8480f)
+                    close()
+                    moveToRelative(0.062f, -2.735f)
+                    curveToRelative(0.5040f, 00f, 0.9330f, -0.3360f, 0.9330f, -0.9720f)
+                    curveToRelative(00f, -0.6330f, -0.3980f, -1.0080f, -0.940f, -1.0080f)
+                    curveToRelative(-0.520f, 00f, -0.9270f, 0.3750f, -0.9270f, 10f)
+                    curveToRelative(00f, 0.640f, 0.4180f, 0.980f, 0.9340f, 0.980f)
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(12.438f, 8.668f)
+                    verticalLineTo(14f)
+                    horizontalLineTo(11.39f)
+                    verticalLineTo(9.684f)
+                    horizontalLineToRelative(-0.051f)
+                    lineToRelative(-1.211f, 0.859f)
+                    verticalLineToRelative(-0.969f)
+                    lineToRelative(1.262f, -0.906f)
+                    horizontalLineToRelative(1.046f)
+                    close()
+                    moveTo(4.5f, 13.5f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, -1f, 0f)
+                    verticalLineTo(3.707f)
+                    lineTo(2.354f, 4.854f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = true, isPositiveArc = true, -0.708f, -0.708f)
+                    lineToRelative(2f, -1.999f)
+                    lineToRelative(0.007f, -0.007f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, 0.7f, 0.006f)
+                    lineToRelative(2f, 2f)
+                    arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = true, isPositiveArc = true, -0.707f, 0.708f)
+                    lineTo(4.5f, 3.707f)
+                    close()
+                }
+            }.build()
+            return _SortNumericUpAlt!!
+        }
 }

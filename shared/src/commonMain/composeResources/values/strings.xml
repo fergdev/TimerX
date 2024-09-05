@@ -48,6 +48,7 @@
     <string name="skip_next">Skip next</string>
     <string name="skip_previous">Skip previous</string>
     <string name="skip_on_last_set">Skip on last set</string>
+    <string name="sort_order">Sort order</string>
     <string name="timer_name">Timer name</string>
     <string name="total_value">Total %1$s</string>
     <string name="up">Up</string>

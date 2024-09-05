@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.ads.GoogleAd
+import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
@@ -72,6 +73,7 @@ import timerx.shared.generated.resources.enable_notifications_message
 import timerx.shared.generated.resources.ignore
 import timerx.shared.generated.resources.no_timers
 import timerx.shared.generated.resources.settings
+import timerx.shared.generated.resources.sort_order
 import timerx.shared.generated.resources.started_value
 
 @OptIn(
@@ -90,6 +92,15 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
             TopAppBar(
                 title = { Text(text = stringResource(Res.string.app_name)) },
                 actions = {
+                    IconButton(
+                        onClick = {
+                        viewModel.interactions.updateSortTimersBy(state.sortTimersBy.next())
+                    }) {
+                        Icon(
+                            imageVector = state.sortTimersBy.imageVector(),
+                            contentDescription = stringResource(Res.string.sort_order)
+                        )
+                    }
                     IconButton(onClick = {
                         navigate(Screen.SettingsScreen)
                     }) {
@@ -136,7 +147,8 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                                     interactions = viewModel.interactions,
                                     navigateRunScreen = { navigate(Screen.RunScreen(timer.id)) },
                                     navigateEditScreen = { navigate(Screen.CreateScreen(timer.id)) },
-                                    reorderableScope = this
+                                    reorderableScope = this,
+                                    isReorderable = state.sortTimersBy == SortTimersBy.SORT_ORDER
                                 )
                             }
                         }
@@ -197,6 +209,7 @@ private fun Timer(
     navigateRunScreen: (Long) -> Unit,
     navigateEditScreen: (Long) -> Unit,
     reorderableScope: ReorderableCollectionItemScope,
+    isReorderable: Boolean
 ) {
     val revealState = rememberRevealState(
         200.dp, directions = setOf(RevealDirection.EndToStart)
@@ -260,7 +273,7 @@ private fun Timer(
                         style = MaterialTheme.typography.displaySmall
                     )
                     Text(
-                        text = timer.time,
+                        text = timer.duration.toInt().timeFormatted(),
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(text = stringResource(Res.string.started_value, timer.startedCount))
@@ -270,13 +283,17 @@ private fun Timer(
                             timer.completedCount
                         )
                     )
-                    Text(text = timer.lastRun)
+                    Text(text = timer.lastRunFormatted)
                 }
-                Icon(
-                    modifier = with(reorderableScope) { Modifier.size(24.dp).draggableHandle() },
-                    imageVector = CustomIcons.dragHandle,
-                    contentDescription = stringResource(Res.string.copy)
-                )
+                if (isReorderable) {
+                    Icon(
+                        modifier = with(reorderableScope) {
+                            Modifier.size(24.dp).draggableHandle()
+                        },
+                        imageVector = CustomIcons.dragHandle,
+                        contentDescription = stringResource(Res.string.copy)
+                    )
+                }
             }
         }
     }

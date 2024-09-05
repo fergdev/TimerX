@@ -1,7 +1,6 @@
 package com.timerx.ui.main
 
 import com.timerx.database.ITimerRepository
-import com.timerx.domain.timeFormatted
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
@@ -25,11 +24,12 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 data class TimerInfo(
     val id: Long,
     val name: String,
-    val time: String,
+    val duration: Long,
     val startedCount: Long,
     val completedCount: Long,
     val sortOrder: Long,
-    val lastRun: String
+    val lastRunMillis: Long,
+    val lastRunFormatted: String,
 )
 
 class MainViewModel(
@@ -41,69 +41,70 @@ class MainViewModel(
     data class State(
         val loadingTimers: Boolean = false,
         val timers: ImmutableList<TimerInfo> = persistentListOf(),
+        val sortTimersBy: SortTimersBy = SortTimersBy.SORT_ORDER,
         val showNotificationsPermissionRequest: Boolean = false
     )
 
     class Interactions(
-        val refreshData: () -> Unit,
         val deleteTimer: (TimerInfo) -> Unit,
         val duplicateTimer: (TimerInfo) -> Unit,
         val swapTimers: (TimerInfo, TimerInfo) -> Unit,
         val hidePermissionsDialog: () -> Unit,
         val requestNotificationsPermission: () -> Unit,
-        val ignoreNotificationsPermission: () -> Unit
+        val ignoreNotificationsPermission: () -> Unit,
+        val updateSortTimersBy: (SortTimersBy) -> Unit
     )
 
     val interactions = Interactions(
-        refreshData = ::refreshData,
         deleteTimer = ::deleteTimer,
         duplicateTimer = ::duplicateTimer,
         swapTimers = ::swapTimer,
         hidePermissionsDialog = ::hidePermissionsDialog,
         requestNotificationsPermission = ::requestNotificationsPermission,
-        ignoreNotificationsPermission = ::ignoreNotificationsPermission
+        ignoreNotificationsPermission = ::ignoreNotificationsPermission,
+        updateSortTimersBy = ::updateSortTimersBy
     )
 
     private val _stateFlow = MutableStateFlow(State())
     val state: StateFlow<State> = _stateFlow
 
     init {
-        refreshData()
-    }
-
-    @OptIn(FormatStringsInDatetimeFormats::class)
-    private val dateTimeFormat = LocalDateTime.Format {
-        byUnicodePattern("yyyy-MM-dd HH:mm:ss")
-    }
-
-    private fun refreshData() {
         viewModelScope.launch {
             _stateFlow.update { it.copy(loadingTimers = true) }
             timerRepository.getShallowTimers()
                 .collect { roomTimers ->
                     _stateFlow.update {
+                        val timers = roomTimers.map { roomTimer ->
+                            TimerInfo(
+                                id = roomTimer.id,
+                                name = roomTimer.name,
+                                duration = roomTimer.duration,
+                                startedCount = roomTimer.startedCount,
+                                completedCount = roomTimer.completedCount,
+                                sortOrder = roomTimer.sortOrder,
+                                lastRunMillis = roomTimer.lastRun?.toEpochMilliseconds() ?: 0L,
+                                lastRunFormatted = roomTimer.lastRun?.toLocalDateTime(
+                                    TimeZone.currentSystemDefault()
+                                )?.format(dateTimeFormat) ?: "Never"
+                            )
+                        }
                         it.copy(
                             loadingTimers = false,
-                            timers = roomTimers.map { roomTimer ->
-                                TimerInfo(
-                                    id = roomTimer.id,
-                                    name = roomTimer.name,
-                                    time = roomTimer.duration.toInt().timeFormatted(),
-                                    startedCount = roomTimer.startedCount,
-                                    completedCount = roomTimer.completedCount,
-                                    sortOrder = roomTimer.sortOrder,
-                                    lastRun = roomTimer.lastRun?.toLocalDateTime(
-                                        TimeZone.currentSystemDefault()
-                                    )?.format(dateTimeFormat) ?: "Never"
-                                )
-                            }.toPersistentList()
+                            timers = _stateFlow.value.sortTimersBy.sort(timers).toPersistentList()
                         )
                     }
                 }
         }
         viewModelScope.launch {
-            timerXSettings.settings.collect {
-                if (it.ignoreNotificationsPermissions.not()) {
+            timerXSettings.settings.collect { settings ->
+                _stateFlow.update {
+                    it.copy(
+                        sortTimersBy = settings.sortTimersBy,
+                        timers = settings.sortTimersBy.sort(_stateFlow.value.timers)
+                            .toPersistentList()
+                    )
+                }
+                if (settings.ignoreNotificationsPermissions.not()) {
                     if (permissionsHandler.getPermissionState(Permission.Notification) != PermissionState.Granted) {
                         _stateFlow.update { state ->
                             state.copy(showNotificationsPermissionRequest = true)
@@ -112,6 +113,11 @@ class MainViewModel(
                 }
             }
         }
+    }
+
+    @OptIn(FormatStringsInDatetimeFormats::class)
+    private val dateTimeFormat = LocalDateTime.Format {
+        byUnicodePattern("yyyy-MM-dd HH:mm:ss")
     }
 
     private fun deleteTimer(timerInfo: TimerInfo) {
@@ -148,6 +154,12 @@ class MainViewModel(
         viewModelScope.launch {
             _stateFlow.update { it.copy(showNotificationsPermissionRequest = false) }
             timerXSettings.setIgnoreNotificationPermissions()
+        }
+    }
+
+    private fun updateSortTimersBy(sortTimersBy: SortTimersBy) {
+        viewModelScope.launch {
+            timerXSettings.setSortTimersBy(sortTimersBy)
         }
     }
 }
