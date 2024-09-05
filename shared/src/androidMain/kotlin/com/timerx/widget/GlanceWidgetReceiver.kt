@@ -13,7 +13,11 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
+import com.timerx.settings.TimerXSettings
+import com.timerx.time.toAgo
+import com.timerx.ui.main.SortTimersBy
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -29,6 +33,8 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
     private val coroutineScope = MainScope()
 
     private val timerRepository = KoinPlatform.getKoin().get<ITimerRepository>()
+
+    private val timerXSettings = KoinPlatform.getKoin().get<TimerXSettings>()
 
     override fun onUpdate(
         context: Context,
@@ -46,22 +52,34 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
 
     private fun observeData(context: Context) {
         coroutineScope.launch {
+            GlanceAppWidgetManager(context).getGlanceIds(TimerXWidget::class.java)
+                .forEach {
+                    updateAppWidgetState(context, TimerXWidgetStateDefinition, it) {
+                        TimerWidgetInfo.Loading
+                    }
+                }
             timerRepository.getShallowTimers()
-                .collect { timers ->
+                .combine(timerXSettings.settings) { roomTimers, settings ->
+                    val sortedTimers = settings.sortTimersBy.sort(roomTimers)
+                    TimerWidgetInfo.Available(
+                        sortedTimers.map { timer ->
+                            TimerData(
+                                id = timer.id,
+                                name = timer.name,
+                                length = timer.duration.toInt(),
+                                lastRun = timer.lastRun?.toAgo() ?: "Never"
+                            )
+                        },
+                        settings.sortTimersBy
+                    )
+                }
+                .collect { availableWidgetInfo ->
                     val glanceId =
                         GlanceAppWidgetManager(context).getGlanceIds(TimerXWidget::class.java)
                             .firstOrNull()
                     glanceId?.let {
                         updateAppWidgetState(context, TimerXWidgetStateDefinition, it) {
-                            TimerInfo.Available(
-                                timers.map { timer ->
-                                    TimerData(
-                                        id = timer.id,
-                                        name = timer.name,
-                                        length = timer.duration.toInt()
-                                    )
-                                }
-                            )
+                            availableWidgetInfo
                         }
                         glanceAppWidget.update(context, it)
                     }
@@ -71,30 +89,37 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
 }
 
 @Serializable
-sealed interface TimerInfo {
+sealed interface TimerWidgetInfo {
     @Serializable
-    object Loading : TimerInfo
+    object Loading : TimerWidgetInfo
 
     @Serializable
-    data class Available(val timers: List<TimerData>) : TimerInfo
+    data class Available(
+        val timers: List<TimerData>,
+        val sortTimersBy: SortTimersBy
+    ) : TimerWidgetInfo
 
     @Serializable
-    data class Unavailable(val message: String) : TimerInfo
+    data class Unavailable(val message: String) : TimerWidgetInfo
 }
 
 @Serializable
 data class TimerData(
     val id: Long,
     val name: String,
-    val length: Int
+    val length: Int,
+    val lastRun: String
 )
 
-object TimerXWidgetStateDefinition : GlanceStateDefinition<TimerInfo> {
+object TimerXWidgetStateDefinition : GlanceStateDefinition<TimerWidgetInfo> {
     private const val FILE_NAME = "timerx_widget_store"
 
     private val Context.dataStore by dataStore(FILE_NAME, TimerInfoSerializer)
 
-    override suspend fun getDataStore(context: Context, fileKey: String): DataStore<TimerInfo> {
+    override suspend fun getDataStore(
+        context: Context,
+        fileKey: String
+    ): DataStore<TimerWidgetInfo> {
         return context.dataStore
     }
 
@@ -102,22 +127,22 @@ object TimerXWidgetStateDefinition : GlanceStateDefinition<TimerInfo> {
         return File(context.applicationContext.filesDir, "datastore/$FILE_NAME")
     }
 
-    object TimerInfoSerializer : Serializer<TimerInfo> {
-        override val defaultValue = TimerInfo.Unavailable("No timers")
+    object TimerInfoSerializer : Serializer<TimerWidgetInfo> {
+        override val defaultValue = TimerWidgetInfo.Unavailable("No timers")
 
-        override suspend fun readFrom(input: InputStream): TimerInfo = try {
+        override suspend fun readFrom(input: InputStream): TimerWidgetInfo = try {
             Json.decodeFromString(
-                TimerInfo.serializer(),
+                TimerWidgetInfo.serializer(),
                 input.readBytes().decodeToString()
             )
         } catch (exception: SerializationException) {
             throw CorruptionException("Could not read timer data: ${exception.message}")
         }
 
-        override suspend fun writeTo(t: TimerInfo, output: OutputStream) {
+        override suspend fun writeTo(t: TimerWidgetInfo, output: OutputStream) {
             output.use {
                 it.write(
-                    Json.encodeToString(TimerInfo.serializer(), t).encodeToByteArray()
+                    Json.encodeToString(TimerWidgetInfo.serializer(), t).encodeToByteArray()
                 )
             }
         }

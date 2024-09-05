@@ -204,7 +204,7 @@ private fun NotificationPermissions(
 
 @Composable
 private fun Timer(
-    timer: TimerInfo,
+    timer: Timer,
     interactions: MainViewModel.Interactions,
     navigateRunScreen: (Long) -> Unit,
     navigateEditScreen: (Long) -> Unit,

@@ -18,8 +18,10 @@ data class Timer(
     val finishVibration: Vibration = Vibration.Heavy,
     val startedCount: Long = 0,
     val completedCount: Long = 0,
+    val createdAt: Instant,
     val lastRun: Instant? = null
 )
+
 
 data class TimerSet(
     val id: Long = 0L,

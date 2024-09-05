@@ -1048,14 +1048,14 @@ object CustomIcons {
             return _CalendarMinus!!
         }
 
-    private var _SortNumericUpAlt: ImageVector? = null
-    val sortNumericUpAlt: ImageVector
+    private var _SortNumericUp: ImageVector? = null
+    val sortNumericUp: ImageVector
         get() {
-            if (_SortNumericUpAlt != null) {
-                return _SortNumericUpAlt!!
+            if (_SortNumericUp != null) {
+                return _SortNumericUp!!
             }
-            _SortNumericUpAlt = ImageVector.Builder(
-                name = "SortNumericUpAlt",
+            _SortNumericUp = ImageVector.Builder(
+                name = "SortNumericUp",
                 defaultWidth = 16.dp,
                 defaultHeight = 16.dp,
                 viewportWidth = 16f,
@@ -1070,9 +1070,31 @@ object CustomIcons {
                     strokeLineCap = StrokeCap.Butt,
                     strokeLineJoin = StrokeJoin.Miter,
                     strokeLineMiter = 1.0f,
+                    pathFillType = PathFillType.NonZero
+                ) {
+                    moveTo(12.438f, 1.668f)
+                    verticalLineTo(7f)
+                    horizontalLineTo(11.39f)
+                    verticalLineTo(2.684f)
+                    horizontalLineToRelative(-0.051f)
+                    lineToRelative(-1.211f, 0.859f)
+                    verticalLineToRelative(-0.969f)
+                    lineToRelative(1.262f, -0.906f)
+                    horizontalLineToRelative(1.046f)
+                    close()
+                }
+                path(
+                    fill = SolidColor(Color(0xFF000000)),
+                    fillAlpha = 1.0f,
+                    stroke = null,
+                    strokeAlpha = 1.0f,
+                    strokeLineWidth = 1.0f,
+                    strokeLineCap = StrokeCap.Butt,
+                    strokeLineJoin = StrokeJoin.Miter,
+                    strokeLineMiter = 1.0f,
                     pathFillType = PathFillType.EvenOdd
                 ) {
-                    moveTo(11.36f, 7.098f)
+                    moveTo(11.36f, 14.098f)
                     curveToRelative(-1.1370f, 00f, -1.7080f, -0.6570f, -1.7620f, -1.2780f)
                     horizontalLineToRelative(1.004f)
                     curveToRelative(0.0580f, 0.2230f, 0.3430f, 0.450f, 0.7730f, 0.450f)
@@ -1080,8 +1102,8 @@ object CustomIcons {
                     horizontalLineToRelative(-0.059f)
                     curveToRelative(-0.1480f, 0.390f, -0.570f, 0.7420f, -1.2610f, 0.7420f)
                     curveToRelative(-0.910f, 00f, -1.720f, -0.6130f, -1.720f, -1.7580f)
-                    curveToRelative(00f, -1.1480f, 0.8480f, -1.8360f, 1.9730f, -1.8360f)
-                    curveToRelative(1.090f, 00f, 2.0630f, 0.6370f, 2.0630f, 2.6880f)
+                    curveToRelative(00f, -1.1480f, 0.8480f, -1.8350f, 1.9730f, -1.8350f)
+                    curveToRelative(1.090f, 00f, 2.0630f, 0.6360f, 2.0630f, 2.6870f)
                     curveToRelative(00f, 1.8670f, -0.7230f, 2.8480f, -2.1450f, 2.8480f)
                     close()
                     moveToRelative(0.062f, -2.735f)
@@ -1101,16 +1123,6 @@ object CustomIcons {
                     strokeLineMiter = 1.0f,
                     pathFillType = PathFillType.NonZero
                 ) {
-                    moveTo(12.438f, 8.668f)
-                    verticalLineTo(14f)
-                    horizontalLineTo(11.39f)
-                    verticalLineTo(9.684f)
-                    horizontalLineToRelative(-0.051f)
-                    lineToRelative(-1.211f, 0.859f)
-                    verticalLineToRelative(-0.969f)
-                    lineToRelative(1.262f, -0.906f)
-                    horizontalLineToRelative(1.046f)
-                    close()
                     moveTo(4.5f, 13.5f)
                     arcToRelative(0.5f, 0.5f, 0f, isMoreThanHalf = false, isPositiveArc = true, -1f, 0f)
                     verticalLineTo(3.707f)
@@ -1125,6 +1137,6 @@ object CustomIcons {
                     close()
                 }
             }.build()
-            return _SortNumericUpAlt!!
+            return _SortNumericUp!!
         }
 }

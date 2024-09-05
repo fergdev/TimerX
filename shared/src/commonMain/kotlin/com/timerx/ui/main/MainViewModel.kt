@@ -5,23 +5,22 @@ import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.settings.TimerXSettings
+import com.timerx.time.toAgo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.toLocalDateTime
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
-data class TimerInfo(
+data class Timer(
     val id: Long,
     val name: String,
     val duration: Long,
@@ -40,15 +39,15 @@ class MainViewModel(
 
     data class State(
         val loadingTimers: Boolean = false,
-        val timers: ImmutableList<TimerInfo> = persistentListOf(),
+        val timers: ImmutableList<Timer> = persistentListOf(),
         val sortTimersBy: SortTimersBy = SortTimersBy.SORT_ORDER,
         val showNotificationsPermissionRequest: Boolean = false
     )
 
     class Interactions(
-        val deleteTimer: (TimerInfo) -> Unit,
-        val duplicateTimer: (TimerInfo) -> Unit,
-        val swapTimers: (TimerInfo, TimerInfo) -> Unit,
+        val deleteTimer: (Timer) -> Unit,
+        val duplicateTimer: (Timer) -> Unit,
+        val swapTimers: (Timer, Timer) -> Unit,
         val hidePermissionsDialog: () -> Unit,
         val requestNotificationsPermission: () -> Unit,
         val ignoreNotificationsPermission: () -> Unit,
@@ -72,46 +71,32 @@ class MainViewModel(
         viewModelScope.launch {
             _stateFlow.update { it.copy(loadingTimers = true) }
             timerRepository.getShallowTimers()
-                .collect { roomTimers ->
-                    _stateFlow.update {
-                        val timers = roomTimers.map { roomTimer ->
-                            TimerInfo(
-                                id = roomTimer.id,
-                                name = roomTimer.name,
-                                duration = roomTimer.duration,
-                                startedCount = roomTimer.startedCount,
-                                completedCount = roomTimer.completedCount,
-                                sortOrder = roomTimer.sortOrder,
-                                lastRunMillis = roomTimer.lastRun?.toEpochMilliseconds() ?: 0L,
-                                lastRunFormatted = roomTimer.lastRun?.toLocalDateTime(
-                                    TimeZone.currentSystemDefault()
-                                )?.format(dateTimeFormat) ?: "Never"
-                            )
-                        }
-                        it.copy(
-                            loadingTimers = false,
-                            timers = _stateFlow.value.sortTimersBy.sort(timers).toPersistentList()
+                .combine(
+                    timerXSettings.settings
+                ) { timers, settings ->
+                    val stateTimers = settings.sortTimersBy.sort(timers).map { roomTimer ->
+                        Timer(
+                            id = roomTimer.id,
+                            name = roomTimer.name,
+                            duration = roomTimer.duration,
+                            startedCount = roomTimer.startedCount,
+                            completedCount = roomTimer.completedCount,
+                            sortOrder = roomTimer.sortOrder,
+                            lastRunMillis = roomTimer.lastRun?.toEpochMilliseconds() ?: 0L,
+                            lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never"
                         )
                     }
-                }
-        }
-        viewModelScope.launch {
-            timerXSettings.settings.collect { settings ->
-                _stateFlow.update {
-                    it.copy(
+                    _stateFlow.value.copy(
+                        loadingTimers = false,
+                        timers = stateTimers.toPersistentList(),
                         sortTimersBy = settings.sortTimersBy,
-                        timers = settings.sortTimersBy.sort(_stateFlow.value.timers)
-                            .toPersistentList()
+                        showNotificationsPermissionRequest =
+                        settings.ignoreNotificationsPermissions.not() &&
+                                permissionsHandler.getPermissionState(Permission.Notification) != PermissionState.Granted
                     )
+                }.collect { newState ->
+                    _stateFlow.value = newState
                 }
-                if (settings.ignoreNotificationsPermissions.not()) {
-                    if (permissionsHandler.getPermissionState(Permission.Notification) != PermissionState.Granted) {
-                        _stateFlow.update { state ->
-                            state.copy(showNotificationsPermissionRequest = true)
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -120,15 +105,15 @@ class MainViewModel(
         byUnicodePattern("yyyy-MM-dd HH:mm:ss")
     }
 
-    private fun deleteTimer(timerInfo: TimerInfo) {
-        viewModelScope.launch { timerRepository.deleteTimer(timerInfo.id) }
+    private fun deleteTimer(timer: Timer) {
+        viewModelScope.launch { timerRepository.deleteTimer(timer.id) }
     }
 
-    private fun duplicateTimer(timerInfo: TimerInfo) {
-        viewModelScope.launch { timerRepository.duplicate(timerInfo.id) }
+    private fun duplicateTimer(timer: Timer) {
+        viewModelScope.launch { timerRepository.duplicate(timer.id) }
     }
 
-    private fun swapTimer(from: TimerInfo, to: TimerInfo) {
+    private fun swapTimer(from: Timer, to: Timer) {
         viewModelScope.launch {
             timerRepository.swapTimers(
                 from.id,

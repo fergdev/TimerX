@@ -1,58 +1,59 @@
 package com.timerx.ui.main
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.timerx.database.RoomTimer
 import com.timerx.ui.common.CustomIcons
 
 enum class SortTimersBy {
     SORT_ORDER {
-        override fun sort(timers: List<TimerInfo>): List<TimerInfo> {
+        override fun sort(timers: List<RoomTimer>): List<RoomTimer> {
             return timers.sortedBy { it.sortOrder }
         }
     },
     RUN_DATE_ASC {
-        override fun sort(timers: List<TimerInfo>): List<TimerInfo> {
-            return timers.sortedBy { it.lastRunMillis }
+        override fun sort(timers: List<RoomTimer>): List<RoomTimer> {
+            return timers.sortedBy { it.lastRun?.toEpochMilliseconds() ?: 0 }
         }
     },
     RUN_DATE_DESC {
-        override fun sort(timers: List<TimerInfo>): List<TimerInfo> {
-            return timers.sortedByDescending { it.lastRunMillis }
+        override fun sort(timers: List<RoomTimer>): List<RoomTimer> {
+            return timers.sortedByDescending { it.lastRun?.toEpochMilliseconds() ?: 0 }
         }
     },
     NAME_ASC {
-        override fun sort(timers: List<TimerInfo>): List<TimerInfo> {
+        override fun sort(timers: List<RoomTimer>): List<RoomTimer> {
             return timers.sortedBy { it.name }
         }
     },
     NAME_DESC {
-        override fun sort(timers: List<TimerInfo>): List<TimerInfo> {
+        override fun sort(timers: List<RoomTimer>): List<RoomTimer> {
             return timers.sortedByDescending { it.name }
         }
     },
     LENGTH_DESC {
-        override fun sort(timers: List<TimerInfo>): List<TimerInfo> {
+        override fun sort(timers: List<RoomTimer>): List<RoomTimer> {
             return timers.sortedByDescending { it.duration }
         }
     },
     LENGTH_ASC {
-        override fun sort(timers: List<TimerInfo>): List<TimerInfo> {
+        override fun sort(timers: List<RoomTimer>): List<RoomTimer> {
             return timers.sortedBy { it.duration }
         }
     };
 
-    abstract fun sort(timers: List<TimerInfo>): List<TimerInfo>
+    abstract fun sort(timers: List<RoomTimer>): List<RoomTimer>
 
 }
 
 internal fun SortTimersBy.imageVector(): ImageVector {
     return when (this) {
         SortTimersBy.SORT_ORDER -> CustomIcons.sortOrder
-        SortTimersBy.RUN_DATE_DESC -> CustomIcons.calendarMinus
         SortTimersBy.RUN_DATE_ASC -> CustomIcons.calendarPlus
-        SortTimersBy.NAME_DESC -> CustomIcons.sortAlphaUpAlt
+        SortTimersBy.RUN_DATE_DESC -> CustomIcons.calendarMinus
         SortTimersBy.NAME_ASC -> CustomIcons.sortAlphaDown
+        SortTimersBy.NAME_DESC -> CustomIcons.sortAlphaUpAlt
+        SortTimersBy.LENGTH_ASC -> CustomIcons.sortNumericUp
         SortTimersBy.LENGTH_DESC -> CustomIcons.sortNumericDownAlt
-        SortTimersBy.LENGTH_ASC -> CustomIcons.sortNumericUpAlt
     }
 }
 

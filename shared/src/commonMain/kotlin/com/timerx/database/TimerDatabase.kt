@@ -228,6 +228,8 @@ data class RoomTimer(
     val startedCount: Long = 0,
     @ColumnInfo(name = "completed_count")
     val completedCount: Long = 0,
+    @ColumnInfo(name = "created_at")
+    val createdAt: Instant,
     @ColumnInfo(name = "last_run")
     val lastRun: Instant? = null
 )
@@ -456,6 +458,7 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
             finishVibration = Vibration.entries[roomTimer.finishVibration],
             startedCount = roomTimer.startedCount,
             completedCount = roomTimer.completedCount,
+            createdAt = roomTimer.createdAt,
             lastRun = roomTimer.lastRun
         )
     }
@@ -470,6 +473,7 @@ private fun Timer.toRoomTimer(): RoomTimer {
         finishVibration = this.finishVibration.ordinal,
         sortOrder = this.sortOrder,
         duration = this.length().toLong(),
+        createdAt = this.createdAt,
         lastRun = this.lastRun
     )
 }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f74cb9193690cfff00fd4bf77512dafe",
+    "identityHash": "91de0e4d377e01d214cf1b1143a78815",
     "entities": [
       {
         "tableName": "RoomTimer",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finish_color` INTEGER NOT NULL, `finish_beep_id` INTEGER NOT NULL, `finish_vibration` INTEGER NOT NULL, `sort_order` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `started_count` INTEGER NOT NULL, `completed_count` INTEGER NOT NULL, `last_run` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finish_color` INTEGER NOT NULL, `finish_beep_id` INTEGER NOT NULL, `finish_vibration` INTEGER NOT NULL, `sort_order` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `started_count` INTEGER NOT NULL, `completed_count` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `last_run` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -59,6 +59,12 @@
           {
             "fieldPath": "completedCount",
             "columnName": "completed_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -334,7 +340,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f74cb9193690cfff00fd4bf77512dafe')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '91de0e4d377e01d214cf1b1143a78815')"
     ]
   }
 }

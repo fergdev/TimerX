@@ -282,7 +282,8 @@ class CreateViewModel(
                             finishBeep = state.value.finishBeep,
                             finishVibration = Vibration.Heavy,
                             startedCount = timerEditing.startedCount,
-                            completedCount = timerEditing.completedCount
+                            completedCount = timerEditing.completedCount,
+                            createdAt = timerEditing.createdAt
                         )
                     )
                 } else {
@@ -301,6 +302,7 @@ class CreateViewModel(
                             finishColor = state.value.finishColor,
                             finishBeep = state.value.finishBeep,
                             finishVibration = state.value.finishVibration,
+                            createdAt = Clock.System.now()
                         )
                     )
                 }
