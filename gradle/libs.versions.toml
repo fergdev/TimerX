@@ -29,6 +29,7 @@ playServicesAds = "23.3.0"
 pre-compose = "1.6.1"
 reorderable = "2.3.1"
 sqlite = "2.5.0-SNAPSHOT"
+protoliteWellKnownTypes = "18.0.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -62,6 +63,7 @@ pre-compose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "pre-
 pre-compose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "pre-compose" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

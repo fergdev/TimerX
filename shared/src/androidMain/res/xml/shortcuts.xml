@@ -3,7 +3,7 @@
 
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/add"
+        android:icon="@drawable/add_gradient"
         android:shortcutDisabledMessage="@string/shortcutNewDisabledMessage"
         android:shortcutId="create_timer"
         android:shortcutLongLabel="@string/shortcutNewLongLabel"

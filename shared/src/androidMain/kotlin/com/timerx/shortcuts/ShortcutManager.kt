@@ -48,7 +48,7 @@ class ShortcutManager(
             val shortcut = ShortcutInfoCompat.Builder(context, roomTimer.shortcutId())
                 .setShortLabel(roomTimer.name)
                 .setLongLabel(roomTimer.name)
-                .setIcon(IconCompat.createWithResource(context, R.drawable.play_arrow))
+                .setIcon(IconCompat.createWithResource(context, R.drawable.play_arrow_gradient))
                 .setIntent(
                     Intent(
                         context,
@@ -58,8 +58,7 @@ class ShortcutManager(
                         setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         putExtra(KEY_RUN_TIMER_ID, roomTimer.id)
                     }
-                )
-                .build()
+                ).build()
 
             ShortcutManagerCompat.pushDynamicShortcut(context, shortcut)
         }

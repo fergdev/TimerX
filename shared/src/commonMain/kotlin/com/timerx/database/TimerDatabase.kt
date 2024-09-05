@@ -328,7 +328,7 @@ class RoomTimerStats(
     @ColumnInfo(name = "timer_id", index = true) val timerId: Long,
 )
 
-class RealmTimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
+class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     private val timerDao = appDatabase.timerDao()
 
     override fun getShallowTimers(): Flow<List<RoomTimer>> {

@@ -3,7 +3,7 @@ package com.timerx.di
 import com.timerx.analytics.getTimerXAnalytics
 import com.timerx.beep.getBeepManager
 import com.timerx.database.ITimerRepository
-import com.timerx.database.RealmTimerRepository
+import com.timerx.database.TimerRepository
 import com.timerx.database.createRoomDatabaseFactory
 import com.timerx.domain.TimerManager
 import com.timerx.notification.getTimerXNotificationManager
@@ -35,7 +35,7 @@ val sharedModule = module {
     single { getVibrationManager(get()) }
     single { permissionsHandler() }
     single { TimerManager(get(), get(), get(), get()) }
-    single<ITimerRepository> { RealmTimerRepository(createRoomDatabaseFactory().createRoomDataBase()) }
+    single<ITimerRepository> { TimerRepository(createRoomDatabaseFactory().createRoomDataBase()) }
     single { getTimerXNotificationManager() }
     single { NavigationProvider() }
     factory { MainViewModel(get(), get(), get()) }

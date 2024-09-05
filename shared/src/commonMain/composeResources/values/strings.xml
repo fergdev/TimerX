@@ -21,12 +21,15 @@
     <string name="edit">Edit</string>
     <string name="edit_timer">Edit timer</string>
     <string name="enable">Enable</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="enable_notifications_message">Please enable notification permissions for the best experience when running a timer.</string>
     <string name="enabled">Enabled</string>
     <string name="finish_beep">Finish beep</string>
     <string name="finish_color">Finish color</string>
     <string name="finished">Finished</string>
     <string name="finish">Finish</string>
     <string name="interval">Interval</string>
+    <string name="ignore">Ignore</string>
     <string name="interval_name">Interval name</string>
     <string name="manual_next">Manual next</string>
     <string name="minus">Minus</string>
@@ -38,7 +41,7 @@
     <string name="prepare">Prepare</string>
     <string name="rest">Rest</string>
     <string name="restart">Restart</string>
-    <string name="started_value">Start: %1$s</string>
+    <string name="started_value">Started: %1$s</string>
     <string name="save">Save</string>
     <string name="sets">Sets</string>
     <string name="settings">Settings</string>

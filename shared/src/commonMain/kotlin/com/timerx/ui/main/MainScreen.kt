@@ -23,16 +23,16 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -67,13 +67,15 @@ import timerx.shared.generated.resources.copy
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.edit
 import timerx.shared.generated.resources.enable
+import timerx.shared.generated.resources.enable_notifications
+import timerx.shared.generated.resources.enable_notifications_message
+import timerx.shared.generated.resources.ignore
 import timerx.shared.generated.resources.no_timers
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.started_value
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 @Composable
 internal fun MainScreen(navigate: (Screen) -> Unit) {
@@ -84,35 +86,31 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
     val state by viewModel.state.collectAsState()
 
     Column(modifier = Modifier.systemBarsPadding()) {
-        Scaffold(
-            modifier = Modifier.weight(1F),
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = stringResource(Res.string.app_name)) },
-                    actions = {
-                        IconButton(onClick = {
-                            navigate(Screen.SettingsScreen)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Settings,
-                                contentDescription = stringResource(Res.string.settings)
-                            )
-                        }
-                    },
+        Scaffold(modifier = Modifier.weight(1F), topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(Res.string.app_name)) },
+                actions = {
+                    IconButton(onClick = {
+                        navigate(Screen.SettingsScreen)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = stringResource(Res.string.settings)
+                        )
+                    }
+                },
+            )
+        }, floatingActionButton = {
+            FloatingActionButton(onClick = { navigate(Screen.CreateScreen()) }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.add)
                 )
-            },
-            floatingActionButton = {
-                FloatingActionButton(onClick = { navigate(Screen.CreateScreen()) }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(Res.string.add)
-                    )
-                }
-            }) { paddingValues ->
+            }
+        }) { paddingValues ->
 
             Box(
-                modifier = Modifier.padding(paddingValues)
-                    .fillMaxSize()
+                modifier = Modifier.padding(paddingValues).fillMaxSize()
             ) {
                 if (state.loadingTimers) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -146,44 +144,51 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                 }
             }
 
-            if (state.showNotificationsPermissionRequest) {
-                ModalBottomSheet(onDismissRequest = {
-                    viewModel.interactions.hidePermissionsDialog()
-                }) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Enable Notifications",
-                            style = MaterialTheme.typography.headlineLarge
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "Please enable notification permissions for the best experience when running a timer.",
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        Button(
-                            modifier = Modifier.width(150.dp),
-                            onClick = { viewModel.interactions.requestNotificationsPermission() }) {
-                            Text(text = stringResource(Res.string.enable))
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        TextButton(
-                            modifier = Modifier.width(150.dp),
-                            onClick = { viewModel.interactions.ignoreNotificationsPermission() }) {
-                            Text(text = "Ignore")
-                        }
-                    }
-                }
-            }
+            NotificationPermissions(
+                state, viewModel.interactions
+            )
         }
         GoogleAd()
     }
 }
 
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun NotificationPermissions(
+    state: MainViewModel.State, interactions: MainViewModel.Interactions
+) {
+    if (state.showNotificationsPermissionRequest) {
+        ModalBottomSheet(onDismissRequest = {
+            interactions.hidePermissionsDialog()
+        }) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(Res.string.enable_notifications),
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = stringResource(Res.string.enable_notifications_message),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(16.dp))
+                Button(modifier = Modifier.width(150.dp),
+                    onClick = { interactions.requestNotificationsPermission() }) {
+                    Text(text = stringResource(Res.string.enable))
+                }
+                Spacer(Modifier.height(8.dp))
+                TextButton(modifier = Modifier.width(150.dp),
+                    onClick = { interactions.ignoreNotificationsPermission() }) {
+                    Text(text = stringResource(Res.string.ignore))
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun Timer(
@@ -194,8 +199,7 @@ private fun Timer(
     reorderableScope: ReorderableCollectionItemScope,
 ) {
     val revealState = rememberRevealState(
-        200.dp,
-        directions = setOf(RevealDirection.EndToStart)
+        200.dp, directions = setOf(RevealDirection.EndToStart)
     )
     val coroutineScope = rememberCoroutineScope()
     val hideReveal = {
@@ -204,44 +208,39 @@ private fun Timer(
         }
     }
     RevealSwipe(
+        modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
         state = revealState,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(16.dp),
         backgroundCardStartColor = MaterialTheme.colorScheme.surface,
         backgroundCardEndColor = MaterialTheme.colorScheme.surfaceVariant,
         card = { shape, content ->
-            Card(
+            OutlinedCard(
                 modifier = Modifier.matchParentSize(),
                 shape = shape,
-                colors = CardDefaults.cardColors(
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
+                colors = CardDefaults.cardColors(),
                 content = content
             )
         },
         hiddenContentEnd = {
             Row {
-                IconButton(
-                    onClick = {
-                        interactions.duplicateTimer(timer)
-                        hideReveal()
-                    }) {
+                IconButton(onClick = {
+                    interactions.duplicateTimer(timer)
+                    hideReveal()
+                }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
-                IconButton(
-                    onClick = { navigateEditScreen(timer.id) }) {
+                IconButton(onClick = { navigateEditScreen(timer.id) }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = Icons.Default.Edit,
                         contentDescription = stringResource(Res.string.edit)
                     )
                 }
-                IconButton(
-                    onClick = { interactions.deleteTimer(timer) }) {
+                IconButton(onClick = { interactions.deleteTimer(timer) }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = Icons.Default.Delete,
@@ -251,17 +250,19 @@ private fun Timer(
             }
         },
     ) {
-        ListItem(
-            modifier = Modifier.clickable { navigateRunScreen(timer.id) },
-            headlineContent = {
-                Text(
-                    text = timer.name,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
-            supportingContent = {
-                Column {
-                    Text(text = timer.time)
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth().clickable { navigateRunScreen(timer.id) }
+        ) {
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                Column(modifier = Modifier.weight(1F)) {
+                    Text(
+                        text = timer.name,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                    Text(
+                        text = timer.time,
+                        style = MaterialTheme.typography.titleLarge
+                    )
                     Text(text = stringResource(Res.string.started_value, timer.startedCount))
                     Text(
                         text = stringResource(
@@ -270,14 +271,12 @@ private fun Timer(
                         )
                     )
                 }
-            },
-            trailingContent = {
                 Icon(
                     modifier = with(reorderableScope) { Modifier.size(24.dp).draggableHandle() },
                     imageVector = CustomIcons.dragHandle,
                     contentDescription = stringResource(Res.string.copy)
                 )
             }
-        )
+        }
     }
 }
