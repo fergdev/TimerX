@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
@@ -102,7 +103,8 @@ class RunViewModel(
                     timerDatabase.updateTimerStats(
                         timer.id,
                         timer.startedCount,
-                        timer.completedCount + 1
+                        timer.completedCount + 1,
+                        timer.lastRun ?: Clock.System.now()
                     )
                 }
             }
@@ -111,7 +113,8 @@ class RunViewModel(
             timerDatabase.updateTimerStats(
                 timer.id,
                 timer.startedCount + 1,
-                timer.completedCount
+                timer.completedCount,
+                Clock.System.now()
             )
         }
     }

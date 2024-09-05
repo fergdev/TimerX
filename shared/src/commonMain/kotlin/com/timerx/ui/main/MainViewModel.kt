@@ -13,6 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.toLocalDateTime
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
@@ -22,7 +28,8 @@ data class TimerInfo(
     val time: String,
     val startedCount: Long,
     val completedCount: Long,
-    val sortOrder: Long
+    val sortOrder: Long,
+    val lastRun: String
 )
 
 class MainViewModel(
@@ -64,6 +71,11 @@ class MainViewModel(
         refreshData()
     }
 
+    @OptIn(FormatStringsInDatetimeFormats::class)
+    private val dateTimeFormat = LocalDateTime.Format {
+        byUnicodePattern("yyyy-MM-dd HH:mm:ss")
+    }
+
     private fun refreshData() {
         viewModelScope.launch {
             _stateFlow.update { it.copy(loadingTimers = true) }
@@ -79,7 +91,10 @@ class MainViewModel(
                                     time = roomTimer.duration.toInt().timeFormatted(),
                                     startedCount = roomTimer.startedCount,
                                     completedCount = roomTimer.completedCount,
-                                    sortOrder = roomTimer.sortOrder
+                                    sortOrder = roomTimer.sortOrder,
+                                    lastRun = roomTimer.lastRun?.toLocalDateTime(
+                                        TimeZone.currentSystemDefault()
+                                    )?.format(dateTimeFormat) ?: "Never"
                                 )
                             }.toPersistentList()
                         )

@@ -14,6 +14,8 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import com.timerx.beep.Beep
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.NO_SORT_ORDER
@@ -27,11 +29,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Instant
 
 interface ITimerRepository {
+    // TODO make this a timer
     fun getShallowTimers(): Flow<List<RoomTimer>>
     suspend fun insertTimer(timer: Timer)
-    suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long)
+    suspend fun updateTimerStats(
+        timerId: Long,
+        startedCount: Long,
+        completedCount: Long,
+        lastRun: Instant
+    )
+
     suspend fun updateTimer(timer: Timer)
     suspend fun deleteTimer(timerId: Long)
     suspend fun duplicate(timerId: Long)
@@ -49,9 +59,6 @@ interface RoomTimerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(timer: RoomTimer): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(timer: RoomTimerStats): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(set: RoomSet): Long
@@ -90,7 +97,6 @@ interface RoomTimerDao {
                 insert(RoomSetInterval(0, setPrimaryKey, intervalPrimaryKey))
             }
         }
-        insert(RoomTimerStats(timerId = timerPrimaryKey))
     }
 
     @Query("SELECT sort_order FROM RoomTimer ORDER BY sort_order DESC LIMIT 1")
@@ -110,14 +116,13 @@ interface RoomTimerDao {
     @Query("UPDATE RoomTimer SET sort_order = :sortOrder WHERE id = :timerId")
     suspend fun updateSortOrder(timerId: Long, sortOrder: Long)
 
-    @Query("UPDATE RoomTimer SET started_count = :startedCount, completed_count = :completedCount WHERE id = :timerId")
-    suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long)
+    @Query("UPDATE RoomTimer " +
+            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+            "WHERE id = :timerId")
+    suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long, lastRun: Instant)
 
     @Query(value = "DELETE FROM RoomTimer WHERE id IS (:id)")
     suspend fun deleteTimer(id: Long)
-
-    @Query(value = "DELETE FROM RoomTimerStats WHERE timer_id IS (:id)")
-    suspend fun deleteTimerStats(id: Long)
 
     @Query(value = "DELETE FROM RoomSet WHERE id IS (:id)")
     suspend fun deleteSet(id: Long)
@@ -141,7 +146,6 @@ interface RoomTimerDao {
         }
 
         deleteTimer(timerId)
-        deleteTimerStats(timerId)
     }
 
     @Transaction
@@ -155,9 +159,6 @@ interface RoomTimerDao {
 
     @Query("SELECT * FROM RoomTimer ORDER BY sort_order DESC")
     fun getTimers(): Flow<List<RoomTimer>>
-
-    @Query("SELECT * FROM RoomTimerStats WHERE timer_id IS (:timerId)")
-    fun getTimerStats(timerId: Long): Flow<RoomTimerStats>
 
     @Query("SELECT * FROM RoomTimer WHERE id IS (:timerId)")
     fun getTimer(timerId: Long): Flow<RoomTimer>
@@ -182,9 +183,10 @@ interface RoomTimerDao {
         RoomSet::class,
         RoomSetInterval::class,
         RoomInterval::class,
-        RoomTimerStats::class
-    ], version = 1
+    ],
+    version = 1
 )
+@TypeConverters(DateTimeConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase(), DB {
     abstract fun timerDao(): RoomTimerDao
@@ -222,10 +224,12 @@ data class RoomTimer(
     val sortOrder: Long,
     @ColumnInfo("duration")
     val duration: Long,
-    @ColumnInfo(name = "started_count", index = true)
+    @ColumnInfo(name = "started_count")
     val startedCount: Long = 0,
-    @ColumnInfo(name = "completed_count", index = true)
+    @ColumnInfo(name = "completed_count")
     val completedCount: Long = 0,
+    @ColumnInfo(name = "last_run")
+    val lastRun: Instant? = null
 )
 
 @Entity(
@@ -312,21 +316,19 @@ class RoomInterval(
     val finalCountDownVibrationId: Int,
 )
 
-@Entity(
-    foreignKeys = [
-        ForeignKey(
-            entity = RoomTimer::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("timer_id"),
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
-)
-class RoomTimerStats(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(name = "timer_id", index = true) val timerId: Long,
-)
+internal class DateTimeConverter {
+    @TypeConverter
+    fun fromTimestamp(value: Long?): Instant? {
+        return value?.let {
+            Instant.fromEpochMilliseconds(it)
+        }
+    }
+
+    @TypeConverter
+    fun dateToTimestamp(date: Instant?): Long? {
+        return date?.toEpochMilliseconds()
+    }
+}
 
 class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     private val timerDao = appDatabase.timerDao()
@@ -342,12 +344,18 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
         )
     }
 
-    override suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long) {
+    override suspend fun updateTimerStats(
+        timerId: Long,
+        startedCount: Long,
+        completedCount: Long,
+        lastRun: Instant
+    ) {
         appDatabase.timerDao()
             .updateTimerStats(
                 timerId,
                 startedCount,
-                completedCount
+                completedCount,
+                lastRun
             )
     }
 
@@ -447,7 +455,8 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
             finishBeep = Beep.entries[roomTimer.finishBeepId],
             finishVibration = Vibration.entries[roomTimer.finishVibration],
             startedCount = roomTimer.startedCount,
-            completedCount = roomTimer.completedCount
+            completedCount = roomTimer.completedCount,
+            lastRun = roomTimer.lastRun
         )
     }
 }
@@ -461,6 +470,7 @@ private fun Timer.toRoomTimer(): RoomTimer {
         finishVibration = this.finishVibration.ordinal,
         sortOrder = this.sortOrder,
         duration = this.length().toLong(),
+        lastRun = this.lastRun
     )
 }
 

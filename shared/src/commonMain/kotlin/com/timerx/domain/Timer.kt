@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.datetime.Instant
 
 internal const val NO_SORT_ORDER = -1L
 
@@ -16,7 +17,8 @@ data class Timer(
     val finishBeep: Beep = Beep.Alert,
     val finishVibration: Vibration = Vibration.Heavy,
     val startedCount: Long = 0,
-    val completedCount: Long = 0
+    val completedCount: Long = 0,
+    val lastRun: Instant? = null
 )
 
 data class TimerSet(

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dd274ec1f60bb9e3fef7a014f2992c58",
+    "identityHash": "f74cb9193690cfff00fd4bf77512dafe",
     "entities": [
       {
         "tableName": "RoomTimer",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finish_color` INTEGER NOT NULL, `finish_beep_id` INTEGER NOT NULL, `finish_vibration` INTEGER NOT NULL, `sort_order` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `started_count` INTEGER NOT NULL, `completed_count` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `finish_color` INTEGER NOT NULL, `finish_beep_id` INTEGER NOT NULL, `finish_vibration` INTEGER NOT NULL, `sort_order` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `started_count` INTEGER NOT NULL, `completed_count` INTEGER NOT NULL, `last_run` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -61,6 +61,11 @@
             "columnName": "completed_count",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastRun",
+            "columnName": "last_run",
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -68,27 +73,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [
-          {
-            "name": "index_RoomTimer_started_count",
-            "unique": false,
-            "columnNames": [
-              "started_count"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimer_started_count` ON `${TABLE_NAME}` (`started_count`)"
-          },
-          {
-            "name": "index_RoomTimer_completed_count",
-            "unique": false,
-            "columnNames": [
-              "completed_count"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimer_completed_count` ON `${TABLE_NAME}` (`completed_count`)"
-          }
-        ]
+        }
       },
       {
         "tableName": "RoomTimerSet",
@@ -345,59 +330,11 @@
             "id"
           ]
         }
-      },
-      {
-        "tableName": "RoomTimerStats",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timer_id` INTEGER NOT NULL, FOREIGN KEY(`timer_id`) REFERENCES `RoomTimer`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timerId",
-            "columnName": "timer_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [
-          {
-            "name": "index_RoomTimerStats_timer_id",
-            "unique": false,
-            "columnNames": [
-              "timer_id"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomTimerStats_timer_id` ON `${TABLE_NAME}` (`timer_id`)"
-          }
-        ],
-        "foreignKeys": [
-          {
-            "table": "RoomTimer",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "timer_id"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd274ec1f60bb9e3fef7a014f2992c58')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f74cb9193690cfff00fd4bf77512dafe')"
     ]
   }
 }

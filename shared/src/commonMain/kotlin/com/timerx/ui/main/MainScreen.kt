@@ -270,6 +270,7 @@ private fun Timer(
                             timer.completedCount
                         )
                     )
+                    Text(text = timer.lastRun)
                 }
                 Icon(
                     modifier = with(reorderableScope) { Modifier.size(24.dp).draggableHandle() },
