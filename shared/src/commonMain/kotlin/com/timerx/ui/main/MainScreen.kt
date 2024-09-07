@@ -1,6 +1,5 @@
 package com.timerx.ui.main
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -69,9 +67,6 @@ import com.timerx.ui.navigation.Screen
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
-import sh.calvin.reorderable.ReorderableCollectionItemScope
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.app_name
@@ -88,9 +83,7 @@ import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.sort_order
 import timerx.shared.generated.resources.started_value
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainScreen(navigate: (Screen) -> Unit) {
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
@@ -108,12 +101,13 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                     colors = TopAppBarDefaults.topAppBarColors(
                         scrolledContainerColor = Color.Transparent,
                     ),
-                    actions = { TopAppBarActions(viewModel.interactions, state, navigate) },
+                    actions = { TopAppBarActions(viewModel.interactions, state.sortTimersBy, navigate) },
                 )
             }, floatingActionButton = {
                 FloatingActionButton(
                     modifier = Modifier.padding(
-                        end = WindowInsets.navigationBars.asPaddingValues().calculateRightPadding(LayoutDirection.Ltr)
+                        end = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateRightPadding(LayoutDirection.Ltr)
                     ),
                     onClick = { navigate(Screen.CreateScreen()) }) {
                     Icon(
@@ -131,46 +125,40 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                         text = stringResource(Res.string.no_timers)
                     )
                 } else {
-                    val lazyListState = rememberLazyListState()
-                    val reorderableLazyListState =
-                        rememberReorderableLazyListState(lazyListState) { from, to ->
-                            val fromItem = state.timers[from.index]
-                            val toItem = state.timers[to.index]
-                            if (fromItem is Timer && toItem is Timer) {
-                                viewModel.interactions.swapTimers(
-                                    fromItem, toItem
-                                )
-                            }
-                        }
-
                     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
                     val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .nestedScroll(appBarScrollBehavior.nestedScrollConnection),
-                        state = lazyListState,
                     ) {
                         item {
                             Spacer(Modifier.height(paddingValues.calculateTopPadding()))
                         }
+
                         items(items = state.timers, key = { it.id }) { timer ->
-                            ReorderableItem(
+                            val layoutDirection = LocalLayoutDirection.current
+                            Box(
                                 modifier = Modifier.padding(
-                                    start = systemBarPadding.calculateStartPadding(
-                                        LocalLayoutDirection.current)
-                                        .coerceAtLeast(displayCutoutPadding.calculateStartPadding(layoutDirection = LayoutDirection.Ltr))
+                                    start = systemBarPadding.calculateStartPadding(layoutDirection)
+                                        .coerceAtLeast(
+                                            displayCutoutPadding.calculateStartPadding(
+                                                layoutDirection = LayoutDirection.Ltr
+                                            )
+                                        )
                                         .coerceAtLeast(16.dp),
-                                    end = systemBarPadding.calculateEndPadding(LocalLayoutDirection.current)
-                                        .coerceAtLeast(displayCutoutPadding.calculateEndPadding(layoutDirection = LayoutDirection.Ltr))
+                                    end = systemBarPadding.calculateEndPadding(layoutDirection)
+                                        .coerceAtLeast(
+                                            displayCutoutPadding.calculateEndPadding(
+                                                layoutDirection = LayoutDirection.Ltr
+                                            )
+                                        )
                                         .coerceAtLeast(16.dp),
-                                ),
-                                state = reorderableLazyListState,
-                                key = timer.id
+                                )
                             ) {
                                 when (timer) {
                                     is Timer -> {
-                                        Timer(
+                                        TimerCard(
                                             timer = timer,
                                             interactions = viewModel.interactions,
                                             navigateRunScreen = { navigate(Screen.RunScreen(timer.id)) },
@@ -181,17 +169,21 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                                                     )
                                                 )
                                             },
-                                            reorderableScope = this,
-                                            isReorderable = state.sortTimersBy == SortTimersBy.SORT_ORDER
                                         )
                                     }
 
                                     is Ad -> {
-                                        GoogleAd()
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            GoogleAd()
+                                        }
                                     }
                                 }
                             }
                         }
+
                         item {
                             Spacer(Modifier.height(paddingValues.calculateBottomPadding()))
                         }
@@ -200,7 +192,8 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
             }
 
             NotificationPermissions(
-                state, viewModel.interactions
+                state.showNotificationsPermissionRequest,
+                viewModel.interactions
             )
         }
     }
@@ -209,15 +202,15 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
 @Composable
 private fun TopAppBarActions(
     interactions: MainViewModel.Interactions,
-    state: MainViewModel.State,
+    sortTimersBy: SortTimersBy,
     navigate: (Screen) -> Unit
 ) {
     IconButton(
         onClick = {
-            interactions.updateSortTimersBy(state.sortTimersBy.next())
+            interactions.updateSortTimersBy(sortTimersBy.next())
         }) {
         Icon(
-            imageVector = state.sortTimersBy.imageVector(),
+            imageVector = sortTimersBy.imageVector(),
             contentDescription = stringResource(Res.string.sort_order)
         )
     }
@@ -232,9 +225,10 @@ private fun TopAppBarActions(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun NotificationPermissions(
-    state: MainViewModel.State, interactions: MainViewModel.Interactions
+    showNotificationsPermissionRequest: Boolean,
+    interactions: MainViewModel.Interactions
 ) {
-    if (state.showNotificationsPermissionRequest) {
+    if (showNotificationsPermissionRequest) {
         ModalBottomSheet(onDismissRequest = {
             interactions.hidePermissionsDialog()
         }) {
@@ -268,13 +262,11 @@ private fun NotificationPermissions(
 }
 
 @Composable
-private fun Timer(
+private fun TimerCard(
     timer: Timer,
     interactions: MainViewModel.Interactions,
     navigateRunScreen: (Long) -> Unit,
     navigateEditScreen: (Long) -> Unit,
-    reorderableScope: ReorderableCollectionItemScope,
-    isReorderable: Boolean
 ) {
     val revealState = rememberRevealState(
         200.dp, directions = setOf(RevealDirection.EndToStart)
@@ -349,15 +341,6 @@ private fun Timer(
                         )
                     )
                     Text(text = timer.lastRunFormatted)
-                }
-                if (isReorderable) {
-                    Icon(
-                        modifier = with(reorderableScope) {
-                            Modifier.size(24.dp).draggableHandle()
-                        },
-                        imageVector = CustomIcons.dragHandle,
-                        contentDescription = stringResource(Res.string.copy)
-                    )
                 }
             }
         }

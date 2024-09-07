@@ -1,8 +1,7 @@
 package com.timerx.ads
 
+import android.content.Context
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
@@ -44,18 +42,17 @@ actual fun GoogleAd() {
         .coerceAtLeast(16.dp)
 
     val adWidth = deviceWidth - paddingStart - paddingEnd
-    val activity = KoinPlatform.getKoin().get<ComponentActivity>()
+    val context = KoinPlatform.getKoin().get<Context>()
     val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-        activity, adWidth.value.toInt()
+        context, adWidth.value.toInt()
     )
 
     AndroidView(
         modifier = Modifier
             .wrapContentSize()
-            .height(adSize.height.dp)
-            .background(Color.Transparent),
-        factory = { context ->
-            AdView(context).apply {
+            .height(adSize.height.dp),
+        factory = { androidViewContext ->
+            AdView(androidViewContext).apply {
                 setAdSize(adSize)
                 adUnitId = "ca-app-pub-2499949091653906/6117628581"
                 loadAd(AdRequest.Builder().build())
