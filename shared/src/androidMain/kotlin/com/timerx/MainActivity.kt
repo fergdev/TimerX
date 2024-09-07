@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.timerx.database.ITimerRepository
 import com.timerx.shortcuts.ShortcutManager
 import com.timerx.ui.App
 import com.timerx.ui.navigation.NavigationProvider
@@ -16,6 +17,7 @@ import com.timerx.ui.navigation.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
     private val activityModule = module {
         single<ComponentActivity> { this@MainActivity }
     }
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +51,17 @@ class MainActivity : ComponentActivity() {
 
     private fun parseIntent(intent: Intent) {
         intent.extras?.let {
+            val koin = KoinPlatform.getKoin()
             if (it.containsKey(KEY_RUN_TIMER_ID)) {
-                KoinPlatform.getKoin().get<NavigationProvider>()
-                    .navigateTo(Screen.RunScreen(it.getLong(KEY_RUN_TIMER_ID)))
+                coroutineScope.launch {
+                    val timerId = it.getLong(KEY_RUN_TIMER_ID)
+                    if (koin.get<ITimerRepository>().doesTimerExist(timerId).first()) {
+                        koin.get<NavigationProvider>()
+                            .navigateTo(Screen.RunScreen(timerId))
+                    }
+                }
             } else if (it.containsKey(KEY_CREATE_TIMER)) {
-                KoinPlatform.getKoin().get<NavigationProvider>()
+                koin.get<NavigationProvider>()
                     .navigateTo(Screen.CreateScreen())
             }
         }

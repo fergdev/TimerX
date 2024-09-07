@@ -52,6 +52,8 @@ interface ITimerRepository {
         toId: Long,
         toSortOrder: Long
     )
+
+    suspend fun doesTimerExist(timerId: Long): Flow<Boolean>
 }
 
 @Dao
@@ -116,10 +118,17 @@ interface RoomTimerDao {
     @Query("UPDATE RoomTimer SET sort_order = :sortOrder WHERE id = :timerId")
     suspend fun updateSortOrder(timerId: Long, sortOrder: Long)
 
-    @Query("UPDATE RoomTimer " +
-            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-            "WHERE id = :timerId")
-    suspend fun updateTimerStats(timerId: Long, startedCount: Long, completedCount: Long, lastRun: Instant)
+    @Query(
+        "UPDATE RoomTimer " +
+                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+                "WHERE id = :timerId"
+    )
+    suspend fun updateTimerStats(
+        timerId: Long,
+        startedCount: Long,
+        completedCount: Long,
+        lastRun: Instant
+    )
 
     @Query(value = "DELETE FROM RoomTimer WHERE id IS (:id)")
     suspend fun deleteTimer(id: Long)
@@ -174,6 +183,9 @@ interface RoomTimerDao {
 
     @Query("SELECT * FROM RoomInterval WHERE id IN (:ids)")
     fun getInterval(ids: List<Long>): Flow<List<RoomInterval>>
+
+    @Query("SELECT * FROM RoomTimer WHERE id IS (:timerId)")
+    fun doesTimerExist(timerId: Long): Flow<RoomTimer?>
 }
 
 @Database(
@@ -414,6 +426,10 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
             toId,
             toSortOrder
         )
+    }
+
+    override suspend fun doesTimerExist(timerId: Long): Flow<Boolean> {
+        return timerDao.doesTimerExist(timerId).map { it != null }
     }
 
     private suspend fun getRestOfTimer(roomTimer: RoomTimer): Timer {

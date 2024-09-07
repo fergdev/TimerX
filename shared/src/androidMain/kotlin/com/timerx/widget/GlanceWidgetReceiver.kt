@@ -29,11 +29,8 @@ import java.io.OutputStream
 
 class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = TimerXWidget()
-
     private val coroutineScope = MainScope()
-
     private val timerRepository = KoinPlatform.getKoin().get<ITimerRepository>()
-
     private val timerXSettings = KoinPlatform.getKoin().get<TimerXSettings>()
 
     override fun onUpdate(
@@ -74,15 +71,13 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
                     )
                 }
                 .collect { availableWidgetInfo ->
-                    val glanceId =
-                        GlanceAppWidgetManager(context).getGlanceIds(TimerXWidget::class.java)
-                            .firstOrNull()
-                    glanceId?.let {
-                        updateAppWidgetState(context, TimerXWidgetStateDefinition, it) {
-                            availableWidgetInfo
+                    GlanceAppWidgetManager(context).getGlanceIds(TimerXWidget::class.java)
+                        .forEach {
+                            updateAppWidgetState(context, TimerXWidgetStateDefinition, it) {
+                                availableWidgetInfo
+                            }
+                            glanceAppWidget.update(context, it)
                         }
-                        glanceAppWidget.update(context, it)
-                    }
                 }
         }
     }
