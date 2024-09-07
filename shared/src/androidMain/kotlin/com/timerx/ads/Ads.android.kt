@@ -3,12 +3,20 @@ package com.timerx.ads
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdListener
@@ -22,9 +30,24 @@ private const val TAG = "ADView"
 
 @Composable
 actual fun GoogleAd() {
-    val deviceWidth = LocalConfiguration.current.screenWidthDp
+    val deviceWidth = LocalConfiguration.current.screenWidthDp.dp
+    val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
+    val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
+    val layoutDirection = LocalLayoutDirection.current
+
+    val paddingStart = systemBarPadding.calculateStartPadding(layoutDirection)
+        .coerceAtLeast(cutoutPadding.calculateStartPadding(layoutDirection))
+        .coerceAtLeast(16.dp)
+
+    val paddingEnd = systemBarPadding.calculateEndPadding(layoutDirection)
+        .coerceAtLeast(cutoutPadding.calculateEndPadding(layoutDirection))
+        .coerceAtLeast(16.dp)
+
+    val adWidth = deviceWidth - paddingStart - paddingEnd
     val activity = KoinPlatform.getKoin().get<ComponentActivity>()
-    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, deviceWidth)
+    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+        activity, adWidth.value.toInt()
+    )
 
     AndroidView(
         modifier = Modifier
