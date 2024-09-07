@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,8 +53,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
@@ -95,7 +101,17 @@ internal fun CreateScreen(
             )
         },
         content = { paddingValues ->
-            Box {
+            val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
+            val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
+            val layoutDirection = LocalLayoutDirection.current
+            Box(
+                modifier = Modifier.padding(
+                    start = systemBarsPadding.calculateStartPadding(layoutDirection)
+                        .coerceAtLeast(cutoutPadding.calculateStartPadding(layoutDirection)),
+                    end = systemBarsPadding.calculateEndPadding(layoutDirection)
+                        .coerceAtLeast(cutoutPadding.calculateEndPadding(layoutDirection))
+                )
+            ) {
                 CreateContent(
                     state,
                     viewModel.interactions,

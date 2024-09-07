@@ -6,11 +6,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -45,7 +52,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.timerx.ads.GoogleAd
 import com.timerx.domain.timeFormatted
@@ -101,7 +111,11 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                     actions = { TopAppBarActions(viewModel.interactions, state, navigate) },
                 )
             }, floatingActionButton = {
-                FloatingActionButton(onClick = { navigate(Screen.CreateScreen()) }) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(
+                        end = WindowInsets.navigationBars.asPaddingValues().calculateRightPadding(LayoutDirection.Ltr)
+                    ),
+                    onClick = { navigate(Screen.CreateScreen()) }) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(Res.string.add)
@@ -129,6 +143,8 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                             }
                         }
 
+                    val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
+                    val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -139,7 +155,19 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                             Spacer(Modifier.height(paddingValues.calculateTopPadding()))
                         }
                         items(items = state.timers, key = { it.id }) { timer ->
-                            ReorderableItem(state = reorderableLazyListState, key = timer.id) {
+                            ReorderableItem(
+                                modifier = Modifier.padding(
+                                    start = systemBarPadding.calculateStartPadding(
+                                        LocalLayoutDirection.current)
+                                        .coerceAtLeast(displayCutoutPadding.calculateStartPadding(layoutDirection = LayoutDirection.Ltr))
+                                        .coerceAtLeast(16.dp),
+                                    end = systemBarPadding.calculateEndPadding(LocalLayoutDirection.current)
+                                        .coerceAtLeast(displayCutoutPadding.calculateEndPadding(layoutDirection = LayoutDirection.Ltr))
+                                        .coerceAtLeast(16.dp),
+                                ),
+                                state = reorderableLazyListState,
+                                key = timer.id
+                            ) {
                                 when (timer) {
                                     is Timer -> {
                                         Timer(
@@ -258,7 +286,7 @@ private fun Timer(
         }
     }
     RevealSwipe(
-        modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+        modifier = Modifier.padding(vertical = 8.dp),
         state = revealState,
         shape = RoundedCornerShape(16.dp),
         backgroundCardStartColor = MaterialTheme.colorScheme.surface,
