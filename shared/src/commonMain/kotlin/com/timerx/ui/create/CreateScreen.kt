@@ -8,13 +8,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -27,9 +31,10 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,6 +47,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -74,73 +81,105 @@ internal fun CreateScreen(
 ) {
     val viewModel: CreateViewModel =
         koinViewModel(vmClass = CreateViewModel::class) { parametersOf(timerId) }
-
     val state by viewModel.state.collectAsState()
-    Surface(modifier = Modifier.navigationBarsPadding()) {
-        Column {
-            TopAppBar(
-                title = {
-                    UnderlinedField(
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 1,
-                        value = state.timerName,
-                        onValueChange = {
-                            viewModel.interactions.updateTimerName(it)
-                        },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        textStyle = MaterialTheme.typography.headlineSmall.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        placeholder = {
-                            Text(
-                                text = stringResource(Res.string.timer_name),
-                                fontStyle = FontStyle.Italic
-                            )
-                        },
-                        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),
-                        onClick = {
-                            navigateUp()
-                        }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.back)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            viewModel.interactions.save()
-                            navigateUp()
-                        }) {
-                        Icon(
-                            modifier = Modifier.size(CustomIcons.defaultIconSize),
-                            imageVector = Icons.Default.Done,
-                            contentDescription = stringResource(Res.string.save)
-                        )
-                    }
-                }
-            )
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                CreateContent(state, viewModel.interactions)
+    val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                scrollBehavior = appBarScrollBehavior,
+                title = { TimerNameTextField(state, viewModel.interactions) },
+                navigationIcon = { AppBarNavigationIcon(navigateUp) },
+                actions = { TopAppBarActions(viewModel.interactions, navigateUp) },
+                colors = TopAppBarDefaults.topAppBarColors(scrolledContainerColor = Color.Transparent)
+            )
+        },
+        content = { paddingValues ->
+            Box {
+                CreateContent(
+                    state,
+                    viewModel.interactions,
+                    appBarScrollBehavior.nestedScrollConnection,
+                    paddingValues
+                )
             }
         }
+    )
+}
+
+@Composable
+private fun TopAppBarActions(
+    interactions: CreateViewModel.Interactions,
+    navigateUp: () -> Unit
+) {
+    IconButton(
+        onClick = {
+            interactions.save()
+            navigateUp()
+        }) {
+        Icon(
+            modifier = Modifier.size(CustomIcons.defaultIconSize),
+            imageVector = Icons.Default.Done,
+            contentDescription = stringResource(Res.string.save)
+        )
     }
+}
+
+@Composable
+private fun AppBarNavigationIcon(navigateUp: () -> Unit) {
+    IconButton(
+        modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),
+        onClick = {
+            navigateUp()
+        }) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = stringResource(Res.string.back)
+        )
+    }
+}
+
+@Composable
+private fun TimerNameTextField(
+    state: CreateViewModel.State,
+    interactions: CreateViewModel.Interactions
+) {
+    UnderlinedField(
+        modifier = Modifier.fillMaxWidth(),
+        maxLines = 1,
+        value = state.timerName,
+        onValueChange = {
+            interactions.updateTimerName(it)
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        textStyle = MaterialTheme.typography.headlineSmall.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        ),
+        placeholder = {
+            Text(
+                text = stringResource(Res.string.timer_name),
+                fontStyle = FontStyle.Italic
+            )
+        },
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+    )
 }
 
 @Composable
 private fun CreateContent(
     state: CreateViewModel.State,
-    interactions: CreateViewModel.Interactions
+    interactions: CreateViewModel.Interactions,
+    nestedScrollConnection: NestedScrollConnection,
+    paddingValues: PaddingValues
 ) {
     val scrollState by mutableStateOf(rememberScrollState())
-    Column(modifier = Modifier.verticalScroll(scrollState)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+            .verticalScroll(scrollState)
+    ) {
+        Spacer(Modifier.height(paddingValues.calculateTopPadding()))
         ReorderableColumn(
             list = state.sets,
             onSettle = { from, to ->
@@ -172,6 +211,7 @@ private fun CreateContent(
             ) { it.timeFormatted() }
         }
         FinishControls(state, interactions)
+        Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 
@@ -186,10 +226,16 @@ private fun FinishControls(
     )
     Column(modifier = Modifier.background(backgroundColor)) {
         FinishColorPicker(interactions.updateFinishColor)
-        BeepSelector(modifier = Modifier.padding(horizontal = 16.dp), selected = state.finishBeep) {
+        BeepSelector(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            selected = state.finishBeep
+        ) {
             interactions.updateFinishAlert(it)
         }
-        VibrationSelector(modifier = Modifier.padding(16.dp), selected = state.finishVibration) {
+        VibrationSelector(
+            modifier = Modifier.padding(16.dp),
+            selected = state.finishVibration
+        ) {
             interactions.updateFinishVibration(it)
         }
     }
