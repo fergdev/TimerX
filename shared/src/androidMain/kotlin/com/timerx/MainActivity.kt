@@ -28,11 +28,15 @@ const val KEY_RUN_TIMER_ID = "run_timer_id"
 const val KEY_CREATE_TIMER = "create_timer"
 private const val splashScreenExitDuration = 500L
 
+private const val keepSplashScreenOn = 1000L
+
 class MainActivity : ComponentActivity() {
     private val activityModule = module {
         single<ComponentActivity> { this@MainActivity }
     }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private lateinit var timerRepository: ITimerRepository
+    private lateinit var navigationProvider: NavigationProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +44,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent { App() }
         loadKoinModules(activityModule)
-        KoinPlatform.getKoin().get<ShortcutManager>()
+        initKoin()
         parseIntent(intent)
+    }
+
+    private fun initKoin() {
+        val koin = KoinPlatform.getKoin()
+        this.timerRepository = koin.get<ITimerRepository>()
+        this.navigationProvider = koin.get<NavigationProvider>()
+
+        // Init singletons
+        koin.get<ShortcutManager>()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -50,19 +63,16 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun parseIntent(intent: Intent) {
-        intent.extras?.let {
-            val koin = KoinPlatform.getKoin()
-            if (it.containsKey(KEY_RUN_TIMER_ID)) {
-                coroutineScope.launch {
+        coroutineScope.launch {
+            intent.extras?.let {
+                if (it.containsKey(KEY_RUN_TIMER_ID)) {
                     val timerId = it.getLong(KEY_RUN_TIMER_ID)
-                    if (koin.get<ITimerRepository>().doesTimerExist(timerId).first()) {
-                        koin.get<NavigationProvider>()
-                            .navigateTo(Screen.RunScreen(timerId))
+                    if (timerRepository.doesTimerExist(timerId).first()) {
+                        navigationProvider.navigateTo(Screen.RunScreen(timerId))
                     }
+                } else if (it.containsKey(KEY_CREATE_TIMER)) {
+                    navigationProvider.navigateTo(Screen.CreateScreen())
                 }
-            } else if (it.containsKey(KEY_CREATE_TIMER)) {
-                koin.get<NavigationProvider>()
-                    .navigateTo(Screen.CreateScreen())
             }
         }
     }
@@ -74,8 +84,8 @@ class MainActivity : ComponentActivity() {
 
     private fun splashScreen() {
         var keepScreenOn = true
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(1000)
+        coroutineScope.launch {
+            delay(keepSplashScreenOn)
             keepScreenOn = false
         }
         installSplashScreen().apply {

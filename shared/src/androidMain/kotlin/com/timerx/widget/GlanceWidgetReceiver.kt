@@ -86,7 +86,7 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
 @Serializable
 sealed interface TimerWidgetInfo {
     @Serializable
-    object Loading : TimerWidgetInfo
+    data object Loading : TimerWidgetInfo
 
     @Serializable
     data class Available(

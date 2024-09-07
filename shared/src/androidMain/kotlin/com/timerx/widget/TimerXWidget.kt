@@ -37,6 +37,7 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.wrapContentHeight
 import androidx.glance.layout.wrapContentSize
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
@@ -281,8 +282,9 @@ private fun GlanceTimer(timerData: TimerData) {
                 Text(
                     text = timerData.name,
                     style = TextStyle(
-                        fontSize = TextUnit(28f, TextUnitType.Sp),
-                        color = GlanceTheme.colors.onSurface
+                        fontSize = TextUnit(16f, TextUnitType.Sp,),
+                        color = GlanceTheme.colors.onSurface,
+                        fontWeight = FontWeight.Bold
                     ),
                     maxLines = 1
                 )
@@ -357,7 +359,7 @@ private fun GlanceTimerThin(timerData: TimerData) {
 @Composable
 private fun HorizontalDivider(
     modifier: GlanceModifier = GlanceModifier,
-    colorProvider: ColorProvider = GlanceTheme.colors.onSurfaceVariant,
+    colorProvider: ColorProvider = GlanceTheme.colors.outline,
     thickness: Dp = 1.dp,
 ) {
     Box(
