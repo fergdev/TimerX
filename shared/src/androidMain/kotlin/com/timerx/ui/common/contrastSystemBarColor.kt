@@ -1,15 +1,14 @@
 package com.timerx.ui.common
 
-import android.app.Activity
-import androidx.compose.runtime.Composable
+import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import org.koin.mp.KoinPlatform
 
-@Composable
-actual fun SetStatusBarColor(color: Color) {
-    val view = LocalView.current
-    val window = (view.context as Activity).window
+actual fun contrastSystemBarColor(color: Color) {
+    val activity = KoinPlatform.getKoin().get<ComponentActivity>()
+    val window = activity.window
+    val view = window.decorView
     val insetsController = WindowCompat.getInsetsController(window, view)
     insetsController.isAppearanceLightStatusBars = isColorDark(color).not()
     insetsController.isAppearanceLightNavigationBars = isColorDark(color).not()

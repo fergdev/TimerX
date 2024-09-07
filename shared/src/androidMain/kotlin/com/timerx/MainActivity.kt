@@ -42,8 +42,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen()
         enableEdgeToEdge()
-        setContent { App() }
         loadKoinModules(activityModule)
+        setContent { App() }
         initKoin()
         parseIntent(intent)
     }

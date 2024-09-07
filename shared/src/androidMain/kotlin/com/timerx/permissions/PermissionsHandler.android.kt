@@ -31,13 +31,10 @@ private class PermissionCallback(
 
 class PermissionsHandler : IPermissionsHandler {
     private val context: Context = KoinPlatform.getKoin().get()
+    private val activity: ComponentActivity = KoinPlatform.getKoin().get()
     private val mutex: Mutex = Mutex()
     private val key = UUID.randomUUID().toString()
     private var permissionCallback: PermissionCallback? = null
-
-    private fun getActivity(): ComponentActivity {
-        return KoinPlatform.getKoin().get()
-    }
 
     override suspend fun getPermissionState(permission: Permission): PermissionState {
         if (permission == Permission.Notification && Build.VERSION.SDK_INT in VERSIONS_WITHOUT_NOTIFICATION_PERMISSION) {
@@ -58,7 +55,7 @@ class PermissionsHandler : IPermissionsHandler {
         if (isAllGranted) return PermissionState.Granted
 
         val isAllRequestRationale: Boolean = permissions.all {
-            shouldShowRequestPermissionRationale(getActivity(), it).not()
+            shouldShowRequestPermissionRationale(activity, it).not()
         }
         return if (isAllRequestRationale) PermissionState.Denied
         else PermissionState.NotGranted
@@ -81,7 +78,7 @@ class PermissionsHandler : IPermissionsHandler {
 
     override suspend fun requestPermission(permission: Permission) {
         mutex.withLock {
-            val launcher = bind(getActivity())
+            val launcher = bind(activity)
             val platformPermission = permission.toPlatformPermission()
             suspendCoroutine { continuation ->
                 requestPermission(
@@ -104,7 +101,7 @@ class PermissionsHandler : IPermissionsHandler {
     }
 
     private fun bind(activity: ComponentActivity): ActivityResultLauncher<Array<String>> {
-        val activityResultRegistryOwner = getActivity() as ActivityResultRegistryOwner
+        val activityResultRegistryOwner = activity as ActivityResultRegistryOwner
 
         return activityResultRegistryOwner.activityResultRegistry.register(
             key,

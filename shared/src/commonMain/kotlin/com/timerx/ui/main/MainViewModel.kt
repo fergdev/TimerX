@@ -14,14 +14,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format.FormatStringsInDatetimeFormats
-import kotlinx.datetime.format.byUnicodePattern
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import kotlin.random.Random
+
+sealed interface MainListItem {
+    val id: Long
+}
 
 data class Timer(
-    val id: Long,
+    override val id: Long,
     val name: String,
     val duration: Long,
     val startedCount: Long,
@@ -29,7 +31,9 @@ data class Timer(
     val sortOrder: Long,
     val lastRunMillis: Long,
     val lastRunFormatted: String,
-)
+) : MainListItem
+
+data class Ad(override val id: Long) : MainListItem
 
 class MainViewModel(
     private val timerRepository: ITimerRepository,
@@ -39,7 +43,7 @@ class MainViewModel(
 
     data class State(
         val loadingTimers: Boolean = false,
-        val timers: ImmutableList<Timer> = persistentListOf(),
+        val timers: ImmutableList<MainListItem> = persistentListOf(),
         val sortTimersBy: SortTimersBy = SortTimersBy.SORT_ORDER,
         val showNotificationsPermissionRequest: Boolean = false
     )
@@ -86,9 +90,17 @@ class MainViewModel(
                             lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never"
                         )
                     }
+                    val listItems = stateTimers.chunked(2)
+                        .flatMap {
+                            if (it.size == 2) {
+                                it + Ad(Random.nextLong())
+                            } else {
+                                it
+                            }
+                        }
                     _stateFlow.value.copy(
                         loadingTimers = false,
-                        timers = stateTimers.toPersistentList(),
+                        timers = listItems.toPersistentList(),
                         sortTimersBy = settings.sortTimersBy,
                         showNotificationsPermissionRequest =
                         settings.ignoreNotificationsPermissions.not() &&
@@ -98,11 +110,6 @@ class MainViewModel(
                     _stateFlow.value = newState
                 }
         }
-    }
-
-    @OptIn(FormatStringsInDatetimeFormats::class)
-    private val dateTimeFormat = LocalDateTime.Format {
-        byUnicodePattern("yyyy-MM-dd HH:mm:ss")
     }
 
     private fun deleteTimer(timer: Timer) {

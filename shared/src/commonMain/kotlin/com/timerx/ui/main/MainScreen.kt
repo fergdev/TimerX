@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -37,12 +36,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.ads.GoogleAd
@@ -50,7 +52,7 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
-import com.timerx.ui.common.SetStatusBarColor
+import com.timerx.ui.common.contrastSystemBarColor
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import com.timerx.ui.navigation.Screen
@@ -82,47 +84,31 @@ import timerx.shared.generated.resources.started_value
 @Composable
 internal fun MainScreen(navigate: (Screen) -> Unit) {
     val viewModel: MainViewModel = koinViewModel(vmClass = MainViewModel::class)
-
-    SetStatusBarColor(MaterialTheme.colorScheme.surface)
-
     val state by viewModel.state.collectAsState()
 
-    Column(modifier = Modifier.systemBarsPadding()) {
-        Scaffold(modifier = Modifier.weight(1F), topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(Res.string.app_name)) },
-                actions = {
-                    IconButton(
-                        onClick = {
-                        viewModel.interactions.updateSortTimersBy(state.sortTimersBy.next())
-                    }) {
-                        Icon(
-                            imageVector = state.sortTimersBy.imageVector(),
-                            contentDescription = stringResource(Res.string.sort_order)
-                        )
-                    }
-                    IconButton(onClick = {
-                        navigate(Screen.SettingsScreen)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = stringResource(Res.string.settings)
-                        )
-                    }
-                },
-            )
-        }, floatingActionButton = {
-            FloatingActionButton(onClick = { navigate(Screen.CreateScreen()) }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(Res.string.add)
-                )
-            }
-        }) { paddingValues ->
+    contrastSystemBarColor(MaterialTheme.colorScheme.surface)
 
-            Box(
-                modifier = Modifier.padding(paddingValues).fillMaxSize()
-            ) {
+    val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    Box {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = stringResource(Res.string.app_name)) },
+                    scrollBehavior = appBarScrollBehavior,
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        scrolledContainerColor = Color.Transparent,
+                    ),
+                    actions = { TopAppBarActions(viewModel.interactions, state, navigate) },
+                )
+            }, floatingActionButton = {
+                FloatingActionButton(onClick = { navigate(Screen.CreateScreen()) }) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.add)
+                    )
+                }
+            }) { paddingValues ->
+            Box(modifier = Modifier.fillMaxSize()) {
                 if (state.loadingTimers) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else if (state.timers.isEmpty()) {
@@ -134,23 +120,52 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                     val lazyListState = rememberLazyListState()
                     val reorderableLazyListState =
                         rememberReorderableLazyListState(lazyListState) { from, to ->
-                            viewModel.interactions.swapTimers(
-                                state.timers[from.index], state.timers[to.index]
-                            )
-                        }
-
-                    LazyColumn(modifier = Modifier.fillMaxSize(), state = lazyListState) {
-                        items(items = state.timers, key = { it.id }) { timer ->
-                            ReorderableItem(state = reorderableLazyListState, key = timer.id) {
-                                Timer(
-                                    timer = timer,
-                                    interactions = viewModel.interactions,
-                                    navigateRunScreen = { navigate(Screen.RunScreen(timer.id)) },
-                                    navigateEditScreen = { navigate(Screen.CreateScreen(timer.id)) },
-                                    reorderableScope = this,
-                                    isReorderable = state.sortTimersBy == SortTimersBy.SORT_ORDER
+                            val fromItem = state.timers[from.index]
+                            val toItem = state.timers[to.index]
+                            if (fromItem is Timer && toItem is Timer) {
+                                viewModel.interactions.swapTimers(
+                                    fromItem, toItem
                                 )
                             }
+                        }
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .nestedScroll(appBarScrollBehavior.nestedScrollConnection),
+                        state = lazyListState,
+                    ) {
+                        item {
+                            Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+                        }
+                        items(items = state.timers, key = { it.id }) { timer ->
+                            ReorderableItem(state = reorderableLazyListState, key = timer.id) {
+                                when (timer) {
+                                    is Timer -> {
+                                        Timer(
+                                            timer = timer,
+                                            interactions = viewModel.interactions,
+                                            navigateRunScreen = { navigate(Screen.RunScreen(timer.id)) },
+                                            navigateEditScreen = {
+                                                navigate(
+                                                    Screen.CreateScreen(
+                                                        timer.id
+                                                    )
+                                                )
+                                            },
+                                            reorderableScope = this,
+                                            isReorderable = state.sortTimersBy == SortTimersBy.SORT_ORDER
+                                        )
+                                    }
+
+                                    is Ad -> {
+                                        GoogleAd()
+                                    }
+                                }
+                            }
+                        }
+                        item {
+                            Spacer(Modifier.height(paddingValues.calculateBottomPadding()))
                         }
                     }
                 }
@@ -160,7 +175,29 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                 state, viewModel.interactions
             )
         }
-        GoogleAd()
+    }
+}
+
+@Composable
+private fun TopAppBarActions(
+    interactions: MainViewModel.Interactions,
+    state: MainViewModel.State,
+    navigate: (Screen) -> Unit
+) {
+    IconButton(
+        onClick = {
+            interactions.updateSortTimersBy(state.sortTimersBy.next())
+        }) {
+        Icon(
+            imageVector = state.sortTimersBy.imageVector(),
+            contentDescription = stringResource(Res.string.sort_order)
+        )
+    }
+    IconButton(onClick = { navigate(Screen.SettingsScreen) }) {
+        Icon(
+            imageVector = Icons.Filled.Settings,
+            contentDescription = stringResource(Res.string.settings)
+        )
     }
 }
 
