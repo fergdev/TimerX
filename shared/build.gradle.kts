@@ -88,9 +88,6 @@ kotlin {
                 implementation(libs.androidx.glance.material3)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.androidx.core.splashscreen)
-
-                implementation("androidx.work:work-runtime:2.9.1")
-                implementation("androidx.work:work-runtime-ktx:2.9.1")
             }
         }
         val androidUnitTest by getting {
