@@ -115,7 +115,6 @@ kotlin {
     }
 }
 
-
 android {
     namespace = "com.timerx"
     compileSdk = 34
@@ -142,13 +141,12 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-
 // TODO enable room plugin when it works properly
-//room {
+// room {
 //    schemaDirectory("$projectDir/schemas")
-//}
+// }
 ksp {
-    arg("room.schemaLocation", "${projectDir}/schemas")
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {

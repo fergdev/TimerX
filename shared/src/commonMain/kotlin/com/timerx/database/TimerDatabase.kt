@@ -120,8 +120,8 @@ interface RoomTimerDao {
 
     @Query(
         "UPDATE RoomTimer " +
-                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-                "WHERE id = :timerId"
+            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+            "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,
@@ -214,7 +214,7 @@ abstract class AppDatabase : RoomDatabase(), DB {
 // Class 'AppDatabase_Impl' is not abstract and does not implement abstract base class member 'clearAllTables'.
 interface DB {
     @Suppress("RedundantUnitReturnType")
-    fun clearAllTables(): Unit {
+    fun clearAllTables() {
     }
 }
 
@@ -445,7 +445,8 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
                 val intervals = timerDao.getInterval(
                     timerDao.getSetInterval(roomSet.id).first().map { intervalSet ->
                         intervalSet.intervalId
-                    }).first()
+                    }
+                ).first()
                 TimerSet(
                     id = roomSet.id,
                     repetitions = roomSet.repetitions,

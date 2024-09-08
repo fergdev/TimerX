@@ -24,11 +24,11 @@ fun UnderlinedField(
     color: Color = MaterialTheme.colorScheme.onSurface,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     onValueChange: (String) -> Unit,
-    placeholder: @Composable (() ->Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
     cursorBrush: SolidColor
 ) {
     Column(modifier = modifier) {
-        Box(modifier= Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             if (placeholder != null && value.isEmpty()) {
                 placeholder()
             }
@@ -46,4 +46,3 @@ fun UnderlinedField(
         HorizontalDivider(color = color)
     }
 }
-

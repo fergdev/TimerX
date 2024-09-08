@@ -109,13 +109,15 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                         end = WindowInsets.navigationBars.asPaddingValues()
                             .calculateRightPadding(LayoutDirection.Ltr)
                     ),
-                    onClick = { navigate(Screen.CreateScreen()) }) {
+                    onClick = { navigate(Screen.CreateScreen()) }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(Res.string.add)
                     )
                 }
-            }) { paddingValues ->
+            }
+        ) { paddingValues ->
             Box(modifier = Modifier.fillMaxSize()) {
                 if (state.loadingTimers) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -208,7 +210,8 @@ private fun TopAppBarActions(
     IconButton(
         onClick = {
             interactions.updateSortTimersBy(sortTimersBy.next())
-        }) {
+        }
+    ) {
         Icon(
             imageVector = sortTimersBy.imageVector(),
             contentDescription = stringResource(Res.string.sort_order)
@@ -247,13 +250,17 @@ private fun NotificationPermissions(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(16.dp))
-                Button(modifier = Modifier.width(150.dp),
-                    onClick = { interactions.requestNotificationsPermission() }) {
+                Button(
+                    modifier = Modifier.width(150.dp),
+                    onClick = { interactions.requestNotificationsPermission() }
+                ) {
                     Text(text = stringResource(Res.string.enable))
                 }
                 Spacer(Modifier.height(8.dp))
-                TextButton(modifier = Modifier.width(150.dp),
-                    onClick = { interactions.ignoreNotificationsPermission() }) {
+                TextButton(
+                    modifier = Modifier.width(150.dp),
+                    onClick = { interactions.ignoreNotificationsPermission() }
+                ) {
                     Text(text = stringResource(Res.string.ignore))
                 }
             }

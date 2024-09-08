@@ -64,7 +64,8 @@ class CreateViewModel(
                         beep = Beep.Alert,
                         vibration = Vibration.Medium
                     )
-                ), TimerInterval(
+                ),
+                TimerInterval(
                     id = defaultIdGenerator++,
                     name = restString,
                     duration = 30,
@@ -362,7 +363,8 @@ class CreateViewModel(
                     }
                 } else {
                     timerSet.intervals
-                }.toImmutableList())
+                }.toImmutableList()
+            )
         _state.value = state.value.copy(sets = sets.toPersistentList())
     }
 
@@ -396,13 +398,15 @@ class CreateViewModel(
     private fun updateIntervalDuration(timerInterval: TimerInterval, duration: Int) {
         if (duration < 1) return
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(duration = duration)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(duration = duration)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -410,13 +414,15 @@ class CreateViewModel(
 
     private fun updateIntervalName(timerInterval: TimerInterval, name: String) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(name = name)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(name = name)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -439,13 +445,15 @@ class CreateViewModel(
 
     private fun updateIntervalColor(timerInterval: TimerInterval, color: Color) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(color = color)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(color = color)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -457,13 +465,15 @@ class CreateViewModel(
 
     private fun updateSkipOnLastSet(timerInterval: TimerInterval, skipOnLastSet: Boolean) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(skipOnLastSet = skipOnLastSet)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(skipOnLastSet = skipOnLastSet)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -471,13 +481,15 @@ class CreateViewModel(
 
     private fun updateCountUp(timerInterval: TimerInterval, countUp: Boolean) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(countUp = countUp)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(countUp = countUp)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -485,13 +497,15 @@ class CreateViewModel(
 
     private fun updateManualNext(timerInterval: TimerInterval, manualNext: Boolean) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(manualNext = manualNext)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(manualNext = manualNext)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -499,13 +513,15 @@ class CreateViewModel(
 
     private fun updateBeep(timerInterval: TimerInterval, beep: Beep) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(beep = beep)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(beep = beep)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -533,13 +549,15 @@ class CreateViewModel(
         finalCountDown: FinalCountDown
     ) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(finalCountDown = finalCountDown)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(finalCountDown = finalCountDown)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())
@@ -547,13 +565,15 @@ class CreateViewModel(
 
     private fun updateVibration(timerInterval: TimerInterval, vibration: Vibration) {
         sets = sets.map { set ->
-            set.copy(intervals = set.intervals.map {
-                if (it.id == timerInterval.id) {
-                    it.copy(vibration = vibration)
-                } else {
-                    it
-                }
-            }.toPersistentList())
+            set.copy(
+                intervals = set.intervals.map {
+                    if (it.id == timerInterval.id) {
+                        it.copy(vibration = vibration)
+                    } else {
+                        it
+                    }
+                }.toPersistentList()
+            )
         }.toMutableList()
 
         _state.value = state.value.copy(sets = sets.toPersistentList())

@@ -1,6 +1,5 @@
 
 plugins {
-    //trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.detekt)
     alias(libs.plugins.androidApplication) apply (false)
     alias(libs.plugins.androidLibrary) apply (false)

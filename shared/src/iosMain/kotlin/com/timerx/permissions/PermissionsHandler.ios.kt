@@ -34,4 +34,3 @@ internal fun doOpenAppSettings() {
     val settingsUrl: NSURL = NSURL.URLWithString(UIApplicationOpenSettingsURLString)!!
     UIApplication.sharedApplication.openURL(settingsUrl)
 }
-

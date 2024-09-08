@@ -56,14 +56,16 @@ fun createNotification(
         setTextColor(R.id.notification_time, contrastColor)
 
         setImageViewIcon(
-            R.id.notification_pause, getTintedIcon(
+            R.id.notification_pause,
+            getTintedIcon(
                 context,
                 if (isRunning) R.drawable.pause else R.drawable.play_arrow,
                 contrastColor
             )
         )
         setImageViewIcon(
-            R.id.notification_cancel, getTintedIcon(
+            R.id.notification_cancel,
+            getTintedIcon(
                 context,
                 R.drawable.close,
                 contrastColor
@@ -81,28 +83,32 @@ fun createNotification(
         setTextColor(R.id.notification_time, contrastColor)
 
         setImageViewIcon(
-            R.id.notification_pause, getTintedIcon(
+            R.id.notification_pause,
+            getTintedIcon(
                 context,
                 if (isRunning) R.drawable.pause else R.drawable.play_arrow,
                 contrastColor
             )
         )
         setImageViewIcon(
-            R.id.notification_cancel, getTintedIcon(
+            R.id.notification_cancel,
+            getTintedIcon(
                 context,
                 R.drawable.close,
                 contrastColor
             )
         )
         setImageViewIcon(
-            R.id.notification_skip_next, getTintedIcon(
+            R.id.notification_skip_next,
+            getTintedIcon(
                 context,
                 R.drawable.skip_next,
                 contrastColor
             )
         )
         setImageViewIcon(
-            R.id.notification_skip_previous, getTintedIcon(
+            R.id.notification_skip_previous,
+            getTintedIcon(
                 context,
                 R.drawable.skip_previous,
                 contrastColor

@@ -42,7 +42,6 @@ enum class SortTimersBy {
     };
 
     abstract fun sort(timers: List<RoomTimer>): List<RoomTimer>
-
 }
 
 internal fun SortTimersBy.imageVector(): ImageVector {

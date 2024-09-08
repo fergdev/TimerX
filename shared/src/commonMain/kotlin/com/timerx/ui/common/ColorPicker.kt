@@ -49,10 +49,11 @@ internal fun ColorPicker(
     }
 }
 
-
 @Composable
 private fun ColorPickerBox(color: Color, onClick: (Color) -> Unit) {
-    Box(modifier = Modifier.size(48.dp).background(color).clickable {
-        onClick(color)
-    })
+    Box(
+        modifier = Modifier.size(48.dp).background(color).clickable {
+            onClick(color)
+        }
+    )
 }

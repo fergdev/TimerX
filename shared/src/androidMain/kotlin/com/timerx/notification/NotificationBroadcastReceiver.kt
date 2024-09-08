@@ -11,7 +11,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
         val string = intent?.extras?.getString(NOTIFICATION_KEY)
-        when(string){
+        when (string) {
             NOTIFICATION_PLAY_PAUSE -> timerManager.playPause()
             NOTIFICATION_STOP -> timerManager.destroy()
             NOTIFICATION_SKIP_NEXT -> timerManager.nextInterval()

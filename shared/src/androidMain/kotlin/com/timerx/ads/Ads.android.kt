@@ -55,12 +55,14 @@ actual fun GoogleAd() {
             AdView(androidViewContext).apply {
                 setAdSize(adSize)
                 adUnitId = "ca-app-pub-2499949091653906/6117628581"
-                loadAd(AdRequest.Builder()
-                    .addKeyword("fitness")
-                    .addKeyword("gym")
-                    .addKeyword("health")
-                    .addKeyword("workout")
-                    .build())
+                loadAd(
+                    AdRequest.Builder()
+                        .addKeyword("fitness")
+                        .addKeyword("gym")
+                        .addKeyword("health")
+                        .addKeyword("workout")
+                        .build()
+                )
                 adListener =
                     object : AdListener() {
                         override fun onAdLoaded() {
@@ -71,9 +73,9 @@ actual fun GoogleAd() {
                             Log.e(
                                 TAG,
                                 "Banner ad failed to load. " +
-                                        "code '${error.code} " +
-                                        "message '${error.message}'" +
-                                        "responseInfo '${error.responseInfo}'"
+                                    "code '${error.code} " +
+                                    "message '${error.message}'" +
+                                    "responseInfo '${error.responseInfo}'"
                             )
                         }
 

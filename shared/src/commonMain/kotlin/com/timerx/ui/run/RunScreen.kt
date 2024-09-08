@@ -189,7 +189,6 @@ private fun TimerInformation(
             color = displayColor
         )
     } else {
-
         state.index?.let {
             Crossfade(
                 targetState = state.index,

@@ -113,9 +113,11 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
         get() = _eventState
 
     override fun start() {
-        runState.update { it.copy(
-            timerName = timer.name,
-            timerState = TimerState.Running)
+        runState.update {
+            it.copy(
+                timerName = timer.name,
+                timerState = TimerState.Running
+            )
         }
         updateState(0, 0, 0)
         _eventState.value = TimerEvent.Started(

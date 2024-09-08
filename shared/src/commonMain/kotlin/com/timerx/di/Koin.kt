@@ -22,7 +22,6 @@ import org.koin.core.module.dsl.new
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-
 @OptIn(DelicateCoroutinesApi::class)
 val sharedModule = module {
     single {
@@ -38,7 +37,7 @@ val sharedModule = module {
     single { new(::permissionsHandler) }
     single { new(::TimerManager) }
     single { createRoomDatabaseFactory().createRoomDataBase() }
-    single { new(::TimerRepository) } bind  ITimerRepository::class
+    single { new(::TimerRepository) } bind ITimerRepository::class
     single { new(::getTimerXNotificationManager) }
     single { new(::NavigationProvider) }
     factory { new(::MainViewModel) }

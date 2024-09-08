@@ -163,7 +163,8 @@ internal fun CreateInterval(
                     )
                 }
             }
-        }) {
+        }
+    ) {
         Surface {
             Row(
                 modifier = Modifier
@@ -280,7 +281,8 @@ private fun IntervalCountDown(
             value = finalCountDown.duration,
             negativeButtonEnabled = finalCountDown.duration > 0,
             color = MaterialTheme.colorScheme.onSurface,
-            formatter = { "$it" }) {
+            formatter = { "$it" }
+        ) {
             update(finalCountDown.copy(duration = it))
         }
     }

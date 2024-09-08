@@ -16,16 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.timerx.vibration.Vibration
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VibrationPicker(onSelected: (Vibration?) -> Unit) {
     ModalBottomSheet(onDismissRequest = { onSelected(null) }) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Vibration.entries.forEach {
-                Text(modifier = Modifier.clickable {
-                    onSelected(it)
-                }, text = it.displayName)
+                Text(
+                    modifier = Modifier.clickable {
+                        onSelected(it)
+                    },
+                    text = it.displayName
+                )
             }
         }
     }

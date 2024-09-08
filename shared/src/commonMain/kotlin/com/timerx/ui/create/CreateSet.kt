@@ -140,7 +140,8 @@ internal fun CreateSet(
                     ) { it.timeFormatted() }
                     FilledTonalIconButton(
                         modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = { interactions.set.update.newInterval(timerSet) }) {
+                        onClick = { interactions.set.update.newInterval(timerSet) }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = stringResource(Res.string.add)
@@ -179,7 +180,8 @@ private fun SetTopControls(
                     timerSet,
                     it
                 )
-            })
+            }
+        )
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
             verticalAlignment = Alignment.CenterVertically,

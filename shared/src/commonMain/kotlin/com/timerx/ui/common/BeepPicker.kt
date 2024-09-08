@@ -22,9 +22,12 @@ fun BeepPicker(onSelected: (Beep?) -> Unit) {
     ModalBottomSheet(onDismissRequest = { onSelected(null) }) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Beep.entries.forEach {
-                Text(modifier = Modifier.clickable {
-                    onSelected(it)
-                }, text = it.displayName)
+                Text(
+                    modifier = Modifier.clickable {
+                        onSelected(it)
+                    },
+                    text = it.displayName
+                )
             }
         }
     }

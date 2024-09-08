@@ -4,4 +4,4 @@ interface RoomDataBaseFactory {
     fun createRoomDataBase(): AppDatabase
 }
 
-expect fun createRoomDatabaseFactory() : RoomDataBaseFactory
+expect fun createRoomDatabaseFactory(): RoomDataBaseFactory

@@ -81,7 +81,8 @@ fun SettingsScreen(navigateUp: () -> Unit) {
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
                             state.vibration,
-                            onCheckedChange = { intent(SettingsIntent.UpdateVibration(it)) })
+                            onCheckedChange = { intent(SettingsIntent.UpdateVibration(it)) }
+                        )
                     }
 
                     Row(
@@ -116,7 +117,8 @@ private fun SettingsAppBar(navigateUp: () -> Unit) {
         navigationIcon = {
             IconButton(
                 modifier = Modifier.rotate(NINETY_DEGREES),
-                onClick = { navigateUp() }) {
+                onClick = { navigateUp() }
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(Res.string.back)

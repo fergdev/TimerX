@@ -132,7 +132,8 @@ private fun TopAppBarActions(
         onClick = {
             interactions.save()
             navigateUp()
-        }) {
+        }
+    ) {
         Icon(
             modifier = Modifier.size(CustomIcons.defaultIconSize),
             imageVector = Icons.Default.Done,
@@ -147,7 +148,8 @@ private fun AppBarNavigationIcon(navigateUp: () -> Unit) {
         modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),
         onClick = {
             navigateUp()
-        }) {
+        }
+    ) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(Res.string.back)
@@ -214,7 +216,8 @@ private fun CreateContent(
         Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             FilledIconButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                onClick = { interactions.addSet() }) {
+                onClick = { interactions.addSet() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = stringResource(Res.string.add)

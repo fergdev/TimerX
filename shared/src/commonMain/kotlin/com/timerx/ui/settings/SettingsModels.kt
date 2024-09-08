@@ -17,4 +17,3 @@ interface SettingsIntent : MVIIntent {
     data object EnableNotifications : SettingsIntent
     data object OpenAppSettings : SettingsIntent
 }
-

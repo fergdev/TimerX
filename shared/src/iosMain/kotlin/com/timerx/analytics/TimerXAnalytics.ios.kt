@@ -26,6 +26,7 @@ interface FirebaseIosCallback {
 }
 
 private var firebaseIosCallback: FirebaseIosCallback? = null
+
 // Callback from swift that allows settings of firebase callback
 @Suppress("unused")
 fun firebaseCallback(callback: FirebaseIosCallback) {

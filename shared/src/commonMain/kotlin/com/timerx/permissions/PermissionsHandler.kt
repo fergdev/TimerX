@@ -40,7 +40,6 @@ enum class PermissionState {
 
 expect fun permissionsHandler(): IPermissionsHandler
 
-
 class RequestCanceledException(
     val permission: Permission,
     message: String? = null

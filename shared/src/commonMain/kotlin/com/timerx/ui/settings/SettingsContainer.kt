@@ -5,7 +5,6 @@ import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.settings.TimerXSettings
 import pro.respawn.flowmvi.api.Container
-import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.logging.StoreLogLevel
@@ -59,6 +58,8 @@ internal class SettingsContainer(
         }
 
     private suspend fun isNotificationsEnabled() =
-        (permissionsHandler.getPermissionState(Permission.Notification)
-                == PermissionState.Granted)
+        (
+            permissionsHandler.getPermissionState(Permission.Notification)
+                == PermissionState.Granted
+            )
 }

@@ -74,7 +74,8 @@ internal class RemoteNotificationPermissionDelegate : PermissionDelegate {
                             settings?.authorizationStatus ?: UNAuthorizationStatusNotDetermined
                         )
                     )
-                })
+                }
+            )
         }
         return when (status) {
             UNAuthorizationStatusAuthorized,

@@ -22,7 +22,6 @@ data class Timer(
     val lastRun: Instant? = null
 )
 
-
 data class TimerSet(
     val id: Long = 0L,
     val repetitions: Int = 1,
