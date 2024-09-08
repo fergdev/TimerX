@@ -14,10 +14,12 @@ import com.timerx.ui.create.CreateViewModel
 import com.timerx.ui.main.MainViewModel
 import com.timerx.ui.navigation.NavigationProvider
 import com.timerx.ui.run.RunViewModel
-import com.timerx.ui.settings.SettingsViewModel
+import com.timerx.ui.settings.SettingsContainer
 import com.timerx.vibration.getVibrationManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import org.koin.core.module.dsl.new
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 
@@ -29,16 +31,17 @@ val sharedModule = module {
             coroutineScope = GlobalScope
         )
     }
-    single { TimerXSettings(get()) }
-    single { getBeepManager(get()) }
-    single { getTimerXAnalytics() }
-    single { getVibrationManager(get()) }
-    single { permissionsHandler() }
-    single { TimerManager(get(), get(), get(), get()) }
-    single<ITimerRepository> { TimerRepository(createRoomDatabaseFactory().createRoomDataBase()) }
-    single { getTimerXNotificationManager() }
-    single { NavigationProvider() }
-    factory { MainViewModel(get(), get(), get()) }
+    single { new(::TimerXSettings) }
+    single { new(::getBeepManager) }
+    single { new(::getTimerXAnalytics) }
+    single { new(::getVibrationManager) }
+    single { new(::permissionsHandler) }
+    single { new(::TimerManager) }
+    single { createRoomDatabaseFactory().createRoomDataBase() }
+    single { new(::TimerRepository) } bind  ITimerRepository::class
+    single { new(::getTimerXNotificationManager) }
+    single { new(::NavigationProvider) }
+    factory { new(::MainViewModel) }
     factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->
         RunViewModel(
@@ -50,7 +53,7 @@ val sharedModule = module {
             get()
         )
     }
-    factory { SettingsViewModel(get(), get()) }
+    factory { new(::SettingsContainer) }
 }
 
 fun appModule() = listOf(sharedModule)

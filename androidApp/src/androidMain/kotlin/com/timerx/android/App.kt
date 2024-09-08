@@ -14,14 +14,14 @@ import org.koin.core.context.GlobalContext.startKoin
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
-        FirebaseAnalytics.getInstance(this);
         startKoin {
             androidContext(this@App)
             androidLogger()
             modules(appModule() + androidModule)
+            createEagerInstances()
         }
         CoroutineScope(Dispatchers.IO).launch {
+            FirebaseAnalytics.getInstance(this@App).setAnalyticsCollectionEnabled(true)
             MobileAds.initialize(this@App) {}
         }
     }

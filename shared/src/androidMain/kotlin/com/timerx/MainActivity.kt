@@ -10,7 +10,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.timerx.database.ITimerRepository
-import com.timerx.shortcuts.ShortcutManager
 import com.timerx.ui.App
 import com.timerx.ui.navigation.NavigationProvider
 import com.timerx.ui.navigation.Screen
@@ -38,8 +37,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var navigationProvider: NavigationProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         splashScreen()
+        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         loadKoinModules(activityModule)
         setContent { App() }
@@ -51,9 +50,6 @@ class MainActivity : ComponentActivity() {
         val koin = KoinPlatform.getKoin()
         this.timerRepository = koin.get<ITimerRepository>()
         this.navigationProvider = koin.get<NavigationProvider>()
-
-        // Init singletons
-        koin.get<ShortcutManager>()
     }
 
     override fun onNewIntent(intent: Intent) {
