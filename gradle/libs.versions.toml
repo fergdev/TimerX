@@ -1,14 +1,14 @@
 [versions]
 agp = "8.6.0"
-android-test-extensions = "1.4.0"
-androidJunit5Plugin = "1.10.0.0"
+android-test-extensions = "1.5.0"
+androidJunit5Plugin = "1.11.0.0"
 androidx-activityCompose = "1.9.2"
 androidx-data-store = "1.1.1"
 androidx-room = "2.7.0-alpha07"
 coreSplashscreen = "1.0.1"
 crashlytics = "3.0.2"
 detekt = "1.23.6"
-detektComposePlugin = "1.3.0"
+detektComposePlugin = "1.4.0"
 detektFormattingPlugin = "1.23.6"
 firebaseAnalytics = "22.1.0"
 firebaseBom = "33.2.0"
@@ -16,22 +16,23 @@ firebaseCrashlytics = "19.0.3"
 glanceAppwidget = "1.1.0"
 googleServices = "4.4.2"
 jetbrains-compose = "1.6.11"
-junit = "5.10.3"
+junit = "5.11.0"
 koin = "3.5.6"
 koin-compose = "1.1.5"
 kotlin = "2.0.10"
-kotlinx-immutable = "0.3.7"
-kotlinx-serialization = "1.7.1"
-kotlinxCoroutinesTest = "1.9.0-RC"
-kotlinxDatetime = "0.6.0"
-kotlinxSerializationJson = "1.7.1"
+kotlinx-immutable = "0.3.8"
+kotlinx-serialization = "1.7.2"
+kotlinxCoroutinesTest = "1.9.0-RC.2"
+kotlinxDatetime = "0.6.1"
+kotlinxSerializationJson = "1.7.2"
 ksp = "2.0.10-1.0.24"
 mockery = "2.3.0"
 playServicesAds = "23.3.0"
 pre-compose = "1.6.1"
+protoliteWellKnownTypes = "18.0.0"
 reorderable = "2.3.2"
 sqlite = "2.5.0-SNAPSHOT"
-protoliteWellKnownTypes = "18.0.0"
+versionCatalogUpdatePlugin = "0.8.4"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -39,8 +40,8 @@ androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", versi
 androidx-data-store-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-data-store" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
-androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
 detekt-compose = { module = "ru.kode:detekt-rules-compose", version.ref = "detektComposePlugin" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormattingPlugin" }
 detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
@@ -58,10 +59,10 @@ koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose" }
 kotlin-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-immutable" }
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-test = "org.jetbrains.kotlin:kotlin-test:2.0.10"
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 pre-compose = { module = "moe.tlaster:precompose", version.ref = "pre-compose" }
@@ -69,16 +70,16 @@ pre-compose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "pre-
 pre-compose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "pre-compose" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
-protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidJunit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+ben-manes-versions = "com.github.ben-manes.versions:0.51.0"
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-crashlytics = {id ="com.google.firebase.crashlytics", version.ref = "crashlytics" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-googleServices = {id ="com.google.gms.google-services", version.ref = "googleServices" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -87,3 +88,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 mokkery = { id = "dev.mokkery", version.ref = "mockery" }
 # Add this back in when the plugin is supported
 #room = { id = "androidx.room", version.ref = "androidx-room" }
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }

@@ -1,14 +1,41 @@
+import nl.littlerobots.vcu.plugin.versionSelector
 
 plugins {
     alias(libs.plugins.detekt)
-    alias(libs.plugins.androidApplication) apply (false)
-    alias(libs.plugins.androidLibrary) apply (false)
-    alias(libs.plugins.kotlinAndroid) apply (false)
-    alias(libs.plugins.kotlinMultiplatform) apply (false)
-    alias(libs.plugins.jetbrainsCompose) apply (false)
-    alias(libs.plugins.composeCompiler) apply (false)
-    alias(libs.plugins.googleServices) apply (false)
-    alias(libs.plugins.crashlytics) apply (false)
+    alias(libs.plugins.ben.manes.versions)
+    alias(libs.plugins.version.catalog.update)
+    alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.kotlinAndroid) apply false
+    alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.jetbrainsCompose) apply false
+    alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.crashlytics) apply false
+}
+
+versionCatalogUpdate {
+    sortByKey = true
+
+    versionSelector {
+        stabilityLevel(it.candidate.version) >= minStabilityLevel
+    }
+
+    keep {
+        keepUnusedVersions = true
+        keepUnusedLibraries = true
+        keepUnusedPlugins = true
+    }
+}
+
+val stabilityLevels = listOf("snapshot", "eap", "preview", "alpha", "beta", "m", "cr", "rc")
+val minStabilityLevel = stabilityLevels.indexOf("beta")
+fun stabilityLevel(version: String): Int {
+    stabilityLevels.forEachIndexed { index, postfix ->
+        val regex = """.*[.\-]$postfix[.\-\d]*""".toRegex(RegexOption.IGNORE_CASE)
+        if (version.matches(regex)) return index
+    }
+    return stabilityLevels.size
 }
 
 dependencies {
