@@ -4,7 +4,7 @@ package com.timerx.main
 
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
-import com.timerx.ui.main.MainViewModel
+import com.timerx.ui.main.MainContainer
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
@@ -26,7 +26,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: MainContainer
 
     private val timers = mutableListOf(
         Timer(id = 1L, name = "name 1", sets = persistentListOf()),
@@ -50,7 +50,7 @@ class MainViewModelTest {
         // given
         everySuspend { timerRepository.getTimers() }.returns(timers)
         // when
-        viewModel = MainViewModel(timerRepository)
+        viewModel = MainContainer(timerRepository)
         // then
         assertEquals(2, viewModel.state.value.timers.size)
     }
@@ -60,7 +60,7 @@ class MainViewModelTest {
         // given
         everySuspend { timerRepository.getTimers() }.returns(listOf())
         everySuspend { timerRepository.deleteTimer(any()) }.returns(Unit)
-        viewModel = MainViewModel(timerRepository)
+        viewModel = MainContainer(timerRepository)
 
         // when
         viewModel.interactions.deleteTimer(timers[1])
@@ -74,7 +74,7 @@ class MainViewModelTest {
         // given
         everySuspend { timerRepository.getTimers() }.returns(listOf())
         everySuspend { timerRepository.duplicate(any()) }.returns(Unit)
-        viewModel = MainViewModel(timerRepository)
+        viewModel = MainContainer(timerRepository)
 
         // when
         viewModel.interactions.duplicateTimer(timers[1])
@@ -88,7 +88,7 @@ class MainViewModelTest {
         // given
         everySuspend { timerRepository.getTimers() }.returns(timers)
         everySuspend { timerRepository.swapTimers(any(), any()) }.returns(Unit)
-        viewModel = MainViewModel(timerRepository)
+        viewModel = MainContainer(timerRepository)
 
         // when
         viewModel.interactions.swapTimers(0, 1)

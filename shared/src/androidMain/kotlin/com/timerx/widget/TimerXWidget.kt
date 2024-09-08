@@ -48,8 +48,8 @@ import com.timerx.MainActivity
 import com.timerx.R
 import com.timerx.domain.timeFormatted
 import com.timerx.settings.TimerXSettings
-import com.timerx.ui.main.SortTimersBy
-import com.timerx.ui.main.next
+import com.timerx.domain.SortTimersBy
+import com.timerx.domain.next
 import com.timerx.widget.TimerXWidget.Companion.BIG_SQUARE
 import com.timerx.widget.TimerXWidget.Companion.HORIZONTAL_RECTANGLE
 import com.timerx.widget.TimerXWidget.Companion.VERTICAL_RECTANGLE

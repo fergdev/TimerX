@@ -1,4 +1,4 @@
-package com.timerx.ui.main
+package com.timerx.domain
 
 import com.timerx.database.RoomTimer
 import com.timerx.ui.common.CustomIcons

@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.timerx.ui.main.SortTimersBy
-import com.timerx.ui.main.toSortTimersBy
+import com.timerx.domain.SortTimersBy
+import com.timerx.domain.toSortTimersBy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
