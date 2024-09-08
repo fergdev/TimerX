@@ -146,7 +146,8 @@ tasks.withType<Test> {
 }
 
 detekt {
-    buildUponDefaultConfig = true // preconfigure defaults
+    buildUponDefaultConfig = true
+    parallel = true
     allRules = false // activate all available (even unstable) rules.
     source.setFrom(
         "src/androidMain/kotlin",
@@ -156,21 +157,21 @@ detekt {
         "src/iosMain/kotlin",
         "src/iosTest/kotlin",
     )
-    config.setFrom("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
+    config.setFrom(File(rootDir, "detekt.yml"))
 }
 
 tasks.withType<Detekt>().configureEach {
     reports {
-        html.required.set(true) // observe findings in your browser with structure and code snippets
-        xml.required.set(true) // checkstyle like format mainly for integrations like Jenkins
-        txt.required.set(true) // similar to the console output, contains issue signature to manually edit baseline files
-        sarif.required.set(true) // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with GitHub Code Scanning
-        md.required.set(true) // simple Markdown format
+        html.required.set(true)
+        xml.required.set(false)
+        txt.required.set(false)
+        sarif.required.set(true)
+        md.required.set(false)
     }
+    jvmTarget = "1.8"
 }
 
 tasks.withType<Detekt>().configureEach {
-    jvmTarget = "1.8"
 }
 tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "1.8"

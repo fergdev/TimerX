@@ -1,4 +1,4 @@
- package com.timerx.android
+ package com.timerx.android.di
 
 import com.timerx.shortcuts.ShortcutManager
 import org.koin.core.module.dsl.new
