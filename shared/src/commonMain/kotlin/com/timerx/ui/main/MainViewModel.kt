@@ -48,7 +48,7 @@ class MainViewModel(
         val showNotificationsPermissionRequest: Boolean = false
     )
 
-    class Interactions(
+    data class Interactions(
         val deleteTimer: (Timer) -> Unit,
         val duplicateTimer: (Timer) -> Unit,
         val swapTimers: (Timer, Timer) -> Unit,
@@ -104,9 +104,11 @@ class MainViewModel(
                         sortTimersBy = settings.sortTimersBy,
                         showNotificationsPermissionRequest =
                         settings.ignoreNotificationsPermissions.not() &&
-                            permissionsHandler.getPermissionState(Permission.Notification) != PermissionState.Granted
+                                permissionsHandler.getPermissionState(Permission.Notification)
+                                != PermissionState.Granted
                     )
-                }.collect { newState ->
+                }
+                .collect { newState ->
                     _stateFlow.value = newState
                 }
         }

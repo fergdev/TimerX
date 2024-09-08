@@ -47,8 +47,8 @@ class CreateViewModel(
     private val restString: String = runBlocking { getString(Res.string.rest) }
 
     private var defaultIdGenerator = 0L
-    private fun defaultTimerSet(): TimerSet {
-        return TimerSet(
+    private fun defaultTimerSet() =
+        TimerSet(
             id = defaultIdGenerator++,
             repetitions = 5,
             intervals = persistentListOf(
@@ -80,10 +80,9 @@ class CreateViewModel(
                 )
             )
         )
-    }
 
-    private fun defaultInterval(): TimerInterval {
-        return TimerInterval(
+    private fun defaultInterval() =
+        TimerInterval(
             id = defaultIdGenerator++,
             name = workString,
             duration = 30,
@@ -96,7 +95,6 @@ class CreateViewModel(
                 vibration = Vibration.Medium
             )
         )
-    }
 
     @OptIn(FormatStringsInDatetimeFormats::class)
     private val dateTimeFormat = LocalDateTime.Format {
@@ -105,25 +103,25 @@ class CreateViewModel(
 
     private var sets: MutableList<TimerSet> = mutableListOf()
 
-    class SetInteractions(
+    data class SetInteractions(
         val duplicate: (TimerSet) -> Unit,
         val delete: (TimerSet) -> Unit,
         val update: UpdateSetInteractions
     )
 
-    class UpdateSetInteractions(
+    data class UpdateSetInteractions(
         val newInterval: (TimerSet) -> Unit,
         val moveInterval: (TimerSet, Int, Int) -> Unit,
         val updateRepetitions: (TimerSet, Int) -> Unit,
     )
 
-    class IntervalInteractions(
+    data class IntervalInteractions(
         val delete: (TimerInterval) -> Unit,
         val duplicate: (TimerInterval) -> Unit,
         val update: UpdateIntervalInteractions
     )
 
-    class UpdateIntervalInteractions(
+    data class UpdateIntervalInteractions(
         val updateDuration: (TimerInterval, Int) -> Unit,
         val updateName: (TimerInterval, String) -> Unit,
         val updateColor: (TimerInterval, Color) -> Unit,
@@ -135,7 +133,7 @@ class CreateViewModel(
         val updateVibration: (TimerInterval, Vibration) -> Unit
     )
 
-    class Interactions(
+    data class Interactions(
         val updateTimerName: (String) -> Unit,
         val addSet: () -> Unit,
         val swapSet: (Int, Int) -> Unit,
@@ -272,13 +270,15 @@ class CreateViewModel(
                             sortOrder = timerEditing.sortOrder,
                             name = name,
                             sets = state.value.sets
-                                .filter { it.intervals.isNotEmpty() }.map {
+                                .filter { it.intervals.isNotEmpty() }
+                                .map {
                                     it.copy(
                                         id = 0,
                                         intervals = it.intervals.map { it.copy(id = 0) }
                                             .toPersistentList()
                                     )
-                                }.toPersistentList(),
+                                }
+                                .toPersistentList(),
                             finishColor = state.value.finishColor,
                             finishBeep = state.value.finishBeep,
                             finishVibration = Vibration.Heavy,

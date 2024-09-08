@@ -4,26 +4,22 @@ import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationOpenSettingsURLString
 
-actual fun permissionsHandler(): IPermissionsHandler {
-    return PermissionsHandler()
-}
+actual fun permissionsHandler(): IPermissionsHandler = PermissionsHandler()
 
 class PermissionsHandler : IPermissionsHandler {
-    private fun getDelegate(permission: Permission): PermissionDelegate {
-        return when (permission) {
+    private fun getDelegate(permission: Permission): PermissionDelegate =
+        when (permission) {
             Permission.Notification -> {
                 RemoteNotificationPermissionDelegate()
             }
         }
-    }
 
     override suspend fun requestPermission(permission: Permission) {
         getDelegate(permission).requestPermission()
     }
 
-    override suspend fun getPermissionState(permission: Permission): PermissionState {
-        return getDelegate(permission).getPermissionState()
-    }
+    override suspend fun getPermissionState(permission: Permission): PermissionState =
+        getDelegate(permission).getPermissionState()
 
     override fun openAppSettings() {
         doOpenAppSettings()

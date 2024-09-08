@@ -153,7 +153,7 @@ fun Modifier.repeatingClickable(
                     currentClickListener()
                     delay(currentDelayMillis)
                     val nextMillis =
-                        currentDelayMillis - (currentDelayMillis * delayDecayFactor)
+                        currentDelayMillis - currentDelayMillis * delayDecayFactor
                     currentDelayMillis = nextMillis.toLong().coerceAtLeast(minDelayMillis)
                 }
             }

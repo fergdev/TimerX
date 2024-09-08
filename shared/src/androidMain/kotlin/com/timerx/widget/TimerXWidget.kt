@@ -79,12 +79,10 @@ class TimerXWidget : GlanceAppWidget() {
     }
 }
 
-private fun DpSize.isThinMode(): Boolean {
-    return this == VERTICAL_RECTANGLE
-}
+private fun DpSize.isThinMode(): Boolean = this == VERTICAL_RECTANGLE
 
-private fun SortTimersBy.drawable(): Int {
-    return when (this) {
+private fun SortTimersBy.drawable() =
+    when (this) {
         SortTimersBy.SORT_ORDER -> R.drawable.sort_gradient
         SortTimersBy.RUN_DATE_ASC -> R.drawable.calendar_plus_gradient
         SortTimersBy.RUN_DATE_DESC -> R.drawable.calendar_minus_gradient
@@ -93,7 +91,6 @@ private fun SortTimersBy.drawable(): Int {
         SortTimersBy.LENGTH_ASC -> R.drawable.sort_numeric_up_gradient
         SortTimersBy.LENGTH_DESC -> R.drawable.sort_numeric_down_alt_gradient
     }
-}
 
 @Composable
 private fun MyContent() {
@@ -261,6 +258,9 @@ private fun WidgetButtonsThin(timerData: TimerWidgetInfo) {
     }
 }
 
+private const val FONT_SIZE_LARGE = 28F
+private const val FONT_SIZE = 16f
+
 @Composable
 private fun GlanceTimer(timerData: TimerData) {
     Column(
@@ -282,7 +282,7 @@ private fun GlanceTimer(timerData: TimerData) {
                 Text(
                     text = timerData.name,
                     style = TextStyle(
-                        fontSize = TextUnit(16f, TextUnitType.Sp,),
+                        fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
                         color = GlanceTheme.colors.onSurface,
                         fontWeight = FontWeight.Bold
                     ),
@@ -291,7 +291,7 @@ private fun GlanceTimer(timerData: TimerData) {
                 Text(
                     text = timerData.lastRun,
                     style = TextStyle(
-                        fontSize = TextUnit(16f, TextUnitType.Sp),
+                        fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
                         color = GlanceTheme.colors.onSurfaceVariant
                     ),
                     maxLines = 1
@@ -300,7 +300,7 @@ private fun GlanceTimer(timerData: TimerData) {
             Text(
                 text = timerData.length.timeFormatted(),
                 style = TextStyle(
-                    fontSize = TextUnit(16f, TextUnitType.Sp),
+                    fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
                     color = GlanceTheme.colors.onSurfaceVariant
                 ),
                 maxLines = 1
@@ -310,6 +310,7 @@ private fun GlanceTimer(timerData: TimerData) {
         HorizontalDivider()
     }
 }
+
 
 @Composable
 private fun GlanceTimerThin(timerData: TimerData) {
@@ -330,7 +331,7 @@ private fun GlanceTimerThin(timerData: TimerData) {
         Text(
             text = timerData.name,
             style = TextStyle(
-                fontSize = TextUnit(28F, TextUnitType.Sp),
+                fontSize = TextUnit(FONT_SIZE_LARGE, TextUnitType.Sp),
                 color = GlanceTheme.colors.onSurface
             ),
             maxLines = 1
@@ -338,7 +339,7 @@ private fun GlanceTimerThin(timerData: TimerData) {
         Text(
             text = timerData.length.timeFormatted(),
             style = TextStyle(
-                fontSize = TextUnit(16f, TextUnitType.Sp),
+                fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
                 color = GlanceTheme.colors.onSurfaceVariant
             ),
             maxLines = 1
@@ -346,7 +347,7 @@ private fun GlanceTimerThin(timerData: TimerData) {
         Text(
             text = timerData.lastRun,
             style = TextStyle(
-                fontSize = TextUnit(16f, TextUnitType.Sp),
+                fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
                 color = GlanceTheme.colors.onSurfaceVariant
             ),
             maxLines = 1

@@ -342,9 +342,8 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
         )
     }
 
-    private fun getCurrentInterval(): TimerInterval {
-        return timer.sets[runState.value.setIndex].intervals[runState.value.intervalIndex]
-    }
+    private fun getCurrentInterval() =
+        timer.sets[runState.value.setIndex].intervals[runState.value.intervalIndex]
 
     private fun finishTimer() {
         runState.value = RunState(

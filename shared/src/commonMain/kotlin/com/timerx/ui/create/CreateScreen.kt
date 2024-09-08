@@ -1,6 +1,5 @@
 package com.timerx.ui.create
 
-import ColorPicker
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -62,6 +61,7 @@ import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
+import com.timerx.ui.common.ColorPicker
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector

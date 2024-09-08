@@ -9,7 +9,7 @@ import org.koin.mp.KoinPlatform
 class Factory : RoomDataBaseFactory {
     private val context: Context = KoinPlatform.getKoin().get()
     override fun createRoomDataBase(): AppDatabase {
-        val dbFile = context.getDatabasePath(dbFileName)
+        val dbFile = context.getDatabasePath(DB_FILE_NAME)
         return Room.databaseBuilder<AppDatabase>(context, dbFile.absolutePath)
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
@@ -17,6 +17,4 @@ class Factory : RoomDataBaseFactory {
     }
 }
 
-actual fun createRoomDatabaseFactory(): RoomDataBaseFactory {
-    return Factory()
-}
+actual fun createRoomDatabaseFactory(): RoomDataBaseFactory = Factory()

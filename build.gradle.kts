@@ -29,7 +29,7 @@ versionCatalogUpdate {
 }
 
 val stabilityLevels = listOf("snapshot", "eap", "preview", "alpha", "beta", "m", "cr", "rc")
-val minStabilityLevel = stabilityLevels.indexOf("beta")
+val minStabilityLevel = stabilityLevels.indexOf("rc")
 fun stabilityLevel(version: String): Int {
     stabilityLevels.forEachIndexed { index, postfix ->
         val regex = """.*[.\-]$postfix[.\-\d]*""".toRegex(RegexOption.IGNORE_CASE)

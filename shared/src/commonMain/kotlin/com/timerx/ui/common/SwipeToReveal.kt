@@ -66,6 +66,8 @@ import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
+private val DEFAULT_EASING = CubicBezierEasing(0.4f, 0.4f, 0.17f, 0.9f)
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RevealSwipe(
@@ -80,7 +82,7 @@ fun RevealSwipe(
     closeOnContentClick: Boolean = true,
     closeOnBackgroundClick: Boolean = true,
     shape: CornerBasedShape = RoundedCornerShape(0.dp),
-    alphaEasing: Easing = CubicBezierEasing(0.4f, 0.4f, 0.17f, 0.9f),
+    alphaEasing: Easing = DEFAULT_EASING,
     backgroundCardStartColor: Color = Color.Transparent,
     backgroundCardEndColor: Color = Color.Transparent,
     card: @Composable BoxScope.(
@@ -285,7 +287,7 @@ fun BaseRevealSwipe(
     enableSwipe: Boolean = true,
     animateBackgroundCardColor: Boolean = true,
     shape: CornerBasedShape,
-    alphaEasing: Easing = CubicBezierEasing(0.4f, 0.4f, 0.17f, 0.9f),
+    alphaEasing: Easing = DEFAULT_EASING,
     backgroundCardStartColor: Color,
     backgroundCardEndColor: Color,
     card: @Composable BoxScope.(
@@ -341,13 +343,13 @@ fun BaseRevealSwipe(
 
         val cornerFactorEnd =
             (-state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero()
-                .coerceIn(0f, 1f).or(0f) {
-                    state.directions.contains(RevealDirection.EndToStart).not()
-                }
+                .coerceIn(0f, 1f)
+                .or(0f) { state.directions.contains(RevealDirection.EndToStart).not() }
 
         val cornerFactorStart =
             (state.anchoredDraggableState.offset / minDragAmountForStraightCorner).nonNaNorZero()
-                .coerceIn(0f, 1f).or(0f) {
+                .coerceIn(0f, 1f)
+                .or(0f) {
                     state.directions.contains(RevealDirection.StartToEnd).not()
                 }
 
@@ -456,9 +458,8 @@ fun BaseRevealSwipe(
 /**
  * Return an alternative value if whenClosure is true. Replaces if/else
  */
-private fun <T> T.or(orValue: T, whenClosure: T.() -> Boolean): T {
-    return if (whenClosure()) orValue else this
-}
+private fun <T> T.or(orValue: T, whenClosure: T.() -> Boolean) =
+    if (whenClosure()) orValue else this
 
 private fun Float.nonNaNorZero() = if (isNaN()) 0f else this
 

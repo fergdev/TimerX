@@ -114,13 +114,10 @@ object TimerXWidgetStateDefinition : GlanceStateDefinition<TimerWidgetInfo> {
     override suspend fun getDataStore(
         context: Context,
         fileKey: String
-    ): DataStore<TimerWidgetInfo> {
-        return context.dataStore
-    }
+    ): DataStore<TimerWidgetInfo> = context.dataStore
 
-    override fun getLocation(context: Context, fileKey: String): File {
-        return File(context.applicationContext.filesDir, "datastore/$FILE_NAME")
-    }
+    override fun getLocation(context: Context, fileKey: String) =
+        File(context.applicationContext.filesDir, "datastore/$FILE_NAME")
 
     object TimerInfoSerializer : Serializer<TimerWidgetInfo> {
         override val defaultValue = TimerWidgetInfo.Unavailable("No timers")
@@ -131,7 +128,10 @@ object TimerXWidgetStateDefinition : GlanceStateDefinition<TimerWidgetInfo> {
                 input.readBytes().decodeToString()
             )
         } catch (exception: SerializationException) {
-            throw CorruptionException("Could not read timer data: ${exception.message}")
+            throw CorruptionException(
+                message = "Could not read timer data: ${exception.message}",
+                cause = exception
+            )
         }
 
         override suspend fun writeTo(t: TimerWidgetInfo, output: OutputStream) {

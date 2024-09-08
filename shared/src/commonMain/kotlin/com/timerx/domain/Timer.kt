@@ -80,24 +80,19 @@ private const val SECONDS_IN_MINUTE = 60L
 private const val MINUTES_IN_HOUR = 60L
 private const val SINGLE_DIGIT_MODULO = 10L
 
-fun Timer.length(): Int {
-    return sets.fold(0) { acc, i ->
-        acc + i.length()
-    }
+fun Timer.length() = sets.fold(0) { acc, i ->
+    acc + i.length()
 }
 
-fun List<TimerSet>.length(): Int {
-    return fold(0) { acc, i ->
+fun List<TimerSet>.length() =
+    fold(0) { acc, i ->
         acc + i.length()
     }
-}
 
-fun TimerSet.length(): Int {
-    return intervals.fold(0) { acc, i ->
+fun TimerSet.length() =
+    intervals.fold(0) { acc, i ->
         acc + i.length()
     } * repetitions
-}
 
-fun TimerInterval.length(): Int {
-    return duration
-}
+fun TimerInterval.length() =
+    duration

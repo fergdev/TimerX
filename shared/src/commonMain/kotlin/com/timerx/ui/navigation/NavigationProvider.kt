@@ -28,7 +28,7 @@ sealed interface Screen {
         override val routeWithParams = ROUTE
     }
 
-    class CreateScreen(private val id: Long? = null) : Screen {
+    data class CreateScreen(private val id: Long? = null) : Screen {
         override val routeWithParams
             get() =
                 if (id == null) ROUTE.replace("/$TIMER_ID_OPTIONAL", "")
@@ -39,7 +39,7 @@ sealed interface Screen {
         }
     }
 
-    class RunScreen(private val id: Long) : Screen {
+    data class RunScreen(private val id: Long) : Screen {
         override val routeWithParams
             get() =
                 ROUTE.replace(TIMER_ID_OPTIONAL, id.toString())

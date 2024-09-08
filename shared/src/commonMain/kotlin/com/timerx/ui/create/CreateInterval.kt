@@ -1,6 +1,5 @@
 package com.timerx.ui.create
 
-import ColorPicker
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -44,6 +43,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.BeepSelector
+import com.timerx.ui.common.ColorPicker
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
@@ -67,7 +67,7 @@ import timerx.shared.generated.resources.manual_next
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.skip_on_last_set
 
-private const val colorAnimationDuration = 400
+private const val COLOR_ANIMATION_DURATION = 400
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +80,7 @@ internal fun CreateInterval(
 ) {
     val backgroundColor by animateColorAsState(
         interval.color.lightDisplayColor(),
-        animationSpec = tween(colorAnimationDuration)
+        animationSpec = tween(COLOR_ANIMATION_DURATION)
     )
     val contrastColor = MaterialTheme.colorScheme.onSurface
     val revealState = rememberRevealState(200.dp, setOf(RevealDirection.EndToStart))

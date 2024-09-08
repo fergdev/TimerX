@@ -120,8 +120,8 @@ interface RoomTimerDao {
 
     @Query(
         "UPDATE RoomTimer " +
-            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-            "WHERE id = :timerId"
+                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+                "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,
@@ -213,12 +213,11 @@ abstract class AppDatabase : RoomDatabase(), DB {
 // Added a hack to resolve below issue:
 // Class 'AppDatabase_Impl' is not abstract and does not implement abstract base class member 'clearAllTables'.
 interface DB {
-    @Suppress("RedundantUnitReturnType")
     fun clearAllTables() {
     }
 }
 
-internal const val dbFileName = "timerx.db"
+internal const val DB_FILE_NAME = "timerx.db"
 
 @Entity
 data class RoomTimer(
@@ -264,14 +263,14 @@ data class RoomTimer(
         )
     ]
 )
-class RoomTimerSet(
+data class RoomTimerSet(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "timer_id", index = true) val timerId: Long,
     @ColumnInfo(name = "set_id", index = true) val setId: Long
 )
 
 @Entity
-class RoomSet(
+data class RoomSet(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     @ColumnInfo("repetitions")
@@ -296,14 +295,14 @@ class RoomSet(
         )
     ]
 )
-class RoomSetInterval(
+data class RoomSetInterval(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "set_id", index = true) val setId: Long,
     @ColumnInfo(name = "interval_id", index = true) val intervalId: Long
 )
 
 @Entity
-class RoomInterval(
+data class RoomInterval(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     @ColumnInfo("name")
@@ -332,24 +331,18 @@ class RoomInterval(
 
 internal class DateTimeConverter {
     @TypeConverter
-    fun fromTimestamp(value: Long?): Instant? {
-        return value?.let {
-            Instant.fromEpochMilliseconds(it)
-        }
+    fun fromTimestamp(value: Long?) = value?.let {
+        Instant.fromEpochMilliseconds(it)
     }
 
     @TypeConverter
-    fun dateToTimestamp(date: Instant?): Long? {
-        return date?.toEpochMilliseconds()
-    }
+    fun dateToTimestamp(date: Instant?) = date?.toEpochMilliseconds()
 }
 
 class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     private val timerDao = appDatabase.timerDao()
 
-    override fun getShallowTimers(): Flow<List<RoomTimer>> {
-        return timerDao.getTimers()
-    }
+    override fun getShallowTimers() = timerDao.getTimers()
 
     override suspend fun insertTimer(timer: Timer) {
         appDatabase.timerDao().insertTimerTransaction(
@@ -410,9 +403,8 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
         insertTimer(toInsert)
     }
 
-    override suspend fun getTimer(timerId: Long): Flow<Timer> {
-        return timerDao.getTimer(timerId).map { getRestOfTimer(it) }
-    }
+    override suspend fun getTimer(timerId: Long) =
+        timerDao.getTimer(timerId).map { getRestOfTimer(it) }
 
     override suspend fun swapTimers(
         fromId: Long,
@@ -428,9 +420,8 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
         )
     }
 
-    override suspend fun doesTimerExist(timerId: Long): Flow<Boolean> {
-        return timerDao.doesTimerExist(timerId).map { it != null }
-    }
+    override suspend fun doesTimerExist(timerId: Long) =
+        timerDao.doesTimerExist(timerId).map { it != null }
 
     private suspend fun getRestOfTimer(roomTimer: RoomTimer): Timer {
         val sets = timerDao.getSets(
@@ -481,8 +472,8 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     }
 }
 
-private fun Timer.toRoomTimer(): RoomTimer {
-    return RoomTimer(
+private fun Timer.toRoomTimer() =
+    RoomTimer(
         id = this.id,
         name = this.name,
         finishColor = this.finishColor.toArgb().toLong(),
@@ -493,17 +484,15 @@ private fun Timer.toRoomTimer(): RoomTimer {
         createdAt = this.createdAt,
         lastRun = this.lastRun
     )
-}
 
-private fun TimerSet.toRoomSet(): RoomSet {
-    return RoomSet(
+private fun TimerSet.toRoomSet() =
+    RoomSet(
         id = this.id,
         repetitions = this.repetitions
     )
-}
 
-private fun TimerInterval.toRoomInterval(): RoomInterval {
-    return RoomInterval(
+private fun TimerInterval.toRoomInterval() =
+    RoomInterval(
         id = this.id,
         name = this.name,
         duration = this.duration,
@@ -517,4 +506,3 @@ private fun TimerInterval.toRoomInterval(): RoomInterval {
         finalCountDownBeepId = this.beep.ordinal,
         finalCountDownVibrationId = this.vibration.ordinal,
     )
-}

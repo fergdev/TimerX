@@ -82,9 +82,8 @@ class TimerManager(
         }
     }
 
-    private fun TimerEvent.shouldNotify(): Boolean {
-        return this !is TimerEvent.Destroy && this !is TimerEvent.Finished
-    }
+    private fun TimerEvent.shouldNotify() =
+        this !is TimerEvent.Destroy && this !is TimerEvent.Finished
 
     fun playPause() {
         if (timerStateMachine?.eventState?.value?.runState?.timerState == TimerState.Running) {
@@ -108,9 +107,7 @@ class TimerManager(
         timerStateMachine = null
     }
 
-    fun isRunning(): Boolean {
-        return timerStateMachine != null
-    }
+    fun isRunning() = timerStateMachine != null
 
     companion object {
         private const val TICKER = "Ticker"

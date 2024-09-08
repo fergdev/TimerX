@@ -31,8 +31,8 @@ class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
     }
 }
 
-private fun Beep.toResource(): Int {
-    return when (this) {
+private fun Beep.toResource()=
+    when (this) {
         Beep.Alert -> R.raw.alert
         Beep.AlertX2 -> R.raw.alert
         Beep.AlertX3 -> R.raw.alert
@@ -46,4 +46,3 @@ private fun Beep.toResource(): Int {
         Beep.EndX2 -> R.raw.end
         Beep.EndX3 -> R.raw.end
     }
-}

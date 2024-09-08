@@ -54,6 +54,5 @@ class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationM
     }
 }
 
-actual fun getVibrationManager(timerXSettings: TimerXSettings): IVibrationManager {
-    return VibrationManager(timerXSettings)
-}
+actual fun getVibrationManager(timerXSettings: TimerXSettings): IVibrationManager =
+    VibrationManager(timerXSettings)

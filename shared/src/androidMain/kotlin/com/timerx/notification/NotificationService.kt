@@ -14,9 +14,7 @@ class NotificationService : Service() {
     private val notificationManager by lazy { getSystemService(NotificationManager::class.java) }
     private val timerManager = KoinPlatform.getKoin().get<TimerManager>()
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -28,9 +26,7 @@ class NotificationService : Service() {
         )
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_STICKY
-    }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) = START_STICKY
 
     private fun createNotificationChannel() {
         val serviceChannel = NotificationChannel(

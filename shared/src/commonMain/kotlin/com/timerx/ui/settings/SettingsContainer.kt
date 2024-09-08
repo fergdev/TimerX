@@ -7,8 +7,6 @@ import com.timerx.settings.TimerXSettings
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.dsl.updateState
-import pro.respawn.flowmvi.logging.StoreLogLevel
-import pro.respawn.flowmvi.plugins.enableLogging
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
@@ -19,8 +17,6 @@ internal class SettingsContainer(
 
     override val store =
         store(SettingsState()) {
-            enableLogging(tag = "####", level = StoreLogLevel.Trace)
-
             whileSubscribed {
                 timerXSettings.settings.collect {
                     updateState<SettingsState, _> {
@@ -58,8 +54,5 @@ internal class SettingsContainer(
         }
 
     private suspend fun isNotificationsEnabled() =
-        (
-            permissionsHandler.getPermissionState(Permission.Notification)
-                == PermissionState.Granted
-            )
+        permissionsHandler.getPermissionState(Permission.Notification) == PermissionState.Granted
 }

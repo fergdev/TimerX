@@ -20,11 +20,9 @@ import org.koin.mp.KoinPlatform
 import java.util.UUID
 import kotlin.coroutines.suspendCoroutine
 
-actual fun permissionsHandler(): IPermissionsHandler {
-    return PermissionsHandler()
-}
+actual fun permissionsHandler(): IPermissionsHandler = PermissionsHandler()
 
-private class PermissionCallback(
+private data class PermissionCallback(
     val permission: Permission,
     val callback: (Result<Unit>) -> Unit
 )
@@ -37,7 +35,9 @@ class PermissionsHandler : IPermissionsHandler {
     private var permissionCallback: PermissionCallback? = null
 
     override suspend fun getPermissionState(permission: Permission): PermissionState {
-        if (permission == Permission.Notification && Build.VERSION.SDK_INT in VERSIONS_WITHOUT_NOTIFICATION_PERMISSION) {
+        if (permission == Permission.Notification
+            && Build.VERSION.SDK_INT in VERSIONS_WITHOUT_NOTIFICATION_PERMISSION
+        ) {
             val isNotificationsEnabled = NotificationManagerCompat.from(context)
                 .areNotificationsEnabled()
             return if (isNotificationsEnabled) {
@@ -61,11 +61,10 @@ class PermissionsHandler : IPermissionsHandler {
         else PermissionState.NotGranted
     }
 
-    private fun Permission.toPlatformPermission(): List<String> {
-        return when (this) {
+    private fun Permission.toPlatformPermission() =
+        when (this) {
             Permission.Notification -> remoteNotificationsPermissions()
         }
-    }
 
     override fun openAppSettings() {
         val intent = Intent().apply {

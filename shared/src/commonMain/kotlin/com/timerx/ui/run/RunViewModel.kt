@@ -44,7 +44,7 @@ class RunViewModel(
 
     val state: StateFlow<RunScreenState> = _state
 
-    class Interactions(
+    data class Interactions(
         val play: () -> Unit,
         val pause: () -> Unit,
         val nextInterval: () -> Unit,

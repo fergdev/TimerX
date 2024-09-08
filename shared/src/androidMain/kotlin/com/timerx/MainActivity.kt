@@ -24,17 +24,15 @@ import org.koin.mp.KoinPlatform
 
 const val KEY_RUN_TIMER_ID = "run_timer_id"
 const val KEY_CREATE_TIMER = "create_timer"
-private const val splashScreenExitDuration = 500L
+private const val SPLASH_SCREEN_EXIT_DURATION = 500L
 
-private const val keepSplashScreenOn = 1000L
+private const val KEEP_SPLASH_ON_DURATION = 1000L
 
 class MainActivity : ComponentActivity() {
     private val activityModule = module {
         single<ComponentActivity> { this@MainActivity }
     }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-    private lateinit var timerRepository: ITimerRepository
-    private lateinit var navigationProvider: NavigationProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         splashScreen()
@@ -47,9 +45,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initKoin() {
-        val koin = KoinPlatform.getKoin()
-        this.timerRepository = koin.get<ITimerRepository>()
-        this.navigationProvider = koin.get<NavigationProvider>()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -58,6 +53,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun parseIntent(intent: Intent) {
+        val koin = KoinPlatform.getKoin()
+        val timerRepository = koin.get<ITimerRepository>()
+        val navigationProvider = koin.get<NavigationProvider>()
         coroutineScope.launch {
             intent.extras?.let {
                 if (it.containsKey(KEY_RUN_TIMER_ID)) {
@@ -75,7 +73,7 @@ class MainActivity : ComponentActivity() {
     private fun splashScreen() {
         var keepScreenOn = true
         coroutineScope.launch {
-            delay(keepSplashScreenOn)
+            delay(KEEP_SPLASH_ON_DURATION)
             keepScreenOn = false
         }
         installSplashScreen().apply {
@@ -87,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     0.5f, 0f
                 ).apply {
                     interpolator = OvershootInterpolator()
-                    duration = splashScreenExitDuration
+                    duration = SPLASH_SCREEN_EXIT_DURATION
                     doOnEnd { viewProvider.remove() }
                     start()
                 }
@@ -97,7 +95,7 @@ class MainActivity : ComponentActivity() {
                     0.5f, 0f
                 ).apply {
                     interpolator = OvershootInterpolator()
-                    duration = splashScreenExitDuration
+                    duration = SPLASH_SCREEN_EXIT_DURATION
                     doOnEnd { viewProvider.remove() }
                     start()
                 }

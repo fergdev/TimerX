@@ -12,7 +12,7 @@ import platform.Foundation.NSUserDomainMask
 
 class Factory : RoomDataBaseFactory {
     override fun createRoomDataBase(): AppDatabase {
-        val dbFile = "${fileDirectory()}/$dbFileName"
+        val dbFile = "${fileDirectory()}/$DB_FILE_NAME"
         return Room.databaseBuilder<AppDatabase>(
             name = dbFile,
         ).setDriver(BundledSQLiteDriver())
@@ -33,6 +33,4 @@ class Factory : RoomDataBaseFactory {
     }
 }
 
-actual fun createRoomDatabaseFactory(): RoomDataBaseFactory {
-    return Factory()
-}
+actual fun createRoomDatabaseFactory(): RoomDataBaseFactory = Factory()
