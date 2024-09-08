@@ -8,6 +8,8 @@ androidx-room = "2.7.0-alpha07"
 coreSplashscreen = "1.0.1"
 crashlytics = "3.0.2"
 detekt = "1.23.6"
+detektComposePlugin = "1.3.0"
+detektFormattingPlugin = "1.23.6"
 firebaseAnalytics = "22.1.0"
 firebaseBom = "33.2.0"
 firebaseCrashlytics = "19.0.3"
@@ -39,6 +41,10 @@ androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", versi
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+detekt-compose = { module = "ru.kode:detekt-rules-compose", version.ref = "detektComposePlugin" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormattingPlugin" }
+detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }

@@ -1,5 +1,3 @@
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -7,7 +5,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.detekt)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.androidJunit5)
     alias(libs.plugins.mokkery)
@@ -145,37 +142,6 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-detekt {
-    buildUponDefaultConfig = true
-    parallel = true
-    allRules = false // activate all available (even unstable) rules.
-    source.setFrom(
-        "src/androidMain/kotlin",
-        "src/androidUnitTest/kotlin",
-        "src/commonMain/kotlin",
-        "src/commonTest/kotlin",
-        "src/iosMain/kotlin",
-        "src/iosTest/kotlin",
-    )
-    config.setFrom(File(rootDir, "detekt.yml"))
-}
-
-tasks.withType<Detekt>().configureEach {
-    reports {
-        html.required.set(true)
-        xml.required.set(false)
-        txt.required.set(false)
-        sarif.required.set(true)
-        md.required.set(false)
-    }
-    jvmTarget = "1.8"
-}
-
-tasks.withType<Detekt>().configureEach {
-}
-tasks.withType<DetektCreateBaselineTask>().configureEach {
-    jvmTarget = "1.8"
-}
 
 // TODO enable room plugin when it works properly
 //room {
