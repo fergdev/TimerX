@@ -1,6 +1,6 @@
 package com.timerx.vibration
 
-import com.timerx.BEEP_VIBRATION_DELAY
+import com.timerx.beep.BEEP_VIBRATION_DELAY
 import com.timerx.settings.TimerXSettings
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2

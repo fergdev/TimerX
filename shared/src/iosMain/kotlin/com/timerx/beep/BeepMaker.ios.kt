@@ -1,6 +1,5 @@
 package com.timerx.beep
 
-import com.timerx.BEEP_VIBRATION_DELAY
 import com.timerx.settings.TimerXSettings
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.delay

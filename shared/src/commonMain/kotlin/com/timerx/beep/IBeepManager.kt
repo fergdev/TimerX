@@ -8,6 +8,8 @@ interface IBeepManager {
     suspend fun beep(beep: Beep)
 }
 
+const val BEEP_VIBRATION_DELAY: Long = 500L
+
 enum class Beep(val displayName: String, val path: String, val repeat: Int) {
     Alert("Alert", "alert", 1),
     AlertX2("Alert X2", "alert", 2),

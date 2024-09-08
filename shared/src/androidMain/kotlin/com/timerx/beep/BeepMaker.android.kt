@@ -2,7 +2,6 @@ package com.timerx.beep
 
 import android.content.Context
 import android.media.MediaPlayer
-import com.timerx.BEEP_VIBRATION_DELAY
 import com.timerx.R
 import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.delay
