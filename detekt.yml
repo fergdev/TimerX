@@ -30,10 +30,6 @@ console-reports:
 
 output-reports:
   active: true
-  exclude: null
-  # - 'TxtOutputReport'
-  # - 'XmlOutputReport'
-  # - 'HtmlOutputReport'
 
 comments:
   active: true
@@ -56,14 +52,14 @@ comments:
     endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'
   UndocumentedPublicClass:
     active: false
-#    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**','**/app/**' ]
-#    searchInNestedClass: true
-#    searchInInnerClass: true
-#    searchInInnerObject: true
-#    searchInInnerInterface: true
+  #    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**','**/app/**' ]
+  #    searchInNestedClass: true
+  #    searchInInnerClass: true
+  #    searchInInnerObject: true
+  #    searchInInnerInterface: true
   UndocumentedPublicFunction:
     active: false
-#    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**', '**/app/**' ]
+  #    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**', '**/app/**' ]
   UndocumentedPublicProperty:
     active: false
 #    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**', '**/app/**' ]
@@ -658,8 +654,8 @@ style:
   ForbiddenMethodCall:
     active: true
     methods:
-      - 'kotlin.io.println'
-      - 'kotlin.io.print'
+      - value: 'kotlin.io.println'
+      - value: 'kotlin.io.print'
   ForbiddenVoid:
     active: true
     ignoreOverridden: true
