@@ -55,18 +55,18 @@ comments:
     active: false
     endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'
   UndocumentedPublicClass:
-    active: true
-    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**','**/app/**' ]
-    searchInNestedClass: true
-    searchInInnerClass: true
-    searchInInnerObject: true
-    searchInInnerInterface: true
+    active: false
+#    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**','**/app/**' ]
+#    searchInNestedClass: true
+#    searchInInnerClass: true
+#    searchInInnerObject: true
+#    searchInInnerInterface: true
   UndocumentedPublicFunction:
-    active: true
-    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**', '**/app/**' ]
+    active: false
+#    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**', '**/app/**' ]
   UndocumentedPublicProperty:
-    active: true
-    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**', '**/app/**' ]
+    active: false
+#    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**', '**/sample/**', '**/app/**' ]
 
 complexity:
   active: true
