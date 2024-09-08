@@ -12,13 +12,14 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 }
 
 versionCatalogUpdate {
     sortByKey = true
 
     versionSelector {
-        stabilityLevel(it.candidate.version) >= minStabilityLevel
+        stabilityLevel(it.candidate.version) >= Config.minStabilityLevel
     }
 
     keep {
@@ -26,16 +27,6 @@ versionCatalogUpdate {
         keepUnusedLibraries = true
         keepUnusedPlugins = true
     }
-}
-
-val stabilityLevels = listOf("snapshot", "eap", "preview", "alpha", "beta", "m", "cr", "rc")
-val minStabilityLevel = stabilityLevels.indexOf("rc")
-fun stabilityLevel(version: String): Int {
-    stabilityLevels.forEachIndexed { index, postfix ->
-        val regex = """.*[.\-]$postfix[.\-\d]*""".toRegex(RegexOption.IGNORE_CASE)
-        if (version.matches(regex)) return index
-    }
-    return stabilityLevels.size
 }
 
 dependencies {
@@ -49,14 +40,10 @@ tasks {
         buildUponDefaultConfig = true
         parallel = true
         setSource(projectDir)
-//        config.setFrom(File(rootDir, Config.Detekt.configFile))
-        config.setFrom(File(rootDir, "detekt.yml"))
+        config.setFrom(File(rootDir, Config.Detekt.CONFIG_FILE))
         basePath = projectDir.absolutePath
-//        jvmTarget = Config.jvmTarget.target
-//        include(Config.Detekt.includedFiles)
-//        exclude(Config.Detekt.excludedFiles)
-        include("**/*.kt", "**/*.kts")
-        exclude("**/resources/**", "**/build/**", "**/.idea/**")
+        include(Config.Detekt.includedFiles)
+        exclude(Config.Detekt.excludedFiles)
         reports {
             xml.required.set(false)
             html.required.set(true)
