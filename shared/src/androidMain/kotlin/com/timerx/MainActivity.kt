@@ -40,11 +40,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         loadKoinModules(activityModule)
         setContent { App() }
-        initKoin()
         parseIntent(intent)
-    }
-
-    private fun initKoin() {
     }
 
     override fun onNewIntent(intent: Intent) {
