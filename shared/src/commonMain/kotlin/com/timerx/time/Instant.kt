@@ -8,7 +8,7 @@ fun Instant.toAgo(): String {
     val duration = now.minus(this)
     val inWholeDays = duration.inWholeDays
     if (inWholeDays != 0L) {
-        return if (inWholeDays == 1L)  "1 day"
+        return if (inWholeDays == 1L) "1 day"
         else "$inWholeDays days"
     }
 

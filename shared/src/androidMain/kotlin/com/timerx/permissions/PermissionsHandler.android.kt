@@ -35,8 +35,8 @@ class PermissionsHandler : IPermissionsHandler {
     private var permissionCallback: PermissionCallback? = null
 
     override suspend fun getPermissionState(permission: Permission): PermissionState {
-        if (permission == Permission.Notification
-            && Build.VERSION.SDK_INT in VERSIONS_WITHOUT_NOTIFICATION_PERMISSION
+        if (permission == Permission.Notification &&
+            Build.VERSION.SDK_INT in VERSIONS_WITHOUT_NOTIFICATION_PERMISSION
         ) {
             val isNotificationsEnabled = NotificationManagerCompat.from(context)
                 .areNotificationsEnabled()

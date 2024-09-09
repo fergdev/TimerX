@@ -102,7 +102,6 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSet(
                     },
                 ) { _, timerInterval, _ ->
                     key(timerInterval.id) {
-
                         CreateInterval(
                             interval = timerInterval,
                             canSkipOnLastSet = timerSet.repetitions > 1,

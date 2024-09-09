@@ -87,7 +87,6 @@ class TimerManager(
                     }
 
                     TimerEvent.Idle -> {
-
                     }
                 }
 

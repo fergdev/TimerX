@@ -131,11 +131,12 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateInterval(
 
                 if (colorPickerVisible) {
                     ColorPicker {
-                        it?.let{ intent(UpdateIntervalColor(interval, it)) }
+                        it?.let { intent(UpdateIntervalColor(interval, it)) }
                         colorPickerVisible = false
                     }
                 }
-                IconButton(onClick = { intent(DuplicateInterval(interval))
+                IconButton(onClick = {
+                    intent(DuplicateInterval(interval))
                 }) {
                     Icon(
                         modifier = Modifier.size(24.dp),

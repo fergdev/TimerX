@@ -50,4 +50,3 @@ internal sealed interface MainIntent : MVIIntent {
     data object IgnoreNotificationsPermission : MainIntent
     data class UpdateSortTimersBy(val sortTimersBy: SortTimersBy) : MainIntent
 }
-

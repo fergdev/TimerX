@@ -13,9 +13,9 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
+import com.timerx.domain.SortTimersBy
 import com.timerx.settings.TimerXSettings
 import com.timerx.time.toAgo
-import com.timerx.domain.SortTimersBy
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch

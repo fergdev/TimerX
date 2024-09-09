@@ -158,7 +158,6 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                                 if (this.showNotificationsPermissionRequest)
                                     NotificationPermissions()
                             }
-
                         }
                     }
                 }

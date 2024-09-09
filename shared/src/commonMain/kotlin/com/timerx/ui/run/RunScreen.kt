@@ -77,7 +77,6 @@ private const val CROSS_FADE_DURATION = 600
 @Composable
 fun RunScreen(timerId: String, navigateUp: () -> Unit) {
     with(koinInject<RunContainer> { parametersOf(timerId) }.store) {
-
         LaunchedEffect(Unit) { start(this).join() }
 
         val state by subscribe(DefaultLifecycle)

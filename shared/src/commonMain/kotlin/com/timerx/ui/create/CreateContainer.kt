@@ -198,7 +198,6 @@ private inline fun reduceIntent(
                 mutableSets.add(it.to, set)
                 copy(sets = mutableSets.toPersistentList())
             }
-
         }
 
         is CreateScreenIntent.UpdateFinishBeep -> {
