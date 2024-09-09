@@ -14,22 +14,25 @@ class TimerXAnalytics : ITimerXAnalytics {
             if (it.isEmpty()) {
                 Bundle.EMPTY
             } else {
-                Bundle().apply {
-                    it.forEach { (t, u) ->
-                        when (u) {
-                            is String -> this.putString(t, u)
-                            is Int -> this.putInt(t, u)
-                            is Long -> this.putLong(t, u)
-                            is Float -> this.putFloat(t, u)
-                            is Double -> this.putDouble(t, u)
-                            else -> this.putString(t, u.toString())
-                        }
-                    }
-                }
+                Bundle().load(params)
             }
         }
         firebaseAnalytics.logEvent(eventName, bundle)
     }
+}
+
+private fun Bundle.load(params: Map<String, Any>): Bundle {
+    params.forEach { (t, u) ->
+        when (u) {
+            is String -> this.putString(t, u)
+            is Int -> this.putInt(t, u)
+            is Long -> this.putLong(t, u)
+            is Float -> this.putFloat(t, u)
+            is Double -> this.putDouble(t, u)
+            else -> this.putString(t, u.toString())
+        }
+    }
+    return this
 }
 
 actual fun getTimerXAnalytics(): ITimerXAnalytics = TimerXAnalytics()
