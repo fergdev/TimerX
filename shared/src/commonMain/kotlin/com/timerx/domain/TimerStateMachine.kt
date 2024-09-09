@@ -11,39 +11,47 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-sealed class TimerEvent(val runState: RunState) {
-    class Started(
-        runState: RunState,
+sealed interface TimerEvent {
+    val runState: RunState
+
+    data object Idle : TimerEvent {
+        override val runState = RunState(timerState = TimerState.Running)
+    }
+
+    data class Started(
+        override val runState: RunState,
         val beep: Beep,
         val vibration: Vibration
-    ) :
-        TimerEvent(runState)
+    ) : TimerEvent
 
-    class NextInterval(
-        runState: RunState,
+    data class NextInterval(
+        override val runState: RunState,
         val beep: Beep,
         val vibration: Vibration
-    ) : TimerEvent(runState)
+    ) : TimerEvent
 
-    class PreviousInterval(
-        runState: RunState,
+    data class PreviousInterval(
+        override val runState: RunState,
         val beep: Beep,
         val vibration: Vibration
-    ) : TimerEvent(runState)
+    ) : TimerEvent
 
-    class Finished(
-        runState: RunState,
+    data class Finished(
+        override val runState: RunState,
         val beep: Beep,
         val vibration: Vibration
-    ) : TimerEvent(runState)
+    ) : TimerEvent
 
-    class Paused(runState: RunState) : TimerEvent(runState)
-    class Resumed(runState: RunState) : TimerEvent(runState)
+    data class Paused(override val runState: RunState) : TimerEvent
+    data class Resumed(override val runState: RunState) : TimerEvent
 
-    class Ticker(runState: RunState, val beep: Beep?, val vibration: Vibration?) :
-        TimerEvent(runState)
+    data class Ticker(
+        override val runState: RunState,
+        val beep: Beep?,
+        val vibration: Vibration?
+    ) : TimerEvent
 
-    class Destroy(runState: RunState) : TimerEvent(runState)
+    data class Destroy(override val runState: RunState) : TimerEvent
 }
 
 enum class TimerState {
@@ -54,7 +62,7 @@ enum class TimerState {
 
 data class RunState(
     val timerName: String = "",
-    val timerState: TimerState = TimerState.Finished,
+    val timerState: TimerState = TimerState.Running,
 
     val setIndex: Int = 0,
     val setCount: Int = 0,
@@ -73,7 +81,7 @@ data class RunState(
     val elapsed: Int = 0,
     val intervalDuration: Int = 0,
 
-    val backgroundColor: Color = Color.Red,
+    val backgroundColor: Color = Color.Transparent,
     val displayCountAsUp: Boolean = false,
     val manualNext: Boolean = false
 )
@@ -81,8 +89,6 @@ data class RunState(
 interface TimerStateMachine {
 
     val eventState: StateFlow<TimerEvent>
-
-    fun start()
 
     fun pause()
 
@@ -97,33 +103,28 @@ interface TimerStateMachine {
 
 class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope: CoroutineScope) :
     TimerStateMachine {
-    private val runState = MutableStateFlow(RunState())
-    private val _eventState =
-        MutableStateFlow<TimerEvent>(
-            TimerEvent.Started(
-                runState.value,
-                getCurrentInterval().beep,
-                getCurrentInterval().vibration
-            )
-        )
+    private val runState: MutableStateFlow<RunState>
+    private val _eventState: MutableStateFlow<TimerEvent>
 
     private var tickerJob: Job? = null
 
     override val eventState: StateFlow<TimerEvent>
         get() = _eventState
 
-    override fun start() {
-        runState.update {
-            it.copy(
+    init {
+        runState = MutableStateFlow(
+            RunState(
                 timerName = timer.name,
-                timerState = TimerState.Running
+                intervalName = timer.sets[0].intervals[0].name
             )
-        }
-        updateState(0, 0, 0)
-        _eventState.value = TimerEvent.Started(
-            runState.value,
-            getCurrentInterval().beep,
-            getCurrentInterval().vibration
+        )
+        updateRunState(0, 0, 0)
+        _eventState = MutableStateFlow(
+            TimerEvent.Started(
+                runState.value,
+                getCurrentInterval().beep,
+                getCurrentInterval().vibration
+            )
         )
         startTicker()
     }
@@ -133,9 +134,7 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
             return
         }
         runState.update { it.copy(timerState = TimerState.Running) }
-        _eventState.value = TimerEvent.Resumed(
-            runState.value
-        )
+        _eventState.value = TimerEvent.Resumed(runState.value)
         startTicker()
     }
 
@@ -187,7 +186,7 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
             if (runState.value.timerState == TimerState.Running) {
                 restartTicker()
             }
-            updateState(
+            updateRunState(
                 setIndex,
                 repetitionIndex,
                 intervalIndex,
@@ -253,7 +252,7 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
             }
         }
 
-        updateState(
+        updateRunState(
             setIndex,
             repetitionIndex,
             intervalIndex,
@@ -308,7 +307,7 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
         startTicker()
     }
 
-    private fun updateState(
+    private fun updateRunState(
         setIndex: Int,
         repetitionIndex: Int,
         intervalIndex: Int,

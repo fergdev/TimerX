@@ -13,7 +13,7 @@ import com.timerx.settings.dataStorePreferences
 import com.timerx.ui.create.CreateViewModel
 import com.timerx.ui.main.MainContainer
 import com.timerx.ui.navigation.NavigationProvider
-import com.timerx.ui.run.RunViewModel
+import com.timerx.ui.run.RunContainer
 import com.timerx.ui.settings.SettingsContainer
 import com.timerx.vibration.getVibrationManager
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -43,13 +43,12 @@ val sharedModule = module {
     factory { new(::MainContainer) }
     factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->
-        RunViewModel(
+        RunContainer(
             timerId.idToLong(),
             get(),
             get(),
             get(),
             get(),
-            get()
         )
     }
     factory { new(::SettingsContainer) }

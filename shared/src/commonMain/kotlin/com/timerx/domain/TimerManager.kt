@@ -2,34 +2,44 @@ package com.timerx.domain
 
 import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.beep.IBeepManager
+import com.timerx.database.ITimerRepository
 import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 class TimerManager(
     private val beepManager: IBeepManager,
     private val vibrationManager: IVibrationManager,
     private val notificationManager: ITimerXNotificationManager,
-    private val timerXAnalytics: ITimerXAnalytics
+    private val timerXAnalytics: ITimerXAnalytics,
+    private val timerRepository: ITimerRepository
 ) {
-
     private var timerStateMachine: TimerStateMachineImpl? = null
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    val eventState: StateFlow<TimerEvent>
-        get() = timerStateMachine!!.eventState
+    private val _eventState = MutableStateFlow<TimerEvent>(TimerEvent.Idle)
+    val eventState: StateFlow<TimerEvent> = _eventState
+    private var currentTimer: Timer? = null
 
     fun startTimer(timer: Timer) {
-        val timerStateMachine = TimerStateMachineImpl(timer, coroutineScope).apply {
-            start()
-        }
+        currentTimer = timer
+        initTimerStateMachine(timer)
+    }
+
+    private fun initTimerStateMachine(timer: Timer) {
+        val timerStateMachine = TimerStateMachineImpl(timer, coroutineScope)
+        updateTimerStartStats(timer)
         this.timerStateMachine = timerStateMachine
         coroutineScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
+                println("#### $timerEvent")
+                _eventState.value = timerEvent
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
                         timerXAnalytics.logEvent(
@@ -44,6 +54,7 @@ class TimerManager(
                         beepManager.beep(timerEvent.beep)
                         vibrationManager.vibrate(timerEvent.vibration)
                         notificationManager.stop()
+                        updateTimerFinishedStats(timer)
                     }
 
                     is TimerEvent.NextInterval -> {
@@ -72,6 +83,11 @@ class TimerManager(
 
                     is TimerEvent.Destroy -> {
                         notificationManager.stop()
+                        _eventState.value = TimerEvent.Idle
+                    }
+
+                    TimerEvent.Idle -> {
+
                     }
                 }
 
@@ -79,6 +95,34 @@ class TimerManager(
                     notificationManager.updateNotification(timerEvent)
                 }
             }
+        }
+    }
+
+    fun restartCurrentTimer() {
+        val timer =
+            currentTimer ?: throw IllegalStateException("Attempting to restart with null timer")
+        initTimerStateMachine(timer)
+    }
+
+    private fun updateTimerFinishedStats(timer: Timer) {
+        coroutineScope.launch {
+            timerRepository.updateTimerStats(
+                timer.id,
+                timer.startedCount,
+                timer.completedCount + 1,
+                timer.lastRun ?: Clock.System.now()
+            )
+        }
+    }
+
+    private fun updateTimerStartStats(timer: Timer) {
+        coroutineScope.launch {
+            timerRepository.updateTimerStats(
+                timer.id,
+                timer.startedCount + 1,
+                timer.completedCount,
+                Clock.System.now()
+            )
         }
     }
 

@@ -31,7 +31,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,18 +42,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.timerx.domain.TimerState
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.KeepScreenOn
 import com.timerx.ui.common.contrastColor
 import com.timerx.ui.common.contrastSystemBarColor
+import com.timerx.ui.run.RunScreenState.Finished
+import com.timerx.ui.run.RunScreenState.NotFinished.Paused
+import com.timerx.ui.run.RunScreenState.NotFinished.Playing
 import kotlinx.coroutines.delay
-import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.BackHandler
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
+import pro.respawn.flowmvi.api.IntentReceiver
+import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
+import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.close
 import timerx.shared.generated.resources.finished
@@ -72,58 +76,59 @@ private const val CROSS_FADE_DURATION = 600
 
 @Composable
 fun RunScreen(timerId: String, navigateUp: () -> Unit) {
-    val viewModel: RunViewModel =
-        koinViewModel(vmClass = RunViewModel::class) { parametersOf(timerId) }
-    val state by viewModel.state.collectAsState()
-    KeepScreenOn()
+    with(koinInject<RunContainer> { parametersOf(timerId) }.store) {
 
-    val backgroundColor = if (state.timerState == TimerState.Paused) {
-        MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
-            .compositeOver(state.backgroundColor)
-    } else {
-        state.backgroundColor
+        LaunchedEffect(Unit) { start(this).join() }
+
+        val state by subscribe(DefaultLifecycle)
+        KeepScreenOn()
+
+        val backgroundColor = if (state is Paused) {
+            MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
+                .compositeOver(state.backgroundColor)
+        } else {
+            state.backgroundColor
+        }
+
+        val animatedColor by animateColorAsState(
+            backgroundColor,
+            animationSpec = tween(CROSS_FADE_DURATION)
+        )
+        contrastSystemBarColor(animatedColor)
+
+        RunView(
+            backgroundColor = animatedColor,
+            state = state,
+            navigateUp = navigateUp
+        )
     }
-
-    val animatedColor by animateColorAsState(
-        backgroundColor,
-        animationSpec = tween(CROSS_FADE_DURATION)
-    )
-    contrastSystemBarColor(animatedColor)
-
-    RunView(
-        backgroundColor = animatedColor,
-        interactions = viewModel.interactions,
-        state = state,
-        navigateUp = navigateUp
-    )
 }
 
 @Composable
-private fun RunView(
+private fun IntentReceiver<RunScreenIntent>.RunView(
     backgroundColor: Color,
-    interactions: RunViewModel.Interactions,
     state: RunScreenState,
     navigateUp: () -> Unit,
 ) {
     var controlsVisible by remember { mutableStateOf(false) }
     var touchCounter by remember { mutableIntStateOf(1) }
 
-    if (state.timerState == TimerState.Paused) {
+    if (state is Paused) {
         controlsVisible = true
     }
 
     LaunchedEffect(touchCounter) {
         delay(CONTROLS_HIDE_DELAY)
-        if (state.timerState != TimerState.Paused) {
+        if (state is Paused) {
             controlsVisible = false
         }
     }
 
-    BackHandler(state.timerState != TimerState.Finished) {
+    BackHandler(state is Finished) {
         controlsVisible = true
         touchCounter++
     }
-    BackHandler(state.timerState != TimerState.Running) {
+    BackHandler(state !is Playing) {
         navigateUp()
     }
     Box(
@@ -147,7 +152,6 @@ private fun RunView(
         ) {
             AnimatedVisibility(controlsVisible) {
                 TopControls(
-                    interactions,
                     contrastDisplayColor,
                     state.volume,
                     state.vibrationEnabled
@@ -158,16 +162,27 @@ private fun RunView(
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            TimerInformation(
-                state,
-                contrastDisplayColor,
-                interactions,
-            )
+            when (state) {
+                is Finished -> {
+                    Text(
+                        text = stringResource(Res.string.finished).uppercase(),
+                        style = typography.displayLarge,
+                        color = contrastDisplayColor
+                    )
+                }
+
+                is RunScreenState.NotFinished -> {
+                    TimerInformation(
+                        state,
+                        contrastDisplayColor,
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
             AnimatedVisibility(controlsVisible) {
-                BottomControls(state, navigateUp, contrastDisplayColor, interactions) {
+                BottomControls(state, navigateUp, contrastDisplayColor) {
                     controlsVisible = true
                     touchCounter++
                 }
@@ -177,64 +192,52 @@ private fun RunView(
 }
 
 @Composable
-private fun TimerInformation(
-    state: RunScreenState,
+private fun IntentReceiver<RunScreenIntent>.TimerInformation(
+    state: RunScreenState.NotFinished,
     displayColor: Color,
-    interactions: RunViewModel.Interactions,
 ) {
-    if (state.timerState == TimerState.Finished) {
+    Crossfade(
+        targetState = state.index,
+        animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
+    ) {
         Text(
-            text = stringResource(Res.string.finished).uppercase(),
-            style = typography.displayLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            text = state.index,
+            color = displayColor,
+            style = typography.displaySmall,
+        )
+    }
+    Spacer(modifier = Modifier.height(24.dp))
+    AnimatedNumber(
+        value = state.time,
+        textStyle = typography.displayLarge,
+        color = displayColor,
+        formatter = { it.timeFormatted() },
+    )
+    Spacer(modifier = Modifier.height(24.dp))
+    Crossfade(
+        targetState = state.timerName,
+        animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
+    ) {
+        Text(
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            text = it,
+            style = typography.displaySmall,
             color = displayColor
         )
-    } else {
-        state.index?.let {
-            Crossfade(
-                targetState = state.index,
-                animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                    text = state.index,
-                    color = displayColor,
-                    style = typography.displaySmall,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        AnimatedNumber(
-            value = state.time,
-            textStyle = typography.displayLarge,
-            color = displayColor,
-            formatter = { it.timeFormatted() },
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Crossfade(
-            targetState = state.name,
-            animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                text = it,
-                style = typography.displaySmall,
-                color = displayColor
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        if (state.manualNext) {
-            Button(onClick = { interactions.onManualNext() }) {
-                Text(text = stringResource(Res.string.next))
-            }
+    }
+    Spacer(modifier = Modifier.height(24.dp))
+    if (state.manualNext) {
+        Button(onClick = { intent(RunScreenIntent.OnManualNext) }) {
+            Text(text = stringResource(Res.string.next))
         }
     }
 }
 
 @Composable
-private fun TopControls(
-    interactions: RunViewModel.Interactions,
+private fun IntentReceiver<RunScreenIntent>.TopControls(
     displayColor: Color,
     volume: Float,
     vibrationEnabled: Boolean,
@@ -243,7 +246,7 @@ private fun TopControls(
     Row {
         IconButton(onClick = {
             incrementTouchCounter()
-            interactions.previousInterval()
+            intent(RunScreenIntent.PreviousInterval)
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
@@ -257,7 +260,7 @@ private fun TopControls(
             value = volume,
             valueRange = 0f..1f,
             onValueChange = {
-                interactions.updateVolume(it)
+                intent(RunScreenIntent.UpdateVolume(it))
             },
             colors = SliderDefaults.colors(
                 thumbColor = displayColor,
@@ -267,7 +270,7 @@ private fun TopControls(
         )
         IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
             incrementTouchCounter()
-            interactions.updateVibrationEnabled(vibrationEnabled.not())
+            intent(RunScreenIntent.UpdateVibrationEnabled(vibrationEnabled.not()))
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
@@ -278,7 +281,7 @@ private fun TopControls(
         }
         IconButton(onClick = {
             incrementTouchCounter()
-            interactions.nextInterval()
+            intent(RunScreenIntent.NextInterval)
         }) {
             Icon(
                 modifier = Modifier.size(CORNER_ICON_SIZE),
@@ -291,26 +294,28 @@ private fun TopControls(
 }
 
 @Composable
-private fun BottomControls(
+private fun IntentReceiver<RunScreenIntent>.BottomControls(
     state: RunScreenState,
     navigateUp: () -> Unit,
     displayColor: Color,
-    interactions: RunViewModel.Interactions,
     incrementTouchCounter: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        if (state.timerState == TimerState.Paused || state.timerState == TimerState.Finished) {
-            IconButton(onClick = { navigateUp() }) {
-                Icon(
-                    modifier = Modifier.size(CORNER_ICON_SIZE),
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(Res.string.close),
-                    tint = displayColor
-                )
+        when (state) {
+            is Finished, is Paused -> {
+                IconButton(onClick = { navigateUp() }) {
+                    Icon(
+                        modifier = Modifier.size(CORNER_ICON_SIZE),
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(Res.string.close),
+                        tint = displayColor
+                    )
+                }
             }
-        } else {
-            // Empty box to align timer name
-            Box(modifier = Modifier.size(CORNER_ICON_SIZE))
+
+            is Playing -> {
+                Box(modifier = Modifier.size(CORNER_ICON_SIZE))
+            }
         }
         Text(
             text = state.timerName,
@@ -319,20 +324,21 @@ private fun BottomControls(
             textAlign = TextAlign.Center,
             color = displayColor
         )
-        TogglePlayButton(state, interactions, displayColor, incrementTouchCounter)
+        TogglePlayButton(state, displayColor, incrementTouchCounter)
     }
 }
 
 @Composable
-private fun TogglePlayButton(
+private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
     state: RunScreenState,
-    interactions: RunViewModel.Interactions,
     displayColor: Color,
     incrementTouchCounter: () -> Unit,
 ) {
-    when (state.timerState) {
-        TimerState.Running -> {
-            IconButton(onClick = interactions.pause) {
+    when (state) {
+        is Playing -> {
+            IconButton(onClick = {
+                intent(RunScreenIntent.Pause)
+            }) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),
                     imageVector = CustomIcons.pause,
@@ -342,9 +348,9 @@ private fun TogglePlayButton(
             }
         }
 
-        TimerState.Paused -> {
+        is Paused -> {
             IconButton(onClick = {
-                interactions.play()
+                intent(RunScreenIntent.Pause)
                 incrementTouchCounter()
             }) {
                 Icon(
@@ -356,9 +362,9 @@ private fun TogglePlayButton(
             }
         }
 
-        TimerState.Finished -> {
+        is Finished -> {
             IconButton(onClick = {
-                interactions.restartTimer()
+                intent(RunScreenIntent.RestartTimer)
                 incrementTouchCounter()
             }) {
                 Icon(

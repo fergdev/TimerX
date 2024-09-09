@@ -9,20 +9,24 @@ class TimerXAnalytics : ITimerXAnalytics {
     private val context: Context = KoinPlatform.getKoin().get()
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
-    override fun logEvent(eventName: String, params: Map<String, Any>?) {
-        val bundle: Bundle? = params?.run {
-            val bundle = Bundle()
-            this.forEach { (t, u) ->
-                when (u) {
-                    is String -> bundle.putString(t, u)
-                    is Int -> bundle.putInt(t, u)
-                    is Long -> bundle.putLong(t, u)
-                    is Float -> bundle.putFloat(t, u)
-                    is Double -> bundle.putDouble(t, u)
-                    else -> bundle.putString(t, u.toString())
+    override fun logEvent(eventName: String, params: Map<String, Any>) {
+        val bundle: Bundle? = params.let {
+            if (it.isEmpty()) {
+                Bundle.EMPTY
+            } else {
+                Bundle().apply {
+                    it.forEach { (t, u) ->
+                        when (u) {
+                            is String -> this.putString(t, u)
+                            is Int -> this.putInt(t, u)
+                            is Long -> this.putLong(t, u)
+                            is Float -> this.putFloat(t, u)
+                            is Double -> this.putDouble(t, u)
+                            else -> this.putString(t, u.toString())
+                        }
+                    }
                 }
             }
-            bundle
         }
         firebaseAnalytics.logEvent(eventName, bundle)
     }

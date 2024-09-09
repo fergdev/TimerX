@@ -1,9 +1,5 @@
 package com.timerx.ui.create
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,12 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,7 +33,6 @@ import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.rememberRevealState
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
 import sh.calvin.reorderable.ReorderableScope
@@ -109,26 +99,13 @@ internal fun CreateSet(
                     },
                 ) { _, timerInterval, _ ->
                     key(timerInterval.id) {
-                        var visible by remember { mutableStateOf(true) }
-                        LaunchedEffect(visible) {
-                            if (!visible) {
-                                delay(400)
-                                interactions.interval.delete(timerInterval)
-                            }
-                        }
 
-                        AnimatedVisibility(
-                            visible = visible,
-                            enter = expandIn(animationSpec = tween(400)),
-                            exit = shrinkOut(animationSpec = tween((400)))
-                        ) {
-                            CreateInterval(
-                                interval = timerInterval,
-                                canSkipOnLastSet = timerSet.repetitions > 1,
-                                interactions = interactions,
-                                scope = this@ReorderableColumn
-                            ) { visible = false }
-                        }
+                        CreateInterval(
+                            interval = timerInterval,
+                            canSkipOnLastSet = timerSet.repetitions > 1,
+                            interactions = interactions,
+                            scope = this@ReorderableColumn
+                        )
                     }
                 }
 

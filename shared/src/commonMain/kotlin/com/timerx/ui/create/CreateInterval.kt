@@ -76,7 +76,6 @@ internal fun CreateInterval(
     canSkipOnLastSet: Boolean,
     interactions: CreateViewModel.Interactions,
     scope: ReorderableScope,
-    animateOutInterval: () -> Unit
 ) {
     val backgroundColor by animateColorAsState(
         interval.color.lightDisplayColor(),
@@ -144,7 +143,7 @@ internal fun CreateInterval(
                         tint = contrastColor
                     )
                 }
-                IconButton(onClick = { animateOutInterval() }) {
+                IconButton(onClick = { interactions.interval.delete(interval) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete),
