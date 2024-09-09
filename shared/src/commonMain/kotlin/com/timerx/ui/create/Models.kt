@@ -6,8 +6,9 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.vibration.Vibration
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import pro.respawn.flowmvi.api.MVIAction
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
@@ -16,7 +17,7 @@ internal data class CreateScreenState(
     val finishColor: Color = Color.Red,
     val finishBeep: Beep = Beep.End,
     val finishVibration: Vibration = Vibration.Heavy,
-    val sets: ImmutableList<TimerSet> = persistentListOf()
+    val sets: PersistentList<TimerSet> = persistentListOf()
 ) : MVIState
 
 sealed interface CreateScreenIntent : MVIIntent {
@@ -67,4 +68,8 @@ sealed interface CreateScreenIntent : MVIIntent {
 
     data class UpdateIntervalVibration(val interval: TimerInterval, val vibration: Vibration) :
         CreateScreenIntent
+}
+
+internal sealed interface RunScreenAction : MVIAction {
+    data object NavigateUp : RunScreenAction
 }

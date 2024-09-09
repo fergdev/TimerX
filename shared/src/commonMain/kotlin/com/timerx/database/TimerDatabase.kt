@@ -77,7 +77,7 @@ interface RoomTimerDao {
     @Transaction
     suspend fun insertTimerTransaction(
         roomTimer: RoomTimer,
-        roomTimerSets: Map<RoomSet, List<RoomInterval>>,
+        roomTimerSets: List<Pair<RoomSet, List<RoomInterval>>>,
     ) {
         val insertSortOrder = if (roomTimer.sortOrder == NO_SORT_ORDER) {
             getMaxSortOrder().first() + 1L
@@ -85,8 +85,8 @@ interface RoomTimerDao {
             roomTimer.sortOrder
         }
         val timerPrimaryKey = insert(roomTimer.copy(sortOrder = insertSortOrder))
-        roomTimerSets.map { entry ->
-            val setPrimaryKey = insert(entry.key)
+        roomTimerSets.forEach { entry ->
+            val setPrimaryKey = insert(entry.first)
             insert(
                 RoomTimerSet(
                     id = 0,
@@ -94,7 +94,7 @@ interface RoomTimerDao {
                     setId = setPrimaryKey
                 )
             )
-            entry.value.forEach { roomInterval ->
+            entry.second.forEach { roomInterval ->
                 val intervalPrimaryKey = insert(roomInterval)
                 insert(RoomSetInterval(0, setPrimaryKey, intervalPrimaryKey))
             }
@@ -160,7 +160,7 @@ interface RoomTimerDao {
     @Transaction
     suspend fun updateTimer(
         roomTimer: RoomTimer,
-        roomTimerSets: Map<RoomSet, List<RoomInterval>>
+        roomTimerSets: List<Pair<RoomSet, List<RoomInterval>>>
     ) {
         deleteTimerTransaction(roomTimer.id)
         insertTimerTransaction(roomTimer, roomTimerSets)
@@ -367,6 +367,7 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     }
 
     override suspend fun updateTimer(timer: Timer) {
+        println("#### sets ${timer.sets.size}")
         deleteTimer(timer.id)
         insertTimer(timer)
     }
@@ -375,15 +376,10 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
         timerDao.deleteTimerTransaction(timerId)
     }
 
-    private fun roomSetsAndIntervals(timer: Timer): MutableMap<RoomSet, List<RoomInterval>> {
-        val inputMap = mutableMapOf<RoomSet, List<RoomInterval>>()
-        timer.sets.forEach { timerSet ->
-            val roomSet = timerSet.toRoomSet()
-            val roomIntervals = timerSet.intervals.map { it.toRoomInterval() }
-            inputMap[roomSet] = roomIntervals
+    private fun roomSetsAndIntervals(timer: Timer): List<Pair<RoomSet, List<RoomInterval>>> =
+        timer.sets.map { timerSet ->
+            Pair(timerSet.toRoomSet(), timerSet.intervals.map { it.toRoomInterval() })
         }
-        return inputMap
-    }
 
     override suspend fun duplicate(timerId: Long) {
         val timer = getTimer(timerId).first()

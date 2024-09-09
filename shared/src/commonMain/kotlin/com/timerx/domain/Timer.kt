@@ -3,7 +3,7 @@ package com.timerx.domain
 import androidx.compose.ui.graphics.Color
 import com.timerx.beep.Beep
 import com.timerx.vibration.Vibration
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.datetime.Instant
 
 internal const val NO_SORT_ORDER = -1L
@@ -12,7 +12,7 @@ data class Timer(
     val id: Long = 0L,
     val sortOrder: Long = NO_SORT_ORDER,
     val name: String,
-    val sets: ImmutableList<TimerSet>,
+    val sets: PersistentList<TimerSet>,
     val finishColor: Color = Color.Red,
     val finishBeep: Beep = Beep.Alert,
     val finishVibration: Vibration = Vibration.Heavy,
@@ -25,7 +25,7 @@ data class Timer(
 data class TimerSet(
     val id: Long = 0L,
     val repetitions: Int = 1,
-    val intervals: ImmutableList<TimerInterval>
+    val intervals: PersistentList<TimerInterval>
 )
 
 data class TimerInterval(

@@ -98,7 +98,11 @@ internal fun CreateScreen(
     with(koinInject<CreateContainer> { parametersOf(timerId) }.store) {
         LaunchedEffect(Unit) { start(this).join() }
 
-        val state by subscribe(DefaultLifecycle)
+        val state by subscribe(DefaultLifecycle) {
+            when (it) {
+                RunScreenAction.NavigateUp -> navigateUp()
+            }
+        }
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
         Scaffold(
             topBar = {
@@ -106,7 +110,7 @@ internal fun CreateScreen(
                     scrollBehavior = appBarScrollBehavior,
                     title = { TimerNameTextField(state) },
                     navigationIcon = { AppBarNavigationIcon(navigateUp) },
-                    actions = { TopAppBarActions(navigateUp) },
+                    actions = { TopAppBarActions() },
                     colors = TopAppBarDefaults.topAppBarColors(scrolledContainerColor = Color.Transparent)
                 )
             },
@@ -134,13 +138,10 @@ internal fun CreateScreen(
 }
 
 @Composable
-private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions(
-    navigateUp: () -> Unit
-) {
+private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions() {
     IconButton(
         onClick = {
             intent(Save)
-            navigateUp()
         }
     ) {
         Icon(
@@ -284,7 +285,7 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker() {
 
             if (colorPickerVisible) {
                 ColorPicker {
-                    it?.let{
+                    it?.let {
                         intent(UpdateFinishColor(it))
                     }
                     colorPickerVisible = false
