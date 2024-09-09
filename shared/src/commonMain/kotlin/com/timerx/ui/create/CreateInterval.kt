@@ -53,8 +53,15 @@ import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.lightDisplayColor
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
+import com.timerx.ui.create.CreateScreenIntent.DuplicateInterval
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalColor
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalCountUp
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalManualNext
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalName
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalSkipOnLastSet
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import pro.respawn.flowmvi.api.IntentReceiver
 import sh.calvin.reorderable.ReorderableScope
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.copy
@@ -71,10 +78,9 @@ private const val COLOR_ANIMATION_DURATION = 400
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CreateInterval(
+internal fun IntentReceiver<CreateScreenIntent>.CreateInterval(
     interval: TimerInterval,
     canSkipOnLastSet: Boolean,
-    interactions: CreateViewModel.Interactions,
     scope: ReorderableScope,
 ) {
     val backgroundColor by animateColorAsState(
@@ -105,7 +111,6 @@ internal fun CreateInterval(
                         IntervalSwitches(
                             canSkipOnLastSet,
                             interval,
-                            interactions,
                         )
                     }
                 }
@@ -126,16 +131,12 @@ internal fun CreateInterval(
 
                 if (colorPickerVisible) {
                     ColorPicker {
-                        if (it != null) {
-                            interactions.interval.update.updateColor(
-                                interval,
-                                it
-                            )
-                        }
+                        it?.let{ intent(UpdateIntervalColor(interval, it)) }
                         colorPickerVisible = false
                     }
                 }
-                IconButton(onClick = { interactions.interval.duplicate(interval) }) {
+                IconButton(onClick = { intent(DuplicateInterval(interval))
+                }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = CustomIcons.contentCopy,
@@ -143,7 +144,9 @@ internal fun CreateInterval(
                         tint = contrastColor
                     )
                 }
-                IconButton(onClick = { interactions.interval.delete(interval) }) {
+                IconButton(onClick = {
+                    intent(CreateScreenIntent.DeleteInterval(interval))
+                }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete),
@@ -180,10 +183,7 @@ internal fun CreateInterval(
                     textStyle = MaterialTheme.typography.titleLarge,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     onValueChange = {
-                        interactions.interval.update.updateName(
-                            interval,
-                            it
-                        )
+                        intent(UpdateIntervalName(interval, it))
                     },
                     placeholder = {
                         Text(
@@ -202,10 +202,7 @@ internal fun CreateInterval(
                     textStyle = MaterialTheme.typography.titleLarge,
                     formatter = { it.timeFormatted() },
                 ) {
-                    interactions.interval.update.updateDuration(
-                        interval,
-                        it
-                    )
+                    intent(CreateScreenIntent.UpdateIntervalDuration(interval, it))
                 }
                 Box(modifier = Modifier.weight(1f)) {
                     Icon(
@@ -225,45 +222,35 @@ internal fun CreateInterval(
 }
 
 @Composable
-private fun IntervalSwitches(
+private fun IntentReceiver<CreateScreenIntent>.IntervalSwitches(
     canSkipOnLastSet: Boolean,
     interval: TimerInterval,
-    interactions: CreateViewModel.Interactions,
 ) {
     if (canSkipOnLastSet) {
         RowSwitch(stringResource(Res.string.skip_on_last_set), interval.skipOnLastSet) {
-            interactions.interval.update.updateSkipOnLastSet(
-                interval,
-                it
-            )
+            intent(UpdateIntervalSkipOnLastSet(interval, it))
         }
     }
     RowSwitch(stringResource(Res.string.count_up), interval.countUp) {
-        interactions.interval.update.updateCountUp(
-            interval,
-            it
-        )
+        intent(UpdateIntervalCountUp(interval, it))
     }
     RowSwitch(stringResource(Res.string.manual_next), interval.manualNext) {
-        interactions.interval.update.updateManualNext(
-            interval,
-            it
-        )
+        intent(UpdateIntervalManualNext(interval, it))
     }
 
     HorizontalDivider()
     Text(text = stringResource(Res.string.finish))
     BeepSelector(selected = interval.beep) {
-        interactions.interval.update.updateBeep(interval, it)
+        intent(CreateScreenIntent.UpdateIntervalBeep(interval, it))
     }
     VibrationSelector(selected = interval.vibration) {
-        interactions.interval.update.updateVibration(interval, it)
+        intent(CreateScreenIntent.UpdateIntervalVibration(interval, it))
     }
 
     HorizontalDivider()
     Text(text = stringResource(Res.string.count_down))
     IntervalCountDown(interval.finalCountDown) {
-        interactions.interval.update.updateFinalCountDown(interval, it)
+        intent(CreateScreenIntent.UpdateIntervalFinalCountDown(interval, it))
     }
 }
 

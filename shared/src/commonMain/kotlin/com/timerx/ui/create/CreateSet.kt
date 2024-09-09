@@ -33,7 +33,11 @@ import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.rememberRevealState
+import com.timerx.ui.create.CreateScreenIntent.DeleteSet
+import com.timerx.ui.create.CreateScreenIntent.DuplicateSet
+import com.timerx.ui.create.CreateScreenIntent.UpdateSetRepetitions
 import org.jetbrains.compose.resources.stringResource
+import pro.respawn.flowmvi.api.IntentReceiver
 import sh.calvin.reorderable.ReorderableColumn
 import sh.calvin.reorderable.ReorderableScope
 import timerx.shared.generated.resources.Res
@@ -44,9 +48,8 @@ import timerx.shared.generated.resources.down
 import timerx.shared.generated.resources.sets
 
 @Composable
-internal fun CreateSet(
+internal fun IntentReceiver<CreateScreenIntent>.CreateSet(
     timerSet: TimerSet,
-    interactions: CreateViewModel.Interactions,
     reorderableScope: ReorderableScope
 ) {
     val revealState = rememberRevealState(
@@ -71,14 +74,14 @@ internal fun CreateSet(
         },
         hiddenContentEnd = {
             Row {
-                FilledTonalIconButton(onClick = { interactions.set.duplicate(timerSet) }) {
+                FilledTonalIconButton(onClick = { intent(DuplicateSet(timerSet)) }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
-                FilledTonalIconButton(onClick = { interactions.set.delete(timerSet) }) {
+                FilledTonalIconButton(onClick = { intent(DeleteSet(timerSet)) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete)
@@ -89,13 +92,13 @@ internal fun CreateSet(
     ) {
         Surface {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                SetTopControls(interactions, timerSet, reorderableScope)
+                SetTopControls(timerSet, reorderableScope)
                 ReorderableColumn(
                     list = timerSet.intervals,
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     onSettle = { from, to ->
-                        interactions.set.update.moveInterval(timerSet, from, to)
+                        intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
                     },
                 ) { _, timerInterval, _ ->
                     key(timerInterval.id) {
@@ -103,7 +106,6 @@ internal fun CreateSet(
                         CreateInterval(
                             interval = timerInterval,
                             canSkipOnLastSet = timerSet.repetitions > 1,
-                            interactions = interactions,
                             scope = this@ReorderableColumn
                         )
                     }
@@ -117,7 +119,7 @@ internal fun CreateSet(
                     ) { it.timeFormatted() }
                     FilledTonalIconButton(
                         modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = { interactions.set.update.newInterval(timerSet) }
+                        onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -132,8 +134,7 @@ internal fun CreateSet(
 }
 
 @Composable
-private fun SetTopControls(
-    interactions: CreateViewModel.Interactions,
+private fun IntentReceiver<CreateScreenIntent>.SetTopControls(
     timerSet: TimerSet,
     reorderableScope: ReorderableScope,
 ) {
@@ -153,10 +154,7 @@ private fun SetTopControls(
             textStyle = MaterialTheme.typography.titleLarge,
             negativeButtonEnabled = timerSet.repetitions > 1,
             onChange = {
-                interactions.set.update.updateRepetitions(
-                    timerSet,
-                    it
-                )
+                intent(UpdateSetRepetitions(timerSet, it))
             }
         )
         Row(

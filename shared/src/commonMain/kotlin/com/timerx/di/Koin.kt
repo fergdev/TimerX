@@ -10,7 +10,7 @@ import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.permissions.permissionsHandler
 import com.timerx.settings.TimerXSettings
 import com.timerx.settings.dataStorePreferences
-import com.timerx.ui.create.CreateViewModel
+import com.timerx.ui.create.CreateContainer
 import com.timerx.ui.main.MainContainer
 import com.timerx.ui.navigation.NavigationProvider
 import com.timerx.ui.run.RunContainer
@@ -41,7 +41,7 @@ val sharedModule = module {
     single { new(::getTimerXNotificationManager) }
     single { new(::NavigationProvider) }
     factory { new(::MainContainer) }
-    factory { (timerId: String) -> CreateViewModel(timerId.idToLong(), get(), get(), get()) }
+    factory { (timerId: String) -> CreateContainer(timerId.idToLong(), get(), get(), get()) }
     factory { (timerId: String) ->
         RunContainer(
             timerId.idToLong(),

@@ -39,7 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -66,9 +66,19 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.lightDisplayColor
-import moe.tlaster.precompose.koin.koinViewModel
+import com.timerx.ui.create.CreateScreenIntent.AddSet
+import com.timerx.ui.create.CreateScreenIntent.Save
+import com.timerx.ui.create.CreateScreenIntent.SwapSet
+import com.timerx.ui.create.CreateScreenIntent.UpdateFinishBeep
+import com.timerx.ui.create.CreateScreenIntent.UpdateFinishColor
+import com.timerx.ui.create.CreateScreenIntent.UpdateFinishVibration
+import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
+import pro.respawn.flowmvi.api.IntentReceiver
+import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
+import pro.respawn.flowmvi.compose.dsl.subscribe
 import sh.calvin.reorderable.ReorderableColumn
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
@@ -85,52 +95,51 @@ internal fun CreateScreen(
     timerId: String,
     navigateUp: () -> Unit
 ) {
-    val viewModel: CreateViewModel =
-        koinViewModel(vmClass = CreateViewModel::class) { parametersOf(timerId) }
-    val state by viewModel.state.collectAsState()
+    with(koinInject<CreateContainer> { parametersOf(timerId) }.store) {
+        LaunchedEffect(Unit) { start(this).join() }
 
-    val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                scrollBehavior = appBarScrollBehavior,
-                title = { TimerNameTextField(state, viewModel.interactions) },
-                navigationIcon = { AppBarNavigationIcon(navigateUp) },
-                actions = { TopAppBarActions(viewModel.interactions, navigateUp) },
-                colors = TopAppBarDefaults.topAppBarColors(scrolledContainerColor = Color.Transparent)
-            )
-        },
-        content = { paddingValues ->
-            val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
-            val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
-            val layoutDirection = LocalLayoutDirection.current
-            Box(
-                modifier = Modifier.padding(
-                    start = systemBarsPadding.calculateStartPadding(layoutDirection)
-                        .coerceAtLeast(cutoutPadding.calculateStartPadding(layoutDirection)),
-                    end = systemBarsPadding.calculateEndPadding(layoutDirection)
-                        .coerceAtLeast(cutoutPadding.calculateEndPadding(layoutDirection))
+        val state by subscribe(DefaultLifecycle)
+        val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    scrollBehavior = appBarScrollBehavior,
+                    title = { TimerNameTextField(state) },
+                    navigationIcon = { AppBarNavigationIcon(navigateUp) },
+                    actions = { TopAppBarActions(navigateUp) },
+                    colors = TopAppBarDefaults.topAppBarColors(scrolledContainerColor = Color.Transparent)
                 )
-            ) {
-                CreateContent(
-                    state,
-                    viewModel.interactions,
-                    appBarScrollBehavior.nestedScrollConnection,
-                    paddingValues
-                )
+            },
+            content = { paddingValues ->
+                val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
+                val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
+                val layoutDirection = LocalLayoutDirection.current
+                Box(
+                    modifier = Modifier.padding(
+                        start = systemBarsPadding.calculateStartPadding(layoutDirection)
+                            .coerceAtLeast(cutoutPadding.calculateStartPadding(layoutDirection)),
+                        end = systemBarsPadding.calculateEndPadding(layoutDirection)
+                            .coerceAtLeast(cutoutPadding.calculateEndPadding(layoutDirection))
+                    )
+                ) {
+                    CreateContent(
+                        state,
+                        appBarScrollBehavior.nestedScrollConnection,
+                        paddingValues
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
-private fun TopAppBarActions(
-    interactions: CreateViewModel.Interactions,
+private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions(
     navigateUp: () -> Unit
 ) {
     IconButton(
         onClick = {
-            interactions.save()
+            intent(Save)
             navigateUp()
         }
     ) {
@@ -158,16 +167,15 @@ private fun AppBarNavigationIcon(navigateUp: () -> Unit) {
 }
 
 @Composable
-private fun TimerNameTextField(
-    state: CreateViewModel.State,
-    interactions: CreateViewModel.Interactions
+private fun IntentReceiver<CreateScreenIntent>.TimerNameTextField(
+    state: CreateScreenState,
 ) {
     UnderlinedField(
         modifier = Modifier.fillMaxWidth(),
         maxLines = 1,
         value = state.timerName,
         onValueChange = {
-            interactions.updateTimerName(it)
+            intent(UpdateTimerName(it))
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         textStyle = MaterialTheme.typography.headlineSmall.copy(
@@ -184,9 +192,8 @@ private fun TimerNameTextField(
 }
 
 @Composable
-private fun CreateContent(
-    state: CreateViewModel.State,
-    interactions: CreateViewModel.Interactions,
+private fun IntentReceiver<CreateScreenIntent>.CreateContent(
+    state: CreateScreenState,
     nestedScrollConnection: NestedScrollConnection,
     paddingValues: PaddingValues
 ) {
@@ -201,14 +208,13 @@ private fun CreateContent(
         ReorderableColumn(
             list = state.sets,
             onSettle = { from, to ->
-                interactions.swapSet(from, to)
+                intent(SwapSet(from, to))
             },
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) { _, set, _ ->
             key(set.id) {
                 CreateSet(
                     timerSet = set,
-                    interactions = interactions,
                     this
                 )
             }
@@ -216,7 +222,7 @@ private fun CreateContent(
         Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             FilledIconButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                onClick = { interactions.addSet() }
+                onClick = { intent(AddSet) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -229,41 +235,36 @@ private fun CreateContent(
                 textStyle = MaterialTheme.typography.displayMedium
             ) { it.timeFormatted() }
         }
-        FinishControls(state, interactions)
+        FinishControls(state)
         Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 
 @Composable
-private fun FinishControls(
-    state: CreateViewModel.State,
-    interactions: CreateViewModel.Interactions
-) {
+private fun IntentReceiver<CreateScreenIntent>.FinishControls(state: CreateScreenState) {
     val backgroundColor by animateColorAsState(
         targetValue = state.finishColor.lightDisplayColor(),
         animationSpec = tween(400)
     )
     Column(modifier = Modifier.background(backgroundColor)) {
-        FinishColorPicker(interactions.updateFinishColor)
+        FinishColorPicker()
         BeepSelector(
             modifier = Modifier.padding(horizontal = 16.dp),
             selected = state.finishBeep
         ) {
-            interactions.updateFinishAlert(it)
+            intent(UpdateFinishBeep(it))
         }
         VibrationSelector(
             modifier = Modifier.padding(16.dp),
             selected = state.finishVibration
         ) {
-            interactions.updateFinishVibration(it)
+            intent(UpdateFinishVibration(it))
         }
     }
 }
 
 @Composable
-private fun FinishColorPicker(
-    updateFinishColor: (Color) -> Unit,
-) {
+private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker() {
     var colorPickerVisible by remember { mutableStateOf(false) }
     Box(modifier = Modifier.clickable { colorPickerVisible = true }) {
         Row(
@@ -283,8 +284,8 @@ private fun FinishColorPicker(
 
             if (colorPickerVisible) {
                 ColorPicker {
-                    if (it != null) {
-                        updateFinishColor(it)
+                    it?.let{
+                        intent(UpdateFinishColor(it))
                     }
                     colorPickerVisible = false
                 }
