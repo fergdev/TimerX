@@ -55,7 +55,7 @@ internal class RunContainer(
     }
 }
 
-internal inline fun updateSettingsPlugin(timerXSettings: TimerXSettings) =
+internal fun updateSettingsPlugin(timerXSettings: TimerXSettings) =
     plugin<RunScreenState, RunScreenIntent, Nothing> {
         onSubscribe {
             launch {
@@ -89,7 +89,7 @@ internal inline fun updateSettingsPlugin(timerXSettings: TimerXSettings) =
         }
     }
 
-internal inline fun observeTimerPlugin(
+internal fun observeTimerPlugin(
     timerManager: TimerManager
 ) = plugin<RunScreenState, RunScreenIntent, Nothing> {
     onSubscribe {
@@ -152,7 +152,7 @@ internal inline fun observeTimerPlugin(
     }
 }
 
-internal inline fun reducePlugin(
+internal fun reducePlugin(
     timerManager: TimerManager,
     timerXSettings: TimerXSettings,
 ) =

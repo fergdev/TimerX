@@ -82,7 +82,7 @@ internal class CreateContainer(
     }
 }
 
-private inline fun reduceIntent(
+private fun reduceIntent(
     defaultGenerator: DefaultGenerator,
     timerDatabase: ITimerRepository,
     beepManager: IBeepManager,
