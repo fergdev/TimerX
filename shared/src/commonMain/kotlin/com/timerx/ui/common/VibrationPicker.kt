@@ -13,9 +13,9 @@ import com.timerx.vibration.Vibration
 
 @Composable
 fun VibrationSelector(
-    modifier: Modifier = Modifier,
     selected: Vibration,
-    onSelected: (Vibration) -> Unit
+    modifier: Modifier = Modifier,
+    onSelect: (Vibration) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Row(modifier = modifier.then(Modifier.horizontalScroll(scrollState))) {
@@ -23,7 +23,7 @@ fun VibrationSelector(
             FilterChip(
                 selected = it == selected,
                 modifier = Modifier.padding(horizontal = 4.dp),
-                onClick = { onSelected(it) },
+                onClick = { onSelect(it) },
                 label = { Text(text = it.displayName) }
             )
         }

@@ -258,7 +258,7 @@ private fun IntentReceiver<CreateScreenIntent>.IntervalSwitches(
 @Composable
 private fun IntervalCountDown(
     finalCountDown: FinalCountDown,
-    update: (FinalCountDown) -> Unit
+    onUpdate: (FinalCountDown) -> Unit
 ) {
     Row(
         modifier = Modifier.height(32.dp).fillMaxWidth(),
@@ -270,14 +270,14 @@ private fun IntervalCountDown(
             color = MaterialTheme.colorScheme.onSurface,
             formatter = { "$it" }
         ) {
-            update(finalCountDown.copy(duration = it))
+            onUpdate(finalCountDown.copy(duration = it))
         }
     }
     BeepSelector(selected = finalCountDown.beep) {
-        update(finalCountDown.copy(beep = it))
+        onUpdate(finalCountDown.copy(beep = it))
     }
     VibrationSelector(selected = finalCountDown.vibration) {
-        update(finalCountDown.copy(vibration = it))
+        onUpdate(finalCountDown.copy(vibration = it))
     }
 }
 

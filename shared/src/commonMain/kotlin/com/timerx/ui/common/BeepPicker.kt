@@ -18,13 +18,13 @@ import com.timerx.beep.Beep
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BeepPicker(onSelected: (Beep?) -> Unit) {
-    ModalBottomSheet(onDismissRequest = { onSelected(null) }) {
+fun BeepPicker(onSelect: (Beep?) -> Unit) {
+    ModalBottomSheet(onDismissRequest = { onSelect(null) }) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Beep.entries.forEach {
                 Text(
                     modifier = Modifier.clickable {
-                        onSelected(it)
+                        onSelect(it)
                     },
                     text = it.displayName
                 )
@@ -35,9 +35,9 @@ fun BeepPicker(onSelected: (Beep?) -> Unit) {
 
 @Composable
 fun BeepSelector(
-    modifier: Modifier = Modifier,
     selected: Beep,
-    onSelected: (Beep) -> Unit
+    modifier: Modifier = Modifier,
+    onSelect: (Beep) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Row(modifier = modifier.then(Modifier.horizontalScroll(scrollState))) {
@@ -45,7 +45,7 @@ fun BeepSelector(
             FilterChip(
                 selected = it == selected,
                 modifier = Modifier.padding(horizontal = 4.dp),
-                onClick = { onSelected(it) },
+                onClick = { onSelect(it) },
                 label = { Text(text = it.displayName) }
             )
         }

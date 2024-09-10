@@ -75,7 +75,7 @@ private val CORNER_ICON_SIZE = 48.dp
 private const val CROSS_FADE_DURATION = 600
 
 @Composable
-fun RunScreen(timerId: String, navigateUp: () -> Unit) {
+fun RunScreen(timerId: String, onNavigateUp: () -> Unit) {
     with(koinInject<RunContainer> { parametersOf(timerId) }.store) {
         LaunchedEffect(Unit) { start(this).join() }
 
@@ -98,7 +98,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
         RunView(
             backgroundColor = animatedColor,
             state = state,
-            navigateUp = navigateUp
+            onNavigateUp = onNavigateUp
         )
     }
 }
@@ -107,7 +107,7 @@ fun RunScreen(timerId: String, navigateUp: () -> Unit) {
 private fun IntentReceiver<RunScreenIntent>.RunView(
     backgroundColor: Color,
     state: RunScreenState,
-    navigateUp: () -> Unit,
+    onNavigateUp: () -> Unit,
 ) {
     var controlsVisible by remember { mutableStateOf(false) }
     var touchCounter by remember { mutableIntStateOf(1) }
@@ -128,7 +128,7 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
         touchCounter++
     }
     BackHandler(state !is Playing) {
-        navigateUp()
+        onNavigateUp()
     }
     Box(
         modifier = Modifier
@@ -181,7 +181,7 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
             Spacer(modifier = Modifier.weight(1f))
 
             AnimatedVisibility(controlsVisible) {
-                BottomControls(state, navigateUp, contrastDisplayColor) {
+                BottomControls(state, onNavigateUp, contrastDisplayColor) {
                     controlsVisible = true
                     touchCounter++
                 }
@@ -240,11 +240,11 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
     displayColor: Color,
     volume: Float,
     vibrationEnabled: Boolean,
-    incrementTouchCounter: () -> Unit,
+    onIncrement: () -> Unit,
 ) {
     Row {
         IconButton(onClick = {
-            incrementTouchCounter()
+            onIncrement()
             intent(RunScreenIntent.PreviousInterval)
         }) {
             Icon(
@@ -268,7 +268,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
             )
         )
         IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
-            incrementTouchCounter()
+            onIncrement()
             intent(RunScreenIntent.UpdateVibrationEnabled(vibrationEnabled.not()))
         }) {
             Icon(
@@ -279,7 +279,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
             )
         }
         IconButton(onClick = {
-            incrementTouchCounter()
+            onIncrement()
             intent(RunScreenIntent.NextInterval)
         }) {
             Icon(
@@ -295,14 +295,14 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
 @Composable
 private fun IntentReceiver<RunScreenIntent>.BottomControls(
     state: RunScreenState,
-    navigateUp: () -> Unit,
+    onNavigateUp: () -> Unit,
     displayColor: Color,
-    incrementTouchCounter: () -> Unit
+    onIncrement: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         when (state) {
             is Finished, is Paused -> {
-                IconButton(onClick = { navigateUp() }) {
+                IconButton(onClick = { onNavigateUp() }) {
                     Icon(
                         modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = Icons.Default.Close,
@@ -323,7 +323,7 @@ private fun IntentReceiver<RunScreenIntent>.BottomControls(
             textAlign = TextAlign.Center,
             color = displayColor
         )
-        TogglePlayButton(state, displayColor, incrementTouchCounter)
+        TogglePlayButton(state, displayColor, onIncrement)
     }
 }
 
@@ -331,7 +331,7 @@ private fun IntentReceiver<RunScreenIntent>.BottomControls(
 private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
     state: RunScreenState,
     displayColor: Color,
-    incrementTouchCounter: () -> Unit,
+    onIncrement: () -> Unit,
 ) {
     when (state) {
         is Playing -> {
@@ -350,7 +350,7 @@ private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
         is Paused -> {
             IconButton(onClick = {
                 intent(RunScreenIntent.Pause)
-                incrementTouchCounter()
+                onIncrement()
             }) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),
@@ -364,7 +364,7 @@ private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
         is Finished -> {
             IconButton(onClick = {
                 intent(RunScreenIntent.RestartTimer)
-                incrementTouchCounter()
+                onIncrement()
             }) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),

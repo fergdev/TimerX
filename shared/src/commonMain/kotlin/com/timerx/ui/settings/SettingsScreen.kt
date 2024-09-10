@@ -48,12 +48,12 @@ import timerx.shared.generated.resources.volume
 private const val NINETY_DEGREES = 90f
 
 @Composable
-fun SettingsScreen(navigateUp: () -> Unit) {
+fun SettingsScreen(onNavigateBack: () -> Unit) {
     with(koinInject<SettingsContainer>().store) {
         LaunchedEffect(Unit) { start(this).join() }
         val state by subscribe(DefaultLifecycle)
         Scaffold(
-            topBar = { SettingsAppBar(navigateUp) },
+            topBar = { SettingsAppBar(onNavigateBack) },
             content = { scaffoldPadding ->
                 val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
                 val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
@@ -111,13 +111,13 @@ fun SettingsScreen(navigateUp: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsAppBar(navigateUp: () -> Unit) {
+private fun SettingsAppBar(onNavigateBack: () -> Unit) {
     TopAppBar(
         title = { Text(text = stringResource(Res.string.settings)) },
         navigationIcon = {
             IconButton(
                 modifier = Modifier.rotate(NINETY_DEGREES),
-                onClick = { navigateUp() }
+                onClick = { onNavigateBack() }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

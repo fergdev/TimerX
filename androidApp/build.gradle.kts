@@ -1,3 +1,4 @@
+@file:Suppress("UnusedPrivateProperty")
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)

@@ -41,8 +41,8 @@ import timerx.shared.generated.resources.minus
 
 @Composable
 fun NumberIncrement(
-    modifier: Modifier = Modifier,
     value: Int,
+    modifier: Modifier = Modifier,
     formatter: (Int) -> String = { "$it" },
     negativeButtonEnabled: Boolean = true,
     positiveButtonEnabled: Boolean = true,
@@ -110,8 +110,8 @@ fun NumberIncrement(
 
 @Composable
 fun AnimatedNumber(
-    modifier: Modifier = Modifier,
     value: Int,
+    modifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
     formatter: (Int) -> String

@@ -85,6 +85,14 @@ fun RevealSwipe(
     alphaEasing: Easing = DEFAULT_EASING,
     backgroundCardStartColor: Color = Color.Transparent,
     backgroundCardEndColor: Color = Color.Transparent,
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    state: RevealState = rememberRevealState(
+        maxRevealDp = 75.dp,
+        directions = setOf(
+            RevealDirection.StartToEnd,
+            RevealDirection.EndToStart
+        )
+    ),
     card: @Composable BoxScope.(
         shape: Shape,
         content: @Composable ColumnScope.() -> Unit
@@ -99,14 +107,6 @@ fun RevealSwipe(
             content = cardContent
         )
     },
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    state: RevealState = rememberRevealState(
-        maxRevealDp = 75.dp,
-        directions = setOf(
-            RevealDirection.StartToEnd,
-            RevealDirection.EndToStart
-        )
-    ),
     hiddenContentEnd: @Composable BoxScope.() -> Unit = {},
     hiddenContentStart: @Composable BoxScope.() -> Unit = {},
     content: @Composable (Shape) -> Unit
@@ -286,10 +286,10 @@ fun BaseRevealSwipe(
     modifier: Modifier = Modifier,
     enableSwipe: Boolean = true,
     animateBackgroundCardColor: Boolean = true,
-    shape: CornerBasedShape,
+    shape: CornerBasedShape = RoundedCornerShape(8.dp),
     alphaEasing: Easing = DEFAULT_EASING,
-    backgroundCardStartColor: Color,
-    backgroundCardEndColor: Color,
+    backgroundCardStartColor: Color = Color.Transparent,
+    backgroundCardEndColor: Color = Color.Transparent,
     card: @Composable BoxScope.(
         shape: Shape,
         content: @Composable ColumnScope.() -> Unit

@@ -93,7 +93,7 @@ import timerx.shared.generated.resources.started_value
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun MainScreen(navigate: (Screen) -> Unit) {
+internal fun MainScreen(onNavigate: (Screen) -> Unit) {
     with(koinInject<MainContainer>().store) {
         LaunchedEffect(Unit) { start(this).join() }
 
@@ -114,7 +114,7 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                         actions = {
                             TopAppBarActions(
                                 state.sortTimersBy,
-                                navigate
+                                onNavigate
                             )
                         },
                     )
@@ -125,7 +125,7 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                             end = WindowInsets.navigationBars.asPaddingValues()
                                 .calculateRightPadding(LayoutDirection.Ltr)
                         ),
-                        onClick = { navigate(Screen.CreateScreen()) }
+                        onClick = { onNavigate(Screen.CreateScreen()) }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -151,7 +151,7 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
                             with(state as MainState.Content) {
                                 Content(
                                     this,
-                                    navigate,
+                                    onNavigate,
                                     paddingValues,
                                     appBarScrollBehavior
                                 )
@@ -170,7 +170,7 @@ internal fun MainScreen(navigate: (Screen) -> Unit) {
 @Composable
 private fun IntentReceiver<MainIntent>.Content(
     state: MainState.Content,
-    navigate: (Screen) -> Unit,
+    onNavigate: (Screen) -> Unit,
     paddingValues: PaddingValues,
     appBarScrollBehavior: TopAppBarScrollBehavior
 ) {
@@ -211,15 +211,15 @@ private fun IntentReceiver<MainIntent>.Content(
                     is MainTimer -> {
                         TimerCard(
                             mainTimer = timer,
-                            navigateRunScreen = {
-                                navigate(
+                            onNavigateRunScreen = {
+                                onNavigate(
                                     Screen.RunScreen(
                                         timer.id
                                     )
                                 )
                             },
-                            navigateEditScreen = {
-                                navigate(
+                            onNavigateEditScreen = {
+                                onNavigate(
                                     Screen.CreateScreen(
                                         timer.id
                                     )
@@ -249,7 +249,7 @@ private fun IntentReceiver<MainIntent>.Content(
 @Composable
 private fun IntentReceiver<MainIntent>.TopAppBarActions(
     sortTimersBy: SortTimersBy,
-    navigate: (Screen) -> Unit
+    onNavigate: (Screen) -> Unit
 ) {
     IconButton(
         onClick = {
@@ -261,7 +261,7 @@ private fun IntentReceiver<MainIntent>.TopAppBarActions(
             contentDescription = stringResource(Res.string.sort_order)
         )
     }
-    IconButton(onClick = { navigate(Screen.SettingsScreen) }) {
+    IconButton(onClick = { onNavigate(Screen.SettingsScreen) }) {
         Icon(
             imageVector = Icons.Filled.Settings,
             contentDescription = stringResource(Res.string.settings)
@@ -312,8 +312,8 @@ private fun IntentReceiver<MainIntent>.NotificationPermissions() {
 @Composable
 private fun IntentReceiver<MainIntent>.TimerCard(
     mainTimer: MainTimer,
-    navigateRunScreen: (Long) -> Unit,
-    navigateEditScreen: (Long) -> Unit,
+    onNavigateRunScreen: (Long) -> Unit,
+    onNavigateEditScreen: (Long) -> Unit,
 ) {
     val revealState = rememberRevealState(
         200.dp, directions = setOf(RevealDirection.EndToStart)
@@ -350,7 +350,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
-                IconButton(onClick = { navigateEditScreen(mainTimer.id) }) {
+                IconButton(onClick = { onNavigateEditScreen(mainTimer.id) }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = Icons.Default.Edit,
@@ -370,7 +370,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
         },
     ) {
         ElevatedCard(
-            modifier = Modifier.fillMaxWidth().clickable { navigateRunScreen(mainTimer.id) }
+            modifier = Modifier.fillMaxWidth().clickable { onNavigateRunScreen(mainTimer.id) }
         ) {
             Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Column(modifier = Modifier.weight(1F)) {

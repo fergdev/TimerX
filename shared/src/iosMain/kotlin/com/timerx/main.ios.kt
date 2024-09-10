@@ -1,3 +1,4 @@
+@file:Suppress("Filename")
 package com.timerx
 
 import androidx.compose.ui.window.ComposeUIViewController

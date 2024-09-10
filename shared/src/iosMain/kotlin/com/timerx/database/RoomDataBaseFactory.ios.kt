@@ -1,3 +1,4 @@
+@file:Suppress("Filename")
 package com.timerx.database
 
 import androidx.room.Room

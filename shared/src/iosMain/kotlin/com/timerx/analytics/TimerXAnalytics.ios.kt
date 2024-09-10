@@ -1,10 +1,8 @@
 package com.timerx.analytics
 
 class TimerXAnalytics : ITimerXAnalytics {
-    override fun logEvent(
-        eventName: String,
-        params: Map<String, Any>?
-    ) {
+
+    override fun logEvent(eventName: String, params: Map<String, Any>) {
         firebaseIosCallback?.logEvent(eventName, params.toString())
     }
 

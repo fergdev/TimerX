@@ -58,7 +58,8 @@ class ShortcutManager(
                         setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         putExtra(KEY_RUN_TIMER_ID, roomTimer.id)
                     }
-                ).build()
+                )
+                .build()
 
             ShortcutManagerCompat.pushDynamicShortcut(context, shortcut)
         }
@@ -84,7 +85,5 @@ class ShortcutManager(
         )
     }
 
-    private fun RoomTimer.shortcutId(): String {
-        return "${this.id}"
-    }
+    private fun RoomTimer.shortcutId() = "${this.id}"
 }

@@ -16,16 +16,16 @@ import androidx.compose.ui.text.input.ImeAction
 
 @Composable
 fun UnderlinedField(
-    modifier: Modifier = Modifier,
     value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
     maxLines: Int = 1,
     singleLine: Boolean = false,
     textStyle: TextStyle = MaterialTheme.typography.labelLarge,
     color: Color = MaterialTheme.colorScheme.onSurface,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-    onValueChange: (String) -> Unit,
+    cursorBrush: SolidColor = SolidColor(MaterialTheme.colorScheme.onSecondary),
     placeholder: @Composable (() -> Unit)? = null,
-    cursorBrush: SolidColor
 ) {
     Column(modifier = modifier) {
         Box(modifier = Modifier.fillMaxWidth()) {

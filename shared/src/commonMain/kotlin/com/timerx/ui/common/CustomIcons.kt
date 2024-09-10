@@ -1,4 +1,4 @@
-@file:Suppress("ObjectPropertyName")
+@file:Suppress("LargeClass")
 
 package com.timerx.ui.common
 

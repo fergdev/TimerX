@@ -20,33 +20,17 @@ import androidx.compose.ui.unit.dp
     ExperimentalMaterial3Api::class
 )
 internal fun ColorPicker(
-    updateColor: (Color?) -> Unit,
+    onUpdate: (Color?) -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = { updateColor(null) }) {
+    ModalBottomSheet(onDismissRequest = { onUpdate(null) }) {
         Row(
             modifier = Modifier.padding(16.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            ColorPickerBox(
-                Color.Red
-            ) {
-                updateColor(it)
-            }
-            ColorPickerBox(
-                Color.Green
-            ) {
-                updateColor(it)
-            }
-            ColorPickerBox(
-                Color.Blue
-            ) {
-                updateColor(it)
-            }
-            ColorPickerBox(
-                Color.Yellow
-            ) {
-                updateColor(it)
-            }
+            ColorPickerBox(Color.Red) { onUpdate(it) }
+            ColorPickerBox(Color.Green) { onUpdate(it) }
+            ColorPickerBox(Color.Blue) { onUpdate(it) }
+            ColorPickerBox(Color.Yellow) { onUpdate(it) }
         }
     }
 }

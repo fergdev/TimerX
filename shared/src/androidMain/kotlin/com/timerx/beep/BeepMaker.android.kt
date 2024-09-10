@@ -11,7 +11,7 @@ import org.koin.mp.KoinPlatform
 actual fun getBeepManager(timerXSettings: TimerXSettings): IBeepManager =
     BeepManager(timerXSettings)
 
-class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
+private class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private var mediaPlayer: MediaPlayer? = null
 

@@ -93,14 +93,14 @@ private const val TWO_HUNDRED_SEVENTY_DEG = 270f
 @Composable
 internal fun CreateScreen(
     timerId: String,
-    navigateUp: () -> Unit
+    onNavigateUp: () -> Unit
 ) {
     with(koinInject<CreateContainer> { parametersOf(timerId) }.store) {
         LaunchedEffect(Unit) { start(this).join() }
 
         val state by subscribe(DefaultLifecycle) {
             when (it) {
-                RunScreenAction.NavigateUp -> navigateUp()
+                RunScreenAction.NavigateUp -> onNavigateUp()
             }
         }
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -109,7 +109,7 @@ internal fun CreateScreen(
                 TopAppBar(
                     scrollBehavior = appBarScrollBehavior,
                     title = { TimerNameTextField(state) },
-                    navigationIcon = { AppBarNavigationIcon(navigateUp) },
+                    navigationIcon = { AppBarNavigationIcon(onNavigateUp) },
                     actions = { TopAppBarActions() },
                     colors = TopAppBarDefaults.topAppBarColors(scrolledContainerColor = Color.Transparent)
                 )
@@ -153,11 +153,11 @@ private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions() {
 }
 
 @Composable
-private fun AppBarNavigationIcon(navigateUp: () -> Unit) {
+private fun AppBarNavigationIcon(onNavigateUp: () -> Unit) {
     IconButton(
         modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),
         onClick = {
-            navigateUp()
+            onNavigateUp()
         }
     ) {
         Icon(
