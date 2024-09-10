@@ -3,6 +3,7 @@ import nl.littlerobots.vcu.plugin.versionSelector
 plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.ben.manes.versions)
+    alias(libs.plugins.gradleDoctor)
     alias(libs.plugins.version.catalog.update)
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
@@ -26,6 +27,24 @@ versionCatalogUpdate {
         keepUnusedVersions = true
         keepUnusedLibraries = true
         keepUnusedPlugins = true
+    }
+}
+
+doctor {
+    disallowMultipleDaemons.set(false)
+    downloadSpeedWarningThreshold.set(.5f)
+    GCWarningThreshold.set(0.10f)
+    GCFailThreshold = 0.9f
+    failOnEmptyDirectories.set(true)
+    warnWhenJetifierEnabled.set(true)
+    negativeAvoidanceThreshold.set(500)
+    warnWhenNotUsingParallelGC.set(true)
+    disallowCleanTaskDependencies.set(true)
+    warnIfKotlinCompileDaemonFallback.set(true)
+    javaHome {
+        ensureJavaHomeMatches.set(true)
+        ensureJavaHomeIsSet.set(true)
+        failOnError.set(true)
     }
 }
 
