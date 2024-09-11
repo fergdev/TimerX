@@ -43,7 +43,7 @@ internal fun AppNavigation() {
             )
         ) {
             CreateScreen(
-                timerId = it.path<String>(TIMER_ID_RAW) ?: ""
+                timerId = it.path<Long>(TIMER_ID_RAW) ?: -1L
             ) { navigationProvider.goBack() }
         }
         scene(
@@ -53,7 +53,7 @@ internal fun AppNavigation() {
                 destroyTransition = slideOutHorizontally { it / 2 }
             )
         ) {
-            RunScreen(it.path<String>(TIMER_ID_RAW)!!) {
+            RunScreen(it.path<Long>(TIMER_ID_RAW)!!) {
                 navigationProvider.goBack()
             }
         }

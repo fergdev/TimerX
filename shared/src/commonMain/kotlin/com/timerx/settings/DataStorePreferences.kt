@@ -12,7 +12,7 @@ import kotlinx.coroutines.SupervisorJob
 import okio.Path.Companion.toPath
 
 expect fun dataStorePreferences(
-    corruptionHandler: ReplaceFileCorruptionHandler<Preferences>?,
+    corruptionHandler: ReplaceFileCorruptionHandler<Preferences>? = null,
     coroutineScope: CoroutineScope,
     migrations: List<DataMigration<Preferences>> = emptyList(),
 ): DataStore<Preferences>

@@ -16,47 +16,32 @@ import com.timerx.ui.navigation.NavigationProvider
 import com.timerx.ui.run.RunContainer
 import com.timerx.ui.settings.SettingsContainer
 import com.timerx.vibration.getVibrationManager
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.new
-import org.koin.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-@OptIn(DelicateCoroutinesApi::class)
 val sharedModule = module {
-    single {
-        dataStorePreferences(
-            corruptionHandler = null,
-            coroutineScope = GlobalScope
-        )
-    }
-    single { new(::TimerXSettings) }
+    single { dataStorePreferences(coroutineScope = CoroutineScope(Dispatchers.IO)) }
+    singleOf(::TimerXSettings)
     single { new(::getBeepManager) }
     single { new(::getTimerXAnalytics) }
     single { new(::getVibrationManager) }
     single { new(::permissionsHandler) }
-    single { new(::TimerManager) }
+    singleOf(::TimerManager)
     single { createRoomDatabaseFactory().createRoomDataBase() }
-    single { new(::TimerRepository) } bind ITimerRepository::class
+    singleOf(::TimerRepository) { bind<ITimerRepository>() }
     single { new(::getTimerXNotificationManager) }
-    single { new(::NavigationProvider) }
-    factory { new(::MainContainer) }
-    factory { (timerId: String) -> CreateContainer(timerId.idToLong(), get(), get(), get()) }
-    factory { (timerId: String) ->
-        RunContainer(
-            timerId.idToLong(),
-            get(),
-            get(),
-            get(),
-            get(),
-        )
-    }
-    factory { new(::SettingsContainer) }
+    singleOf(::NavigationProvider)
+    factoryOf(::MainContainer)
+    factoryOf(::CreateContainer)
+    factoryOf(::RunContainer)
+    factoryOf(::SettingsContainer)
 }
 
 fun appModule() = listOf(sharedModule)
 
-private fun String.idToLong(): Long {
-    if (this.isEmpty()) return -1L
-    return this.toLong()
-}

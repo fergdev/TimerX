@@ -92,7 +92,7 @@ private const val TWO_HUNDRED_SEVENTY_DEG = 270f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CreateScreen(
-    timerId: String,
+    timerId: Long,
     onNavigateUp: () -> Unit
 ) {
     with(koinInject<CreateContainer> { parametersOf(timerId) }.store) {

@@ -75,7 +75,7 @@ private val CORNER_ICON_SIZE = 48.dp
 private const val CROSS_FADE_DURATION = 600
 
 @Composable
-fun RunScreen(timerId: String, onNavigateUp: () -> Unit) {
+fun RunScreen(timerId: Long, onNavigateUp: () -> Unit) {
     with(koinInject<RunContainer> { parametersOf(timerId) }.store) {
         LaunchedEffect(Unit) { start(this).join() }
 
