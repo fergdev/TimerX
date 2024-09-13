@@ -2,6 +2,7 @@ package com.timerx.ui.common
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
@@ -22,6 +23,9 @@ private const val COLOR_PRIMARY_LIGHT = 0xFF6200EEL
 private const val COLOR_SECONDARY_LIGHT = 0xFF6200EEL
 private const val COLOR_TERTIARY_LIGHT = 0xFF6200EEL
 
+internal val md_theme_light_scrim = Color(0xFFFFFFFF)
+internal val md_theme_dark_scrim = Color(0xFF000000)
+
 val darkColorScheme = darkColorScheme(
     primary = Color(COLOR_PRIMARY_DARK),
     secondary = Color(COLOR_SECONDARY_DARK),
@@ -34,16 +38,15 @@ val lightColorScheme = lightColorScheme(
     tertiary = Color(COLOR_TERTIARY_LIGHT)
 )
 
+
+@Composable
+internal expect fun rememberColorScheme(dark: Boolean, dynamic: Boolean): ColorScheme
+
 @Composable
 fun TimerXTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        darkColorScheme
-    } else {
-        lightColorScheme
-    }
     val typography = Typography(
         bodyMedium = TextStyle(
             fontFamily = FontFamily.Default,
@@ -60,7 +63,7 @@ fun TimerXTheme(
     )
 
     MaterialTheme(
-        colorScheme = colors,
+        colorScheme = rememberColorScheme(isSystemInDarkTheme(), true),
         typography = typography,
         shapes = shapes,
         content = content
