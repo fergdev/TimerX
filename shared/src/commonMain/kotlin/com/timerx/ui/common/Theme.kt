@@ -63,7 +63,7 @@ fun TimerXTheme(
     )
 
     MaterialTheme(
-        colorScheme = rememberColorScheme(isSystemInDarkTheme(), true),
+        colorScheme = rememberColorScheme(darkTheme, true),
         typography = typography,
         shapes = shapes,
         content = content
