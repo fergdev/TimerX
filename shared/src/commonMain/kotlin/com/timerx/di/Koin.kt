@@ -42,6 +42,3 @@ val sharedModule = module {
     factoryOf(::RunContainer)
     factoryOf(::SettingsContainer)
 }
-
-fun appModule() = listOf(sharedModule)
-

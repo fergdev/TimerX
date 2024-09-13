@@ -1,19 +1,13 @@
 @file:Suppress("Filename")
+
 package com.timerx
 
 import androidx.compose.ui.window.ComposeUIViewController
-import com.timerx.di.appModule
+import com.timerx.di.startKoin
 import com.timerx.ui.App
-import org.koin.core.context.startKoin
 
 @Suppress("FunctionName")
 fun MainViewController() = ComposeUIViewController {
-    initKoin()
+    startKoin()
     App()
-}
-
-fun initKoin() {
-    startKoin {
-        modules(appModule())
-    }
 }

@@ -13,7 +13,6 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.crashlytics) apply false
-    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 }
 
 versionCatalogUpdate {
