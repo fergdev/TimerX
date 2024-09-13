@@ -13,6 +13,7 @@ detektFormattingPlugin = "1.23.7"
 firebaseAnalytics = "22.1.0"
 firebaseBom = "33.2.0"
 firebaseCrashlytics = "19.0.3"
+flowMvi = "3.0.0"
 glanceAppwidget = "1.1.0"
 googleServices = "4.4.2"
 gradleDoctorPlugin = "0.10.0"
@@ -37,7 +38,6 @@ sqlite = "2.5.0-SNAPSHOT"
 versionCatalogUpdatePlugin = "0.8.4"
 
 [libraries]
-#android-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-data-store-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-data-store" }
@@ -45,6 +45,8 @@ androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", versi
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
+flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowMvi" }
+flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowMvi" }
 detekt-compose = { module = "ru.kode:detekt-rules-compose", version.ref = "detektComposePlugin" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormattingPlugin" }
 detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }

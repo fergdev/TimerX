@@ -65,9 +65,8 @@ kotlin {
                 implementation(libs.sqlite.bundled)
                 implementation(libs.kotlinx.serialization)
                 // Core KMP module
-                implementation("pro.respawn.flowmvi:core:3.0.0")
-                // compose multiplatform
-                implementation("pro.respawn.flowmvi:compose:3.0.0")
+                implementation(libs.flowmvi.core)
+                implementation(libs.flowmvi.compose)
             }
         }
         val commonTest by getting {
