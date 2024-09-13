@@ -17,13 +17,13 @@ flowMvi = "3.0.0"
 glanceAppwidget = "1.1.0"
 googleServices = "4.4.2"
 gradleDoctorPlugin = "0.10.0"
-jetbrains-compose = "1.6.11"
+jetbrains-compose = "1.7.0-beta02"
 junit = "5.11.0"
 koin = "4.0.0-RC2"
 kotlin = "2.0.20"
 kotlinx-immutable = "0.3.8"
 kotlinx-serialization = "1.7.2"
-kotlinxCoroutinesTest = "1.9.0-RC.2"
+kotlinxCoroutinesTest = "1.9.0"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJson = "1.7.2"
 ksp = "2.0.20-1.0.25"
@@ -43,8 +43,6 @@ androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", versi
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
-flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowMvi" }
-flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowMvi" }
 detekt-compose = { module = "ru.kode:detekt-rules-compose", version.ref = "detektComposePlugin" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormattingPlugin" }
 detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
@@ -52,6 +50,8 @@ detekt-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-librarie
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowMvi" }
+flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowMvi" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

@@ -557,7 +557,8 @@ data class RevealState(
         },
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold ?: { with(density) { 10.dp.toPx() } },
-        animationSpec = animationSpec,
+        snapAnimationSpec = animationSpec,
+        decayAnimationSpec = exponentialDecay(),
         confirmValueChange = confirmValueChange
     )
 }
