@@ -57,7 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
-import com.timerx.ads.GoogleAd
+import com.timerx.ui.ads.GoogleAd
 import com.timerx.domain.SortTimersBy
 import com.timerx.domain.imageVector
 import com.timerx.domain.next

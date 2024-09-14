@@ -1,4 +1,4 @@
-package com.timerx.ads
+package com.timerx.ui.ads
 
 import android.content.Context
 import android.util.Log
