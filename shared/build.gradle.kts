@@ -34,6 +34,8 @@ kotlin {
         }
     }
 
+    jvm("desktop")
+
     androidTarget().compilations.all {
         compileTaskProvider.configure {
             compilerOptions {
@@ -145,6 +147,9 @@ kotlin {
         val iosMain by getting {
             dependsOn(mobileMain)
         }
+        val desktopMain by getting {}
+        val desktopMain2 by creating {}
+        val wasmJsMain by getting
     }
 }
 
