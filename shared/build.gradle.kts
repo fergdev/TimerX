@@ -148,7 +148,6 @@ kotlin {
             dependsOn(mobileMain)
         }
         val desktopMain by getting {}
-        val desktopMain2 by creating {}
         val wasmJsMain by getting
     }
 }
