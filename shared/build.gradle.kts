@@ -21,6 +21,14 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     androidTarget()
+    androidTarget().compilations.all {
+        compileTaskProvider.configure {
+            compilerOptions {
+//                jvmTarget = Config.jvmTarget
+                freeCompilerArgs.addAll(Config.jvmCompilerArgs)
+            }
+        }
+    }
 
     listOf(
         iosX64(),
@@ -40,34 +48,34 @@ kotlin {
             @OptIn(ExperimentalKotlinGradlePluginApi::class)
             compilerOptions {
                 languageVersion.set(KotlinVersion.KOTLIN_2_0)
-                // Common compiler options applied to all Kotlin source sets
-                freeCompilerArgs.add("-Xexpect-actual-classes")
+                freeCompilerArgs.addAll(Config.compilerArgs)
+            }
+            all {
+                languageSettings {
+                    progressiveMode = true
+                    Config.optIns.forEach { optIn(it) }
+                }
             }
 
             dependencies {
-                implementation(libs.koin)
                 api(libs.koin.compose)
-
-                implementation(libs.kotlin.immutable)
-
-                implementation(compose.runtime)
+                implementation(compose.components.resources)
                 implementation(compose.foundation)
                 implementation(compose.material3)
-
-                implementation(compose.components.resources)
-
-                implementation(libs.pre.compose)
-                implementation(libs.pre.compose.viewmodel)
-                implementation(libs.pre.compose.koin)
-                implementation(libs.kotlinx.datetime)
-                implementation(libs.reorderable)
+                implementation(compose.runtime)
                 implementation(libs.androidx.data.store.core)
                 implementation(libs.androidx.room.runtime)
-                implementation(libs.sqlite.bundled)
-                implementation(libs.kotlinx.serialization)
-                // Core KMP module
-                implementation(libs.flowmvi.core)
                 implementation(libs.flowmvi.compose)
+                implementation(libs.flowmvi.core)
+                implementation(libs.koin)
+                implementation(libs.kotlin.immutable)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.serialization)
+                implementation(libs.pre.compose)
+                implementation(libs.pre.compose.koin)
+                implementation(libs.pre.compose.viewmodel)
+                implementation(libs.reorderable)
+                implementation(libs.sqlite.bundled)
             }
         }
         val commonTest by getting {
