@@ -21,11 +21,11 @@ kotlin {
 
 android {
     namespace = "com.timerx.android"
-    compileSdk = 34
+    compileSdk = Config.compileSdk
     defaultConfig {
         applicationId = "com.timerx.android"
-        minSdk = 31
-        targetSdk = 34
+        minSdk = Config.minSdk
+        targetSdk = Config.targetSdk
         versionCode = 1
         versionName = "1.0"
     }
@@ -40,8 +40,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = Config.javaVersion
+        targetCompatibility = Config.javaVersion
     }
     kotlin {
         jvmToolchain(17)

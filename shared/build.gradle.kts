@@ -1,4 +1,5 @@
 @file:Suppress("UnusedPrivateProperty")
+
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -117,16 +118,16 @@ kotlin {
 
 android {
     namespace = "com.timerx"
-    compileSdk = 34
+    compileSdk = Config.compileSdk
     defaultConfig {
-        minSdk = 31
+        minSdk = Config.minSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["runnerBuilder"] =
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = Config.javaVersion
+        targetCompatibility = Config.javaVersion
     }
     kotlin {
         jvmToolchain(17)
@@ -137,6 +138,7 @@ junitPlatform {
     // Using local dependency instead of Maven coordinates
     instrumentationTests.enabled = false
 }
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }
