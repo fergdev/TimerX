@@ -73,10 +73,10 @@ kotlin {
             }
 
             dependencies {
+                api(compose.runtime)
                 implementation(compose.components.resources)
                 implementation(compose.foundation)
                 implementation(compose.material3)
-                implementation(compose.runtime)
                 implementation(libs.flowmvi.compose)
                 implementation(libs.flowmvi.core)
                 implementation(libs.koin)
@@ -146,7 +146,7 @@ kotlin {
         val iosMain by getting {
             dependsOn(mobileMain)
         }
-        val desktopMain by getting {}
+        val desktopMain by getting
         val wasmJsMain by getting
     }
 }
