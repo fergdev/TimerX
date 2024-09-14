@@ -73,7 +73,6 @@ kotlin {
             }
 
             dependencies {
-                api(libs.koin.compose)
                 implementation(compose.components.resources)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -81,6 +80,7 @@ kotlin {
                 implementation(libs.flowmvi.compose)
                 implementation(libs.flowmvi.core)
                 implementation(libs.koin)
+                implementation(libs.koin.compose)
                 implementation(libs.kotlin.immutable)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization)
@@ -110,14 +110,13 @@ kotlin {
         val androidMain by getting {
             dependsOn(mobileMain)
             dependencies {
-                implementation(libs.koin.android)
+                api(libs.firebase.analytics)
                 api(libs.koin.android)
-                api(libs.androidx.activity.compose)
+                api(libs.play.services.ads)
+                implementation(libs.androidx.activity.compose)
                 //noinspection BomWithoutPlatform
                 implementation(libs.firebase.bom)
-                api(libs.firebase.analytics)
                 implementation(libs.firebase.crashlytics)
-                api(libs.play.services.ads)
                 implementation(libs.androidx.glance.appwidget)
                 implementation(libs.androidx.glance.material3)
                 implementation(libs.kotlinx.serialization.json)
