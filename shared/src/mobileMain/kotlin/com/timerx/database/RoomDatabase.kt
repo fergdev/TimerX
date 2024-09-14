@@ -328,6 +328,7 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
                 finishColor = Color(color = roomTimer.finishColor),
                 finishBeep = Beep.entries[roomTimer.finishBeepId],
                 finishVibration = Vibration.entries[roomTimer.finishVibration],
+                duration = roomTimer.duration,
                 startedCount = roomTimer.startedCount,
                 completedCount = roomTimer.completedCount,
                 createdAt = roomTimer.createdAt,

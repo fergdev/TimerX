@@ -50,7 +50,7 @@ sealed interface Screen {
 }
 
 class NavigationProvider {
-    private val coroutineScope = CoroutineScope(Dispatchers.Default) // TODO this used to be IO
+    private val coroutineScope = CoroutineScope(Dispatchers.Main) // TODO this used to be IO
     internal val navigator = Navigator()
 
     // TODO provide back stack for navigation flow

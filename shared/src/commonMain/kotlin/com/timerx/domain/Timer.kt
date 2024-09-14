@@ -16,6 +16,7 @@ data class Timer(
     val finishColor: Color = Color.Red,
     val finishBeep: Beep = Beep.Alert,
     val finishVibration: Vibration = Vibration.Heavy,
+    val duration: Long = 0,
     val startedCount: Long = 0,
     val completedCount: Long = 0,
     val createdAt: Instant,
@@ -72,8 +73,8 @@ fun Int.timeFormatted(): String {
     } else {
         "$seconds"
     }
-
-    return "$hoursString$minutesString:$secondsString"
+    return if(hours == 0L) "$minutesString:$secondsString"
+    else "$hoursString:$minutesString:$secondsString"
 }
 
 private const val SECONDS_IN_MINUTE = 60L

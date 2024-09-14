@@ -22,11 +22,11 @@ enum class SortTimersBy {
     },
     LENGTH_DESC {
         override fun sort(timers: List<Timer>) =
-            timers.sortedByDescending { it.length() } // TODO this is broken
+            timers.sortedByDescending { it.duration }
     },
     LENGTH_ASC {
         override fun sort(timers: List<Timer>) =
-            timers.sortedBy { it.length() } // TODO this is broken
+            timers.sortedBy { it.duration }
     };
 
     abstract fun sort(timers: List<Timer>): List<Timer>

@@ -14,7 +14,6 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.SortTimersBy
-import com.timerx.domain.length
 import com.timerx.settings.ITimerXSettings
 import com.timerx.time.toAgo
 import kotlinx.coroutines.MainScope
@@ -64,7 +63,7 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
                             TimerData(
                                 id = timer.id,
                                 name = timer.name,
-                                length = timer.length().toInt(),// TODO this is broken
+                                length = timer.duration,
                                 lastRun = timer.lastRun?.toAgo() ?: "Never"
                             )
                         },
@@ -103,7 +102,7 @@ sealed interface TimerWidgetInfo {
 data class TimerData(
     val id: Long,
     val name: String,
-    val length: Int,
+    val length: Long,
     val lastRun: String
 )
 
