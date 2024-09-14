@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.androidJunit5)
     alias(libs.plugins.mokkery)
-    alias(libs.plugins.googleServices)
     alias(libs.plugins.ksp)
     // TODO add plugin back in when this is supported again
 //    alias(libs.plugins.room)
