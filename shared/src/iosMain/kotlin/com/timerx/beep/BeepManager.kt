@@ -1,17 +1,17 @@
 package com.timerx.beep
 
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ITimerXSettings
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import platform.AVFAudio.AVAudioPlayer
 import platform.Foundation.NSBundle
 
-actual fun getBeepManager(timerXSettings: TimerXSettings): IBeepManager =
+actual fun getBeepManager(timerXSettings: ITimerXSettings): IBeepManager =
     BeepManager(timerXSettings)
 
 @OptIn(ExperimentalForeignApi::class)
-class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
+class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
 
     override suspend fun beep(beep: Beep) {
         val soundURL = NSBundle.mainBundle.URLForResource(beep.path, "mp3")

@@ -18,7 +18,19 @@ data class Settings(
     val sortTimersBy: SortTimersBy
 )
 
-class TimerXSettings(private val dataStore: DataStore<Preferences>) {
+interface ITimerXSettings {
+    val settings: Flow<Settings>
+
+    suspend fun setVolume(volume: Float)
+
+    suspend fun setVibrationEnabled(enabled: Boolean)
+
+    suspend fun setIgnoreNotificationPermissions()
+
+    suspend fun setSortTimersBy(sortTimersBy: SortTimersBy)
+}
+
+class TimerXSettings(private val dataStore: DataStore<Preferences>) : ITimerXSettings {
 
     companion object {
         private const val PREFS_TAG_KEY = "app_preferences"
@@ -36,7 +48,7 @@ class TimerXSettings(private val dataStore: DataStore<Preferences>) {
     private val sortTimersByKey =
         intPreferencesKey("$PREFS_TAG_KEY$SORT_TIMERS_BY")
 
-    val settings: Flow<Settings> = dataStore.data.map { preferences ->
+    override val settings: Flow<Settings> = dataStore.data.map { preferences ->
         Settings(
             volume = preferences[volumePreferencesKey] ?: 1F,
             vibrationEnabled = preferences[vibrationEnablePreferencesKey] ?: true,
@@ -46,25 +58,25 @@ class TimerXSettings(private val dataStore: DataStore<Preferences>) {
         )
     }
 
-    suspend fun setVolume(volume: Float) {
+    override suspend fun setVolume(volume: Float) {
         dataStore.edit { preferences ->
             preferences[volumePreferencesKey] = volume
         }
     }
 
-    suspend fun setVibrationEnabled(enabled: Boolean) {
+    override suspend fun setVibrationEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[vibrationEnablePreferencesKey] = enabled
         }
     }
 
-    suspend fun setIgnoreNotificationPermissions() {
+    override suspend fun setIgnoreNotificationPermissions() {
         dataStore.edit { preferences ->
             preferences[ignoreNotificationsPermissionsKey] = true
         }
     }
 
-    suspend fun setSortTimersBy(sortTimersBy: SortTimersBy) {
+    override suspend fun setSortTimersBy(sortTimersBy: SortTimersBy) {
         dataStore.edit { preferences ->
             preferences[sortTimersByKey] = sortTimersBy.ordinal
         }

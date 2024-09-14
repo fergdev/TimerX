@@ -8,6 +8,7 @@ import com.timerx.database.createRoomDatabaseFactory
 import com.timerx.domain.TimerManager
 import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.permissions.permissionsHandler
+import com.timerx.settings.ITimerXSettings
 import com.timerx.settings.TimerXSettings
 import com.timerx.settings.dataStorePreferences
 import com.timerx.ui.create.CreateContainer
@@ -27,7 +28,7 @@ import org.koin.dsl.module
 
 val sharedModule = module {
     single { dataStorePreferences(coroutineScope = CoroutineScope(Dispatchers.IO)) }
-    singleOf(::TimerXSettings)
+    singleOf(::TimerXSettings) { bind<ITimerXSettings>() }
     single { new(::getBeepManager) }
     single { new(::getTimerXAnalytics) }
     single { new(::getVibrationManager) }

@@ -49,7 +49,7 @@ import com.timerx.R
 import com.timerx.domain.SortTimersBy
 import com.timerx.domain.next
 import com.timerx.domain.timeFormatted
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ITimerXSettings
 import com.timerx.widget.TimerXWidget.Companion.BIG_SQUARE
 import com.timerx.widget.TimerXWidget.Companion.HORIZONTAL_RECTANGLE
 import com.timerx.widget.TimerXWidget.Companion.VERTICAL_RECTANGLE
@@ -178,7 +178,7 @@ private fun WidgetButtons(timerData: TimerWidgetInfo) {
                     .size(48.dp)
                     .clickable {
                         coroutineScope.launch {
-                            val get = KoinPlatform.getKoin().get<TimerXSettings>()
+                            val get = KoinPlatform.getKoin().get<ITimerXSettings>()
                             val settings = get.settings.first()
                             get.setSortTimersBy(settings.sortTimersBy.next())
                         }
@@ -230,7 +230,7 @@ private fun WidgetButtonsThin(timerData: TimerWidgetInfo) {
                     .size(48.dp)
                     .clickable {
                         coroutineScope.launch {
-                            val get = KoinPlatform.getKoin().get<TimerXSettings>()
+                            val get = KoinPlatform.getKoin().get<ITimerXSettings>()
                             val settings = get.settings.first()
                             get.setSortTimersBy(settings.sortTimersBy.next())
                         }

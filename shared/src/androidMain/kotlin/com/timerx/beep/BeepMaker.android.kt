@@ -3,15 +3,15 @@ package com.timerx.beep
 import android.content.Context
 import android.media.MediaPlayer
 import com.timerx.R
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ITimerXSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import org.koin.mp.KoinPlatform
 
-actual fun getBeepManager(timerXSettings: TimerXSettings): IBeepManager =
+actual fun getBeepManager(timerXSettings: ITimerXSettings): IBeepManager =
     BeepManager(timerXSettings)
 
-private class BeepManager(private val timerXSettings: TimerXSettings) : IBeepManager {
+private class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private var mediaPlayer: MediaPlayer? = null
 

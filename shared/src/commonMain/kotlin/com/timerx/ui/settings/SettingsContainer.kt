@@ -3,7 +3,7 @@ package com.timerx.ui.settings
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ITimerXSettings
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.dsl.updateState
@@ -11,7 +11,7 @@ import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
 internal class SettingsContainer(
-    private val timerXSettings: TimerXSettings,
+    private val timerXSettings: ITimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
 ) : Container<SettingsState, SettingsIntent, Nothing> {
 

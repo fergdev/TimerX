@@ -5,7 +5,6 @@ import Firebase
 import shared
 import GoogleMobileAds
 
-
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -49,6 +48,9 @@ class FirebaseLoggingCallback: FirebaseIosCallback {
 struct iOSApp: App {
       @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
+    init() {
+        StartKoinKt.startKoin()
+    }
 	var body: some Scene {
 		WindowGroup {
 			ContentView()

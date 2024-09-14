@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import com.timerx.beep.BEEP_VIBRATION_DELAY
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ITimerXSettings
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
 import com.timerx.vibration.Vibration.HeavyX3
@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import org.koin.mp.KoinPlatform
 
-class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationManager {
+class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibrationManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 
@@ -54,5 +54,5 @@ class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationM
     }
 }
 
-actual fun getVibrationManager(timerXSettings: TimerXSettings): IVibrationManager =
+actual fun getVibrationManager(timerXSettings: ITimerXSettings): IVibrationManager =
     VibrationManager(timerXSettings)

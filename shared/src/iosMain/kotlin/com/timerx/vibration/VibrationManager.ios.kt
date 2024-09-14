@@ -1,7 +1,7 @@
 package com.timerx.vibration
 
 import com.timerx.beep.BEEP_VIBRATION_DELAY
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ITimerXSettings
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
 import com.timerx.vibration.Vibration.HeavyX3
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.first
 import platform.UIKit.UIImpactFeedbackGenerator
 import platform.UIKit.UIImpactFeedbackStyle
 
-class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationManager {
+class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibrationManager {
 
     override suspend fun vibrate(vibration: Vibration) {
         if (timerXSettings.settings.first().vibrationEnabled.not()) {
@@ -45,5 +45,5 @@ class VibrationManager(private val timerXSettings: TimerXSettings) : IVibrationM
     }
 }
 
-actual fun getVibrationManager(timerXSettings: TimerXSettings): IVibrationManager =
+actual fun getVibrationManager(timerXSettings: ITimerXSettings): IVibrationManager =
     VibrationManager(timerXSettings)
