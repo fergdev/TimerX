@@ -216,7 +216,7 @@ private fun IntentReceiver<RunScreenIntent>.TimerInformation(
     )
     Spacer(modifier = Modifier.height(24.dp))
     Crossfade(
-        targetState = state.timerName,
+        targetState = state.intervalName,
         animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
     ) {
         Text(
