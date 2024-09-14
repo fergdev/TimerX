@@ -1,6 +1,7 @@
 package com.timerx.ui.main
 
 import com.timerx.database.ITimerRepository
+import com.timerx.domain.length
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
@@ -33,7 +34,7 @@ internal class MainContainer(
                             MainTimer(
                                 id = roomTimer.id,
                                 name = roomTimer.name,
-                                duration = roomTimer.duration,
+                                duration = roomTimer.length().toLong(), // todo this is broken
                                 startedCount = roomTimer.startedCount,
                                 completedCount = roomTimer.completedCount,
                                 sortOrder = roomTimer.sortOrder,

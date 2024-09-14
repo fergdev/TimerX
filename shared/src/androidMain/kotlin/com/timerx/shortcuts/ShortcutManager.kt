@@ -10,7 +10,7 @@ import com.timerx.KEY_RUN_TIMER_ID
 import com.timerx.MainActivity
 import com.timerx.R
 import com.timerx.database.ITimerRepository
-import com.timerx.database.RoomTimer
+import com.timerx.domain.Timer
 import com.timerx.ui.navigation.NavigationProvider
 import com.timerx.ui.navigation.Screen
 import kotlinx.coroutines.CoroutineScope
@@ -42,12 +42,12 @@ class ShortcutManager(
         }
     }
 
-    private fun refreshDynamicShortcuts(roomTimers: List<RoomTimer>) {
+    private fun refreshDynamicShortcuts(roomTimers: List<Timer>) {
         ShortcutManagerCompat.removeAllDynamicShortcuts(context)
-        roomTimers.take(dynamicShortcutLimit).forEach { roomTimer ->
-            val shortcut = ShortcutInfoCompat.Builder(context, roomTimer.shortcutId())
-                .setShortLabel(roomTimer.name)
-                .setLongLabel(roomTimer.name)
+        roomTimers.take(dynamicShortcutLimit).forEach { timer ->
+            val shortcut = ShortcutInfoCompat.Builder(context, timer.shortcutId())
+                .setShortLabel(timer.name)
+                .setLongLabel(timer.name)
                 .setIcon(IconCompat.createWithResource(context, R.drawable.play_arrow_gradient))
                 .setIntent(
                     Intent(
@@ -56,7 +56,7 @@ class ShortcutManager(
                     ).apply {
                         action = Intent.ACTION_VIEW
                         setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        putExtra(KEY_RUN_TIMER_ID, roomTimer.id)
+                        putExtra(KEY_RUN_TIMER_ID, timer.id)
                     }
                 )
                 .build()
@@ -65,7 +65,7 @@ class ShortcutManager(
         }
     }
 
-    private fun handlePinnedShortcuts(roomTimers: List<RoomTimer>) {
+    private fun handlePinnedShortcuts(roomTimers: List<Timer>) {
         val pinnedShortcuts = ShortcutManagerCompat.getShortcuts(
             context,
             ShortcutManagerCompat.FLAG_MATCH_PINNED
@@ -85,5 +85,5 @@ class ShortcutManager(
         )
     }
 
-    private fun RoomTimer.shortcutId() = "${this.id}"
+    private fun Timer.shortcutId() = "${this.id}"
 }

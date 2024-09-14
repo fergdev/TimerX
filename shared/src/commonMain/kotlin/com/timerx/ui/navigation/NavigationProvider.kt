@@ -2,7 +2,6 @@ package com.timerx.ui.navigation
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,7 +50,7 @@ sealed interface Screen {
 }
 
 class NavigationProvider {
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(Dispatchers.Default) // TODO this used to be IO
     internal val navigator = Navigator()
 
     // TODO provide back stack for navigation flow

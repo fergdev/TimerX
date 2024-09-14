@@ -24,37 +24,13 @@ import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
 import com.timerx.vibration.Vibration
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
-
-interface ITimerRepository {
-    // TODO make this a timer
-    fun getShallowTimers(): Flow<List<RoomTimer>>
-    suspend fun insertTimer(timer: Timer)
-    suspend fun updateTimerStats(
-        timerId: Long,
-        startedCount: Long,
-        completedCount: Long,
-        lastRun: Instant
-    )
-
-    suspend fun updateTimer(timer: Timer)
-    suspend fun deleteTimer(timerId: Long)
-    suspend fun duplicate(timerId: Long)
-    suspend fun getTimer(timerId: Long): Flow<Timer>
-    suspend fun swapTimers(
-        fromId: Long,
-        fromSortOrder: Long,
-        toId: Long,
-        toSortOrder: Long
-    )
-
-    suspend fun doesTimerExist(timerId: Long): Flow<Boolean>
-}
 
 @Dao
 interface RoomTimerDao {
@@ -120,8 +96,8 @@ interface RoomTimerDao {
 
     @Query(
         "UPDATE RoomTimer " +
-            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-            "WHERE id = :timerId"
+                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+                "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,
@@ -342,7 +318,23 @@ internal class DateTimeConverter {
 class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     private val timerDao = appDatabase.timerDao()
 
-    override fun getShallowTimers() = timerDao.getTimers()
+    override fun getShallowTimers() = timerDao.getTimers().map {
+        it.map { roomTimer ->
+            Timer(
+                id = roomTimer.id,
+                sortOrder = roomTimer.sortOrder,
+                name = roomTimer.name,
+                sets = persistentListOf(),
+                finishColor = Color(color = roomTimer.finishColor),
+                finishBeep = Beep.entries[roomTimer.finishBeepId],
+                finishVibration = Vibration.entries[roomTimer.finishVibration],
+                startedCount = roomTimer.startedCount,
+                completedCount = roomTimer.completedCount,
+                createdAt = roomTimer.createdAt,
+                lastRun = roomTimer.lastRun
+            )
+        }
+    }
 
     override suspend fun insertTimer(timer: Timer) {
         appDatabase.timerDao().insertTimerTransaction(

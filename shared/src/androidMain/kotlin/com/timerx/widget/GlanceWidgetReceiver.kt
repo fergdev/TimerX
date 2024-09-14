@@ -14,6 +14,7 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.SortTimersBy
+import com.timerx.domain.length
 import com.timerx.settings.ITimerXSettings
 import com.timerx.time.toAgo
 import kotlinx.coroutines.MainScope
@@ -56,14 +57,14 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
                     }
                 }
             timerRepository.getShallowTimers()
-                .combine(timerXSettings.settings) { roomTimers, settings ->
-                    val sortedTimers = settings.sortTimersBy.sort(roomTimers)
+                .combine(timerXSettings.settings) { timers, settings ->
+                    val sortedTimers = settings.sortTimersBy.sort(timers)
                     TimerWidgetInfo.Available(
                         sortedTimers.map { timer ->
                             TimerData(
                                 id = timer.id,
                                 name = timer.name,
-                                length = timer.duration.toInt(),
+                                length = timer.length().toInt(),// TODO this is broken
                                 lastRun = timer.lastRun?.toAgo() ?: "Never"
                             )
                         },

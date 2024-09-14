@@ -1,34 +1,35 @@
 package com.timerx.domain
 
-import com.timerx.database.RoomTimer
 import com.timerx.ui.common.CustomIcons
 
 enum class SortTimersBy {
     SORT_ORDER {
-        override fun sort(timers: List<RoomTimer>) = timers.sortedBy { it.sortOrder }
+        override fun sort(timers: List<Timer>) = timers.sortedBy { it.sortOrder }
     },
     RUN_DATE_ASC {
-        override fun sort(timers: List<RoomTimer>) =
+        override fun sort(timers: List<Timer>) =
             timers.sortedBy { it.lastRun?.toEpochMilliseconds() ?: 0 }
     },
     RUN_DATE_DESC {
-        override fun sort(timers: List<RoomTimer>) =
+        override fun sort(timers: List<Timer>) =
             timers.sortedByDescending { it.lastRun?.toEpochMilliseconds() ?: 0 }
     },
     NAME_ASC {
-        override fun sort(timers: List<RoomTimer>) = timers.sortedBy { it.name }
+        override fun sort(timers: List<Timer>) = timers.sortedBy { it.name }
     },
     NAME_DESC {
-        override fun sort(timers: List<RoomTimer>) = timers.sortedByDescending { it.name }
+        override fun sort(timers: List<Timer>) = timers.sortedByDescending { it.name }
     },
     LENGTH_DESC {
-        override fun sort(timers: List<RoomTimer>) = timers.sortedByDescending { it.duration }
+        override fun sort(timers: List<Timer>) =
+            timers.sortedByDescending { it.length() } // TODO this is broken
     },
     LENGTH_ASC {
-        override fun sort(timers: List<RoomTimer>) = timers.sortedBy { it.duration }
+        override fun sort(timers: List<Timer>) =
+            timers.sortedBy { it.length() } // TODO this is broken
     };
 
-    abstract fun sort(timers: List<RoomTimer>): List<RoomTimer>
+    abstract fun sort(timers: List<Timer>): List<Timer>
 }
 
 internal fun SortTimersBy.imageVector() =

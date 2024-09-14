@@ -20,7 +20,20 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    androidTarget()
+
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "app"
+        binaries.executable()
+        browser {
+            commonWebpackConfig {
+                outputFileName = "app.js"
+                export = true
+            }
+            testTask { enabled = false }
+        }
+    }
+
     androidTarget().compilations.all {
         compileTaskProvider.configure {
             compilerOptions {
@@ -63,8 +76,6 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.runtime)
-                implementation(libs.androidx.data.store.core)
-                implementation(libs.androidx.room.runtime)
                 implementation(libs.flowmvi.compose)
                 implementation(libs.flowmvi.core)
                 implementation(libs.koin)
@@ -75,7 +86,6 @@ kotlin {
                 implementation(libs.pre.compose.koin)
                 implementation(libs.pre.compose.viewmodel)
                 implementation(libs.reorderable)
-                implementation(libs.sqlite.bundled)
             }
         }
         val commonTest by getting {
@@ -84,7 +94,19 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.test)
             }
         }
+
+        val mobileMain = create("mobileMain") {
+            kotlin.srcDir("src/mobileMain/kotlin")
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.androidx.data.store.core)
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.sqlite.bundled)
+            }
+        }
+
         val androidMain by getting {
+            dependsOn(mobileMain)
             dependencies {
                 implementation(libs.koin.android)
                 api(libs.koin.android)
@@ -120,7 +142,9 @@ kotlin {
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
-        val iosMain by getting
+        val iosMain by getting {
+            dependsOn(mobileMain)
+        }
     }
 }
 

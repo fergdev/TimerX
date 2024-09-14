@@ -7,20 +7,16 @@ import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.compose.resources.getString
-import timerx.shared.generated.resources.Res
-import timerx.shared.generated.resources.prepare
-import timerx.shared.generated.resources.rest
-import timerx.shared.generated.resources.work
 
 internal class DefaultGenerator {
     private var defaultIdGenerator = 0L
     private val workString by lazy {
-        runBlocking { getString(Res.string.work) }
+//        GlobalScope.launch { getString(Res.string.work) }
+        "work"
     }
     private val restString by lazy {
-        runBlocking { getString(Res.string.rest) }
+//        GlobalScope.launch { getString(Res.string.rest) }
+        "rest"
     }
 
     fun getNextId(): Long = defaultIdGenerator++
@@ -55,7 +51,7 @@ internal class DefaultGenerator {
             repetitions = 1,
             intervals = persistentListOf(
                 TimerInterval(
-                    name = runBlocking { getString(Res.string.prepare) },
+                    name = "prepare",//runBlocking { getString(Res.string.prepare) },
                     duration = 10,
                     color = Color.Yellow,
                     skipOnLastSet = false,

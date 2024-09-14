@@ -7,7 +7,6 @@ import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +20,7 @@ class TimerManager(
     private val timerRepository: ITimerRepository
 ) {
     private var timerStateMachine: TimerStateMachineImpl? = null
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(Dispatchers.Unconfined)
 
     private val _eventState = MutableStateFlow<TimerEvent>(TimerEvent.Idle)
     val eventState: StateFlow<TimerEvent> = _eventState
