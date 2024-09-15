@@ -8,10 +8,25 @@ import org.gradle.api.JavaVersion
 object Config {
     //    val jvmTarget = JvmTarget.JVM_11
 //    val idePluginJvmTarget = JvmTarget.JVM_17
+
+    const val name = "TimerX"
+    const val namespace = "com.timerx"
+    const val versionCode = 8
+    const val majorRelease = 3
+    const val minorRelease = 0
+    const val patch = 1
+    const val postfix = "-beta01" // include dash (-)
+    const val majorVersionName = "$majorRelease.$minorRelease.$patch"
+    const val versionName = "$majorRelease.$minorRelease.$patch"
+    const val appDescription = "The best timer in the world"
+    const val vendorName = "TimerX"
+    const val licenseFile = "LICENSE.txt"
     val javaVersion = JavaVersion.VERSION_17
     const val compileSdk = 34
     const val targetSdk = compileSdk
     const val minSdk = 21
+    const val appId = "todo-some-uuid"
+    const val supportEmail = "emailthis@mail.com"
 
     val stabilityLevels = listOf("snapshot", "eap", "preview", "alpha", "beta", "m", "cr", "rc")
     val minStabilityLevel = stabilityLevels.indexOf("beta")

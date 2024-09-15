@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -12,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.animation.doOnEnd
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.defaultComponentContext
 import com.timerx.ui.AppContent
 import com.timerx.ui.navigation.DefaultRootComponent
@@ -33,11 +35,15 @@ private const val KEEP_SPLASH_ON_DURATION = 1000L
 class MainActivity : ComponentActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
+    @OptIn(ExperimentalDecomposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         splashScreen()
         super.onCreate(savedInstanceState)
         // TODO see if this does anything for status bar coloring
+        // Fix for three-button nav not properly going edge-to-edge.
         enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT))
+        // TODO: https://issuetracker.google.com/issues/298296168
+        window.setFlags(FLAG_LAYOUT_NO_LIMITS, FLAG_LAYOUT_NO_LIMITS)
         val root = DefaultRootComponent(
             componentContext = defaultComponentContext()
         )

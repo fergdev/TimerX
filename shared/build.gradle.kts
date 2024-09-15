@@ -1,5 +1,6 @@
 @file:Suppress("UnusedPrivateProperty")
 
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -91,12 +92,13 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization)
                 implementation(libs.reorderable)
+                implementation(libs.kotlin.coroutines.core)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
-                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.kotlin.coroutines.test)
             }
         }
 
@@ -117,6 +119,7 @@ kotlin {
                 api(libs.koin.android)
                 api(libs.play.services.ads)
                 implementation(libs.androidx.activity.compose)
+                api(libs.kotlin.coroutines.android)
                 //noinspection BomWithoutPlatform
                 implementation(libs.firebase.bom)
                 implementation(libs.firebase.crashlytics)
@@ -149,13 +152,22 @@ kotlin {
         val iosMain by getting {
             dependsOn(mobileMain)
         }
-        val desktopMain by getting
-        val wasmJsMain by getting
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlin.coroutines.swing)
+            }
+        }
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(libs.essenty.stateKeeper)
+            }
+        }
     }
 }
 
 android {
-    namespace = "com.timerx"
+    namespace = Config.namespace
     compileSdk = Config.compileSdk
     defaultConfig {
         minSdk = Config.minSdk
@@ -169,6 +181,52 @@ android {
     }
     kotlin {
         jvmToolchain(17)
+    }
+}
+
+compose {
+    resources {
+        // TODO change this to com.timerx
+        packageOfResClass = "timerx.shared.generated.resources"
+        publicResClass = true
+    }
+    android { }
+    web { }
+    desktop {
+        application {
+            mainClass = "${Config.namespace}.MainKt"
+            nativeDistributions {
+                targetFormats(TargetFormat.Dmg, TargetFormat.Deb, TargetFormat.Exe)
+                packageName = Config.namespace
+                packageVersion = Config.majorVersionName
+                description = Config.appDescription
+                vendor = Config.vendorName
+                licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
+                val iconDir = rootProject.rootDir.resolve("docs").resolve("images")
+
+                macOS {
+                    packageName = Config.name
+                    dockName = Config.name
+                    setDockNameSameAsPackageName = false
+                    bundleID = Config.namespace
+                    appCategory = "public.app-category.developer-tools"
+                    iconFile = iconDir.resolve("icon_macos.icns")
+                }
+                windows {
+                    dirChooser = true
+                    menu = false
+                    shortcut = true
+                    perUserInstall = true
+                    upgradeUuid = Config.appId
+                    iconFile = iconDir.resolve("favicon.ico")
+                }
+                linux {
+                    debMaintainer = Config.supportEmail
+                    appCategory = "Development"
+                    iconFile = iconDir.resolve("icon_512.png")
+                }
+            }
+        }
     }
 }
 

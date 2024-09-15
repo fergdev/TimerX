@@ -2,6 +2,7 @@ package com.timerx.ui.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DelicateDecomposeApi
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
@@ -15,7 +16,7 @@ import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
 import kotlinx.serialization.Serializable
 
-class DefaultRootComponent(
+class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
     componentContext: ComponentContext,
     webHistoryController: WebHistoryController? = null
 ) : RootComponent,
