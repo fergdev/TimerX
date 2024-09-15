@@ -7,6 +7,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.timerx.di.startKoin
@@ -17,6 +18,7 @@ import org.koin.compose.KoinContext
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.app_name
 
+@OptIn(ExperimentalDecomposeApi::class)
 fun main() = application {
     startKoin()
     val lifecycle = LifecycleRegistry()

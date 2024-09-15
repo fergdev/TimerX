@@ -1,14 +1,14 @@
 package com.timerx.di
 
+import com.timerx.ui.create.CreateContainer
+import com.timerx.ui.run.RunContainer
+import com.timerx.ui.settings.SettingsContainer
+import com.timerx.ui.main.MainContainer
 import com.timerx.analytics.getTimerXAnalytics
 import com.timerx.beep.getBeepManager
 import com.timerx.domain.TimerManager
 import com.timerx.notification.getTimerXNotificationManager
 import com.timerx.permissions.permissionsHandler
-import com.timerx.ui.create.CreateContainer
-import com.timerx.ui.main.MainContainer
-import com.timerx.ui.run.RunContainer
-import com.timerx.ui.settings.SettingsContainer
 import com.timerx.vibration.getVibrationManager
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
