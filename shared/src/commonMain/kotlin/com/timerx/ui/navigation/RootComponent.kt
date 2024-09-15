@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.timerx.ui.create.CreateComponent
 import com.timerx.ui.main.MainComponent
+import com.timerx.ui.settings.SettingsComponent
 
 interface RootComponent : BackHandlerOwner {
 

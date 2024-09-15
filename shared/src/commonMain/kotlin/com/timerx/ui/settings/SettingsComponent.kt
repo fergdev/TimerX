@@ -1,4 +1,4 @@
-package com.timerx.ui.navigation
+package com.timerx.ui.settings
 
 import com.arkivanov.decompose.ComponentContext
 

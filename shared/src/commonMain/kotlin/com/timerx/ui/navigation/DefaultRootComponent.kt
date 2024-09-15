@@ -14,6 +14,7 @@ import com.arkivanov.decompose.value.Value
 import com.timerx.ui.create.DefaultCreateComponent
 import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
+import com.timerx.ui.settings.DefaultSettingsComponent
 import kotlinx.serialization.Serializable
 
 class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
