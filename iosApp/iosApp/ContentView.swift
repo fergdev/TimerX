@@ -4,17 +4,19 @@ import FirebaseAnalytics
 import GoogleMobileAds
 
 struct ComposeView: UIViewControllerRepresentable {
+    let root: RootComponent
     func makeUIViewController(context: Context) -> UIViewController {
-        return Main_iosKt.MainViewController()
+        return Main_iosKt.MainViewController(root: root)
     }
         
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct ContentView: View {
+    let root: RootComponent
     var body: some View {
         VStack {
-            ComposeView()
+            ComposeView(root: root)
             BannerView(adUnitID: "ca-app-pub-2499949091653906/4852400953")
                 .frame(width: GADAdSizeBanner.size.width, height: GADAdSizeBanner.size.height)
         }.ignoresSafeArea(edges: .horizontal)

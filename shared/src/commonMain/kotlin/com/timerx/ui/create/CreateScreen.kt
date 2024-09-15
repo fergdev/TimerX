@@ -91,16 +91,15 @@ private const val TWO_HUNDRED_SEVENTY_DEG = 270f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CreateScreen(
-    timerId: Long,
-    onNavigateUp: () -> Unit
+internal fun CreateContent(
+    createComponent: CreateComponent
 ) {
-    with(koinInject<CreateContainer> { parametersOf(timerId) }.store) {
+    with(koinInject<CreateContainer> { parametersOf(createComponent.timerId) }.store) {
         LaunchedEffect(Unit) { start(this).join() }
 
         val state by subscribe(DefaultLifecycle) {
             when (it) {
-                RunScreenAction.NavigateUp -> onNavigateUp()
+                RunScreenAction.NavigateUp -> createComponent.onBackClicked()
             }
         }
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -109,7 +108,7 @@ internal fun CreateScreen(
                 TopAppBar(
                     scrollBehavior = appBarScrollBehavior,
                     title = { TimerNameTextField(state) },
-                    navigationIcon = { AppBarNavigationIcon(onNavigateUp) },
+                    navigationIcon = { AppBarNavigationIcon(createComponent::onBackClicked) },
                     actions = { TopAppBarActions() },
                     colors = TopAppBarDefaults.topAppBarColors(scrolledContainerColor = Color.Transparent)
                 )

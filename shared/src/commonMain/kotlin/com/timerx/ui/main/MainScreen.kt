@@ -57,18 +57,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
-import com.timerx.ui.ads.GoogleAd
 import com.timerx.domain.SortTimersBy
 import com.timerx.domain.imageVector
 import com.timerx.domain.next
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.ads.GoogleAd
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.contrastSystemBarColor
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
-import com.timerx.ui.navigation.Screen
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -93,7 +92,7 @@ import timerx.shared.generated.resources.started_value
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun MainScreen(onNavigate: (Screen) -> Unit) {
+internal fun MainContent(mainComponent: MainComponent) {
     with(koinInject<MainContainer>().store) {
         LaunchedEffect(Unit) { start(this).join() }
 
@@ -114,7 +113,7 @@ internal fun MainScreen(onNavigate: (Screen) -> Unit) {
                         actions = {
                             TopAppBarActions(
                                 state.sortTimersBy,
-                                onNavigate
+                                mainComponent
                             )
                         },
                     )
@@ -125,7 +124,7 @@ internal fun MainScreen(onNavigate: (Screen) -> Unit) {
                             end = WindowInsets.navigationBars.asPaddingValues()
                                 .calculateRightPadding(LayoutDirection.Ltr)
                         ),
-                        onClick = { onNavigate(Screen.CreateScreen()) }
+                        onClick = mainComponent::onCreateClicked
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -151,12 +150,13 @@ internal fun MainScreen(onNavigate: (Screen) -> Unit) {
                             with(state as MainState.Content) {
                                 Content(
                                     this,
-                                    onNavigate,
+                                    mainComponent,
                                     paddingValues,
                                     appBarScrollBehavior
                                 )
-                                if (this.showNotificationsPermissionRequest)
+                                if (this.showNotificationsPermissionRequest) {
                                     NotificationPermissions()
+                                }
                             }
                         }
                     }
@@ -170,7 +170,7 @@ internal fun MainScreen(onNavigate: (Screen) -> Unit) {
 @Composable
 private fun IntentReceiver<MainIntent>.Content(
     state: MainState.Content,
-    onNavigate: (Screen) -> Unit,
+    mainComponent: MainComponent,
     paddingValues: PaddingValues,
     appBarScrollBehavior: TopAppBarScrollBehavior
 ) {
@@ -212,18 +212,10 @@ private fun IntentReceiver<MainIntent>.Content(
                         TimerCard(
                             mainTimer = timer,
                             onNavigateRunScreen = {
-                                onNavigate(
-                                    Screen.RunScreen(
-                                        timer.id
-                                    )
-                                )
+                                mainComponent.onRunClicked(timer.id)
                             },
                             onNavigateEditScreen = {
-                                onNavigate(
-                                    Screen.CreateScreen(
-                                        timer.id
-                                    )
-                                )
+                                mainComponent.onCreateClicked(timer.id)
                             },
                         )
                     }
@@ -249,7 +241,7 @@ private fun IntentReceiver<MainIntent>.Content(
 @Composable
 private fun IntentReceiver<MainIntent>.TopAppBarActions(
     sortTimersBy: SortTimersBy,
-    onNavigate: (Screen) -> Unit
+    mainComponent: MainComponent,
 ) {
     IconButton(
         onClick = {
@@ -261,7 +253,7 @@ private fun IntentReceiver<MainIntent>.TopAppBarActions(
             contentDescription = stringResource(Res.string.sort_order)
         )
     }
-    IconButton(onClick = { onNavigate(Screen.SettingsScreen) }) {
+    IconButton(onClick = { mainComponent.onSettingsClicked() }) {
         Icon(
             imageVector = Icons.Filled.Settings,
             contentDescription = stringResource(Res.string.settings)

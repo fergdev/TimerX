@@ -1,70 +1,43 @@
 package com.timerx.ui.navigation
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import com.timerx.ui.create.CreateScreen
-import com.timerx.ui.main.MainScreen
-import com.timerx.ui.run.RunScreen
-import com.timerx.ui.settings.SettingsScreen
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.path
-import moe.tlaster.precompose.navigation.transition.NavTransition
-import moe.tlaster.precompose.stateholder.currentLocalStateHolder
-import org.koin.mp.KoinPlatform
+import androidx.compose.ui.Modifier
+import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.StackAnimation
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
+import com.arkivanov.decompose.extensions.compose.stack.animation.scale
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.timerx.ui.create.CreateContent
+import com.timerx.ui.main.MainContent
+import com.timerx.ui.run.RunContent
+import com.timerx.ui.settings.SettingsContent
 
-private const val KEY_NAVIGATOR = "Navigator"
-
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
-internal fun AppNavigation() {
-    val navigationProvider = remember {
-        KoinPlatform.getKoin().get<NavigationProvider>()
-    }
-    val stateHolder = currentLocalStateHolder
-    stateHolder.getOrPut(KEY_NAVIGATOR) {
-        navigationProvider.navigator
-    }
+internal fun AppNavigation(rootComponent: RootComponent) {
+    val state = rootComponent.stack.subscribeAsState()
 
-    NavHost(
-        navigator = navigationProvider.navigator,
-        initialRoute = Screen.MainScreen.ROUTE
+    val animation: StackAnimation<Any, RootComponent.Child> = predictiveBackAnimation(
+        backHandler = rootComponent.backHandler,
+        fallbackAnimation = stackAnimation(fade() + scale()),
+        onBack = rootComponent::onBackClicked,
+    )
+    Children(
+        stack = state.value,
+        modifier = Modifier.fillMaxSize(),
+        animation = animation
     ) {
-        scene(route = Screen.MainScreen.ROUTE) {
-            MainScreen { navigationProvider.navigateTo(it) }
-        }
-        scene(
-            route = Screen.CreateScreen.ROUTE,
-            navTransition = NavTransition(
-                createTransition = slideInVertically { it / 2 },
-                destroyTransition = slideOutVertically { it / 2 }
-            )
-        ) {
-            CreateScreen(
-                timerId = it.path<Long>(TIMER_ID_RAW) ?: -1L
-            ) { navigationProvider.goBack() }
-        }
-        scene(
-            route = Screen.RunScreen.ROUTE,
-            navTransition = NavTransition(
-                createTransition = slideInHorizontally { it / 2 },
-                destroyTransition = slideOutHorizontally { it / 2 }
-            )
-        ) {
-            RunScreen(it.path<Long>(TIMER_ID_RAW)!!) {
-                navigationProvider.goBack()
-            }
-        }
-        scene(
-            route = Screen.SettingsScreen.ROUTE,
-            navTransition = NavTransition(
-                createTransition = slideInVertically(),
-                destroyTransition = slideOutVertically()
-            )
-        ) {
-            SettingsScreen { navigationProvider.goBack() }
+        val child = it.instance
+        when (child) {
+            is RootComponent.Child.CreateChild -> CreateContent(child.component)
+            is RootComponent.Child.MainChild -> MainContent(child.component)
+            is RootComponent.Child.RunChild -> RunContent(child.component)
+            is RootComponent.Child.SettingsChild -> SettingsContent(child.component)
         }
     }
 }

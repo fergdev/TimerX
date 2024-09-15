@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
+import com.timerx.ui.navigation.RunComponent
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.KeepScreenOn
@@ -52,7 +53,6 @@ import com.timerx.ui.run.RunScreenState.Finished
 import com.timerx.ui.run.RunScreenState.NotFinished.Paused
 import com.timerx.ui.run.RunScreenState.NotFinished.Playing
 import kotlinx.coroutines.delay
-import moe.tlaster.precompose.navigation.BackHandler
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -75,8 +75,8 @@ private val CORNER_ICON_SIZE = 48.dp
 private const val CROSS_FADE_DURATION = 600
 
 @Composable
-fun RunScreen(timerId: Long, onNavigateUp: () -> Unit) {
-    with(koinInject<RunContainer> { parametersOf(timerId) }.store) {
+fun RunContent(runComponent: RunComponent) {
+    with(koinInject<RunContainer> { parametersOf(runComponent.timerId) }.store) {
         LaunchedEffect(Unit) { start(this).join() }
 
         val state by subscribe(DefaultLifecycle)
@@ -98,7 +98,7 @@ fun RunScreen(timerId: Long, onNavigateUp: () -> Unit) {
         RunView(
             backgroundColor = animatedColor,
             state = state,
-            onNavigateUp = onNavigateUp
+            onNavigateUp = runComponent::onBackClicked
         )
     }
 }
@@ -123,13 +123,14 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
         }
     }
 
-    BackHandler(state is Finished) {
-        controlsVisible = true
-        touchCounter++
-    }
-    BackHandler(state !is Playing) {
-        onNavigateUp()
-    }
+    // TODO handle back here
+//    BackHandler(state is Finished) {
+//        controlsVisible = true
+//        touchCounter++
+//    }
+//    BackHandler(state !is Playing) {
+//        onNavigateUp()
+//    }
     Box(
         modifier = Modifier
             .fillMaxSize()

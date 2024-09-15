@@ -6,15 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.timerx.ui.common.TimerXTheme
 import com.timerx.ui.navigation.AppNavigation
-import moe.tlaster.precompose.PreComposeApp
+import com.timerx.ui.navigation.RootComponent
 
 @Composable
-fun App() {
-    PreComposeApp {
-        TimerXTheme {
-            Surface(modifier = Modifier.fillMaxSize()) {
-                AppNavigation()
-            }
+fun AppContent(rootComponent: RootComponent) {
+    TimerXTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            AppNavigation(rootComponent)
         }
     }
 }

@@ -5,14 +5,11 @@ import android.content.Intent
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
-import com.timerx.KEY_CREATE_TIMER
 import com.timerx.KEY_RUN_TIMER_ID
 import com.timerx.MainActivity
 import com.timerx.R
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
-import com.timerx.ui.navigation.NavigationProvider
-import com.timerx.ui.navigation.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +17,6 @@ import kotlinx.coroutines.launch
 class ShortcutManager(
     private val context: Context,
     private val timerRepository: ITimerRepository,
-    private val navigationProvider: NavigationProvider
 ) {
 
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -31,13 +27,6 @@ class ShortcutManager(
             timerRepository.getShallowTimers().collect { roomTimers ->
                 handlePinnedShortcuts(roomTimers)
                 refreshDynamicShortcuts(roomTimers)
-            }
-        }
-        coroutineScope.launch {
-            navigationProvider.navigationFlow.collect {
-                if (it is Screen.CreateScreen) {
-                    ShortcutManagerCompat.reportShortcutUsed(context, KEY_CREATE_TIMER)
-                }
             }
         }
     }

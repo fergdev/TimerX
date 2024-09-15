@@ -19,7 +19,6 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "app"
@@ -53,6 +52,8 @@ kotlin {
             baseName = "shared"
             isStatic = true
             linkerOpts.add("-lsqlite3")
+            export(libs.decompose)
+            export(libs.essenty.lifecycle)
         }
     }
 
@@ -73,6 +74,12 @@ kotlin {
 
             dependencies {
                 api(compose.runtime)
+                api(libs.decompose)
+                api(libs.decompose.compose)
+                api(libs.essenty.lifecycle)
+                api(libs.essenty.stateKeeper)
+                api(libs.essenty.instanceKeeper)
+                api(libs.essenty.backHandler)
                 implementation(compose.components.resources)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -83,9 +90,6 @@ kotlin {
                 implementation(libs.kotlin.immutable)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization)
-                implementation(libs.pre.compose)
-                implementation(libs.pre.compose.koin)
-                implementation(libs.pre.compose.viewmodel)
                 implementation(libs.reorderable)
             }
         }

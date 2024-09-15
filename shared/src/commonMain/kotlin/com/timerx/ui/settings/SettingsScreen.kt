@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
+import com.timerx.ui.navigation.SettingsComponent
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
@@ -48,12 +49,12 @@ import timerx.shared.generated.resources.volume
 private const val NINETY_DEGREES = 90f
 
 @Composable
-fun SettingsScreen(onNavigateBack: () -> Unit) {
+fun SettingsContent(rootComponent: SettingsComponent) {
     with(koinInject<SettingsContainer>().store) {
         LaunchedEffect(Unit) { start(this).join() }
         val state by subscribe(DefaultLifecycle)
         Scaffold(
-            topBar = { SettingsAppBar(onNavigateBack) },
+            topBar = { SettingsAppBar(rootComponent::onBackClicked) },
             content = { scaffoldPadding ->
                 val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
                 val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
