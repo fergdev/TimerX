@@ -11,8 +11,8 @@ object Config {
 
     const val name = "TimerX"
     const val namespace = "com.timerx"
-    const val versionCode = 8
-    const val majorRelease = 3
+    const val versionCode = 1
+    const val majorRelease = 1
     const val minorRelease = 0
     const val patch = 1
     const val postfix = "-beta01" // include dash (-)

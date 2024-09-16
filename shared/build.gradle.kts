@@ -57,6 +57,9 @@ kotlin {
             export(libs.essenty.lifecycle)
         }
     }
+    // TODO enable native
+//    macosArm64()
+//    macosX64()
 
     sourceSets {
         val commonMain by getting {
@@ -170,6 +173,8 @@ kotlin {
                 implementation(libs.essenty.stateKeeper)
             }
         }
+//        val nativeMain by getting
+//        val macosMain by getting
     }
 }
 
@@ -208,7 +213,7 @@ compose {
                 packageVersion = Config.majorVersionName
                 description = Config.appDescription
                 vendor = Config.vendorName
-                licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
+//                licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
                 val iconDir = rootProject.rootDir.resolve("docs").resolve("images")
 
                 macOS {
@@ -217,7 +222,7 @@ compose {
                     setDockNameSameAsPackageName = false
                     bundleID = Config.namespace
                     appCategory = "public.app-category.developer-tools"
-                    iconFile = iconDir.resolve("icon_macos.icns")
+//                    iconFile = iconDir.resolve("icon_macos.icns")
                 }
                 windows {
                     dirChooser = true
