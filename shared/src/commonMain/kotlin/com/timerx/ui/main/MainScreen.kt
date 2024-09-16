@@ -371,7 +371,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
                         style = MaterialTheme.typography.displaySmall
                     )
                     Text(
-                        text = mainTimer.duration.toInt().timeFormatted(),
+                        text = mainTimer.duration.timeFormatted(),
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(text = stringResource(Res.string.started_value, mainTimer.startedCount))

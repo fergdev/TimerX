@@ -41,14 +41,14 @@ import timerx.shared.generated.resources.minus
 
 @Composable
 fun NumberIncrement(
-    value: Int,
+    value: Long,
     modifier: Modifier = Modifier,
-    formatter: (Int) -> String = { "$it" },
+    formatter: (Long) -> String = { "$it" },
     negativeButtonEnabled: Boolean = true,
     positiveButtonEnabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.onSurface,
     textStyle: TextStyle = LocalTextStyle.current,
-    onChange: (Int) -> Unit,
+    onChange: (Long) -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -110,11 +110,11 @@ fun NumberIncrement(
 
 @Composable
 fun AnimatedNumber(
-    value: Int,
+    value: Long,
     modifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
-    formatter: (Int) -> String
+    formatter: (Long) -> String
 ) {
     Box(modifier = modifier) {
         AnimatedContent(targetState = value, transitionSpec = {

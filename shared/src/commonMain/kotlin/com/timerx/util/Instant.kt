@@ -1,4 +1,4 @@
-package com.timerx.time
+package com.timerx.util
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant

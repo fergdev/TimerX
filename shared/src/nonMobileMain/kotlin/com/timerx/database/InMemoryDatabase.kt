@@ -40,8 +40,8 @@ object InMemoryTimerXRepository : ITimerRepository {
     override suspend fun duplicate(timerId: Long) {
     }
 
-    override suspend fun getTimer(timerId: Long): Flow<Timer> {
-        return flow { emit(flow.value.first { it.id == timerId }) }
+    override suspend fun getTimer(timerId: Long): Flow<Timer?> {
+        return flow { emit(flow.value.firstOrNull { it.id == timerId }) }
     }
 
     override suspend fun swapTimers(

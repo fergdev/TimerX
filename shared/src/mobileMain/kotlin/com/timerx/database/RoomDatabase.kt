@@ -284,7 +284,7 @@ data class RoomInterval(
     @ColumnInfo("name")
     val name: String,
     @ColumnInfo("duration")
-    val duration: Int,
+    val duration: Long,
     @ColumnInfo("color")
     val color: Long,
     @ColumnInfo("skip_on_last_set")
@@ -298,7 +298,7 @@ data class RoomInterval(
     @ColumnInfo("vibration_id")
     val vibrationId: Int,
     @ColumnInfo("final_count_down_duration")
-    val finalCountDownDuration: Int,
+    val finalCountDownDuration: Long,
     @ColumnInfo("final_count_down_beep_id")
     val finalCountDownBeepId: Int,
     @ColumnInfo("final_count_down_vibration_id")

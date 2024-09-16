@@ -149,11 +149,11 @@ private fun IntentReceiver<CreateScreenIntent>.SetTopControls(
         )
         NumberIncrement(
             modifier = Modifier.align(Alignment.Center),
-            value = timerSet.repetitions,
+            value = timerSet.repetitions.toLong(),
             textStyle = MaterialTheme.typography.titleLarge,
             negativeButtonEnabled = timerSet.repetitions > 1,
             onChange = {
-                intent(UpdateSetRepetitions(timerSet, it))
+                intent(UpdateSetRepetitions(timerSet, it.toInt()))
             }
         )
         Row(

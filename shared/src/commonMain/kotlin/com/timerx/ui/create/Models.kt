@@ -40,7 +40,7 @@ sealed interface CreateScreenIntent : MVIIntent {
     data class DeleteInterval(val interval: TimerInterval) : CreateScreenIntent
     data class DuplicateInterval(val interval: TimerInterval) : CreateScreenIntent
 
-    data class UpdateIntervalDuration(val interval: TimerInterval, val duration: Int) :
+    data class UpdateIntervalDuration(val interval: TimerInterval, val duration: Long) :
         CreateScreenIntent
 
     data class UpdateIntervalName(val interval: TimerInterval, val name: String) :

@@ -5,7 +5,7 @@ import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.settings.ITimerXSettings
-import com.timerx.time.toAgo
+import com.timerx.util.toAgo
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.combine
 import pro.respawn.flowmvi.api.Container

@@ -50,7 +50,7 @@ internal class CreateContainer(
                     updateState {
                         CreateScreenState(
                             timerName = timer.name,
-                            sets = timer.sets,
+                            sets = timer.sets.toPersistentList(),
                             finishColor = timer.finishColor,
                             finishBeep = timer.finishBeep,
                             finishVibration = timer.finishVibration,
@@ -345,7 +345,7 @@ private fun PersistentList<TimerSet>.normaliseSets() =
 private fun PersistentList<TimerSet>.updateInterval(
     interval: TimerInterval,
     name: String? = null,
-    duration: Int? = null,
+    duration: Long? = null,
     color: Color? = null,
     skipOnLastSet: Boolean? = null,
     countUp: Boolean? = null,

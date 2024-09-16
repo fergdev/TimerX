@@ -78,8 +78,8 @@ data class RunState(
     val intervalCount: Int = 0,
     val intervalName: String = "",
 
-    val elapsed: Int = 0,
-    val intervalDuration: Int = 0,
+    val elapsed: Long = 0,
+    val intervalDuration: Long = 0,
 
     val backgroundColor: Color = Color.Transparent,
     val displayCountAsUp: Boolean = false,
@@ -103,7 +103,12 @@ interface TimerStateMachine {
 
 class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope: CoroutineScope) :
     TimerStateMachine {
-    private val runState: MutableStateFlow<RunState>
+    private val runState: MutableStateFlow<RunState> = MutableStateFlow(
+        RunState(
+            timerName = timer.name,
+            intervalName = timer.sets[0].intervals[0].name
+        )
+    )
     private val _eventState: MutableStateFlow<TimerEvent>
 
     private var tickerJob: Job? = null
@@ -112,12 +117,6 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
         get() = _eventState
 
     init {
-        runState = MutableStateFlow(
-            RunState(
-                timerName = timer.name,
-                intervalName = timer.sets[0].intervals[0].name
-            )
-        )
         updateRunState(0, 0, 0)
         _eventState = MutableStateFlow(
             TimerEvent.Started(
@@ -208,7 +207,7 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
             restartTicker()
         }
 
-        if (runState.value.elapsed != 0) {
+        if (runState.value.elapsed != 0L) {
             runState.value = runState.value.copy(elapsed = 0)
             _eventState.value =
                 TimerEvent.PreviousInterval(
@@ -279,13 +278,13 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
                 val currentInterval = getCurrentInterval()
                 val timeLeft = currentInterval.duration - nextElapsed
                 val beep =
-                    if (timeLeft <= currentInterval.finalCountDown.duration && timeLeft != 0) {
+                    if (timeLeft <= currentInterval.finalCountDown.duration && timeLeft != 0L) {
                         currentInterval.finalCountDown.beep
                     } else {
                         null
                     }
                 val vibration =
-                    if (timeLeft <= currentInterval.finalCountDown.duration && timeLeft != 0) {
+                    if (timeLeft <= currentInterval.finalCountDown.duration && timeLeft != 0L) {
                         currentInterval.finalCountDown.vibration
                     } else {
                         null

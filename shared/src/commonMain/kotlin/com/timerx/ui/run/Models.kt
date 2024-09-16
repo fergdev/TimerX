@@ -20,7 +20,7 @@ internal sealed interface RunScreenState : MVIState {
             override val volume: Float
             override val vibrationEnabled: Boolean
             override val timerName: String
-            val time: Int
+            val time: Long
             val intervalName: String
             val manualNext: Boolean
             val index: String
@@ -30,7 +30,7 @@ internal sealed interface RunScreenState : MVIState {
                 override val volume: Float,
                 override val vibrationEnabled: Boolean,
                 override val timerName: String,
-                override val time: Int,
+                override val time: Long,
                 override val intervalName: String,
                 override val manualNext: Boolean,
                 override val index: String,
@@ -41,7 +41,7 @@ internal sealed interface RunScreenState : MVIState {
                 override val volume: Float,
                 override val vibrationEnabled: Boolean,
                 override val timerName: String,
-                override val time: Int,
+                override val time: Long,
                 override val intervalName: String,
                 override val manualNext: Boolean,
                 override val index: String,

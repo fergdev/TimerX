@@ -15,7 +15,7 @@ import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.SortTimersBy
 import com.timerx.settings.ITimerXSettings
-import com.timerx.time.toAgo
+import com.timerx.util.toAgo
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch

@@ -12,11 +12,11 @@ data class Timer(
     val id: Long = 0L,
     val sortOrder: Long = NO_SORT_ORDER,
     val name: String,
-    val sets: PersistentList<TimerSet>,
+    val sets: List<TimerSet>,
     val finishColor: Color = Color.Red,
     val finishBeep: Beep = Beep.Alert,
     val finishVibration: Vibration = Vibration.Heavy,
-    val duration: Long = 0,
+    val duration: Long = sets.length(),
     val startedCount: Long = 0,
     val completedCount: Long = 0,
     val createdAt: Instant,
@@ -32,7 +32,7 @@ data class TimerSet(
 data class TimerInterval(
     val id: Long = 0L,
     val name: String,
-    val duration: Int,
+    val duration: Long,
     val color: Color = Color.Blue,
     val skipOnLastSet: Boolean = false,
     val countUp: Boolean = false,
@@ -43,12 +43,12 @@ data class TimerInterval(
 )
 
 data class FinalCountDown(
-    val duration: Int = 3,
+    val duration: Long = 3,
     val beep: Beep = Beep.Alert,
     val vibration: Vibration = Vibration.Light
 )
 
-fun Int.timeFormatted(): String {
+fun Long.timeFormatted(): String {
     val hours = this / (SECONDS_IN_MINUTE * MINUTES_IN_HOUR)
     val hoursString = if (hours == 0L) {
         ""
@@ -81,17 +81,17 @@ private const val SECONDS_IN_MINUTE = 60L
 private const val MINUTES_IN_HOUR = 60L
 private const val SINGLE_DIGIT_MODULO = 10L
 
-fun Timer.length() = sets.fold(0) { acc, i ->
+fun Timer.length() = sets.fold(0L) { acc, i ->
     acc + i.length()
 }
 
 fun List<TimerSet>.length() =
-    fold(0) { acc, i ->
+    fold(0L) { acc, i ->
         acc + i.length()
     }
 
 fun TimerSet.length() =
-    intervals.fold(0) { acc, i ->
+    intervals.fold(0L) { acc, i ->
         acc + i.length()
     } * repetitions
 

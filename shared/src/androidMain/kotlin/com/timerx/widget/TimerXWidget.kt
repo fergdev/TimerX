@@ -298,7 +298,7 @@ private fun GlanceTimer(timerData: TimerData) {
                 )
             }
             Text(
-                text = timerData.length.toInt().timeFormatted(),
+                text = timerData.length.timeFormatted(),
                 style = TextStyle(
                     fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
                     color = GlanceTheme.colors.onSurfaceVariant
@@ -336,7 +336,7 @@ private fun GlanceTimerThin(timerData: TimerData) {
             maxLines = 1
         )
         Text(
-            text = timerData.length.toInt().timeFormatted(),
+            text = timerData.length.timeFormatted(),
             style = TextStyle(
                 fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
                 color = GlanceTheme.colors.onSurfaceVariant
