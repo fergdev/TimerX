@@ -7,9 +7,6 @@ import kotlinx.coroutines.flow.first
 import platform.AVFAudio.AVAudioPlayer
 import platform.Foundation.NSBundle
 
-actual fun getBeepManager(timerXSettings: ITimerXSettings): IBeepManager =
-    BeepManager(timerXSettings)
-
 @OptIn(ExperimentalForeignApi::class)
 class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
 

@@ -20,8 +20,6 @@ import org.koin.mp.KoinPlatform
 import java.util.UUID
 import kotlin.coroutines.suspendCoroutine
 
-actual fun permissionsHandler(): IPermissionsHandler = PermissionsHandler()
-
 private data class PermissionCallback(
     val permission: Permission,
     val callback: (Result<Unit>) -> Unit

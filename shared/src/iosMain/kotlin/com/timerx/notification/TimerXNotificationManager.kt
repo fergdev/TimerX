@@ -6,8 +6,6 @@ import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNTimeIntervalNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
 
-actual fun getTimerXNotificationManager(): ITimerXNotificationManager = TimerXNotificationManager()
-
 class TimerXNotificationManager : ITimerXNotificationManager {
     override fun start() {
         val center = UNUserNotificationCenter.currentNotificationCenter()

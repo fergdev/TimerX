@@ -1,5 +1,5 @@
 package com.timerx.di
 
-fun startKoin() {
-    startKoin { }
-}
+// Used in swift
+@Suppress("unused")
+fun startKoin() = startKoin { }

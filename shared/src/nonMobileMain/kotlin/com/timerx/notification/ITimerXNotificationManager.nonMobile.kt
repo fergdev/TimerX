@@ -2,7 +2,7 @@ package com.timerx.notification
 
 import com.timerx.domain.TimerEvent
 
-actual fun getTimerXNotificationManager() = object : ITimerXNotificationManager {
+object NotificationManager : ITimerXNotificationManager {
     override fun start() {
 
     }

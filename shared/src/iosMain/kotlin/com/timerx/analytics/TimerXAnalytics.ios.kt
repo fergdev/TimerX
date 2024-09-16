@@ -17,8 +17,6 @@ class TimerXAnalytics : ITimerXAnalytics {
     }
 }
 
-actual fun getTimerXAnalytics(): ITimerXAnalytics = TimerXAnalytics()
-
 interface FirebaseIosCallback {
     fun logEvent(eventId: String, params: String)
 }

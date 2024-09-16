@@ -34,5 +34,3 @@ private fun Bundle.load(params: Map<String, Any>): Bundle {
     }
     return this
 }
-
-actual fun getTimerXAnalytics(): ITimerXAnalytics = TimerXAnalytics()

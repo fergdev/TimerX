@@ -1,9 +1,5 @@
 package com.timerx.beep
 
-import com.timerx.settings.ITimerXSettings
-
-expect fun getBeepManager(timerXSettings: ITimerXSettings): IBeepManager
-
 interface IBeepManager {
     suspend fun beep(beep: Beep)
 }

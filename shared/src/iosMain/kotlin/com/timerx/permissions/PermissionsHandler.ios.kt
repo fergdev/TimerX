@@ -4,8 +4,6 @@ import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationOpenSettingsURLString
 
-actual fun permissionsHandler(): IPermissionsHandler = PermissionsHandler()
-
 class PermissionsHandler : IPermissionsHandler {
     private fun getDelegate(permission: Permission): PermissionDelegate =
         when (permission) {

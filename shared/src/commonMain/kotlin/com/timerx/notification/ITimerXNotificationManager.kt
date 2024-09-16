@@ -2,8 +2,6 @@ package com.timerx.notification
 
 import com.timerx.domain.TimerEvent
 
-expect fun getTimerXNotificationManager(): ITimerXNotificationManager
-
 interface ITimerXNotificationManager {
 
     fun start()

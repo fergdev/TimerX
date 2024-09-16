@@ -8,10 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import org.koin.mp.KoinPlatform
 
-actual fun getBeepManager(timerXSettings: ITimerXSettings): IBeepManager =
-    BeepManager(timerXSettings)
-
-private class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
+class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private var mediaPlayer: MediaPlayer? = null
 

@@ -13,7 +13,7 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-actual val platformModule = module {
+val mobileModule = module {
     single { dataStorePreferences(coroutineScope = CoroutineScope(Dispatchers.IO)) }
     singleOf(::TimerXSettings) { bind<ITimerXSettings>() }
     single { createRoomDatabaseFactory().createRoomDataBase() }

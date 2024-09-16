@@ -1,12 +1,8 @@
 package com.timerx.vibration
 
-import com.timerx.settings.ITimerXSettings
-
 interface IVibrationManager {
     suspend fun vibrate(vibration: Vibration)
 }
-
-expect fun getVibrationManager(timerXSettings: ITimerXSettings): IVibrationManager
 
 enum class Vibration(val displayName: String, val repeat: Int) {
     Soft("Soft", 1),

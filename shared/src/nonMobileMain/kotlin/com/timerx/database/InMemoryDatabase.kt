@@ -9,9 +9,7 @@ import kotlinx.datetime.Instant
 
 object InMemoryTimerXRepository : ITimerRepository {
     private val flow = MutableStateFlow<List<Timer>>(emptyList())
-    override fun getShallowTimers(): Flow<List<Timer>> {
-        return flow
-    }
+    override fun getShallowTimers(): Flow<List<Timer>> = flow
 
     override suspend fun insertTimer(timer: Timer) {
         flow.update {

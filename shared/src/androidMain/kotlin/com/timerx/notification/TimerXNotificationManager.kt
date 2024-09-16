@@ -6,9 +6,7 @@ import android.content.Intent
 import com.timerx.domain.TimerEvent
 import org.koin.mp.KoinPlatform
 
-actual fun getTimerXNotificationManager(): ITimerXNotificationManager = TimerXNotificationManager()
-
-class TimerXNotificationManager : ITimerXNotificationManager {
+class NotificationManager : ITimerXNotificationManager {
     private val context: Context = KoinPlatform.getKoin().get()
     private val notificationManager by lazy { context.getSystemService(NotificationManager::class.java) }
 
