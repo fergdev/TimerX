@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,15 +45,16 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
-import com.timerx.ui.navigation.RunComponent
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.KeepScreenOn
 import com.timerx.ui.common.contrastColor
 import com.timerx.ui.common.contrastSystemBarColor
-import com.timerx.ui.run.RunScreenState.Finished
-import com.timerx.ui.run.RunScreenState.NotFinished.Paused
-import com.timerx.ui.run.RunScreenState.NotFinished.Playing
+import com.timerx.ui.navigation.RunComponent
+import com.timerx.ui.run.RunScreenState.Loaded
+import com.timerx.ui.run.RunScreenState.Loaded.Finished
+import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
+import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -60,9 +63,11 @@ import pro.respawn.flowmvi.api.IntentReceiver
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.back
 import timerx.shared.generated.resources.close
 import timerx.shared.generated.resources.finished
 import timerx.shared.generated.resources.next
+import timerx.shared.generated.resources.no_timer_message
 import timerx.shared.generated.resources.pause
 import timerx.shared.generated.resources.play
 import timerx.shared.generated.resources.restart
@@ -82,31 +87,71 @@ fun RunContent(runComponent: RunComponent) {
         val state by subscribe(DefaultLifecycle)
         KeepScreenOn()
 
-        val backgroundColor = if (state is Paused) {
-            MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
-                .compositeOver(state.backgroundColor)
-        } else {
-            state.backgroundColor
+        when (state) {
+            RunScreenState.Loading -> LoadingContent()
+            RunScreenState.NoTimer -> NoTimerContent(runComponent)
+            is Loaded -> {
+                LoadedContent(state as Loaded, runComponent)
+            }
         }
-
-        val animatedColor by animateColorAsState(
-            backgroundColor,
-            animationSpec = tween(CROSS_FADE_DURATION)
-        )
-        contrastSystemBarColor(animatedColor)
-
-        RunView(
-            backgroundColor = animatedColor,
-            state = state,
-            onNavigateUp = runComponent::onBackClicked
-        )
     }
+}
+
+@Composable
+private fun LoadingContent() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun NoTimerContent(runComponent: RunComponent) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(Res.string.no_timer_message),
+            style = typography.titleLarge,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { runComponent.onBackClicked() }) {
+            Text(text = stringResource(Res.string.back))
+        }
+    }
+}
+
+@Composable
+private fun IntentReceiver<RunScreenIntent>.LoadedContent(
+    state: Loaded,
+    runComponent: RunComponent
+) {
+    val backgroundColor = if (state is Paused) {
+        MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
+            .compositeOver(state.backgroundColor)
+    } else {
+        state.backgroundColor
+    }
+
+    val animatedColor by animateColorAsState(
+        backgroundColor,
+        animationSpec = tween(CROSS_FADE_DURATION)
+    )
+    contrastSystemBarColor(animatedColor)
+
+    RunView(
+        backgroundColor = animatedColor,
+        state = state,
+        onNavigateUp = runComponent::onBackClicked
+    )
 }
 
 @Composable
 private fun IntentReceiver<RunScreenIntent>.RunView(
     backgroundColor: Color,
-    state: RunScreenState,
+    state: Loaded,
     onNavigateUp: () -> Unit,
 ) {
     var controlsVisible by remember { mutableStateOf(false) }
@@ -171,7 +216,7 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
                     )
                 }
 
-                is RunScreenState.NotFinished -> {
+                is Loaded.NotFinished -> {
                     TimerInformation(
                         state,
                         contrastDisplayColor,
@@ -193,7 +238,7 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
 
 @Composable
 private fun IntentReceiver<RunScreenIntent>.TimerInformation(
-    state: RunScreenState.NotFinished,
+    state: Loaded.NotFinished,
     displayColor: Color,
 ) {
     Crossfade(
@@ -295,7 +340,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
 
 @Composable
 private fun IntentReceiver<RunScreenIntent>.BottomControls(
-    state: RunScreenState,
+    state: Loaded,
     onNavigateUp: () -> Unit,
     displayColor: Color,
     onIncrement: () -> Unit
@@ -330,7 +375,7 @@ private fun IntentReceiver<RunScreenIntent>.BottomControls(
 
 @Composable
 private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
-    state: RunScreenState,
+    state: Loaded,
     displayColor: Color,
     onIncrement: () -> Unit,
 ) {

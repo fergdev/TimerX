@@ -32,6 +32,7 @@ internal fun AppNavigation(rootComponent: RootComponent) {
         modifier = Modifier.fillMaxSize(),
         animation = animation
     ) {
+        @Suppress("MoveVariableDeclarationIntoWhen")
         val child = it.instance
         when (child) {
             is RootComponent.Child.CreateChild -> CreateContent(child.component)

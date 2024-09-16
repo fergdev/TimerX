@@ -213,7 +213,7 @@ compose {
                 packageVersion = Config.majorVersionName
                 description = Config.appDescription
                 vendor = Config.vendorName
-//                licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
+                licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
                 val iconDir = rootProject.rootDir.resolve("docs").resolve("images")
 
                 macOS {
@@ -230,17 +230,21 @@ compose {
                     shortcut = true
                     perUserInstall = true
                     upgradeUuid = Config.appId
-                    iconFile = iconDir.resolve("favicon.ico")
+//                    iconFile = iconDir.resolve("favicon.ico")
                 }
                 linux {
                     debMaintainer = Config.supportEmail
                     appCategory = "Development"
-                    iconFile = iconDir.resolve("icon_512.png")
+//                    iconFile = iconDir.resolve("icon_512.png")
                 }
             }
         }
     }
 }
+
+//    "-DmainClass=com.timerx.MainKt"
+tasks.withType<JavaExec>().named { it == "desktopRun" }
+    .configureEach { mainClass = "com.timerx.MainKt" }
 
 junitPlatform {
     // Using local dependency instead of Maven coordinates

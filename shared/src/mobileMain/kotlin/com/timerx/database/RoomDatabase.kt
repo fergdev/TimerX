@@ -146,7 +146,7 @@ interface RoomTimerDao {
     fun getTimers(): Flow<List<RoomTimer>>
 
     @Query("SELECT * FROM RoomTimer WHERE id IS (:timerId)")
-    fun getTimer(timerId: Long): Flow<RoomTimer>
+    fun getTimer(timerId: Long): Flow<RoomTimer?>
 
     @Query("SELECT * FROM RoomTimerSet WHERE timer_id IS (:timerId)")
     fun getTimerSet(timerId: Long): Flow<List<RoomTimerSet>>
@@ -360,7 +360,6 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     }
 
     override suspend fun updateTimer(timer: Timer) {
-        println("#### sets ${timer.sets.size}")
         deleteTimer(timer.id)
         insertTimer(timer)
     }
@@ -375,25 +374,26 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
         }
 
     override suspend fun duplicate(timerId: Long) {
-        val timer = getTimer(timerId).first()
-        val toInsert = timer.copy(
-            id = 0,
-            name = timer.name + " (copy)",
-            sets = timer.sets.map { timerSet ->
-                timerSet.copy(
-                    id = 0,
-                    intervals = timerSet.intervals.map { timerInterval ->
-                        timerInterval.copy(id = 0)
-                    }.toPersistentList()
-                )
-            }.toPersistentList(),
-            sortOrder = NO_SORT_ORDER
-        )
-        insertTimer(toInsert)
+        getTimer(timerId)?.first()?.let {
+            val toInsert = it.copy(
+                id = 0,
+                name = it.name + " (copy)",
+                sets = it.sets.map { timerSet ->
+                    timerSet.copy(
+                        id = 0,
+                        intervals = timerSet.intervals.map { timerInterval ->
+                            timerInterval.copy(id = 0)
+                        }.toPersistentList()
+                    )
+                }.toPersistentList(),
+                sortOrder = NO_SORT_ORDER
+            )
+            insertTimer(toInsert)
+        }
     }
 
     override suspend fun getTimer(timerId: Long) =
-        timerDao.getTimer(timerId).map { getRestOfTimer(it) }
+        timerDao.getTimer(timerId).map { it?.let{getRestOfTimer(it)} }
 
     override suspend fun swapTimers(
         fromId: Long,

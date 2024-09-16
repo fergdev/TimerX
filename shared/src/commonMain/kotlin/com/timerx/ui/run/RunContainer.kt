@@ -1,14 +1,13 @@
 package com.timerx.ui.run
 
-import androidx.compose.ui.graphics.Color
 import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.database.ITimerRepository
+import com.timerx.domain.TimerEvent
 import com.timerx.domain.TimerManager
 import com.timerx.domain.TimerState
 import com.timerx.settings.ITimerXSettings
-import com.timerx.ui.run.RunScreenState.Finished
-import com.timerx.ui.run.RunScreenState.NotFinished.Paused
-import com.timerx.ui.run.RunScreenState.NotFinished.Playing
+import com.timerx.settings.Settings
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import pro.respawn.flowmvi.api.Container
@@ -26,131 +25,98 @@ internal class RunContainer(
 ) : Container<RunScreenState, RunScreenIntent, Nothing> {
 
     override val store = store(
-        Playing(
-            backgroundColor = Color.Transparent,
-            volume = 0F,
-            vibrationEnabled = true,
-            index = "",
-            time = 0,
-            intervalName = "",
-            manualNext = false,
-            timerName = ""
-        )
+        RunScreenState.Loading
     ) {
         init {
             launch {
                 val timer = timerRepository.getTimer(timerId).first()
-                if (timerManager.isRunning().not()) {
-                    timerManager.startTimer(timer)
+                if (timer == null) {
+                    updateState { RunScreenState.NoTimer }
+                } else {
+                    if (timerManager.isRunning().not()) {
+                        timerManager.startTimer(timer)
+                    }
                 }
+                timerXAnalytics.logEvent("TimerStart")
             }
-            timerXAnalytics.logEvent("TimerStart")
         }
 
         install(
-            updateSettingsPlugin(timerXSettings),
-            observeTimerPlugin(timerManager),
+            observeTimerPlugin(timerManager, timerXSettings),
             reducePlugin(timerManager, timerXSettings)
         )
     }
 }
 
-internal fun updateSettingsPlugin(timerXSettings: ITimerXSettings) =
-    plugin<RunScreenState, RunScreenIntent, Nothing> {
-        onSubscribe {
-            launch {
-                timerXSettings.settings.collect { settings ->
-                    updateState {
-                        when (this) {
-                            is Finished -> {
-                                copy(
-                                    volume = settings.volume,
-                                    vibrationEnabled = settings.vibrationEnabled
-                                )
-                            }
-
-                            is Paused -> {
-                                copy(
-                                    volume = settings.volume,
-                                    vibrationEnabled = settings.vibrationEnabled
-                                )
-                            }
-
-                            is Playing -> {
-                                copy(
-                                    volume = settings.volume,
-                                    vibrationEnabled = settings.vibrationEnabled
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 internal fun observeTimerPlugin(
-    timerManager: TimerManager
+    timerManager: TimerManager,
+    timerXSettings: ITimerXSettings
 ) = plugin<RunScreenState, RunScreenIntent, Nothing> {
     onSubscribe {
         launch {
-            timerManager.eventState.collect { timerEvent ->
-                val elapsed = if (timerEvent.runState.displayCountAsUp) {
-                    timerEvent.runState.elapsed
-                } else {
-                    timerEvent.runState.intervalDuration - timerEvent.runState.elapsed
+            timerManager.eventState
+                .combine(timerXSettings.settings) { timerEvent: TimerEvent, settings: Settings ->
+                    Pair(timerEvent, settings)
                 }
-                val index = if (timerEvent.runState.setRepetitionCount != 1) {
-                    "${timerEvent.runState.setRepetitionCount - timerEvent.runState.repetitionIndex}"
-                } else {
-                    ""
-                }
-                updateState {
-                    when (timerEvent.runState.timerState) {
-                        TimerState.Running -> {
-                            Playing(
-                                volume = this.volume,
-                                vibrationEnabled = this.vibrationEnabled,
-                                timerName = timerEvent.runState.timerName,
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                index = index,
-                                time = elapsed,
-                                intervalName = timerEvent.runState.intervalName,
-                                manualNext = timerEvent.runState.manualNext
-                            )
-                        }
+                .collect {
+                    val timerEvent = it.first
+                    val settings = it.second
+                    val elapsed = if (timerEvent.runState.displayCountAsUp) {
+                        timerEvent.runState.elapsed
+                    } else {
+                        timerEvent.runState.intervalDuration - timerEvent.runState.elapsed
+                    }
+                    val index = if (timerEvent.runState.setRepetitionCount != 1) {
+                        "${timerEvent.runState.setRepetitionCount - timerEvent.runState.repetitionIndex}"
+                    } else {
+                        ""
+                    }
+                    updateState {
+                        when (timerEvent.runState.timerState) {
+                            TimerState.Running -> {
+                                RunScreenState.Loaded.NotFinished.Playing(
+                                    volume = settings.volume,
+                                    vibrationEnabled = settings.vibrationEnabled,
+                                    timerName = timerEvent.runState.timerName,
+                                    backgroundColor = timerEvent.runState.backgroundColor,
+                                    index = index,
+                                    time = elapsed,
+                                    intervalName = timerEvent.runState.intervalName,
+                                    manualNext = timerEvent.runState.manualNext
+                                )
+                            }
 
-                        TimerState.Paused -> {
-                            Paused(
-                                volume = this.volume,
-                                vibrationEnabled = this.vibrationEnabled,
-                                timerName = timerEvent.runState.timerName,
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                                index = index,
-                                time = elapsed,
-                                intervalName = timerEvent.runState.intervalName,
-                                manualNext = timerEvent.runState.manualNext
-                            )
-                        }
+                            TimerState.Paused -> {
+                                RunScreenState.Loaded.NotFinished.Paused(
+                                    volume = settings.volume,
+                                    vibrationEnabled = settings.vibrationEnabled,
+                                    timerName = timerEvent.runState.timerName,
+                                    backgroundColor = timerEvent.runState.backgroundColor,
+                                    index = index,
+                                    time = elapsed,
+                                    intervalName = timerEvent.runState.intervalName,
+                                    manualNext = timerEvent.runState.manualNext
+                                )
+                            }
 
-                        TimerState.Finished -> {
-                            Finished(
-                                volume = this.volume,
-                                vibrationEnabled = this.vibrationEnabled,
-                                timerName = timerEvent.runState.timerName,
-                                backgroundColor = timerEvent.runState.backgroundColor,
-                            )
+                            TimerState.Finished -> {
+                                RunScreenState.Loaded.Finished(
+                                    volume = settings.volume,
+                                    vibrationEnabled = settings.vibrationEnabled,
+                                    timerName = timerEvent.runState.timerName,
+                                    backgroundColor = timerEvent.runState.backgroundColor,
+                                )
+                            }
                         }
                     }
                 }
-            }
         }
     }
-
     onStop {
         timerManager.destroy()
     }
 }
+
 
 internal fun reducePlugin(
     timerManager: TimerManager,
@@ -163,11 +129,11 @@ internal fun reducePlugin(
             RunScreenIntent.OnManualNext -> timerManager.nextInterval()
             RunScreenIntent.Pause -> timerManager.playPause()
             RunScreenIntent.Play -> {
-                if (timerManager.eventState.value.runState.timerState == TimerState.Finished) {
-                    timerManager.restartCurrentTimer()
-                } else {
-                    timerManager.playPause()
-                }
+//                if (timerManager.eventState.value.runState.timerState == TimerState.Finished) {
+//                    timerManager.restartCurrentTimer()
+//                } else {
+                timerManager.playPause()
+//                }
             }
 
             RunScreenIntent.RestartTimer -> {

@@ -44,28 +44,27 @@ internal class CreateContainer(
     private val defaultGenerator = DefaultGenerator()
     override val store = store(CreateScreenState()) {
         init {
-            if (timerId != -1L) {
-                launch {
-                    timerDatabase.getTimer(timerId).first().let {
-                        updateState {
-                            CreateScreenState(
-                                timerName = it.name,
-                                sets = it.sets,
-                                finishColor = it.finishColor,
-                                finishBeep = it.finishBeep,
-                                finishVibration = it.finishVibration,
-                            )
-                        }
-                    }
-                }
-            } else {
-                updateState {
-                    CreateScreenState(
-                        sets = persistentListOf(
-                            defaultGenerator.prepare(),
-                            defaultGenerator.defaultTimerSet()
+            launch {
+                val timer = timerDatabase.getTimer(timerId).first()
+                if (timer != null) {
+                    updateState {
+                        CreateScreenState(
+                            timerName = timer.name,
+                            sets = timer.sets,
+                            finishColor = timer.finishColor,
+                            finishBeep = timer.finishBeep,
+                            finishVibration = timer.finishVibration,
                         )
-                    )
+                    }
+                } else {
+                    updateState {
+                        CreateScreenState(
+                            sets = persistentListOf(
+                                defaultGenerator.prepare(),
+                                defaultGenerator.defaultTimerSet()
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -296,8 +295,8 @@ private fun reduceIntent(
                 }
                 launch {
                     val newSets = sets.normaliseSets()
-                    if (timerId != -1L) {
-                        val timerEditing = timerDatabase.getTimer(timerId).first()
+                    val timerEditing = timerDatabase.getTimer(timerId)?.first()
+                    if (timerEditing != null) {
                         timerDatabase.updateTimer(
                             Timer(
                                 id = timerEditing.id,
@@ -354,8 +353,7 @@ private fun PersistentList<TimerSet>.updateInterval(
     beep: Beep? = null,
     vibration: Vibration? = null,
     finalCountDown: FinalCountDown? = null
-) =
-    this.map { set ->
+) = this.map { set ->
         val index = set.intervals.indexOf(interval)
         if (index != -1) {
             val mutableIntervals = set.intervals.toMutableList()

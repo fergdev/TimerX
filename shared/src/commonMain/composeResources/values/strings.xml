@@ -34,6 +34,7 @@
     <string name="manual_next">Manual next</string>
     <string name="minus">Minus</string>
     <string name="next">Next</string>
+    <string name="no_timer_message">This timer doesn't exist anymore.</string>
     <string name="notifications">Notifications</string>
     <string name="no_timers">No timers</string>
     <string name="pause">Pause</string>
