@@ -22,10 +22,8 @@ struct ContentView: View {
                 BannerAdView(isBannerVisible: $isBannerVisible)
                     .frame(width: GADAdSizeBanner.size.width, height: GADAdSizeBanner.size.height)
                     .padding([.bottom], 20)
-
             }
         }
-        .background(Color.black)
         .ignoresSafeArea(edges: .all)
             .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
     }

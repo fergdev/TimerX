@@ -1,6 +1,7 @@
 package com.timerx.beep
 
 import com.timerx.settings.ITimerXSettings
+import com.timerx.util.NSErrorException
 import com.timerx.util.throwNSErrors
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +35,7 @@ class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
                 )
                 audioSession.setActive(true, it)
             }
-        } catch (e: Exception) {
+        } catch (e: NSErrorException) {
             println("Error setting up audio session: ${e.message}")
         }
 

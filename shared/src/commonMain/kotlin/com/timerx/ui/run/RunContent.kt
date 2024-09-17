@@ -42,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
@@ -286,11 +288,13 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
     displayColor: Color,
     volume: Float,
     vibrationEnabled: Boolean,
-    onIncrement: () -> Unit,
+    onIncrementTouchCounter: () -> Unit,
 ) {
     Row {
+        val haptic = LocalHapticFeedback.current
         IconButton(onClick = {
-            onIncrement()
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            onIncrementTouchCounter()
             intent(RunScreenIntent.PreviousInterval)
         }) {
             Icon(
@@ -314,7 +318,8 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
             )
         )
         IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
-            onIncrement()
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            onIncrementTouchCounter()
             intent(RunScreenIntent.UpdateVibrationEnabled(vibrationEnabled.not()))
         }) {
             Icon(
@@ -325,7 +330,8 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
             )
         }
         IconButton(onClick = {
-            onIncrement()
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            onIncrementTouchCounter()
             intent(RunScreenIntent.NextInterval)
         }) {
             Icon(
@@ -348,7 +354,11 @@ private fun IntentReceiver<RunScreenIntent>.BottomControls(
     Row(verticalAlignment = Alignment.CenterVertically) {
         when (state) {
             is Finished, is Paused -> {
-                IconButton(onClick = { onNavigateUp() }) {
+                val haptic = LocalHapticFeedback.current
+                IconButton(onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onNavigateUp()
+                }) {
                     Icon(
                         modifier = Modifier.size(CORNER_ICON_SIZE),
                         imageVector = Icons.Default.Close,
@@ -379,9 +389,11 @@ private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
     displayColor: Color,
     onIncrement: () -> Unit,
 ) {
+    val haptic = LocalHapticFeedback.current
     when (state) {
         is Playing -> {
             IconButton(onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 intent(RunScreenIntent.Pause)
             }) {
                 Icon(
@@ -395,6 +407,7 @@ private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
 
         is Paused -> {
             IconButton(onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 intent(RunScreenIntent.Pause)
                 onIncrement()
             }) {

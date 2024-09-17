@@ -28,6 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
@@ -79,9 +81,13 @@ fun SettingsContent(rootComponent: SettingsComponent) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = stringResource(Res.string.vibration))
                         Spacer(modifier = Modifier.weight(1f))
+                        val haptic = LocalHapticFeedback.current
                         Switch(
                             state.vibration,
-                            onCheckedChange = { intent(SettingsIntent.UpdateVibration(it)) }
+                            onCheckedChange = {
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                intent(SettingsIntent.UpdateVibration(it))
+                            }
                         )
                     }
 
