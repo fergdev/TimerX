@@ -29,9 +29,8 @@ class TimerXNotificationManager : ITimerXNotificationManager {
     }
 
     override fun updateNotification(timerEvent: TimerEvent) {
-        println("Update notification $timerEvent")
         val content = UNMutableNotificationContent().apply {
-            setTitle("Title")
+            setTitle("TimerX Running")
             setBody(timerEvent.toString())
             setSound(null)
         }
@@ -42,8 +41,7 @@ class TimerXNotificationManager : ITimerXNotificationManager {
 
         UNUserNotificationCenter.currentNotificationCenter()
             .addNotificationRequest(request) { error ->
-                if (error != null) println("Error: $error")
-                else println("Success")
+                if (error != null) println("Notification error: $error")
             }
     }
 

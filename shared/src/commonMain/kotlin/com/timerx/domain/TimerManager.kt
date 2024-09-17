@@ -37,14 +37,9 @@ class TimerManager(
         this.timerStateMachine = timerStateMachine
         coroutineScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
-                println("#### $timerEvent")
                 _eventState.value = timerEvent
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
-                        timerXAnalytics.logEvent(
-                            TICKER,
-                            mapOf(Pair(ELAPSED, timerEvent.runState.elapsed))
-                        )
                         timerEvent.beep?.let { beepManager.beep(it) }
                         timerEvent.vibration?.let { vibrationManager.vibrate(it) }
                     }
