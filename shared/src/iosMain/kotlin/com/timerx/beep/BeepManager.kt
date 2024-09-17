@@ -9,6 +9,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import platform.AVFAudio.AVAudioSession
+import platform.AVFAudio.AVAudioSessionCategoryOptionMixWithOthers
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
 import platform.AVFoundation.AVPlayer
@@ -21,11 +22,16 @@ import platform.Foundation.NSBundle
 @OptIn(ExperimentalForeignApi::class)
 class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
     private val avPlayer = AVPlayer()
+
     init {
         try {
             throwNSErrors {
                 val audioSession = AVAudioSession.sharedInstance()
-                audioSession.setCategory(AVAudioSessionCategoryPlayback, it)
+                audioSession.setCategory(
+                    AVAudioSessionCategoryPlayback,
+                    AVAudioSessionCategoryOptionMixWithOthers,
+                    it
+                )
                 audioSession.setActive(true, it)
             }
         } catch (e: Exception) {
