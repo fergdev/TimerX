@@ -18,7 +18,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         StartKoinKt.startKoin()
         FirebaseApp.configure()
         TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "16d05d566ddd35ca547efdf2eeb1496c" ]
         return true
     }
 }

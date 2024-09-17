@@ -21,30 +21,16 @@ struct ContentView: View {
             if isBannerVisible {
                 BannerAdView(isBannerVisible: $isBannerVisible)
                     .frame(width: GADAdSizeBanner.size.width, height: GADAdSizeBanner.size.height)
+                    .padding([.bottom], 20)
+
             }
-        }.ignoresSafeArea(edges: .horizontal)
-            .ignoresSafeArea(edges: .all)
+        }
+        .background(Color.black)
+        .ignoresSafeArea(edges: .all)
             .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
     }
 }
 
-//struct BannerView: UIViewRepresentable {
-//    var adUnitID: String
-//
-//    func makeUIView(context: Context) -> GADBannerView {
-//        let viewController = UIViewController()
-//        let banner = GADBannerView(adSize: GADAdSizeBanner)
-//        banner.adUnitID = adUnitID
-//        banner.rootViewController = viewController
-//        banner.load(GADRequest())
-//        return banner
-//    }
-//
-//    func updateUIView(_ uiView: GADBannerView, context: Context) {
-//        // No update code needed
-//        view.isHidden = true
-//    }
-//}
 struct BannerAdView: UIViewRepresentable {
     @Binding var isBannerVisible: Bool
     var adUnitID = "ca-app-pub-2499949091653906/4852400953"
