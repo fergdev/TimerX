@@ -22,7 +22,7 @@ object Config {
     const val vendorName = "TimerX"
     const val licenseFile = "LICENSE.txt"
     val javaVersion = JavaVersion.VERSION_17
-    const val compileSdk = 34
+    const val compileSdk = 35
     const val targetSdk = compileSdk
     const val minSdk = 21
     const val appId = "todo-some-uuid"
