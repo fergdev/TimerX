@@ -1,7 +1,7 @@
 package com.timerx.vibration
 
-object VibrationManager : IVibrationManager {
+object NoopVibrationManager : IVibrationManager {
     override suspend fun vibrate(vibration: Vibration) {
-        println("BRRRRRRr")
+        // Noop
     }
 }

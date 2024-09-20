@@ -128,19 +128,9 @@ internal fun reducePlugin(
             RunScreenIntent.PreviousInterval -> timerManager.previousInterval()
             RunScreenIntent.OnManualNext -> timerManager.nextInterval()
             RunScreenIntent.Pause -> timerManager.playPause()
-            RunScreenIntent.Play -> {
-//                if (timerManager.eventState.value.runState.timerState == TimerState.Finished) {
-//                    timerManager.restartCurrentTimer()
-//                } else {
-                timerManager.playPause()
-//                }
-            }
-
-            RunScreenIntent.RestartTimer -> {
-                timerManager.restartCurrentTimer()
-            }
-
-            is RunScreenIntent.UpdateVibrationEnabled -> timerXSettings.setVibrationEnabled(true)
+            RunScreenIntent.Play -> timerManager.playPause()
+            RunScreenIntent.RestartTimer -> timerManager.restartCurrentTimer()
+            is RunScreenIntent.UpdateVibrationEnabled -> timerXSettings.setVibrationEnabled(it.enabled)
             is RunScreenIntent.UpdateVolume -> timerXSettings.setVolume(it.volume)
         }
     }

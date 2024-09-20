@@ -96,6 +96,10 @@ kotlin {
                 implementation(libs.kotlinx.serialization)
                 implementation(libs.reorderable)
                 implementation(libs.kotlin.coroutines.core)
+                implementation(libs.multiplatform.settings)
+                implementation(libs.multiplatform.settings.coroutines)
+                implementation(libs.multiplatform.settings.no.arg)
+                implementation(libs.multiplatform.settings.observable)
             }
         }
         val commonTest by getting {
@@ -109,7 +113,6 @@ kotlin {
             kotlin.srcDir("src/mobileMain/kotlin")
             dependsOn(commonMain)
             dependencies {
-                implementation(libs.androidx.data.store.core)
                 implementation(libs.androidx.room.runtime)
                 implementation(libs.sqlite.bundled)
             }
