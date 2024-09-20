@@ -20,8 +20,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
         
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "16d05d566ddd35ca547efdf2eeb1496c" ]
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+
         return true
     }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        NSLog("applicationDidBecomeActive")
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        NSLog("applicationDidEnterBackground")
+    }
+
 }
 
 class FirebaseLoggingCallback: FirebaseIosCallback {
@@ -62,4 +75,5 @@ struct iOSApp: App {
             ContentView(root: delegate.root)
 		}
 	}
+
 }
