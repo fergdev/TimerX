@@ -4,10 +4,10 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.domain.SortTimersBy
+import com.timerx.util.mapIfNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import com.russhwolf.settings.Settings as MPSettings
 
 data class Settings(
@@ -29,11 +29,6 @@ interface ITimerXSettings {
     suspend fun setSortTimersBy(sortTimersBy: SortTimersBy)
 }
 
-inline fun <T> Flow<T?>.mapIfNull(t: T): Flow<T> =
-    this.map {
-        it ?: t
-    }
-
 private const val VIBRATION_ENABLED = "vibrationEnabled"
 private const val VOLUME = "volume"
 private const val SET_IGNORE_NOTIFICATIONS_PERMISSION = "setIgnoreNotificationsPermission"
@@ -42,7 +37,7 @@ private const val SORT_TIMERS_BY = "sortTimersBy"
 @OptIn(ExperimentalSettingsApi::class)
 class TimerXSettings : ITimerXSettings {
     private val flowSettings = MPSettings().makeObservable().toFlowSettings(Dispatchers.Main)
-    private val volume = flowSettings.getFloatOrNullFlow(VOLUME).mapIfNull(100F)
+    private val volume = flowSettings.getFloatOrNullFlow(VOLUME).mapIfNull(1F)
     private val vibrationEnabled = flowSettings.getBooleanOrNullFlow(VIBRATION_ENABLED).mapIfNull(true)
     private val ignoreNotificationsPermissions =
         flowSettings.getBooleanOrNullFlow(SET_IGNORE_NOTIFICATIONS_PERMISSION).mapIfNull(false)
