@@ -31,7 +31,6 @@ kotlinxSerializationJson = "1.7.3"
 ksp = "2.0.20-1.0.25"
 mockery = "2.3.0"
 playServicesAds = "23.3.0"
-protoliteWellKnownTypes = "18.0.0"
 reorderable = "2.3.2"
 sqlite = "2.5.0-SNAPSHOT"
 versionCatalogUpdatePlugin = "0.8.4"
@@ -48,7 +47,6 @@ decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decom
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 detekt-compose = { module = "ru.kode:detekt-rules-compose", version.ref = "detektComposePlugin" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormattingPlugin" }
-detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detekt-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
 essenty-backHandler = { module = "com.arkivanov.essenty:back-handler", version.ref = "essenty" }
 essenty-instanceKeeper = { module = "com.arkivanov.essenty:instance-keeper", version.ref = "essenty" }
