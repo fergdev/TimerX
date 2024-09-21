@@ -7,7 +7,7 @@ import com.timerx.ui.create.CreateContainer
 import com.timerx.ui.di.containerModule
 import com.timerx.ui.main.MainContainer
 import com.timerx.ui.run.RunContainer
-import com.timerx.ui.settings.SettingsContainer
+import com.timerx.ui.settings.alerts.AlertsSettingsContainer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -22,7 +22,7 @@ val sharedModule = module {
     factoryOf(::MainContainer)
     factoryOf(::CreateContainer)
     factoryOf(::RunContainer)
-    factoryOf(::SettingsContainer)
+    factoryOf(::AlertsSettingsContainer)
 }
 
 expect val platformModule: Module

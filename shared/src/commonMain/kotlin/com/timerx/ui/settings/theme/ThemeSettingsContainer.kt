@@ -1,0 +1,51 @@
+package com.timerx.ui.settings.theme
+
+import com.timerx.platform.PlatformCapabilities
+import com.timerx.settings.ITimerXSettings
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateDarkTheme
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsAmoled
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsHighFidelity
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsSystemDynamic
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdatePaletteStyle
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateSeedColor
+import pro.respawn.flowmvi.api.Container
+import pro.respawn.flowmvi.dsl.store
+import pro.respawn.flowmvi.plugins.reduce
+import pro.respawn.flowmvi.plugins.whileSubscribed
+
+internal class ThemeSettingsContainer(
+    private val timerXSettings: ITimerXSettings,
+    private val platformCapabilities: PlatformCapabilities
+) : Container<ThemeSettingsState, ThemeSettingsIntent, Nothing> {
+
+    override val store = store(ThemeSettingsState()) {
+        whileSubscribed {
+            timerXSettings.themeSettings.collect {
+                updateState {
+                    ThemeSettingsState(
+                        isDynamicThemeSupported = platformCapabilities.isDynamicThemeSupported,
+                        isSystemDynamic = it.isSystemDynamic,
+                        settingsDarkTheme = it.settingsDarkTheme,
+                        isAmoled = it.isAmoled,
+                        isHighFidelity = it.isHighFidelity,
+                        paletteStyle = it.paletteStyle,
+                        contrast = it.contrast
+                    )
+                }
+            }
+        }
+
+        reduce {
+            when (it) {
+                is UpdateDarkTheme -> timerXSettings.setDarkTheme(it.settingsDarkTheme)
+                is UpdateIsSystemDynamic -> timerXSettings.setIsDynamicTheme(it.isSystemDynamic)
+                is UpdateIsAmoled -> timerXSettings.setIsAmoled(it.isAmoled)
+                is UpdateIsHighFidelity -> timerXSettings.setIsHighFidelity(it.isHighFidelity)
+                is UpdateContrast -> timerXSettings.setContrast(it.contrast)
+                is UpdatePaletteStyle -> timerXSettings.setPaletteStyle(it.paletteStyle)
+                is UpdateSeedColor -> timerXSettings.setSeedColor(it.seedColor)
+            }
+        }
+    }
+}

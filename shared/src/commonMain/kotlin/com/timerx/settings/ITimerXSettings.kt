@@ -33,10 +33,10 @@ interface ITimerXSettings {
     suspend fun setSortTimersBy(sortTimersBy: SortTimersBy)
 
     val themeSettings: Flow<ThemeSettings>
-    suspend fun setSeedColor(toArgb: Int)
+    suspend fun setSeedColor(seedColor: Color)
     suspend fun setPaletteStyle(style: PaletteStyle)
     suspend fun setIsAmoled(notIsAmoled: Boolean)
-    suspend fun setDarkTheme(user: DarkTheme)
+    suspend fun setDarkTheme(user: SettingsDarkTheme)
     suspend fun setIsDynamicTheme(isDynamic: Boolean)
     suspend fun setIsHighFidelity(isHighFidelity: Boolean)
     suspend fun setContrast(contrast: Double)
@@ -93,9 +93,9 @@ class TimerXSettings : ITimerXSettings {
     }
 
     private val isDynamicTheme = flowSettings.getBooleanOrNullFlow(DYNAMIC_THEME).mapIfNull(false)
-    private val isDarkTheme = flowSettings.getIntOrNullFlow(DARK_THEME).map {
-        if (it == null) DarkTheme.User
-        else DarkTheme.entries[it]
+    private val isSettingsDarkTheme = flowSettings.getIntOrNullFlow(DARK_THEME).map {
+        if (it == null) SettingsDarkTheme.User
+        else SettingsDarkTheme.entries[it]
     }
     private val isAmoled = flowSettings.getBooleanOrNullFlow(IS_AMOLED).mapIfNull(true)
     private val seedColor =
@@ -111,11 +111,11 @@ class TimerXSettings : ITimerXSettings {
     }
 
     override val themeSettings = combine(
-        isDynamicTheme, isDarkTheme, isAmoled, seedColor, style, isHighFidelity, contrast
+        isDynamicTheme, isSettingsDarkTheme, isAmoled, seedColor, style, isHighFidelity, contrast
     ) { isDynamicTheme, isDarkTheme, isAmoled, seedColor, style, isHighFidelity, contrast ->
         ThemeSettings(
             isSystemDynamic = isDynamicTheme,
-            darkTheme = isDarkTheme,
+            settingsDarkTheme = isDarkTheme,
             isAmoled = isAmoled,
             seedColor = Color(seedColor),
             paletteStyle = style,
@@ -124,8 +124,8 @@ class TimerXSettings : ITimerXSettings {
         )
     }
 
-    override suspend fun setSeedColor(toArgb: Int) {
-        flowSettings.putInt(SEED_COLOR, toArgb)
+    override suspend fun setSeedColor(seedColor: Color) {
+        flowSettings.putInt(SEED_COLOR, seedColor.toArgb())
     }
 
     override suspend fun setPaletteStyle(style: PaletteStyle) {
@@ -136,8 +136,8 @@ class TimerXSettings : ITimerXSettings {
         flowSettings.putBoolean(IS_AMOLED, isAmoled)
     }
 
-    override suspend fun setDarkTheme(user: DarkTheme) {
-        flowSettings.putInt(DARK_THEME, user.ordinal)
+    override suspend fun setDarkTheme(settingsDarkTheme: SettingsDarkTheme) {
+        flowSettings.putInt(DARK_THEME, settingsDarkTheme.ordinal)
     }
 
     override suspend fun setIsDynamicTheme(isDynamic: Boolean) {
@@ -153,7 +153,7 @@ class TimerXSettings : ITimerXSettings {
     }
 }
 
-enum class DarkTheme {
+enum class SettingsDarkTheme {
     User,
     ForceLight,
     ForceDark
@@ -162,7 +162,7 @@ enum class DarkTheme {
 
 data class ThemeSettings(
     val isSystemDynamic: Boolean = false,
-    val darkTheme: DarkTheme = DarkTheme.User,
+    val settingsDarkTheme: SettingsDarkTheme = SettingsDarkTheme.User,
     val isAmoled: Boolean = true,
     val seedColor: Color = presetColors[0],
     val paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,

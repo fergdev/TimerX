@@ -1,6 +1,6 @@
 package com.timerx.platform
 
 data class PlatformCapabilities(
-    val dynamicColor: Boolean,
+    val isDynamicThemeSupported: Boolean,
     val vibration: Boolean
 )

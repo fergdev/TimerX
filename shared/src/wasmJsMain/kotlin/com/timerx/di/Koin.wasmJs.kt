@@ -9,7 +9,7 @@ import org.koin.dsl.module
 
 val wasmCapabilities =
     PlatformCapabilities(
-        dynamicColor = false,
+        isDynamicThemeSupported = false,
         vibration = false
     )
 actual val platformModule = module {

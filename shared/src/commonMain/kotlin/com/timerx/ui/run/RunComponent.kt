@@ -1,7 +1,11 @@
 package com.timerx.ui.run
 
 import com.arkivanov.decompose.ComponentContext
-import com.timerx.ui.navigation.RunComponent
+
+interface RunComponent {
+    val timerId: Long
+    fun onBackClicked()
+}
 
 class DefaultRunComponent(
     componentContext: ComponentContext,

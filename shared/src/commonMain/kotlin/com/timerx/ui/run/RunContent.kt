@@ -52,7 +52,6 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.KeepScreenOn
 import com.timerx.ui.common.contrastColor
 import com.timerx.ui.common.contrastSystemBarColor
-import com.timerx.ui.navigation.RunComponent
 import com.timerx.ui.run.RunScreenState.Loaded
 import com.timerx.ui.run.RunScreenState.Loaded.Finished
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused

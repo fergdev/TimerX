@@ -1,4 +1,4 @@
-package com.timerx.ui.settings
+package com.timerx.ui.settings.alerts
 
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
@@ -10,17 +10,17 @@ import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
-internal class SettingsContainer(
+internal class AlertsSettingsContainer(
     private val timerXSettings: ITimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
-) : Container<SettingsState, SettingsIntent, Nothing> {
+) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
 
     override val store =
-        store(SettingsState()) {
+        store(AlertsSettingsState()) {
             whileSubscribed {
                 timerXSettings.settings.collect {
-                    updateState<SettingsState, _> {
-                        SettingsState(
+                    updateState<AlertsSettingsState, _> {
+                        AlertsSettingsState(
                             volume = it.volume,
                             vibration = it.vibrationEnabled,
                             notificationsEnabled = isNotificationsEnabled()
@@ -31,22 +31,22 @@ internal class SettingsContainer(
 
             reduce { settingsIntent ->
                 when (settingsIntent) {
-                    is SettingsIntent.UpdateVolume -> {
+                    is AlertsSettingsIntent.UpdateVolume -> {
                         timerXSettings.setVolume(settingsIntent.volume)
                     }
 
-                    is SettingsIntent.UpdateVibration -> {
+                    is AlertsSettingsIntent.UpdateVibration -> {
                         timerXSettings.setVibrationEnabled(settingsIntent.enabled)
                     }
 
-                    is SettingsIntent.EnableNotifications -> {
+                    is AlertsSettingsIntent.EnableNotifications -> {
                         permissionsHandler.requestPermission(Permission.Notification)
                         updateState {
                             copy(notificationsEnabled = isNotificationsEnabled())
                         }
                     }
 
-                    is SettingsIntent.OpenAppSettings -> {
+                    is AlertsSettingsIntent.OpenAppSettings -> {
                         permissionsHandler.openAppSettings()
                     }
                 }

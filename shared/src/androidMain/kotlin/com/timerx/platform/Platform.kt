@@ -3,9 +3,9 @@ package com.timerx.platform
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 
-val androidCapabilities =
+internal val androidCapabilities =
     PlatformCapabilities(
-        dynamicColor = supportsDynamicColors,
+        isDynamicThemeSupported = supportsDynamicColors,
         vibration = true
     )
 @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)

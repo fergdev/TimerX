@@ -1,4 +1,4 @@
-package com.timerx.ui.theme
+package com.timerx.ui.settings.theme
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -23,60 +23,68 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
-import com.timerx.platform.PlatformCapabilities
-import com.timerx.settings.DarkTheme
-import com.timerx.settings.ITimerXSettings
-import com.timerx.settings.ThemeSettings
+import com.timerx.settings.SettingsDarkTheme
 import com.timerx.ui.common.isDarkTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.timerx.ui.settings.SettingsScaffold
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateDarkTheme
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsAmoled
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsHighFidelity
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsSystemDynamic
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdatePaletteStyle
+import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateSeedColor
+import com.timerx.ui.theme.presetColors
 import org.koin.compose.koinInject
+import pro.respawn.flowmvi.api.IntentReceiver
+import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
+import pro.respawn.flowmvi.compose.dsl.subscribe
 
 @Composable
-internal fun CustomizeThemeContent() {
-    val settings = koinInject<ITimerXSettings>()
-    val platformCapabilities: PlatformCapabilities = koinInject()
-    val themeSettings = settings.themeSettings.collectAsState(ThemeSettings())
-    val coroutineScope = rememberCoroutineScope()
-    val isDarkTheme = isDarkTheme(themeSettings.value)
+internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent) {
+    SettingsScaffold("Theme", themeSettingsComponent::onBackClicked) {
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        DarkModeRow(themeSettings, coroutineScope, settings)
-        AnimatedVisibility(platformCapabilities.dynamicColor) {
-            DynamicColorsRow(themeSettings.value.isSystemDynamic, coroutineScope, settings)
-        }
-        AnimatedVisibility(platformCapabilities.dynamicColor.not() || themeSettings.value.isSystemDynamic.not()) {
-            Column {
-                AnimatedVisibility(isDarkTheme) {
-                    AmoledRow(themeSettings, coroutineScope, settings)
+        with(koinInject<ThemeSettingsContainer>().store) {
+            LaunchedEffect(Unit) { start(this).join() }
+            val state by subscribe(DefaultLifecycle)
+
+            val isDarkTheme = isDarkTheme(state.settingsDarkTheme)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                DarkModeRow(state.settingsDarkTheme)
+                if (state.isDynamicThemeSupported) {
+                    DynamicColorsRow(state.isSystemDynamic)
                 }
-                AnimatedVisibility(themeSettings.value.paletteStyle != PaletteStyle.Monochrome) {
-                    HighFidelityRow(themeSettings.value.isHighFidelity, coroutineScope, settings)
-                }
-                ContrastRow(themeSettings.value.contrast, coroutineScope, settings)
-                PaletteRow(themeSettings, coroutineScope, settings)
-                AnimatedVisibility(themeSettings.value.paletteStyle != PaletteStyle.Monochrome) {
+                AnimatedVisibility(state.isSystemDynamic.not()) {
                     Column {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        SeedColorRow(themeSettings.value.seedColor)
+                        AnimatedVisibility(isDarkTheme) {
+                            AmoledRow(state.isAmoled)
+                        }
+                        AnimatedVisibility(state.paletteStyle != PaletteStyle.Monochrome) {
+                            HighFidelityRow(state.isHighFidelity)
+                        }
+                        ContrastRow(state.contrast)
+                        PaletteRow(state.paletteStyle)
+                        AnimatedVisibility(state.paletteStyle != PaletteStyle.Monochrome) {
+                            Column {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                SeedColorRow(state.seedColor)
+                                Spacer(modifier = Modifier.height(10.dp))
+                                AppColors()
+                            }
+                        }
                         Spacer(modifier = Modifier.height(10.dp))
-                        AppColors(coroutineScope, settings)
                     }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
                 ColorPreview()
             }
         }
@@ -85,10 +93,8 @@ internal fun CustomizeThemeContent() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun HighFidelityRow(
+private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
     isHighFidelity: Boolean,
-    coroutineScope: CoroutineScope,
-    settings: ITimerXSettings
 ) {
     Column {
         Text(text = "High fidelity")
@@ -99,16 +105,12 @@ private fun HighFidelityRow(
             FilterChip(
                 label = { Text(text = "Yes") },
                 selected = isHighFidelity,
-                onClick = {
-                    coroutineScope.launch { settings.setIsHighFidelity(true) }
-                },
+                onClick = { intent(UpdateIsHighFidelity(true)) },
             )
             FilterChip(
                 label = { Text(text = "No") },
                 selected = isHighFidelity.not(),
-                onClick = {
-                    coroutineScope.launch { settings.setIsHighFidelity(false) }
-                },
+                onClick = { intent(UpdateIsHighFidelity(false)) },
             )
         }
     }
@@ -116,11 +118,7 @@ private fun HighFidelityRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ContrastRow(
-    contrast: Double,
-    coroutineScope: CoroutineScope,
-    settings: ITimerXSettings
-) {
+private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: Double) {
     Text(text = "Contrast")
     FlowRow(
         modifier = Modifier.fillMaxWidth().wrapContentWidth(),
@@ -131,9 +129,7 @@ private fun ContrastRow(
             modifier = Modifier.fillMaxWidth(),
             value = contrast.toFloat(),
             valueRange = -1f..1f,
-            onValueChange = {
-                coroutineScope.launch { settings.setContrast(it.toDouble()) }
-            },
+            onValueChange = { intent(UpdateContrast(it.toDouble())) },
             onValueChangeFinished = {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             }
@@ -143,10 +139,8 @@ private fun ContrastRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DynamicColorsRow(
-    isSystemDynamic: Boolean,
-    coroutineScope: CoroutineScope,
-    settings: ITimerXSettings
+private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(
+    isSystemDynamic: Boolean
 ) {
     Column {
         Text(text = "System dynamic colors")
@@ -158,14 +152,14 @@ private fun DynamicColorsRow(
                 label = { Text(text = "Yes") },
                 selected = isSystemDynamic,
                 onClick = {
-                    coroutineScope.launch { settings.setIsDynamicTheme(true) }
+                    intent(UpdateIsSystemDynamic(true))
                 },
             )
             FilterChip(
                 label = { Text(text = "No") },
                 selected = isSystemDynamic.not(),
                 onClick = {
-                    coroutineScope.launch { settings.setIsDynamicTheme(false) }
+                    intent(UpdateIsSystemDynamic(false))
                 },
             )
         }
@@ -174,10 +168,8 @@ private fun DynamicColorsRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AmoledRow(
-    themeSettings: State<ThemeSettings>,
-    coroutineScope: CoroutineScope,
-    settings: ITimerXSettings
+private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(
+    isAmoled: Boolean
 ) {
     Text(text = "Is Amoled")
     FlowRow(
@@ -186,16 +178,16 @@ private fun AmoledRow(
     ) {
         FilterChip(
             label = { Text(text = "Yes") },
-            selected = themeSettings.value.isAmoled,
+            selected = isAmoled,
             onClick = {
-                coroutineScope.launch { settings.setIsAmoled(true) }
+                intent(UpdateIsAmoled(true))
             },
         )
         FilterChip(
             label = { Text(text = "No") },
-            selected = themeSettings.value.isAmoled.not(),
+            selected = isAmoled.not(),
             onClick = {
-                coroutineScope.launch { settings.setIsAmoled(false) }
+                intent(UpdateIsAmoled(false))
             },
         )
     }
@@ -203,10 +195,8 @@ private fun AmoledRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DarkModeRow(
-    themeSettings: State<ThemeSettings>,
-    coroutineScope: CoroutineScope,
-    settings: ITimerXSettings
+private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(
+    settingsDarkTheme: SettingsDarkTheme,
 ) {
     Text(text = "Dark mode")
     FlowRow(
@@ -215,23 +205,23 @@ private fun DarkModeRow(
     ) {
         FilterChip(
             label = { Text(text = "User") },
-            selected = themeSettings.value.darkTheme == DarkTheme.User,
+            selected = settingsDarkTheme == SettingsDarkTheme.User,
             onClick = {
-                coroutineScope.launch { settings.setDarkTheme(DarkTheme.User) }
+                intent(UpdateDarkTheme(SettingsDarkTheme.User))
             },
         )
         FilterChip(
             label = { Text(text = "Force Light") },
-            selected = themeSettings.value.darkTheme == DarkTheme.ForceLight,
+            selected = settingsDarkTheme == SettingsDarkTheme.ForceLight,
             onClick = {
-                coroutineScope.launch { settings.setDarkTheme(DarkTheme.ForceLight) }
+                intent(UpdateDarkTheme(SettingsDarkTheme.ForceLight))
             },
         )
         FilterChip(
             label = { Text(text = "Force dark") },
-            selected = themeSettings.value.darkTheme == DarkTheme.ForceDark,
+            selected = settingsDarkTheme == SettingsDarkTheme.ForceDark,
             onClick = {
-                coroutineScope.launch { settings.setDarkTheme(DarkTheme.ForceDark) }
+                intent(UpdateDarkTheme(SettingsDarkTheme.ForceDark))
             },
         )
     }
@@ -239,23 +229,19 @@ private fun DarkModeRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun PaletteRow(
-    themeSettings: State<ThemeSettings>,
-    coroutineScope: CoroutineScope,
-    settings: ITimerXSettings
+private fun IntentReceiver<UpdatePaletteStyle>.PaletteRow(
+    paletteStyle: PaletteStyle,
 ) {
     Text(text = "Palette Style")
     FlowRow(
         modifier = Modifier.fillMaxWidth().wrapContentWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        PaletteStyle.entries.forEach { paletteStyle ->
+        PaletteStyle.entries.forEach {
             FilterChip(
-                label = { Text(text = paletteStyle.name) },
-                selected = themeSettings.value.paletteStyle == paletteStyle,
-                onClick = {
-                    coroutineScope.launch { settings.setPaletteStyle(paletteStyle) }
-                },
+                label = { Text(text = it.name) },
+                selected = it == paletteStyle,
+                onClick = { intent(UpdatePaletteStyle(it)) },
             )
         }
     }
@@ -287,10 +273,7 @@ private fun ColorPreview() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AppColors(
-    coroutineScope: CoroutineScope,
-    settings: ITimerXSettings
-) {
+private fun IntentReceiver<UpdateSeedColor>.AppColors() {
     FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
         presetColors.forEach { color ->
             Box(
@@ -299,9 +282,7 @@ private fun AppColors(
                     .size(32.dp)
                     .clip(RoundedCornerShape(100.dp))
                     .background(color)
-                    .clickable {
-                        coroutineScope.launch { settings.setSeedColor(color.toArgb()) }
-                    }
+                    .clickable { intent(UpdateSeedColor(color)) }
             )
         }
     }
