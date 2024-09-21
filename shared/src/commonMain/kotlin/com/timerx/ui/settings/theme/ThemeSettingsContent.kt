@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -58,36 +60,52 @@ internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent
             LaunchedEffect(Unit) { start(this).join() }
             val state by subscribe(DefaultLifecycle)
 
-            val isDarkTheme = isDarkTheme(state.settingsDarkTheme)
-            Column(modifier = Modifier.fillMaxWidth()) {
-                DarkModeRow(state.settingsDarkTheme)
-                if (state.isDynamicThemeSupported) {
-                    DynamicColorsRow(state.isSystemDynamic)
-                }
-                AnimatedVisibility(state.isSystemDynamic.not()) {
-                    Column {
-                        AnimatedVisibility(isDarkTheme) {
-                            AmoledRow(state.isAmoled)
-                        }
-                        AnimatedVisibility(state.paletteStyle != PaletteStyle.Monochrome) {
-                            HighFidelityRow(state.isHighFidelity)
-                        }
-                        ContrastRow(state.contrast)
-                        PaletteRow(state.paletteStyle)
-                        AnimatedVisibility(state.paletteStyle != PaletteStyle.Monochrome) {
-                            Column {
-                                Spacer(modifier = Modifier.height(8.dp))
-                                SeedColorRow(state.seedColor)
-                                Spacer(modifier = Modifier.height(10.dp))
-                                AppColors()
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
+            when(state){
+                ThemeSettingsState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
                 }
-                ColorPreview()
+                is ThemeSettingsState.LoadedState -> {
+                    LoadedContent(state as ThemeSettingsState.LoadedState)
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
+    state: ThemeSettingsState.LoadedState
+) {
+    val isDarkTheme = isDarkTheme(state.settingsDarkTheme)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        DarkModeRow(state.settingsDarkTheme)
+        if (state.isDynamicThemeSupported) {
+            DynamicColorsRow(state.isSystemDynamic)
+        }
+        AnimatedVisibility(state.isSystemDynamic.not()) {
+            Column {
+                AnimatedVisibility(isDarkTheme) {
+                    AmoledRow(state.isAmoled)
+                }
+                AnimatedVisibility(state.paletteStyle != PaletteStyle.Monochrome) {
+                    HighFidelityRow(state.isHighFidelity)
+                }
+                ContrastRow(state.contrast)
+                PaletteRow(state.paletteStyle)
+                AnimatedVisibility(state.paletteStyle != PaletteStyle.Monochrome) {
+                    Column {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        SeedColorRow(state.seedColor)
+                        Spacer(modifier = Modifier.height(10.dp))
+                        AppColors()
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
+        ColorPreview()
     }
 }
 

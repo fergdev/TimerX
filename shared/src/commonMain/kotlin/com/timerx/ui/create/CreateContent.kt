@@ -47,7 +47,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -153,12 +152,7 @@ private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions() {
 
 @Composable
 private fun AppBarNavigationIcon(onNavigateUp: () -> Unit) {
-    IconButton(
-        modifier = Modifier.rotate(TWO_HUNDRED_SEVENTY_DEG),
-        onClick = {
-            onNavigateUp()
-        }
-    ) {
+    IconButton(onClick = { onNavigateUp() }) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(Res.string.back)

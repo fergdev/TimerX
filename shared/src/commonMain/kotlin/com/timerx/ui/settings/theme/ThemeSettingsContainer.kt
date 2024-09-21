@@ -19,11 +19,11 @@ internal class ThemeSettingsContainer(
     private val platformCapabilities: PlatformCapabilities
 ) : Container<ThemeSettingsState, ThemeSettingsIntent, Nothing> {
 
-    override val store = store(ThemeSettingsState()) {
+    override val store = store(ThemeSettingsState.Loading) {
         whileSubscribed {
             timerXSettings.themeSettings.collect {
                 updateState {
-                    ThemeSettingsState(
+                    ThemeSettingsState.LoadedState(
                         isDynamicThemeSupported = platformCapabilities.isDynamicThemeSupported,
                         isSystemDynamic = it.isSystemDynamic,
                         settingsDarkTheme = it.settingsDarkTheme,

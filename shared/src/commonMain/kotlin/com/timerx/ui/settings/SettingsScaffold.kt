@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
@@ -36,7 +35,7 @@ import timerx.shared.generated.resources.back
 fun SettingsScaffold(
     title: String,
     onBackClicked: () -> Unit,
-     content: @Composable () -> Unit
+    content: @Composable () -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -69,8 +68,6 @@ fun SettingsScaffold(
     )
 }
 
-private const val NINETY_DEGREES = 90f
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsAppBar(name: String, onNavigateBack: () -> Unit) {
@@ -78,7 +75,6 @@ fun SettingsAppBar(name: String, onNavigateBack: () -> Unit) {
         title = { Text(text = name) },
         navigationIcon = {
             IconButton(
-                modifier = Modifier.rotate(NINETY_DEGREES),
                 onClick = { onNavigateBack() }
             ) {
                 Icon(
