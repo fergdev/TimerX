@@ -8,6 +8,7 @@ import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
+import com.timerx.platform.androidCapabilities
 import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.VibrationManager
 import org.koin.core.module.dsl.bind
@@ -16,6 +17,7 @@ import org.koin.dsl.module
 
 actual val platformModule = module {
     includes(mobileModule)
+    single { androidCapabilities }
     singleOf(::BeepManager) { bind<IBeepManager>() }
     singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
     singleOf(::VibrationManager) { bind<IVibrationManager>() }

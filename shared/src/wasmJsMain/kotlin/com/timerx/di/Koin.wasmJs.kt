@@ -2,11 +2,18 @@ package com.timerx.di
 
 import com.timerx.beep.ABeepManager
 import com.timerx.beep.IBeepManager
+import com.timerx.platform.PlatformCapabilities
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
+val wasmCapabilities =
+    PlatformCapabilities(
+        dynamicColor = false,
+        vibration = false
+    )
 actual val platformModule = module {
     includes(nonMobileModule)
+    single { wasmCapabilities}
     singleOf(::ABeepManager) { bind<IBeepManager>() }
 }

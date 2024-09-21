@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -33,6 +35,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
+import com.timerx.ui.theme.CustomizeThemeContent
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
@@ -69,7 +72,7 @@ fun SettingsContent(rootComponent: SettingsComponent) {
                         end = systemBarsPadding.calculateEndPadding(LocalLayoutDirection.current)
                             .coerceAtLeast(cutoutPadding.calculateEndPadding(LocalLayoutDirection.current))
                             .coerceAtLeast(16.dp)
-                    )
+                    ).verticalScroll(rememberScrollState()),
                 ) {
                     Spacer(Modifier.height(scaffoldPadding.calculateTopPadding()))
                     Text(text = stringResource(Res.string.volume))
@@ -109,6 +112,8 @@ fun SettingsContent(rootComponent: SettingsComponent) {
                     Button(onClick = { intent(SettingsIntent.OpenAppSettings) }) {
                         Text(text = stringResource(Res.string.app_os_settings))
                     }
+
+                    CustomizeThemeContent()
                 }
             }
         )
