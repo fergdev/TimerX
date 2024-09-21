@@ -61,7 +61,7 @@ import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
-import com.timerx.ui.common.ColorPicker
+import com.timerx.ui.common.ColorPickerModalBottomSheet
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
@@ -283,7 +283,7 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker() {
             )
 
             if (colorPickerVisible) {
-                ColorPicker {
+                ColorPickerModalBottomSheet {
                     it?.let {
                         intent(UpdateFinishColor(it))
                     }

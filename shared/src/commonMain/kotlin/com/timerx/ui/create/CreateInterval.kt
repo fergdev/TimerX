@@ -43,7 +43,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.BeepSelector
-import com.timerx.ui.common.ColorPicker
+import com.timerx.ui.common.ColorPickerModalBottomSheet
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
@@ -130,7 +130,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateInterval(
                 }
 
                 if (colorPickerVisible) {
-                    ColorPicker {
+                    ColorPickerModalBottomSheet {
                         it?.let { intent(UpdateIntervalColor(interval, it)) }
                         colorPickerVisible = false
                     }
