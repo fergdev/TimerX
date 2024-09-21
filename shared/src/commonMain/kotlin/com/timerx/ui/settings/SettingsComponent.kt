@@ -30,8 +30,6 @@ interface SettingsComponent : BackHandlerOwner {
         class Alerts(val component: AlertSettingsComponent) : Child()
         class Theme(val component: ThemeSettingsComponent) : Child()
     }
-
-    fun navigateTo(config: SettingsConfig)
 }
 
 @OptIn(DelicateDecomposeApi::class)
@@ -81,14 +79,10 @@ class DefaultSettingsComponent(
     override fun onBackClicked(toIndex: Int) {
         nav.popTo(index = toIndex)
     }
-
-    override fun navigateTo(config: SettingsConfig) {
-        nav.push(config)
-    }
 }
 
 @Serializable
-sealed interface SettingsConfig {
+private sealed interface SettingsConfig {
     @Serializable
     data object Main : SettingsConfig
 
