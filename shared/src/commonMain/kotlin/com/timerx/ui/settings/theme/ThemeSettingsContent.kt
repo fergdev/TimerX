@@ -55,7 +55,6 @@ import pro.respawn.flowmvi.compose.dsl.subscribe
 @Composable
 internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent) {
     SettingsScaffold("Theme", themeSettingsComponent::onBackClicked) {
-
         with(koinInject<ThemeSettingsContainer>().store) {
             LaunchedEffect(Unit) { start(this).join() }
             val state by subscribe(DefaultLifecycle)

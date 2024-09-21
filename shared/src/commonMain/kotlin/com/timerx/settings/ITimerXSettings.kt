@@ -97,7 +97,7 @@ class TimerXSettings : ITimerXSettings {
         if (it == null) SettingsDarkTheme.User
         else SettingsDarkTheme.entries[it]
     }
-    private val isAmoled = flowSettings.getBooleanOrNullFlow(IS_AMOLED).mapIfNull(true)
+    private val isAmoled = flowSettings.getBooleanOrNullFlow(IS_AMOLED).mapIfNull(false)
     private val seedColor =
         flowSettings.getIntOrNullFlow(SEED_COLOR).mapIfNull(presetColors[0].toArgb())
     private val style = flowSettings.getIntOrNullFlow(PALETTE_STYLE).map {
