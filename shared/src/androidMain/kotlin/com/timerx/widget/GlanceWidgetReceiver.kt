@@ -56,7 +56,7 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
                     }
                 }
             timerRepository.getShallowTimers()
-                .combine(timerXSettings.settings) { timers, settings ->
+                .combine(timerXSettings.alertSettings) { timers, settings ->
                     val sortedTimers = settings.sortTimersBy.sort(timers)
                     TimerWidgetInfo.Available(
                         sortedTimers.map { timer ->

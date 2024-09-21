@@ -30,7 +30,7 @@ class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibration
     private val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 
     override suspend fun vibrate(vibration: Vibration) {
-        if (timerXSettings.settings.first().vibrationEnabled.not()) {
+        if (timerXSettings.alertSettings.first().vibrationEnabled.not()) {
             return
         }
         val millis = when (vibration) {

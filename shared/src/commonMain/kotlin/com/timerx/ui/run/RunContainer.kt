@@ -6,7 +6,7 @@ import com.timerx.domain.TimerEvent
 import com.timerx.domain.TimerManager
 import com.timerx.domain.TimerState
 import com.timerx.settings.ITimerXSettings
-import com.timerx.settings.Settings
+import com.timerx.settings.AlertSettings
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -55,8 +55,8 @@ internal fun observeTimerPlugin(
     onSubscribe {
         launch {
             timerManager.eventState
-                .combine(timerXSettings.settings) { timerEvent: TimerEvent, settings: Settings ->
-                    Pair(timerEvent, settings)
+                .combine(timerXSettings.alertSettings) { timerEvent: TimerEvent, alertSettings: AlertSettings ->
+                    Pair(timerEvent, alertSettings)
                 }
                 .collect {
                     val timerEvent = it.first

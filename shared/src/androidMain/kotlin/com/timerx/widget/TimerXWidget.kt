@@ -179,7 +179,7 @@ private fun WidgetButtons(timerData: TimerWidgetInfo) {
                     .clickable {
                         coroutineScope.launch {
                             val get = KoinPlatform.getKoin().get<ITimerXSettings>()
-                            val settings = get.settings.first()
+                            val settings = get.alertSettings.first()
                             get.setSortTimersBy(settings.sortTimersBy.next())
                         }
                     },
@@ -231,7 +231,7 @@ private fun WidgetButtonsThin(timerData: TimerWidgetInfo) {
                     .clickable {
                         coroutineScope.launch {
                             val get = KoinPlatform.getKoin().get<ITimerXSettings>()
-                            val settings = get.settings.first()
+                            val settings = get.alertSettings.first()
                             get.setSortTimersBy(settings.sortTimersBy.next())
                         }
                     },

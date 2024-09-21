@@ -19,7 +19,7 @@ class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
                 it.reset()
                 it.release()
             }
-            val volume = timerXSettings.settings.first().volume
+            val volume = timerXSettings.alertSettings.first().volume
             mediaPlayer?.setVolume(volume, volume)
             mediaPlayer?.start()
             delay(BEEP_VIBRATION_DELAY)

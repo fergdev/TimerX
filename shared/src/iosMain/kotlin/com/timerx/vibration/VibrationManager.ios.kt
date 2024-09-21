@@ -26,7 +26,7 @@ import platform.UIKit.UIImpactFeedbackStyle
 class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibrationManager {
 
     override suspend fun vibrate(vibration: Vibration) {
-        if (timerXSettings.settings.first().vibrationEnabled.not()) {
+        if (timerXSettings.alertSettings.first().vibrationEnabled.not()) {
             return
         }
         val style = when (vibration) {

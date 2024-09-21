@@ -24,7 +24,7 @@ internal class MainContainer(
         whileSubscribed {
             timerRepository.getShallowTimers()
                 .combine(
-                    timerXSettings.settings
+                    timerXSettings.alertSettings
                 ) { timers, settings ->
                     if (timers.isEmpty()) {
                         MainState.Empty(settings.sortTimersBy)

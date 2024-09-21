@@ -21,7 +21,7 @@ internal class ThemeSettingsContainer(
 
     override val store = store(ThemeSettingsState.Loading) {
         whileSubscribed {
-            timerXSettings.themeSettings.collect {
+            timerXSettings.themeSettingsManager.themeSettings.collect {
                 updateState {
                     ThemeSettingsState.LoadedState(
                         isDynamicThemeSupported = platformCapabilities.isDynamicThemeSupported,
@@ -38,13 +38,13 @@ internal class ThemeSettingsContainer(
 
         reduce {
             when (it) {
-                is UpdateDarkTheme -> timerXSettings.setDarkTheme(it.settingsDarkTheme)
-                is UpdateIsSystemDynamic -> timerXSettings.setIsDynamicTheme(it.isSystemDynamic)
-                is UpdateIsAmoled -> timerXSettings.setIsAmoled(it.isAmoled)
-                is UpdateIsHighFidelity -> timerXSettings.setIsHighFidelity(it.isHighFidelity)
-                is UpdateContrast -> timerXSettings.setContrast(it.contrast)
-                is UpdatePaletteStyle -> timerXSettings.setPaletteStyle(it.paletteStyle)
-                is UpdateSeedColor -> timerXSettings.setSeedColor(it.seedColor)
+                is UpdateDarkTheme -> timerXSettings.themeSettingsManager.setDarkTheme(it.settingsDarkTheme)
+                is UpdateIsSystemDynamic -> timerXSettings.themeSettingsManager.setIsDynamicTheme(it.isSystemDynamic)
+                is UpdateIsAmoled -> timerXSettings.themeSettingsManager.setIsAmoled(it.isAmoled)
+                is UpdateIsHighFidelity -> timerXSettings.themeSettingsManager.setIsHighFidelity(it.isHighFidelity)
+                is UpdateContrast -> timerXSettings.themeSettingsManager.setContrast(it.contrast)
+                is UpdatePaletteStyle -> timerXSettings.themeSettingsManager.setPaletteStyle(it.paletteStyle)
+                is UpdateSeedColor -> timerXSettings.themeSettingsManager.setSeedColor(it.seedColor)
             }
         }
     }

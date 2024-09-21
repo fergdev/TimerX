@@ -18,7 +18,7 @@ internal class AlertsSettingsContainer(
     override val store =
         store(AlertsSettingsState()) {
             whileSubscribed {
-                timerXSettings.settings.collect {
+                timerXSettings.alertSettings.collect {
                     updateState<AlertsSettingsState, _> {
                         AlertsSettingsState(
                             volume = it.volume,
