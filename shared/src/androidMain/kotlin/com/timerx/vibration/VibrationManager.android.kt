@@ -21,16 +21,31 @@ import com.timerx.vibration.Vibration.RigidX3
 import com.timerx.vibration.Vibration.Soft
 import com.timerx.vibration.Vibration.SoftX2
 import com.timerx.vibration.Vibration.SoftX3
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 
 class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibrationManager {
     private val context: Context = KoinPlatform.getKoin().get()
+
+    // TODO Fix this for lower api targets
     private val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 
+    private var vibrationEnabled = true
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+    init {
+        coroutineScope.launch {
+            timerXSettings.alertSettingsManager.alertSettings.collect {
+                vibrationEnabled = it.vibrationEnabled
+            }
+        }
+    }
+
     override suspend fun vibrate(vibration: Vibration) {
-        if (timerXSettings.alertSettings.first().vibrationEnabled.not()) {
+        if (vibrationEnabled.not()) {
             return
         }
         val millis = when (vibration) {

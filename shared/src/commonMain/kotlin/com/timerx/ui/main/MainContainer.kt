@@ -22,43 +22,44 @@ internal class MainContainer(
 
     override val store = store(MainState.Loading()) {
         whileSubscribed {
-            timerRepository.getShallowTimers()
-                .combine(
-                    timerXSettings.alertSettings
-                ) { timers, settings ->
-                    if (timers.isEmpty()) {
-                        MainState.Empty(settings.sortTimersBy)
-                    } else {
-                        val stateMainTimers = settings.sortTimersBy.sort(timers).map { roomTimer ->
-                            MainTimer(
-                                id = roomTimer.id,
-                                name = roomTimer.name,
-                                duration = roomTimer.duration,
-                                startedCount = roomTimer.startedCount,
-                                completedCount = roomTimer.completedCount,
-                                sortOrder = roomTimer.sortOrder,
-                                lastRunMillis = roomTimer.lastRun?.toEpochMilliseconds() ?: 0L,
-                                lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never"
-                            )
-                        }
-                        val listItems = stateMainTimers.chunked(2)
-                            .flatMap {
-                                if (it.size == 2) {
-                                    it + Ad(Random.nextLong())
-                                } else {
-                                    it
-                                }
-                            }
-                        MainState.Content(
-                            timers = listItems.toPersistentList(),
-                            sortTimersBy = settings.sortTimersBy,
-                            showNotificationsPermissionRequest =
-                            settings.ignoreNotificationsPermissions.not() &&
-                                permissionsHandler.getPermissionState(Permission.Notification)
-                                != PermissionState.Granted
+            combine(
+                timerRepository.getShallowTimers(),
+                timerXSettings.alertSettingsManager.alertSettings,
+                timerXSettings.sortTimersBy
+            ) { timers, settings, sortTimersBy ->
+                if (timers.isEmpty()) {
+                    MainState.Empty(sortTimersBy)
+                } else {
+                    val stateMainTimers = sortTimersBy.sort(timers).map { roomTimer ->
+                        MainTimer(
+                            id = roomTimer.id,
+                            name = roomTimer.name,
+                            duration = roomTimer.duration,
+                            startedCount = roomTimer.startedCount,
+                            completedCount = roomTimer.completedCount,
+                            sortOrder = roomTimer.sortOrder,
+                            lastRunMillis = roomTimer.lastRun?.toEpochMilliseconds() ?: 0L,
+                            lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never"
                         )
                     }
+                    val listItems = stateMainTimers.chunked(2)
+                        .flatMap {
+                            if (it.size == 2) {
+                                it + Ad(Random.nextLong())
+                            } else {
+                                it
+                            }
+                        }
+                    MainState.Content(
+                        timers = listItems.toPersistentList(),
+                        sortTimersBy = sortTimersBy,
+                        showNotificationsPermissionRequest =
+                        settings.ignoreNotificationsPermissions.not() &&
+                                permissionsHandler.getPermissionState(Permission.Notification)
+                                != PermissionState.Granted
+                    )
                 }
+            }
                 .collect { updateState { it } }
         }
         reduce {
@@ -75,7 +76,7 @@ internal class MainContainer(
                 }
 
                 MainIntent.IgnoreNotificationsPermission -> {
-                    timerXSettings.setIgnoreNotificationPermissions()
+                    timerXSettings.alertSettingsManager.setIgnoreNotificationPermissions()
                 }
 
                 MainIntent.RequestNotificationsPermission -> {

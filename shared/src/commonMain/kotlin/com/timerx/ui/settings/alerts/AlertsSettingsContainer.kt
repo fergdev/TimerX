@@ -18,7 +18,7 @@ internal class AlertsSettingsContainer(
     override val store =
         store(AlertsSettingsState()) {
             whileSubscribed {
-                timerXSettings.alertSettings.collect {
+                timerXSettings.alertSettingsManager.alertSettings.collect {
                     updateState<AlertsSettingsState, _> {
                         AlertsSettingsState(
                             volume = it.volume,
@@ -32,11 +32,11 @@ internal class AlertsSettingsContainer(
             reduce { settingsIntent ->
                 when (settingsIntent) {
                     is AlertsSettingsIntent.UpdateVolume -> {
-                        timerXSettings.setVolume(settingsIntent.volume)
+                        timerXSettings.alertSettingsManager.setVolume(settingsIntent.volume)
                     }
 
                     is AlertsSettingsIntent.UpdateVibration -> {
-                        timerXSettings.setVibrationEnabled(settingsIntent.enabled)
+                        timerXSettings.alertSettingsManager.setVibrationEnabled(settingsIntent.enabled)
                     }
 
                     is AlertsSettingsIntent.EnableNotifications -> {

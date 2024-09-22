@@ -56,8 +56,8 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
                     }
                 }
             timerRepository.getShallowTimers()
-                .combine(timerXSettings.alertSettings) { timers, settings ->
-                    val sortedTimers = settings.sortTimersBy.sort(timers)
+                .combine(timerXSettings.sortTimersBy) { timers, sortTimersBy ->
+                    val sortedTimers = sortTimersBy.sort(timers)
                     TimerWidgetInfo.Available(
                         sortedTimers.map { timer ->
                             TimerData(
@@ -67,7 +67,7 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
                                 lastRun = timer.lastRun?.toAgo() ?: "Never"
                             )
                         },
-                        settings.sortTimersBy
+                        sortTimersBy
                     )
                 }
                 .collect { availableWidgetInfo ->

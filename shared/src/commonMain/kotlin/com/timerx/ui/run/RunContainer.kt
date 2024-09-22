@@ -5,8 +5,8 @@ import com.timerx.database.ITimerRepository
 import com.timerx.domain.TimerEvent
 import com.timerx.domain.TimerManager
 import com.timerx.domain.TimerState
-import com.timerx.settings.ITimerXSettings
 import com.timerx.settings.AlertSettings
+import com.timerx.settings.ITimerXSettings
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -55,7 +55,7 @@ internal fun observeTimerPlugin(
     onSubscribe {
         launch {
             timerManager.eventState
-                .combine(timerXSettings.alertSettings) { timerEvent: TimerEvent, alertSettings: AlertSettings ->
+                .combine(timerXSettings.alertSettingsManager.alertSettings) { timerEvent: TimerEvent, alertSettings: AlertSettings ->
                     Pair(timerEvent, alertSettings)
                 }
                 .collect {
@@ -130,7 +130,10 @@ internal fun reducePlugin(
             RunScreenIntent.Pause -> timerManager.playPause()
             RunScreenIntent.Play -> timerManager.playPause()
             RunScreenIntent.RestartTimer -> timerManager.restartCurrentTimer()
-            is RunScreenIntent.UpdateVibrationEnabled -> timerXSettings.setVibrationEnabled(it.enabled)
-            is RunScreenIntent.UpdateVolume -> timerXSettings.setVolume(it.volume)
+            is RunScreenIntent.UpdateVibrationEnabled -> timerXSettings.alertSettingsManager.setVibrationEnabled(
+                it.enabled
+            )
+
+            is RunScreenIntent.UpdateVolume -> timerXSettings.alertSettingsManager.setVolume(it.volume)
         }
     }

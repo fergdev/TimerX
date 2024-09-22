@@ -21,7 +21,6 @@ private const val IS_HIGH_FIDELITY = "isHighFidelity"
 private const val THEME_CONTRAST = "contrast"
 
 interface ThemeSettingsManager {
-
     val themeSettings: Flow<ThemeSettings>
     suspend fun setSeedColor(seedColor: Color)
     suspend fun setPaletteStyle(style: PaletteStyle)
