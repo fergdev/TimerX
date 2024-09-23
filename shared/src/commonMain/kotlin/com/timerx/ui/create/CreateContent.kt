@@ -259,7 +259,7 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = stringResource(Res.string.finish_color)
+            Text(text = stringResource(Res.string.finish_color))
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 modifier = Modifier.size(CustomIcons.defaultIconSize),
