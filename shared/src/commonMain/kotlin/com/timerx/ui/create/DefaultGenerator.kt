@@ -5,6 +5,9 @@ import com.timerx.beep.Beep
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.ui.common.blue
+import com.timerx.ui.common.green
+import com.timerx.ui.common.yellow
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.persistentListOf
 
@@ -25,12 +28,12 @@ internal class DefaultGenerator {
             id = defaultIdGenerator++,
             repetitions = 5,
             intervals = persistentListOf(
-                defaultInterval(workString, Color.Green),
-                defaultInterval(restString, Color.Blue),
+                defaultInterval(workString, green),
+                defaultInterval(restString, blue),
             )
         )
 
-    fun defaultInterval(name: String = workString, color: Color = Color.Green) =
+    fun defaultInterval(name: String = workString, color: Color = green) =
         TimerInterval(
             id = defaultIdGenerator++,
             name = name,
@@ -53,7 +56,7 @@ internal class DefaultGenerator {
                 TimerInterval(
                     name = "prepare",//runBlocking { getString(Res.string.prepare) },
                     duration = 10,
-                    color = Color.Yellow,
+                    color = yellow,
                     skipOnLastSet = false,
                     countUp = false,
                     manualNext = false,
