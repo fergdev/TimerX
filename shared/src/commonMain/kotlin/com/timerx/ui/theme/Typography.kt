@@ -10,26 +10,29 @@ import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.sp
+import com.timerx.BuildFlags
+import com.timerx.util.Platform
+import com.timerx.util.platform
 import org.jetbrains.compose.resources.Font
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.comfortaa
 import timerx.shared.generated.resources.montserrat
 
 val Comfortaa
-    //    @Composable get() = if (BuildFlags.platform == Platform.Web)
-    @Composable get() = if (false)
-    // https://github.com/JetBrains/compose-multiplatform/issues/4635
-        FontFamily.Default
-    else
-        Font(Res.font.comfortaa).toFontFamily()
+    @Composable get() =
+        // https://github.com/JetBrains/compose-multiplatform/issues/4635
+        if (BuildFlags.platform == Platform.Web)
+            FontFamily.Default
+        else
+            Font(Res.font.comfortaa).toFontFamily()
 
 val Montserrat @Composable get() = Font(Res.font.montserrat).toFontFamily()
 
 inline val FontFamily.Companion.Montserrat @Composable get() = com.timerx.ui.theme.Montserrat
 inline val FontFamily.Companion.Comfortaa @Composable get() = com.timerx.ui.theme.Comfortaa
 
-//private val FontFeatures = "dlig, liga, kern, zero, locl, size".takeUnless { BuildFlags.platform == Platform.Web }
-private val FontFeatures = "dlig, liga, kern, zero, locl, size".takeUnless { false }
+private val FontFeatures =
+    "dlig, liga, kern, zero, locl, size".takeUnless { BuildFlags.platform == Platform.Web }
 
 // region Typography
 internal val AppTypography

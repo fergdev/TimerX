@@ -71,6 +71,7 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateFinishBeep
 import com.timerx.ui.create.CreateScreenIntent.UpdateFinishColor
 import com.timerx.ui.create.CreateScreenIntent.UpdateFinishVibration
 import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
+import com.timerx.ui.theme.Animation
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -103,7 +104,7 @@ internal fun CreateContent(createComponent: CreateComponent) {
                 TTopBar(
                     scrollBehavior = appBarScrollBehavior,
                     title = stringResource(
-                        if(state.isEditing) Res.string.edit
+                        if (state.isEditing) Res.string.edit
                         else Res.string.create
                     ).branded(),
                     onNavigationIconClick = createComponent::onBackClicked,
@@ -243,31 +244,28 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(
     finishColor: Color
 ) {
     var colorPickerVisible by remember { mutableStateOf(false) }
+    if (colorPickerVisible) {
+        ColorPickerModalBottomSheet(size = 64.dp) {
+            it?.let { intent(UpdateFinishColor(it)) }
+            colorPickerVisible = false
+        }
+    }
     val backgroundColor by animateColorAsState(
         targetValue = finishColor.lightDisplayColor(),
-        animationSpec = tween(400)
+        animationSpec = tween(Animation.fast)
     )
     Box(modifier = Modifier.clickable { colorPickerVisible = true }.background(backgroundColor)) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = stringResource(Res.string.finish_color))
+            Text(text = stringResource(Res.string.finish_color)
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 modifier = Modifier.size(CustomIcons.defaultIconSize),
                 imageVector = CustomIcons.colorFill,
                 contentDescription = null,
             )
-
-            if (colorPickerVisible) {
-                ColorPickerModalBottomSheet(size = 64.dp) {
-                    it?.let {
-                        intent(UpdateFinishColor(it))
-                    }
-                    colorPickerVisible = false
-                }
-            }
         }
     }
 }

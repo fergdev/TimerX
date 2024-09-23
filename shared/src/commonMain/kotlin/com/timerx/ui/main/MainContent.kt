@@ -211,7 +211,6 @@ private fun IntentReceiver<MainIntent>.Content(
 
                     is Ad -> {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             GoogleAd()

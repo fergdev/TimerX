@@ -7,7 +7,7 @@ import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
-import com.timerx.ui.theme.presetColors
+import com.timerx.ui.common.blue
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -43,7 +43,10 @@ internal class ThemeSettingsManagerImpl(
     }
     private val isAmoled = flowSettings.getBooleanOrNullFlow(IS_AMOLED).mapIfNull(false)
     private val seedColor =
-        flowSettings.getIntOrNullFlow(SEED_COLOR).mapIfNull(presetColors[0].toArgb())
+        flowSettings.getIntOrNullFlow(SEED_COLOR).map{
+            if(it == null) blue
+            else Color(it)
+        }
     private val style = flowSettings.getIntOrNullFlow(PALETTE_STYLE).map {
         if (it == null) PaletteStyle.TonalSpot
         else PaletteStyle.entries[it]
@@ -61,7 +64,7 @@ internal class ThemeSettingsManagerImpl(
             isSystemDynamic = isDynamicTheme,
             settingsDarkTheme = isDarkTheme,
             isAmoled = isAmoled,
-            seedColor = Color(seedColor),
+            seedColor = seedColor,
             paletteStyle = style,
             isHighFidelity = isHighFidelity,
             contrast = contrast
@@ -107,7 +110,7 @@ data class ThemeSettings(
     val isSystemDynamic: Boolean = false,
     val settingsDarkTheme: SettingsDarkTheme = SettingsDarkTheme.User,
     val isAmoled: Boolean = true,
-    val seedColor: Color = presetColors[0],
+    val seedColor: Color = blue,
     val paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
     val isHighFidelity: Boolean = false,
     val contrast: Double = Contrast.Default.value

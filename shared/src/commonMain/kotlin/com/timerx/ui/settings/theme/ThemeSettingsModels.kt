@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.timerx.settings.SettingsDarkTheme
-import com.timerx.ui.theme.presetColors
+import com.timerx.ui.common.blue
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
@@ -17,7 +17,7 @@ internal interface ThemeSettingsState : MVIState {
         val isSystemDynamic: Boolean = false,
         val settingsDarkTheme: SettingsDarkTheme = SettingsDarkTheme.User,
         val isAmoled: Boolean = true,
-        val seedColor: Color = presetColors[0],
+        val seedColor: Color = blue,
         val paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
         val isHighFidelity: Boolean = false,
         val contrast: Double = Contrast.Default.value

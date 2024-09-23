@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ actual fun GoogleAd() {
 
     AndroidView(
         modifier = Modifier
+            .padding(top = 8.dp, bottom = 8.dp)
             .wrapContentSize()
             .height(adSize.height.dp),
         factory = { androidViewContext ->
