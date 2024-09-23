@@ -63,9 +63,10 @@
     <string name="sort_order">Sort order</string>
     <string name="started_value">Started: %1$s</string>
     <string name="system_dynamic_colors">System dynamic colors</string>
-    <string name="timer_name">Timer name</string>
     <string name="theme">Theme</string>
     <string name="theme_subtitle">Make Tx look how you want</string>
+    <string name="timer_name">Timer name</string>
+    <string name="timer_name_required">Timer name required</string>
     <string name="total_value">Total %1$s</string>
     <string name="up">Up</string>
     <string name="user">User</string>

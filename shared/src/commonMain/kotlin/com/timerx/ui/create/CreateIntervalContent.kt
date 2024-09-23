@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -170,7 +169,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
         Surface {
             Row(
                 modifier = Modifier
-                    .background(backgroundColor, RoundedCornerShape(8.dp))
+                    .background(backgroundColor, MaterialTheme.shapes.medium)
                     .fillMaxWidth()
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically

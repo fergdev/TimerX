@@ -86,6 +86,7 @@ import timerx.shared.generated.resources.edit
 import timerx.shared.generated.resources.finish_color
 import timerx.shared.generated.resources.save
 import timerx.shared.generated.resources.timer_name
+import timerx.shared.generated.resources.timer_name_required
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,8 +151,8 @@ private fun IntentReceiver<UpdateTimerName>.TimerNameTextField(
     timerNameModel: TimerNameModel
 ) {
     OutlinedTextField(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
         value = timerNameModel.name,
-        modifier = Modifier.fillMaxWidth(),
         maxLines = 1,
         onValueChange = { intent(UpdateTimerName(it)) },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -159,8 +160,8 @@ private fun IntentReceiver<UpdateTimerName>.TimerNameTextField(
         label = { Text(text = stringResource(Res.string.timer_name)) },
         isError = timerNameModel.isError,
         supportingText = {
-            if(timerNameModel.isError){
-                Text(text = "Timer name required")
+            if (timerNameModel.isError) {
+                Text(text = stringResource(Res.string.timer_name_required))
             }
         }
     )
@@ -182,7 +183,6 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
     ) {
         Spacer(Modifier.height(paddingValues.calculateTopPadding()))
         TimerNameTextField(state.timerNameModel)
-        Spacer(modifier = Modifier.height(16.dp))
         SetColumn(state)
         FinalTimeRow(state)
         FinishControls(state)
@@ -198,7 +198,7 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
 private fun IntentReceiver<AddSet>.FinalTimeRow(
     state: CreateScreenState
 ) {
-    Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+    Box(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp).fillMaxWidth()) {
         FilledIconButton(
             modifier = Modifier.align(Alignment.CenterEnd),
             onClick = { intent(AddSet) }
@@ -263,7 +263,11 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(finishColor: Co
         targetValue = finishColor.lightDisplayColor(),
         animationSpec = tween(Animation.fast)
     )
-    Box(modifier = Modifier.clickable { colorPickerVisible = true }.background(backgroundColor)) {
+    Box(modifier = Modifier.clickable { colorPickerVisible = true }
+        .background(
+            color = backgroundColor,
+            shape = MaterialTheme.shapes.medium
+        )) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
