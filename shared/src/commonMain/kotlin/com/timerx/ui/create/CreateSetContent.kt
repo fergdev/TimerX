@@ -61,6 +61,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
         shape = RoundedCornerShape(12.dp),
         card = { shape, content ->
             ElevatedCard(
+                modifier = Modifier.matchParentSize(),
                 shape = shape,
                 content = content
             )
