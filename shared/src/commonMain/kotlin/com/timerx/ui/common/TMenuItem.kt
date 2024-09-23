@@ -107,8 +107,8 @@ fun TMenuItem(
         icon = icon?.let {
             {
                 TMenuItemIcon(
-                    icon = it,
-                    color = if (enabled) color else LocalContentColor.current,
+                    imageVector = it,
+                    tint = if (enabled) color else LocalContentColor.current,
                     contentDescription = title
                 )
             }
@@ -128,12 +128,12 @@ fun TMenuItem(
 
 @Composable
 fun TMenuItemIcon(
-    icon: ImageVector,
-    color: Color,
+    imageVector: ImageVector,
+    tint: Color,
     contentDescription: String
 ) = TCircleIcon(
-    icon = icon,
-    color = color,
+    icon = imageVector,
+    color = tint,
     size = 40.dp,
     contentDescription = contentDescription
 )

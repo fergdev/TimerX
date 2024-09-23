@@ -2,6 +2,9 @@ package com.timerx.ui.settings.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
@@ -54,14 +57,14 @@ internal fun MainSettingsContent(
                 TMenuItem(
                     title = stringResource(Res.string.theme),
                     color = rainbow[1],
-                    icon = CustomIcons.pause,
+                    icon = Icons.Filled.Face,
                     subtitle = stringResource(Res.string.theme_subtitle),
                     onClick = { component.onThemeClicked() }
                 )
                 TMenuItem(
                     title = stringResource(Res.string.keep_screen_on),
                     color = rainbow[2],
-                    icon = CustomIcons.pause,
+                    icon = Icons.Filled.Lock,
                     subtitle = stringResource(Res.string.keep_screen_on_subtitle),
                     onClick = {
                         intent(KeepScreenOn(state.isKeepScreenOn.not()))

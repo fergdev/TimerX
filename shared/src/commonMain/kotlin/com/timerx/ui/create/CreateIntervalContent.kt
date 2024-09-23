@@ -49,9 +49,11 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
+import com.timerx.ui.common.TMenuItemIcon
 import com.timerx.ui.common.UnderlinedField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.lightDisplayColor
+import com.timerx.ui.common.rainbow
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import com.timerx.ui.create.CreateScreenIntent.DuplicateInterval
@@ -119,11 +121,10 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
                     colorPickerVisible = true
                     hideReveal()
                 }) {
-                    Icon(
-                        modifier = Modifier.size(CustomIcons.defaultIconSize),
+                    TMenuItemIcon(
                         imageVector = CustomIcons.colorFill,
-                        contentDescription = null,
-                        tint = contrastColor
+                        contentDescription = "Interval color",
+                        tint = rainbow[0]
                     )
                 }
 
@@ -135,32 +136,32 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
                 }
                 IconButton(onClick = {
                     intent(DuplicateInterval(interval))
+                    hideReveal()
                 }) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
+                    TMenuItemIcon(
                         imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy),
-                        tint = contrastColor
+                        tint = rainbow[3]
                     )
                 }
                 IconButton(onClick = {
                     intent(CreateScreenIntent.DeleteInterval(interval))
+                    hideReveal()
                 }) {
-                    Icon(
+                    TMenuItemIcon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete),
-                        tint = contrastColor
+                        tint = rainbow[6]
                     )
                 }
                 IconButton(onClick = {
                     hideReveal()
                     settingsBottomSheetVisible = true
                 }) {
-                    Icon(
-                        modifier = Modifier.size(CustomIcons.defaultIconSize),
+                    TMenuItemIcon(
                         imageVector = Icons.Filled.Settings,
                         contentDescription = stringResource(Res.string.settings),
-                        tint = contrastColor
+                        tint = rainbow[9]
                     )
                 }
             }

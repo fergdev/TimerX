@@ -8,6 +8,29 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.ui.create.CreateScreenIntent.AddSet
+import com.timerx.ui.create.CreateScreenIntent.DeleteInterval
+import com.timerx.ui.create.CreateScreenIntent.DeleteSet
+import com.timerx.ui.create.CreateScreenIntent.DuplicateInterval
+import com.timerx.ui.create.CreateScreenIntent.DuplicateSet
+import com.timerx.ui.create.CreateScreenIntent.MoveInterval
+import com.timerx.ui.create.CreateScreenIntent.NewInterval
+import com.timerx.ui.create.CreateScreenIntent.Save
+import com.timerx.ui.create.CreateScreenIntent.SwapSet
+import com.timerx.ui.create.CreateScreenIntent.UpdateFinishBeep
+import com.timerx.ui.create.CreateScreenIntent.UpdateFinishColor
+import com.timerx.ui.create.CreateScreenIntent.UpdateFinishVibration
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalBeep
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalColor
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalCountUp
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalDuration
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalFinalCountDown
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalManualNext
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalName
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalSkipOnLastSet
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalVibration
+import com.timerx.ui.create.CreateScreenIntent.UpdateSetRepetitions
+import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
 import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.PersistentList
@@ -90,18 +113,18 @@ private fun reduceIntent(
     timerId: Long
 ) = reducePlugin<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     when (it) {
-        is CreateScreenIntent.UpdateTimerName -> updateState { copy(timerName = it.timerName) }
-        CreateScreenIntent.AddSet ->
+        is UpdateTimerName -> updateState { copy(timerName = it.timerName) }
+        AddSet ->
             updateState {
                 copy(sets = (sets + defaultGenerator.defaultTimerSet()).toPersistentList())
             }
 
-        is CreateScreenIntent.DeleteSet ->
+        is DeleteSet ->
             updateState {
                 copy(sets = sets.filter { set -> it.set == set }.toPersistentList())
             }
 
-        is CreateScreenIntent.DuplicateSet -> {
+        is DuplicateSet -> {
             updateState {
                 val index = sets.indexOfFirst { set -> set.id == it.set.id }
                 val mutableSets = sets.toMutableList()
@@ -118,7 +141,7 @@ private fun reduceIntent(
             }
         }
 
-        is CreateScreenIntent.UpdateSetRepetitions -> {
+        is UpdateSetRepetitions -> {
             updateState {
                 val index = sets.indexOfFirst { set -> set.id == it.set.id }
                 val mutableSets = sets.toMutableList()
@@ -127,7 +150,7 @@ private fun reduceIntent(
             }
         }
 
-        is CreateScreenIntent.DeleteInterval -> {
+        is DeleteInterval -> {
             updateState {
                 copy(
                     sets = sets.map { set ->
@@ -145,14 +168,16 @@ private fun reduceIntent(
             }
         }
 
-        is CreateScreenIntent.DuplicateInterval -> {
+        is DuplicateInterval -> {
             updateState {
                 copy(
                     sets = sets.map { set ->
                         val index = set.intervals.indexOf(it.interval)
                         if (index != -1) {
                             set.copy(
-                                intervals = (set.intervals + set.intervals[index].copy()).toPersistentList()
+                                intervals = (set.intervals + set.intervals[index].copy(
+                                    id = defaultGenerator.getNextId()
+                                )).toPersistentList()
                             )
                         } else {
                             set
@@ -162,7 +187,7 @@ private fun reduceIntent(
             }
         }
 
-        is CreateScreenIntent.MoveInterval -> {
+        is MoveInterval -> {
             updateState {
                 copy(
                     sets = sets.map { set ->
@@ -179,7 +204,7 @@ private fun reduceIntent(
             }
         }
 
-        is CreateScreenIntent.NewInterval -> {
+        is NewInterval -> {
             updateState {
                 val index = sets.indexOfFirst { set -> set.id == it.set.id }
                 val mutableSets = sets.toMutableList()
@@ -191,7 +216,7 @@ private fun reduceIntent(
             }
         }
 
-        is CreateScreenIntent.SwapSet -> {
+        is SwapSet -> {
             updateState {
                 val mutableSets = sets.toMutableList()
                 val set = mutableSets.removeAt(it.from)
@@ -200,23 +225,23 @@ private fun reduceIntent(
             }
         }
 
-        is CreateScreenIntent.UpdateFinishBeep -> {
+        is UpdateFinishBeep -> {
             updateState { copy(finishBeep = it.beep) }
             beepManager.beep(it.beep)
         }
 
-        is CreateScreenIntent.UpdateFinishColor -> {
+        is UpdateFinishColor -> {
             updateState {
                 copy(finishColor = it.color)
             }
         }
 
-        is CreateScreenIntent.UpdateFinishVibration -> {
+        is UpdateFinishVibration -> {
             updateState { copy(finishVibration = finishVibration) }
             vibrationManger.vibrate(it.vibration)
         }
 
-        is CreateScreenIntent.UpdateIntervalBeep -> {
+        is UpdateIntervalBeep -> {
             updateState {
                 copy(
                     sets = sets.updateInterval(
@@ -228,19 +253,19 @@ private fun reduceIntent(
             beepManager.beep(it.beep)
         }
 
-        is CreateScreenIntent.UpdateIntervalColor -> updateState {
+        is UpdateIntervalColor -> updateState {
             copy(sets = sets.updateInterval(interval = it.interval, color = it.color))
         }
 
-        is CreateScreenIntent.UpdateIntervalCountUp -> updateState {
+        is UpdateIntervalCountUp -> updateState {
             copy(sets = sets.updateInterval(interval = it.interval, countUp = it.countUp))
         }
 
-        is CreateScreenIntent.UpdateIntervalDuration -> updateState {
+        is UpdateIntervalDuration -> updateState {
             copy(sets = sets.updateInterval(interval = it.interval, duration = it.duration))
         }
 
-        is CreateScreenIntent.UpdateIntervalFinalCountDown -> updateState {
+        is UpdateIntervalFinalCountDown -> updateState {
             copy(
                 sets = sets.updateInterval(
                     interval = it.interval,
@@ -249,7 +274,7 @@ private fun reduceIntent(
             )
         }
 
-        is CreateScreenIntent.UpdateIntervalManualNext ->
+        is UpdateIntervalManualNext ->
             updateState {
                 copy(
                     sets = sets.updateInterval(
@@ -259,12 +284,12 @@ private fun reduceIntent(
                 )
             }
 
-        is CreateScreenIntent.UpdateIntervalName ->
+        is UpdateIntervalName ->
             updateState {
                 copy(sets = sets.updateInterval(interval = it.interval, name = it.name))
             }
 
-        is CreateScreenIntent.UpdateIntervalSkipOnLastSet -> updateState {
+        is UpdateIntervalSkipOnLastSet -> updateState {
             copy(
                 sets = sets.updateInterval(
                     interval = it.interval,
@@ -273,7 +298,7 @@ private fun reduceIntent(
             )
         }
 
-        is CreateScreenIntent.UpdateIntervalVibration -> {
+        is UpdateIntervalVibration -> {
             updateState {
                 copy(
                     sets = sets.updateInterval(
@@ -285,7 +310,7 @@ private fun reduceIntent(
             vibrationManger.vibrate(it.vibration)
         }
 
-        CreateScreenIntent.Save -> {
+        Save -> {
             withState {
                 val name = timerName.ifBlank {
                     getString(
@@ -355,22 +380,22 @@ private fun PersistentList<TimerSet>.updateInterval(
     vibration: Vibration? = null,
     finalCountDown: FinalCountDown? = null
 ) = this.map { set ->
-        val index = set.intervals.indexOf(interval)
-        if (index != -1) {
-            val mutableIntervals = set.intervals.toMutableList()
-            mutableIntervals[index] = interval.copy(
-                name = name ?: interval.name,
-                duration = duration ?: interval.duration,
-                color = color ?: interval.color,
-                skipOnLastSet = skipOnLastSet ?: interval.skipOnLastSet,
-                countUp = countUp ?: interval.countUp,
-                manualNext = manualNext ?: interval.manualNext,
-                beep = beep ?: interval.beep,
-                vibration = vibration ?: interval.vibration,
-                finalCountDown = finalCountDown ?: interval.finalCountDown
-            )
-            set.copy(intervals = mutableIntervals.toPersistentList())
-        } else {
-            set
-        }
-    }.toPersistentList()
+    val index = set.intervals.indexOf(interval)
+    if (index != -1) {
+        val mutableIntervals = set.intervals.toMutableList()
+        mutableIntervals[index] = interval.copy(
+            name = name ?: interval.name,
+            duration = duration ?: interval.duration,
+            color = color ?: interval.color,
+            skipOnLastSet = skipOnLastSet ?: interval.skipOnLastSet,
+            countUp = countUp ?: interval.countUp,
+            manualNext = manualNext ?: interval.manualNext,
+            beep = beep ?: interval.beep,
+            vibration = vibration ?: interval.vibration,
+            finalCountDown = finalCountDown ?: interval.finalCountDown
+        )
+        set.copy(intervals = mutableIntervals.toPersistentList())
+    } else {
+        set
+    }
+}.toPersistentList()
