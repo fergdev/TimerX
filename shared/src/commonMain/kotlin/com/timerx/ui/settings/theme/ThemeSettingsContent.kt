@@ -2,6 +2,7 @@ package com.timerx.ui.settings.theme
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,7 +26,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -319,21 +319,18 @@ private fun IntentReceiver<UpdateSeedColor>.SeedColorRow(seedColor: Color) {
     ThemeCard {
         FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
             rainbow.forEach { color ->
-                val animatedBorderColor by animateColorAsState(
-                    targetValue = if (seedColor == color) Color.White
-                    else Color.Transparent,
+                val alpha by animateFloatAsState(
+                    targetValue = if(seedColor == color) 1.0f else 0f,
                     animationSpec = tween(durationMillis = Animation.fast)
                 )
 
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(100.dp))
+                        .size(48.dp)
+                        .clip(CircleShape)
                         .background(color)
-                        .border(
-                                width = 4.dp, color = animatedBorderColor, shape = CircleShape
-                            )
+                        .border(width = 4.dp, color = Color.White.copy(alpha = alpha), shape = CircleShape)
                         .clickable { intent(UpdateSeedColor(color)) }
                 )
             }
