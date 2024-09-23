@@ -147,16 +147,22 @@ private fun IntentReceiver<Save>.TopAppBarActions() {
 
 @Composable
 private fun IntentReceiver<UpdateTimerName>.TimerNameTextField(
-    state: CreateScreenState,
+    timerNameModel: TimerNameModel
 ) {
     OutlinedTextField(
-        value = state.timerName,
+        value = timerNameModel.name,
         modifier = Modifier.fillMaxWidth(),
         maxLines = 1,
         onValueChange = { intent(UpdateTimerName(it)) },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         placeholder = { Text(text = stringResource(Res.string.timer_name)) },
         label = { Text(text = stringResource(Res.string.timer_name)) },
+        isError = timerNameModel.isError,
+        supportingText = {
+            if(timerNameModel.isError){
+                Text(text = "Timer name required")
+            }
+        }
     )
 }
 
@@ -175,7 +181,7 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
             .verticalScroll(scrollState)
     ) {
         Spacer(Modifier.height(paddingValues.calculateTopPadding()))
-        TimerNameTextField(state)
+        TimerNameTextField(state.timerNameModel)
         Spacer(modifier = Modifier.height(16.dp))
         SetColumn(state)
         FinalTimeRow(state)

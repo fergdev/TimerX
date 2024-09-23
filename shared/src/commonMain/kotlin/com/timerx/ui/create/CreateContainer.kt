@@ -39,24 +39,10 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.format.FormatStringsInDatetimeFormats
-import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.getString
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.plugins.init
 import pro.respawn.flowmvi.plugins.reducePlugin
-import timerx.shared.generated.resources.Res
-import timerx.shared.generated.resources.created_value
-
-@OptIn(FormatStringsInDatetimeFormats::class)
-private val dateTimeFormat = LocalDateTime.Format {
-    byUnicodePattern("yyyy-MM-dd HH:mm:ss")
-}
 
 internal class CreateContainer(
     timerId: Long,
@@ -72,7 +58,7 @@ internal class CreateContainer(
                 if (timer != null) {
                     updateState {
                         CreateScreenState(
-                            timerName = timer.name,
+                            timerNameModel = TimerNameModel(timer.name),
                             sets = timer.sets.toPersistentList(),
                             isEditing = true,
                             finishColor = timer.finishColor,
@@ -113,7 +99,7 @@ private fun reduceIntent(
     timerId: Long
 ) = reducePlugin<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     when (it) {
-        is UpdateTimerName -> updateState { copy(timerName = it.timerName) }
+        is UpdateTimerName -> updateState { copy(timerNameModel = TimerNameModel(name = it.timerName)) }
         AddSet ->
             updateState {
                 copy(sets = (sets + defaultGenerator.defaultTimerSet()).toPersistentList())
@@ -312,22 +298,21 @@ private fun reduceIntent(
 
         Save -> {
             withState {
-                val name = timerName.ifBlank {
-                    getString(
-                        Res.string.created_value,
-                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                            .format(dateTimeFormat)
-                    )
+                if (timerNameModel.name.isBlank()) {
+                    updateState {
+                        copy(timerNameModel = timerNameModel.copy(isError = true))
+                    }
+                    return@withState
                 }
                 launch {
                     val newSets = sets.normaliseSets()
-                    val timerEditing = timerDatabase.getTimer(timerId)?.first()
+                    val timerEditing = timerDatabase.getTimer(timerId).first()
                     if (timerEditing != null) {
                         timerDatabase.updateTimer(
                             Timer(
                                 id = timerEditing.id,
                                 sortOrder = timerEditing.sortOrder,
-                                name = name,
+                                name = timerNameModel.name,
                                 sets = newSets,
                                 finishColor = finishColor,
                                 finishBeep = finishBeep,
@@ -340,7 +325,7 @@ private fun reduceIntent(
                     } else {
                         timerDatabase.insertTimer(
                             Timer(
-                                name = name,
+                                name = timerNameModel.name,
                                 sets = newSets,
                                 finishColor = finishColor,
                                 finishBeep = finishBeep,
