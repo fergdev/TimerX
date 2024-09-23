@@ -149,7 +149,10 @@ private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
 private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
     isHighFidelity: Boolean,
 ) {
-    ThemeCard {
+    val updateIsHighFidelity = {
+        intent(UpdateIsHighFidelity(isHighFidelity.not()))
+    }
+    ThemeCard(modifier = Modifier.clickable { updateIsHighFidelity() }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.high_fidelity))
             Spacer(modifier = Modifier.weight(1f))
@@ -187,17 +190,20 @@ private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: Double) {
 }
 
 @Composable
-private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(
-    isSystemDynamic: Boolean
-) {
-    ThemeCard {
+private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(isSystemDynamic: Boolean) {
+    val updateIsSystemDynamic = {
+        intent(UpdateIsSystemDynamic(isSystemDynamic.not()))
+    }
+    ThemeCard(modifier = Modifier.clickable {
+        updateIsSystemDynamic()
+    }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.system_dynamic_colors))
             Spacer(modifier = Modifier.weight(1f))
             Switch(
                 checked = isSystemDynamic,
                 onCheckedChange = {
-                    intent(UpdateIsSystemDynamic(it))
+                    updateIsSystemDynamic()
                 }
             )
         }
@@ -206,14 +212,19 @@ private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(
 
 @Composable
 private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
-    ThemeCard {
+    val updateIsAmoled = {
+        intent(UpdateIsAmoled(isAmoled.not()))
+    }
+    ThemeCard(modifier = Modifier.clickable {
+        updateIsAmoled()
+    }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.amoled))
             Spacer(modifier = Modifier.weight(1f))
             Switch(
                 checked = isAmoled,
                 onCheckedChange = {
-                    intent(UpdateIsAmoled(it))
+                    updateIsAmoled()
                 }
             )
         }
@@ -297,7 +308,7 @@ private fun ColorPreview() {
 }
 
 @Composable
-fun ColorBox(
+private fun ColorBox(
     text: String,
     color: Color,
     modifier: Modifier = Modifier,
@@ -320,7 +331,7 @@ private fun IntentReceiver<UpdateSeedColor>.SeedColorRow(seedColor: Color) {
         FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
             rainbow.forEach { color ->
                 val alpha by animateFloatAsState(
-                    targetValue = if(seedColor == color) 1.0f else 0f,
+                    targetValue = if (seedColor == color) 1.0f else 0f,
                     animationSpec = tween(durationMillis = Animation.fast)
                 )
 
@@ -330,7 +341,11 @@ private fun IntentReceiver<UpdateSeedColor>.SeedColorRow(seedColor: Color) {
                         .size(48.dp)
                         .clip(CircleShape)
                         .background(color)
-                        .border(width = 4.dp, color = Color.White.copy(alpha = alpha), shape = CircleShape)
+                        .border(
+                            width = 4.dp,
+                            color = Color.White.copy(alpha = alpha),
+                            shape = CircleShape
+                        )
                         .clickable { intent(UpdateSeedColor(color)) }
                 )
             }
@@ -354,8 +369,8 @@ private fun colorSchemePairs() = listOf(
 )
 
 @Composable
-private fun ThemeCard(content: @Composable ColumnScope.() -> Unit) {
-    ElevatedCard {
+private fun ThemeCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    ElevatedCard(modifier = modifier) {
         Column(modifier = Modifier.padding(8.dp)) {
             content()
         }

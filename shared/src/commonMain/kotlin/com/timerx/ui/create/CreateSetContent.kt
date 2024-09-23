@@ -45,7 +45,7 @@ import timerx.shared.generated.resources.down
 import timerx.shared.generated.resources.sets
 
 @Composable
-internal fun IntentReceiver<CreateScreenIntent>.CreateSet(
+internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
     timerSet: TimerSet,
     reorderableScope: ReorderableScope
 ) {
@@ -95,7 +95,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSet(
                 },
             ) { _, timerInterval, _ ->
                 key(timerInterval.id) {
-                    CreateInterval(
+                    CreateIntervalContent(
                         interval = timerInterval,
                         canSkipOnLastSet = timerSet.repetitions > 1,
                         scope = this@ReorderableColumn

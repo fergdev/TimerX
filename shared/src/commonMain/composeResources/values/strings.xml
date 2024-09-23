@@ -38,6 +38,8 @@
     <string name="ignore">Ignore</string>
     <string name="interval">Interval</string>
     <string name="interval_name">Interval name</string>
+    <string name="keep_screen_on">Keep screen on</string>
+    <string name="keep_screen_on_subtitle">Allow Tx to keep the screen alive while a timer is running</string>
     <string name="manual_next">Manual next</string>
     <string name="minus">Minus</string>
     <string name="next">Next</string>

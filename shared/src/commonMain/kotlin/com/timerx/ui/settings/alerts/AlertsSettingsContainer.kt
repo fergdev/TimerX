@@ -22,8 +22,8 @@ internal class AlertsSettingsContainer(
                     updateState<AlertsSettingsState, _> {
                         AlertsSettingsState(
                             volume = it.volume,
-                            vibration = it.vibrationEnabled,
-                            notificationsEnabled = isNotificationsEnabled()
+                            isVibrationEnabled = it.vibrationEnabled,
+                            isNotificationsEnabled = isNotificationsEnabled()
                         )
                     }
                 }
@@ -42,7 +42,7 @@ internal class AlertsSettingsContainer(
                     is AlertsSettingsIntent.EnableNotifications -> {
                         permissionsHandler.requestPermission(Permission.Notification)
                         updateState {
-                            copy(notificationsEnabled = isNotificationsEnabled())
+                            copy(isNotificationsEnabled = isNotificationsEnabled())
                         }
                     }
 

@@ -86,7 +86,6 @@ fun RunContent(runComponent: RunComponent) {
         LaunchedEffect(Unit) { start(this).join() }
 
         val state by subscribe(DefaultLifecycle)
-        KeepScreenOn()
 
         when (state) {
             RunScreenState.Loading -> LoadingContent()
@@ -129,6 +128,9 @@ private fun IntentReceiver<RunScreenIntent>.LoadedContent(
     state: Loaded,
     runComponent: RunComponent
 ) {
+    if (state.keepScreenOn) {
+        KeepScreenOn()
+    }
     val backgroundColor = if (state is Paused) {
         MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
             .compositeOver(state.backgroundColor)

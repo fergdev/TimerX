@@ -22,19 +22,19 @@ import androidx.compose.ui.unit.dp
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun ColorPickerModalBottomSheet(
-    size: Dp = 32.dp,
-    onUpdate: (Color?) -> Unit,
+    size: Dp = 64.dp,
+    onColorSelected: (Color?) -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = { onUpdate(null) }) {
+    ModalBottomSheet(onDismissRequest = { onColorSelected(null) }) {
         ColorsFlowRow(size = size) {
-            onUpdate(it)
+            onColorSelected(it)
         }
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun ColorsFlowRow(size: Dp = 32.dp, onClick: (Color) -> Unit) {
+internal fun ColorsFlowRow(size: Dp = 64.dp, onColorSelected: (Color) -> Unit) {
     FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
         rainbow.forEach { color ->
             Box(
@@ -43,7 +43,7 @@ internal fun ColorsFlowRow(size: Dp = 32.dp, onClick: (Color) -> Unit) {
                     .size(size)
                     .clip(RoundedCornerShape(100.dp))
                     .background(color)
-                    .clickable { onClick(color) }
+                    .clickable { onColorSelected(color) }
             )
         }
     }

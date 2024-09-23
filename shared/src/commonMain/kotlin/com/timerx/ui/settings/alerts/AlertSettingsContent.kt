@@ -1,5 +1,6 @@
 package com.timerx.ui.settings.alerts
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -57,16 +58,16 @@ fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) {
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                VolumeCard(state)
-                VibrationCard(state)
-                NotificationsCard(state)
+                VolumeCard(state.volume)
+                VibrationCard(state.isVibrationEnabled)
+                NotificationsCard(state.isNotificationsEnabled)
             }
         }
     }
 }
 
 @Composable
-private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(state: AlertsSettingsState) {
+private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(isNotificationsEnabled:Boolean) {
     AlertCard {
         Row(
             modifier = Modifier.padding(vertical = 16.dp),
@@ -74,7 +75,7 @@ private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(state: Alerts
         ) {
             Text(text = stringResource(Res.string.notifications))
             Spacer(modifier = Modifier.weight(1f))
-            if (state.notificationsEnabled) {
+            if (isNotificationsEnabled) {
                 Text(stringResource(Res.string.enabled))
             } else {
                 Button(onClick = { intent(EnableNotifications) }) {
@@ -90,17 +91,22 @@ private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(state: Alerts
 }
 
 @Composable
-private fun IntentReceiver<UpdateVibration>.VibrationCard(state: AlertsSettingsState) {
-    AlertCard {
+private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Boolean) {
+    val haptic = LocalHapticFeedback.current
+    val updateVibration = {
+        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        intent(UpdateVibration(isVibrationEnabled.not()))
+    }
+    AlertCard(modifier = Modifier.clickable {
+        updateVibration()
+    }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.vibration))
             Spacer(modifier = Modifier.weight(1f))
-            val haptic = LocalHapticFeedback.current
             Switch(
-                state.vibration,
+                isVibrationEnabled,
                 onCheckedChange = {
-                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    intent(UpdateVibration(it))
+                    updateVibration()
                 }
             )
         }
@@ -108,19 +114,19 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(state: AlertsSettingsS
 }
 
 @Composable
-private fun IntentReceiver<UpdateVolume>.VolumeCard(state: AlertsSettingsState) {
+private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Float) {
     AlertCard {
         Text(text = stringResource(Res.string.volume))
         Slider(
-            value = state.volume,
+            value = volume,
             onValueChange = { intent(UpdateVolume(it)) }
         )
     }
 }
 
 @Composable
-private fun AlertCard(content: @Composable ColumnScope.() -> Unit) {
-    ElevatedCard {
+private fun AlertCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    ElevatedCard(modifier = modifier) {
         Column(modifier = Modifier.padding(8.dp)) {
             content()
         }

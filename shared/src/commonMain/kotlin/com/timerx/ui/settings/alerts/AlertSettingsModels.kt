@@ -7,8 +7,8 @@ import pro.respawn.flowmvi.api.MVIState
 @Serializable
 data class AlertsSettingsState(
     val volume: Float = 1.0F,
-    val vibration: Boolean = false,
-    val notificationsEnabled: Boolean = false,
+    val isVibrationEnabled: Boolean = false,
+    val isNotificationsEnabled: Boolean = false,
 ) : MVIState
 
 interface AlertsSettingsIntent : MVIIntent {

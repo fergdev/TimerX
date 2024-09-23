@@ -135,12 +135,8 @@ internal fun CreateContent(createComponent: CreateComponent) {
 }
 
 @Composable
-private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions() {
-    IconButton(
-        onClick = {
-            intent(Save)
-        }
-    ) {
+private fun IntentReceiver<Save>.TopAppBarActions() {
+    IconButton(onClick = { intent(Save) }) {
         Icon(
             modifier = Modifier.size(CustomIcons.defaultIconSize),
             imageVector = Icons.Default.Done,
@@ -150,7 +146,7 @@ private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions() {
 }
 
 @Composable
-private fun IntentReceiver<CreateScreenIntent>.TimerNameTextField(
+private fun IntentReceiver<UpdateTimerName>.TimerNameTextField(
     state: CreateScreenState,
 ) {
     OutlinedTextField(
@@ -174,49 +170,58 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
             .nestedScroll(nestedScrollConnection)
             .verticalScroll(scrollState)
     ) {
         Spacer(Modifier.height(paddingValues.calculateTopPadding()))
         TimerNameTextField(state)
         Spacer(modifier = Modifier.height(16.dp))
-        ReorderableColumn(
-            list = state.sets,
-            onSettle = { from, to ->
-                intent(SwapSet(from, to))
-            },
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) { _, set, _ ->
-            key(set.id) {
-                CreateSet(
-                    timerSet = set,
-                    this
-                )
-            }
-        }
-        Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-            FilledIconButton(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                onClick = { intent(AddSet) }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(Res.string.add)
-                )
-            }
-            AnimatedNumber(
-                modifier = Modifier.align(Alignment.TopCenter),
-                value = state.sets.length(),
-                textStyle = MaterialTheme.typography.displayMedium
-            ) { it.timeFormatted() }
-        }
+        SetColumn(state)
+        FinalTimeRow(state)
         FinishControls(state)
         Spacer(
             Modifier.height(
                 WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
             )
         )
+    }
+}
+
+@Composable
+private fun IntentReceiver<AddSet>.FinalTimeRow(
+    state: CreateScreenState
+) {
+    Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+        FilledIconButton(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            onClick = { intent(AddSet) }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = stringResource(Res.string.add)
+            )
+        }
+        AnimatedNumber(
+            modifier = Modifier.align(Alignment.TopCenter),
+            value = state.sets.length(),
+            textStyle = MaterialTheme.typography.displayMedium
+        ) { it.timeFormatted() }
+    }
+}
+
+@Composable
+private fun IntentReceiver<CreateScreenIntent>.SetColumn(state: CreateScreenState) {
+    ReorderableColumn(
+        list = state.sets,
+        onSettle = { from, to ->
+            intent(SwapSet(from, to))
+        },
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) { _, set, _ ->
+        key(set.id) {
+            CreateSetContent(timerSet = set, this)
+        }
     }
 }
 
@@ -240,9 +245,7 @@ private fun IntentReceiver<CreateScreenIntent>.FinishControls(state: CreateScree
 }
 
 @Composable
-private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(
-    finishColor: Color
-) {
+private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(finishColor: Color) {
     var colorPickerVisible by remember { mutableStateOf(false) }
     if (colorPickerVisible) {
         ColorPickerModalBottomSheet(size = 64.dp) {

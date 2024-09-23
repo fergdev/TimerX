@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
 
 object CornerRadius {
-
     val extraSmall = 12.dp
     const val small = 50
     val medium = 16.dp
@@ -13,7 +12,6 @@ object CornerRadius {
 }
 
 object Size {
-
     val bottomBar = 68.dp
     val icon = 28.dp
     val smallIcon = 18.dp
@@ -24,15 +22,12 @@ object Size {
 object Padding {
 
     object Widget {
-
         val vertical = 12.dp
         val horizontal = 16.dp
-
         val values = PaddingValues(horizontal, vertical)
     }
 
     object Screen {
-
         val values get() = PaddingValues(horizontal, vertical)
         val horizontal = 12.dp
         val vertical = 16.dp
@@ -49,19 +44,16 @@ object Padding {
 }
 
 object Elevation {
-
     val none = 0.dp
     val small = 1.dp
     val normal = 4.dp
     val high = 8.dp
     val floating = 12.dp
-
     val dialog = normal
     val bottomSheet = 2.dp
 }
 
 object Blur {
-
     val lowest = 2.dp
     val low = 4.dp
     val medium = 12.dp
@@ -70,7 +62,6 @@ object Blur {
 }
 
 object Opacity {
-
     const val enabled = 1f
     const val secondary = 0.85f
     const val semiTransparent = 0.66f

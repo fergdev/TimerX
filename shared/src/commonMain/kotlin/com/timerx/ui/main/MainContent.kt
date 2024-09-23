@@ -65,6 +65,7 @@ import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.TIcon
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.TTopBar
+import com.timerx.ui.common.branded
 import com.timerx.ui.common.contrastSystemBarColor
 import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rememberRevealState
@@ -355,7 +356,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
         ) {
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Text(
-                    text = mainTimer.name,
+                    text = mainTimer.name.branded(),
                     style = MaterialTheme.typography.displaySmall,
                     maxLines = 1
                 )
@@ -363,10 +364,14 @@ private fun IntentReceiver<MainIntent>.TimerCard(
                 Row {
                     Text(
                         text = mainTimer.duration.timeFormatted(),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    Text(text = mainTimer.lastRunFormatted)
+                    Text(
+                        text = mainTimer.lastRunFormatted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
