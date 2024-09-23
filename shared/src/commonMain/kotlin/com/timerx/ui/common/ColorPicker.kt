@@ -20,9 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.timerx.ui.theme.presetColors
 
 @Composable
-@OptIn(
-    ExperimentalMaterial3Api::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun ColorPickerModalBottomSheet(
     onUpdate: (Color?) -> Unit,
 ) {

@@ -86,13 +86,9 @@ import timerx.shared.generated.resources.finish_color
 import timerx.shared.generated.resources.save
 import timerx.shared.generated.resources.timer_name
 
-private const val TWO_HUNDRED_SEVENTY_DEG = 270f
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CreateContent(
-    createComponent: CreateComponent
-) {
+internal fun CreateContent(createComponent: CreateComponent) {
     with(koinInject<CreateContainer> { parametersOf(createComponent.timerId) }.store) {
         LaunchedEffect(Unit) { start(this).join() }
 

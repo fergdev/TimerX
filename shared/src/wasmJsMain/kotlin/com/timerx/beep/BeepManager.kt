@@ -11,7 +11,7 @@ class ABeepManager(settings: ITimerXSettings) : IBeepManager {
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            settings.alertSettings.collect {
+            settings.alertSettingsManager.alertSettings.collect {
                 volume = it.volume.toDouble()
             }
         }

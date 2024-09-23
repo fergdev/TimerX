@@ -38,10 +38,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -50,7 +48,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
@@ -65,7 +62,11 @@ import com.timerx.ui.ads.GoogleAd
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
+import com.timerx.ui.common.TIcon
+import com.timerx.ui.common.TScaffold
+import com.timerx.ui.common.TTopBar
 import com.timerx.ui.common.contrastSystemBarColor
+import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import kotlinx.coroutines.launch
@@ -97,66 +98,57 @@ internal fun MainContent(mainComponent: MainComponent) {
         LaunchedEffect(Unit) { start(this).join() }
 
         val state by subscribe(DefaultLifecycle)
-
         contrastSystemBarColor(MaterialTheme.colorScheme.surface)
 
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-        Box {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { Text(text = stringResource(Res.string.app_name)) },
-                        scrollBehavior = appBarScrollBehavior,
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            scrolledContainerColor = Color.Transparent,
-                        ),
-                        actions = {
-                            TopAppBarActions(
-                                state.sortTimersBy,
-                                mainComponent
-                            )
-                        },
+        TScaffold(
+            topBar = {
+                TTopBar(
+                    title = stringResource(Res.string.app_name).doubleBranded(),
+                    scrollBehavior = appBarScrollBehavior,
+                    actions = { TopAppBarActions(state.sortTimersBy, mainComponent) },
+                )
+            },
+            fab = {
+                FloatingActionButton(
+                    modifier = Modifier.padding(
+                        end = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateRightPadding(LayoutDirection.Ltr),
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding()
+                    ),
+                    onClick = mainComponent::onCreateClicked
+                ) {
+                    TIcon(
+                        icon = Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.add)
                     )
-                },
-                floatingActionButton = {
-                    FloatingActionButton(
-                        modifier = Modifier.padding(
-                            end = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateRightPadding(LayoutDirection.Ltr)
-                        ),
-                        onClick = mainComponent::onCreateClicked
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(Res.string.add)
+                }
+            }
+        ) { padding ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                when (state) {
+                    is MainState.Loading -> {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+
+                    is MainState.Empty -> {
+                        Text(
+                            modifier = Modifier.padding(16.dp).align(Alignment.Center),
+                            text = stringResource(Res.string.no_timers)
                         )
                     }
-                }
-            ) { paddingValues ->
-                Box(modifier = Modifier.fillMaxSize()) {
-                    when (state) {
-                        is MainState.Loading -> {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                        }
 
-                        is MainState.Empty -> {
-                            Text(
-                                modifier = Modifier.padding(16.dp).align(Alignment.Center),
-                                text = stringResource(Res.string.no_timers)
+                    is MainState.Content -> {
+                        with(state as MainState.Content) {
+                            Content(
+                                this,
+                                mainComponent,
+                                appBarScrollBehavior,
+                                padding
                             )
-                        }
-
-                        is MainState.Content -> {
-                            with(state as MainState.Content) {
-                                Content(
-                                    this,
-                                    mainComponent,
-                                    paddingValues,
-                                    appBarScrollBehavior
-                                )
-                                if (this.showNotificationsPermissionRequest) {
-                                    NotificationPermissions()
-                                }
+                            if (this.showNotificationsPermissionRequest) {
+                                NotificationPermissions()
                             }
                         }
                     }
@@ -171,8 +163,8 @@ internal fun MainContent(mainComponent: MainComponent) {
 private fun IntentReceiver<MainIntent>.Content(
     state: MainState.Content,
     mainComponent: MainComponent,
-    paddingValues: PaddingValues,
-    appBarScrollBehavior: TopAppBarScrollBehavior
+    appBarScrollBehavior: TopAppBarScrollBehavior,
+    padding: PaddingValues
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()
@@ -182,9 +174,8 @@ private fun IntentReceiver<MainIntent>.Content(
             .nestedScroll(appBarScrollBehavior.nestedScrollConnection),
     ) {
         item {
-            Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+            Spacer(Modifier.height(padding.calculateTopPadding()))
         }
-
         items(items = state.timers, key = { it.id }) { timer ->
             val layoutDirection = LocalLayoutDirection.current
             Box(
@@ -231,9 +222,8 @@ private fun IntentReceiver<MainIntent>.Content(
                 }
             }
         }
-
         item {
-            Spacer(Modifier.height(paddingValues.calculateBottomPadding()))
+            Spacer(Modifier.height(systemBarPadding.calculateBottomPadding()))
         }
     }
 }
@@ -362,27 +352,28 @@ private fun IntentReceiver<MainIntent>.TimerCard(
         },
     ) {
         ElevatedCard(
-            modifier = Modifier.fillMaxWidth().clickable { onNavigateRunScreen(mainTimer.id) }
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onNavigateRunScreen(mainTimer.id) }
         ) {
-            Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                Column(modifier = Modifier.weight(1F)) {
-                    Text(
-                        text = mainTimer.name,
-                        style = MaterialTheme.typography.displaySmall
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                Text(
+                    text = mainTimer.name,
+                    style = MaterialTheme.typography.displaySmall,
+                    maxLines = 1
+                )
+                Text(
+                    text = mainTimer.duration.timeFormatted(),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(text = stringResource(Res.string.started_value, mainTimer.startedCount))
+                Text(
+                    text = stringResource(
+                        Res.string.completed_value,
+                        mainTimer.completedCount
                     )
-                    Text(
-                        text = mainTimer.duration.timeFormatted(),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(text = stringResource(Res.string.started_value, mainTimer.startedCount))
-                    Text(
-                        text = stringResource(
-                            Res.string.completed_value,
-                            mainTimer.completedCount
-                        )
-                    )
-                    Text(text = mainTimer.lastRunFormatted)
-                }
+                )
+                Text(text = mainTimer.lastRunFormatted)
             }
         }
     }

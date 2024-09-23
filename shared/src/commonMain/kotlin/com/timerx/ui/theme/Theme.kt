@@ -1,34 +1,21 @@
-package com.timerx.ui.common
+package com.timerx.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.DynamicMaterialThemeState
 import com.materialkolor.rememberDynamicMaterialThemeState
 import com.timerx.settings.ITimerXSettings
 import com.timerx.settings.SettingsDarkTheme
 import com.timerx.settings.ThemeSettings
-import com.timerx.ui.theme.systemDynamicColorScheme
 import org.koin.compose.koinInject
 
-private val typography = Typography(
-    bodyMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    )
-)
 private val shapes = Shapes(
     extraSmall = RoundedCornerShape(4.dp),
     small = RoundedCornerShape(8.dp),
@@ -63,7 +50,7 @@ fun TimerXTheme(content: @Composable () -> Unit) {
     DynamicMaterialTheme(
         state = state,
         animate = true,
-        typography = typography,
+        typography = AppTypography,
         shapes = shapes,
         content = {
             Surface(content = content)

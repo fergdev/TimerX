@@ -14,12 +14,12 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.timerx.ui.common.TimerXTheme
 import com.timerx.ui.create.CreateContent
 import com.timerx.ui.main.MainContent
 import com.timerx.ui.navigation.RootComponent
 import com.timerx.ui.run.RunContent
 import com.timerx.ui.settings.SettingsContent
+import com.timerx.ui.theme.TimerXTheme
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
