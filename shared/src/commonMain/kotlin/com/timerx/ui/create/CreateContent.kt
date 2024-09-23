@@ -18,25 +18,25 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,11 +48,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
@@ -62,8 +60,9 @@ import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.ColorPickerModalBottomSheet
 import com.timerx.ui.common.CustomIcons
-import com.timerx.ui.common.UnderlinedField
+import com.timerx.ui.common.TTopBar
 import com.timerx.ui.common.VibrationSelector
+import com.timerx.ui.common.branded
 import com.timerx.ui.common.lightDisplayColor
 import com.timerx.ui.create.CreateScreenIntent.AddSet
 import com.timerx.ui.create.CreateScreenIntent.Save
@@ -81,7 +80,8 @@ import pro.respawn.flowmvi.compose.dsl.subscribe
 import sh.calvin.reorderable.ReorderableColumn
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
-import timerx.shared.generated.resources.back
+import timerx.shared.generated.resources.create
+import timerx.shared.generated.resources.edit
 import timerx.shared.generated.resources.finish_color
 import timerx.shared.generated.resources.save
 import timerx.shared.generated.resources.timer_name
@@ -100,12 +100,14 @@ internal fun CreateContent(createComponent: CreateComponent) {
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
         Scaffold(
             topBar = {
-                TopAppBar(
+                TTopBar(
                     scrollBehavior = appBarScrollBehavior,
-                    title = { TimerNameTextField(state) },
-                    navigationIcon = { AppBarNavigationIcon(createComponent::onBackClicked) },
+                    title = stringResource(
+                        if(state.isEditing) Res.string.edit
+                        else Res.string.create
+                    ).branded(),
+                    onNavigationIconClick = createComponent::onBackClicked,
                     actions = { TopAppBarActions() },
-                    colors = TopAppBarDefaults.topAppBarColors(scrolledContainerColor = Color.Transparent)
                 )
             },
             content = { paddingValues ->
@@ -147,37 +149,17 @@ private fun IntentReceiver<CreateScreenIntent>.TopAppBarActions() {
 }
 
 @Composable
-private fun AppBarNavigationIcon(onNavigateUp: () -> Unit) {
-    IconButton(onClick = { onNavigateUp() }) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = stringResource(Res.string.back)
-        )
-    }
-}
-
-@Composable
 private fun IntentReceiver<CreateScreenIntent>.TimerNameTextField(
     state: CreateScreenState,
 ) {
-    UnderlinedField(
+    OutlinedTextField(
+        value = state.timerName,
         modifier = Modifier.fillMaxWidth(),
         maxLines = 1,
-        value = state.timerName,
-        onValueChange = {
-            intent(UpdateTimerName(it))
-        },
+        onValueChange = { intent(UpdateTimerName(it)) },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        textStyle = MaterialTheme.typography.headlineSmall.copy(
-            color = MaterialTheme.colorScheme.onSurface
-        ),
-        placeholder = {
-            Text(
-                text = stringResource(Res.string.timer_name),
-                fontStyle = FontStyle.Italic
-            )
-        },
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+        placeholder = { Text(text = stringResource(Res.string.timer_name)) },
+        label = { Text(text = stringResource(Res.string.timer_name)) },
     )
 }
 
@@ -191,16 +173,19 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(16.dp)
             .nestedScroll(nestedScrollConnection)
             .verticalScroll(scrollState)
     ) {
         Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+        TimerNameTextField(state)
+        Spacer(modifier = Modifier.height(16.dp))
         ReorderableColumn(
             list = state.sets,
             onSettle = { from, to ->
                 intent(SwapSet(from, to))
             },
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) { _, set, _ ->
             key(set.id) {
                 CreateSet(
@@ -226,18 +211,18 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
             ) { it.timeFormatted() }
         }
         FinishControls(state)
-        Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
+        Spacer(
+            Modifier.height(
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            )
+        )
     }
 }
 
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.FinishControls(state: CreateScreenState) {
-    val backgroundColor by animateColorAsState(
-        targetValue = state.finishColor.lightDisplayColor(),
-        animationSpec = tween(400)
-    )
-    Column(modifier = Modifier.background(backgroundColor)) {
-        FinishColorPicker()
+    ElevatedCard {
+        FinishColorPicker(state.finishColor)
         BeepSelector(
             modifier = Modifier.padding(horizontal = 16.dp),
             selected = state.finishBeep
@@ -254,17 +239,20 @@ private fun IntentReceiver<CreateScreenIntent>.FinishControls(state: CreateScree
 }
 
 @Composable
-private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker() {
+private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(
+    finishColor: Color
+) {
     var colorPickerVisible by remember { mutableStateOf(false) }
-    Box(modifier = Modifier.clickable { colorPickerVisible = true }) {
+    val backgroundColor by animateColorAsState(
+        targetValue = finishColor.lightDisplayColor(),
+        animationSpec = tween(400)
+    )
+    Box(modifier = Modifier.clickable { colorPickerVisible = true }.background(backgroundColor)) {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(Res.string.finish_color),
-            )
+            Text(text = stringResource(Res.string.finish_color))
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 modifier = Modifier.size(CustomIcons.defaultIconSize),
@@ -273,7 +261,7 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker() {
             )
 
             if (colorPickerVisible) {
-                ColorPickerModalBottomSheet {
+                ColorPickerModalBottomSheet(size = 64.dp) {
                     it?.let {
                         intent(UpdateFinishColor(it))
                     }

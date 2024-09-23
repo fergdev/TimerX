@@ -40,7 +40,7 @@ class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            timerXSettings.alertSettings.collect {
+            timerXSettings.alertSettingsManager.alertSettings.collect {
                 avPlayer.volume = it.volume
             }
         }

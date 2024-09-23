@@ -17,6 +17,7 @@ internal data class CreateScreenState(
     val finishColor: Color = Color.Red,
     val finishBeep: Beep = Beep.End,
     val finishVibration: Vibration = Vibration.Heavy,
+    val isEditing: Boolean = false,
     val sets: PersistentList<TimerSet> = persistentListOf()
 ) : MVIState
 

@@ -51,6 +51,7 @@ internal class CreateContainer(
                         CreateScreenState(
                             timerName = timer.name,
                             sets = timer.sets.toPersistentList(),
+                            isEditing = true,
                             finishColor = timer.finishColor,
                             finishBeep = timer.finishBeep,
                             finishVibration = timer.finishVibration,

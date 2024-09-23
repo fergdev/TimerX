@@ -291,6 +291,7 @@ ksp {
 }
 
 dependencies {
+    implementation(libs.androidx.animation.core.android)
     listOf(
         "kspAndroid",
         "kspIosSimulatorArm64",

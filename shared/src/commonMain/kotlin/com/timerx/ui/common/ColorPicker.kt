@@ -16,16 +16,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.theme.presetColors
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun ColorPickerModalBottomSheet(
+    size: Dp = 32.dp,
     onUpdate: (Color?) -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = { onUpdate(null) }) {
-        ColorsFlowRow{
+        ColorsFlowRow(size = size) {
             onUpdate(it)
         }
     }
@@ -33,13 +35,23 @@ internal fun ColorPickerModalBottomSheet(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun ColorsFlowRow(onClick: (Color) -> Unit) {
+internal fun ColorsFlowRow(size: Dp = 32.dp, onClick: (Color) -> Unit) {
     FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
         presetColors.forEach { color ->
             Box(
                 modifier = Modifier
                     .padding(4.dp)
-                    .size(32.dp)
+                    .size(size)
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(color)
+                    .clickable { onClick(color) }
+            )
+        }
+        rainbow.forEach { color ->
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(size)
                     .clip(RoundedCornerShape(100.dp))
                     .background(color)
                     .clickable { onClick(color) }

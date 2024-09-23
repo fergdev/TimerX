@@ -39,7 +39,7 @@ internal class MainContainer(
                             completedCount = roomTimer.completedCount,
                             sortOrder = roomTimer.sortOrder,
                             lastRunMillis = roomTimer.lastRun?.toEpochMilliseconds() ?: 0L,
-                            lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never"
+                            lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never run"
                         )
                     }
                     val listItems = stateMainTimers.chunked(2)

@@ -6,14 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
@@ -28,8 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.common.RScaffoldDefaults.ContentFadeDistance
 import androidx.compose.material3.FabPosition.Companion as Material3FabPosition
@@ -118,24 +110,12 @@ fun TScaffold(
         bottomBar = bottomBar,
         contentWindowInsets = contentWindowInsets ?: WindowInsets(0.dp),
     ) { padding ->
-        val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
-        val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    start = systemBarsPadding.calculateStartPadding(LocalLayoutDirection.current)
-                        .coerceAtLeast(cutoutPadding.calculateStartPadding(LocalLayoutDirection.current))
-                        .coerceAtLeast(16.dp),
-                    end = systemBarsPadding.calculateEndPadding(LocalLayoutDirection.current)
-                        .coerceAtLeast(cutoutPadding.calculateEndPadding(LocalLayoutDirection.current))
-                        .coerceAtLeast(16.dp)
-                )
                 .thenIf(fadeContent) { fadingEdge(FadingEdge.Top, ContentFadeDistance) }
         ) {
-//                Spacer(Modifier.height(padding.calculateTopPadding()))
-                content(padding)
-//                Spacer(Modifier.height(padding.calculateBottomPadding()))
+            content(padding)
         }
     }
 }

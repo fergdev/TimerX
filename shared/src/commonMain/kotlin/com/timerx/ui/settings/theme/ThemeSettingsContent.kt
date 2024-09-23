@@ -2,11 +2,14 @@ package com.timerx.ui.settings.theme
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,20 +19,22 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
 import com.timerx.settings.SettingsDarkTheme
 import com.timerx.ui.common.TScaffold
+import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateDarkTheme
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsAmoled
@@ -53,17 +59,33 @@ import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsSystemDynamic
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdatePaletteStyle
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateSeedColor
 import com.timerx.ui.settings.theme.ThemeSettingsState.LoadedState
+import com.timerx.ui.theme.Animation
 import com.timerx.ui.theme.isDarkTheme
-import com.timerx.ui.theme.presetColors
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pro.respawn.flowmvi.api.IntentReceiver
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.amoled
+import timerx.shared.generated.resources.contrast_level
+import timerx.shared.generated.resources.dark_mode
+import timerx.shared.generated.resources.force_dark
+import timerx.shared.generated.resources.force_light
+import timerx.shared.generated.resources.high_fidelity
+import timerx.shared.generated.resources.palette_style
+import timerx.shared.generated.resources.preview
+import timerx.shared.generated.resources.system_dynamic_colors
+import timerx.shared.generated.resources.theme
+import timerx.shared.generated.resources.user
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent) {
-    TScaffold(title = "Theme", onBack = themeSettingsComponent::onBackClicked) { padding ->
+    TScaffold(
+        title = stringResource(Res.string.theme),
+        onBack = themeSettingsComponent::onBackClicked
+    ) { padding ->
         with(koinInject<ThemeSettingsContainer>().store) {
             LaunchedEffect(Unit) { start(this).join() }
             val state by subscribe(DefaultLifecycle)
@@ -93,8 +115,11 @@ private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
         modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
             .padding(
                 top = scaffoldPadding.calculateTopPadding(),
-                bottom = scaffoldPadding.calculateBottomPadding() + systemBarPadding.calculateBottomPadding()
-            )
+                bottom = scaffoldPadding.calculateBottomPadding() + systemBarPadding.calculateBottomPadding(),
+                start = 16.dp,
+                end = 16.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val isDarkTheme = isDarkTheme(state.settingsDarkTheme)
         DarkModeRow(state.settingsDarkTheme)
@@ -102,7 +127,7 @@ private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
             DynamicColorsRow(state.isSystemDynamic)
         }
         AnimatedVisibility(state.isSystemDynamic.not()) {
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AnimatedVisibility(isDarkTheme) {
                     AmoledRow(state.isAmoled)
                 }
@@ -112,40 +137,27 @@ private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
                 ContrastRow(state.contrast)
                 PaletteRow(state.paletteStyle)
                 AnimatedVisibility(state.paletteStyle != PaletteStyle.Monochrome) {
-                    Column {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        SeedColorRow(state.seedColor)
-                        Spacer(modifier = Modifier.height(10.dp))
-                        AppColors()
-                    }
+                    SeedColorRow(state.seedColor)
                 }
-                Spacer(modifier = Modifier.height(10.dp))
             }
         }
         ColorPreview()
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
     isHighFidelity: Boolean,
 ) {
-    Column {
-        Text(text = "High fidelity")
-        FlowRow(
-            modifier = Modifier.fillMaxWidth().wrapContentWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            FilterChip(
-                label = { Text(text = "Yes") },
-                selected = isHighFidelity,
-                onClick = { intent(UpdateIsHighFidelity(true)) },
-            )
-            FilterChip(
-                label = { Text(text = "No") },
-                selected = isHighFidelity.not(),
-                onClick = { intent(UpdateIsHighFidelity(false)) },
+    ThemeCard {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = stringResource(Res.string.high_fidelity))
+            Spacer(modifier = Modifier.weight(1f))
+            Switch(
+                checked = isHighFidelity,
+                onCheckedChange = {
+                    intent(UpdateIsHighFidelity(it))
+                }
             )
         }
     }
@@ -154,47 +166,88 @@ private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: Double) {
-    Text(text = "Contrast")
-    FlowRow(
-        modifier = Modifier.fillMaxWidth().wrapContentWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        val haptic = LocalHapticFeedback.current
-        Slider(
-            modifier = Modifier.fillMaxWidth(),
-            value = contrast.toFloat(),
-            valueRange = -1f..1f,
-            onValueChange = { intent(UpdateContrast(it.toDouble())) },
-            onValueChangeFinished = {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            }
-        )
+    ThemeCard {
+        Text(text = stringResource(Res.string.contrast_level))
+        FlowRow(
+            modifier = Modifier.fillMaxWidth().wrapContentWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            val haptic = LocalHapticFeedback.current
+            Slider(
+                modifier = Modifier.fillMaxWidth(),
+                value = contrast.toFloat(),
+                valueRange = -1f..1f,
+                onValueChange = { intent(UpdateContrast(it.toDouble())) },
+                onValueChangeFinished = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(
+    isSystemDynamic: Boolean
+) {
+    ThemeCard {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = stringResource(Res.string.system_dynamic_colors))
+            Spacer(modifier = Modifier.weight(1f))
+            Switch(
+                checked = isSystemDynamic,
+                onCheckedChange = {
+                    intent(UpdateIsSystemDynamic(it))
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
+    ThemeCard {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = stringResource(Res.string.amoled))
+            Spacer(modifier = Modifier.weight(1f))
+            Switch(
+                checked = isAmoled,
+                onCheckedChange = {
+                    intent(UpdateIsAmoled(it))
+                }
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(
-    isSystemDynamic: Boolean
-) {
-    Column {
-        Text(text = "System dynamic colors")
+private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(settingsDarkTheme: SettingsDarkTheme) {
+    ThemeCard {
+        Text(text = stringResource(Res.string.dark_mode))
         FlowRow(
             modifier = Modifier.fillMaxWidth().wrapContentWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             FilterChip(
-                label = { Text(text = "Yes") },
-                selected = isSystemDynamic,
+                label = { Text(text = stringResource(Res.string.user)) },
+                selected = settingsDarkTheme == SettingsDarkTheme.User,
                 onClick = {
-                    intent(UpdateIsSystemDynamic(true))
+                    intent(UpdateDarkTheme(SettingsDarkTheme.User))
                 },
             )
             FilterChip(
-                label = { Text(text = "No") },
-                selected = isSystemDynamic.not(),
+                label = { Text(text = stringResource(Res.string.force_light)) },
+                selected = settingsDarkTheme == SettingsDarkTheme.ForceLight,
                 onClick = {
-                    intent(UpdateIsSystemDynamic(false))
+                    intent(UpdateDarkTheme(SettingsDarkTheme.ForceLight))
+                },
+            )
+            FilterChip(
+                label = { Text(text = stringResource(Res.string.force_dark)) },
+                selected = settingsDarkTheme == SettingsDarkTheme.ForceDark,
+                onClick = {
+                    intent(UpdateDarkTheme(SettingsDarkTheme.ForceDark))
                 },
             )
         }
@@ -203,122 +256,42 @@ private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(
-    isAmoled: Boolean
-) {
-    Text(text = "Is Amoled")
-    FlowRow(
-        modifier = Modifier.fillMaxWidth().wrapContentWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        FilterChip(
-            label = { Text(text = "Yes") },
-            selected = isAmoled,
-            onClick = {
-                intent(UpdateIsAmoled(true))
-            },
-        )
-        FilterChip(
-            label = { Text(text = "No") },
-            selected = isAmoled.not(),
-            onClick = {
-                intent(UpdateIsAmoled(false))
-            },
-        )
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(
-    settingsDarkTheme: SettingsDarkTheme,
-) {
-    Text(text = "Dark mode")
-    FlowRow(
-        modifier = Modifier.fillMaxWidth().wrapContentWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        FilterChip(
-            label = { Text(text = "User") },
-            selected = settingsDarkTheme == SettingsDarkTheme.User,
-            onClick = {
-                intent(UpdateDarkTheme(SettingsDarkTheme.User))
-            },
-        )
-        FilterChip(
-            label = { Text(text = "Force Light") },
-            selected = settingsDarkTheme == SettingsDarkTheme.ForceLight,
-            onClick = {
-                intent(UpdateDarkTheme(SettingsDarkTheme.ForceLight))
-            },
-        )
-        FilterChip(
-            label = { Text(text = "Force dark") },
-            selected = settingsDarkTheme == SettingsDarkTheme.ForceDark,
-            onClick = {
-                intent(UpdateDarkTheme(SettingsDarkTheme.ForceDark))
-            },
-        )
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun IntentReceiver<UpdatePaletteStyle>.PaletteRow(
-    paletteStyle: PaletteStyle,
-) {
-    Text(text = "Palette Style")
-    FlowRow(
-        modifier = Modifier.fillMaxWidth().wrapContentWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        PaletteStyle.entries.forEach {
-            FilterChip(
-                label = { Text(text = it.name) },
-                selected = it == paletteStyle,
-                onClick = { intent(UpdatePaletteStyle(it)) },
-            )
+private fun IntentReceiver<UpdatePaletteStyle>.PaletteRow(paletteStyle: PaletteStyle) {
+    ThemeCard {
+        Text(text = stringResource(Res.string.palette_style))
+        FlowRow(
+            modifier = Modifier.fillMaxWidth().wrapContentWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            PaletteStyle.entries.forEach {
+                FilterChip(
+                    label = { Text(text = it.name) },
+                    selected = it == paletteStyle,
+                    onClick = { intent(UpdatePaletteStyle(it)) },
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun ColorPreview() {
-    Text(text = "Preview", style = MaterialTheme.typography.headlineSmall)
-    Column(
-        modifier = Modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Column {
-            colorSchemePairs().forEach { (name, colors) ->
-                val (color, onColor) = colors
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    ColorBox(text = name, color = color, modifier = Modifier.weight(1f))
-                    ColorBox(
-                        text = "On$name",
-                        color = onColor,
-                        modifier = Modifier.weight(1f)
-                    )
+    ThemeCard {
+        Text(text = stringResource(Res.string.preview))
+        Card {
+            Column {
+                colorSchemePairs().forEach { (name, colors) ->
+                    val (color, onColor) = colors
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        ColorBox(text = name, color = color, modifier = Modifier.weight(1f))
+                        ColorBox(
+                            text = "On$name",
+                            color = onColor,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun IntentReceiver<UpdateSeedColor>.AppColors() {
-    FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
-        presetColors.forEach { color ->
-            Box(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(32.dp)
-                    .clip(RoundedCornerShape(100.dp))
-                    .background(color)
-                    .clickable { intent(UpdateSeedColor(color)) }
-            )
         }
     }
 }
@@ -333,26 +306,38 @@ fun ColorBox(
     Box(modifier = modifier.background(color)) {
         Text(
             text = text,
+            maxLines = 1,
             color = animateColorAsState(targetValue = textColor).value,
             modifier = Modifier.padding(8.dp),
         )
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SeedColorRow(seedColor: Color) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(text = "Seed Color")
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(
-            modifier = Modifier
-                .size(height = 32.dp, width = 80.dp)
-                .clip(MaterialTheme.shapes.small)
-                .background(seedColor)
-        )
+private fun IntentReceiver<UpdateSeedColor>.SeedColorRow(seedColor: Color) {
+    ThemeCard {
+        FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
+            rainbow.forEach { color ->
+                val animatedBorderColor by animateColorAsState(
+                    targetValue = if (seedColor == color) Color.White
+                    else Color.Transparent,
+                    animationSpec = tween(durationMillis = Animation.fast)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(100.dp))
+                        .background(color)
+                        .border(
+                                width = 4.dp, color = animatedBorderColor, shape = CircleShape
+                            )
+                        .clickable { intent(UpdateSeedColor(color)) }
+                )
+            }
+        }
     }
 }
 
@@ -370,3 +355,12 @@ private fun colorSchemePairs() = listOf(
     "Surface" to (colorScheme.surface to colorScheme.onSurface),
     "SurfaceVariant" to (colorScheme.surfaceVariant to colorScheme.onSurfaceVariant),
 )
+
+@Composable
+private fun ThemeCard(content: @Composable ColumnScope.() -> Unit) {
+    ElevatedCard {
+        Column(modifier = Modifier.padding(8.dp)) {
+            content()
+        }
+    }
+}

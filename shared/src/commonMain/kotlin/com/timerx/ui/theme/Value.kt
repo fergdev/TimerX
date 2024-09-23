@@ -78,3 +78,9 @@ object Opacity {
     const val disabled = 0.38f
     const val tint = 0.2f
 }
+
+object Animation {
+    const val fast = 300
+    const val medium = 600
+    const val slow = 900
+}

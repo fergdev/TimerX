@@ -3,7 +3,9 @@ package com.timerx.util
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-fun Instant.toAgo(): String {
+fun Instant.toAgo() = "${toTimeDistance()} ago"
+
+fun Instant.toTimeDistance(): String {
     val now = Clock.System.now()
     val duration = now.minus(this)
     val inWholeDays = duration.inWholeDays

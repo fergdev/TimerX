@@ -7,22 +7,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
@@ -61,13 +58,10 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSet(
     RevealSwipe(
         state = revealState,
         backgroundCardEndColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(12.dp),
         card = { shape, content ->
-            Card(
+            ElevatedCard(
                 modifier = Modifier.matchParentSize(),
-                colors = CardDefaults.cardColors(
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    containerColor = Color.Transparent
-                ),
                 shape = shape,
                 content = content
             )
@@ -90,43 +84,40 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSet(
             }
         }
     ) {
-        Surface {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                SetTopControls(timerSet, reorderableScope)
-                ReorderableColumn(
-                    list = timerSet.intervals,
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    onSettle = { from, to ->
-                        intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
-                    },
-                ) { _, timerInterval, _ ->
-                    key(timerInterval.id) {
-                        CreateInterval(
-                            interval = timerInterval,
-                            canSkipOnLastSet = timerSet.repetitions > 1,
-                            scope = this@ReorderableColumn
-                        )
-                    }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            SetTopControls(timerSet, reorderableScope)
+            ReorderableColumn(
+                list = timerSet.intervals,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                onSettle = { from, to ->
+                    intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
+                },
+            ) { _, timerInterval, _ ->
+                key(timerInterval.id) {
+                    CreateInterval(
+                        interval = timerInterval,
+                        canSkipOnLastSet = timerSet.repetitions > 1,
+                        scope = this@ReorderableColumn
+                    )
                 }
+            }
 
-                Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                    AnimatedNumber(
-                        modifier = Modifier.align(Alignment.Center),
-                        value = timerSet.length(),
-                        textStyle = MaterialTheme.typography.titleLarge
-                    ) { it.timeFormatted() }
-                    FilledTonalIconButton(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(Res.string.add)
-                        )
-                    }
+            Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                AnimatedNumber(
+                    modifier = Modifier.align(Alignment.Center),
+                    value = timerSet.length(),
+                    textStyle = MaterialTheme.typography.titleLarge
+                ) { it.timeFormatted() }
+                FilledTonalIconButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.add)
+                    )
                 }
-                HorizontalDivider(modifier = Modifier.fillMaxWidth())
             }
         }
     }

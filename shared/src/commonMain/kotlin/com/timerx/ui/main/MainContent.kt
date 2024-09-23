@@ -78,7 +78,6 @@ import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
 import timerx.shared.generated.resources.app_name
-import timerx.shared.generated.resources.completed_value
 import timerx.shared.generated.resources.copy
 import timerx.shared.generated.resources.delete
 import timerx.shared.generated.resources.edit
@@ -89,7 +88,6 @@ import timerx.shared.generated.resources.ignore
 import timerx.shared.generated.resources.no_timers
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.sort_order
-import timerx.shared.generated.resources.started_value
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -213,7 +211,7 @@ private fun IntentReceiver<MainIntent>.Content(
 
                     is Ad -> {
                         Box(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             GoogleAd()
@@ -362,18 +360,15 @@ private fun IntentReceiver<MainIntent>.TimerCard(
                     style = MaterialTheme.typography.displaySmall,
                     maxLines = 1
                 )
-                Text(
-                    text = mainTimer.duration.timeFormatted(),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(text = stringResource(Res.string.started_value, mainTimer.startedCount))
-                Text(
-                    text = stringResource(
-                        Res.string.completed_value,
-                        mainTimer.completedCount
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Text(
+                        text = mainTimer.duration.timeFormatted(),
+                        style = MaterialTheme.typography.titleLarge
                     )
-                )
-                Text(text = mainTimer.lastRunFormatted)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = mainTimer.lastRunFormatted)
+                }
             }
         }
     }

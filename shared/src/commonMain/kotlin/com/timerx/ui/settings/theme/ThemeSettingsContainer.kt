@@ -24,6 +24,7 @@ internal class ThemeSettingsContainer(
             timerXSettings.themeSettingsManager.themeSettings.collect {
                 updateState {
                     ThemeSettingsState.LoadedState(
+                        seedColor = it.seedColor,
                         isDynamicThemeSupported = platformCapabilities.isDynamicThemeSupported,
                         isSystemDynamic = it.isSystemDynamic,
                         settingsDarkTheme = it.settingsDarkTheme,
