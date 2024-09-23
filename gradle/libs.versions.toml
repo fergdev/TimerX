@@ -4,6 +4,7 @@ android-test-extensions = "1.5.0"
 androidJunit5Plugin = "1.11.0.0"
 androidx-activityCompose = "1.10.0-alpha02"
 androidx-room = "2.7.0-alpha08"
+animationCoreAndroid = "1.8.0-alpha02"
 coreSplashscreen = "1.2.0-alpha02"
 coroutines = "1.9.0"
 crashlytics = "3.0.2"
@@ -16,6 +17,7 @@ firebaseAnalytics = "22.1.0"
 firebaseBom = "33.3.0"
 firebaseCrashlytics = "19.1.0"
 flowMvi = "3.1.0-beta01"
+flowext = "1.0.0"
 glanceAppwidget = "1.1.0"
 googleServices = "4.4.2"
 gradleDoctorPlugin = "0.10.0"
@@ -34,10 +36,10 @@ playServicesAds = "23.3.0"
 reorderable = "2.3.2"
 sqlite = "2.5.0-SNAPSHOT"
 versionCatalogUpdatePlugin = "0.8.4"
-animationCoreAndroid = "1.7.2"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-animation-core-android = { module = "androidx.compose.animation:animation-core-android", version.ref = "animationCoreAndroid" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
@@ -55,6 +57,7 @@ essenty-stateKeeper = { module = "com.arkivanov.essenty:state-keeper", version.r
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+flowext = { module = "io.github.hoc081098:FlowExt", version.ref = "flowext" }
 flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowMvi" }
 flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowMvi" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
@@ -75,6 +78,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
 multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
@@ -82,7 +86,6 @@ multiplatform-settings-observable = { module = "com.russhwolf:multiplatform-sett
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
-androidx-animation-core-android = { group = "androidx.compose.animation", name = "animation-core-android", version.ref = "animationCoreAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

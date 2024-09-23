@@ -122,8 +122,8 @@ kotlin {
                 implementation(libs.multiplatform.settings.coroutines)
                 implementation(libs.multiplatform.settings.no.arg)
                 implementation(libs.multiplatform.settings.observable)
-                implementation("com.materialkolor:material-kolor:1.7.1")
-                implementation("io.github.hoc081098:FlowExt:1.0.0-RC")
+                implementation(libs.material.kolor)
+                implementation(libs.flowext)
             }
         }
         val commonTest by getting {
