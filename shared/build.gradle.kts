@@ -147,6 +147,11 @@ kotlin {
             dependsOn(commonMain)
         }
 
+        val nonAndroidMain = create("nonAndroidMain") {
+            kotlin.srcDir("src/nonAndroidMain/kotlin")
+            dependsOn(commonMain)
+        }
+
         val androidMain by getting {
             dependsOn(mobileMain)
             dependencies {
@@ -186,9 +191,11 @@ kotlin {
         val iosSimulatorArm64Main by getting
         val iosMain by getting {
             dependsOn(mobileMain)
+            dependsOn(nonAndroidMain)
         }
         val desktopMain by getting {
             dependsOn(nonMobileMain)
+            dependsOn(nonAndroidMain)
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlin.coroutines.swing)
@@ -196,6 +203,7 @@ kotlin {
         }
         val wasmJsMain by getting {
             dependsOn(nonMobileMain)
+            dependsOn(nonAndroidMain)
             dependencies {
                 implementation(libs.essenty.stateKeeper)
             }

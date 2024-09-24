@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.0-alpha02"
+agp = "8.8.0-alpha03"
 android-test-extensions = "1.5.0"
 androidJunit5Plugin = "1.11.0.0"
 androidx-activityCompose = "1.10.0-alpha02"

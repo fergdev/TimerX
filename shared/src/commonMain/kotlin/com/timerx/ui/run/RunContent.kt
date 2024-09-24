@@ -56,6 +56,7 @@ import com.timerx.ui.run.RunScreenState.Loaded
 import com.timerx.ui.run.RunScreenState.Loaded.Finished
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing
+import com.timerx.ui.shader.vignetteShader
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -189,6 +190,9 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
                 controlsVisible = true
                 touchCounter++
             }
+            .vignetteShader(
+                100f, 0.25f
+            )
             .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
