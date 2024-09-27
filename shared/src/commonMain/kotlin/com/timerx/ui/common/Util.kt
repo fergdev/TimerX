@@ -52,7 +52,7 @@ fun String.doubleBranded(color: Color = MaterialTheme.colorScheme.primary) = bui
 val String?.isValid: Boolean
     get() = !isNullOrBlank() && !equals("null", true)
 
-inline fun String?.isValid(): Boolean {
+fun String?.isValid(): Boolean {
     kotlin.contracts.contract {
         returns(true) implies (this@isValid != null)
     }

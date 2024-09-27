@@ -133,7 +133,7 @@ kotlin {
             }
         }
 
-        val mobileMain = create("mobileMain") {
+        val roomMain = create("roomMain") {
             kotlin.srcDir("src/mobileMain/kotlin")
             dependsOn(commonMain)
             dependencies {
@@ -153,7 +153,7 @@ kotlin {
         }
 
         val androidMain by getting {
-            dependsOn(mobileMain)
+            dependsOn(roomMain)
             dependencies {
                 api(libs.firebase.analytics)
                 api(libs.koin.android)
@@ -190,12 +190,12 @@ kotlin {
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by getting {
-            dependsOn(mobileMain)
+            dependsOn(roomMain)
             dependsOn(nonAndroidMain)
         }
         val desktopMain by getting {
             dependsOn(nonMobileMain)
-            dependsOn(mobileMain)
+            dependsOn(roomMain)
             dependsOn(nonAndroidMain)
             dependencies {
                 implementation(compose.desktop.currentOs)
