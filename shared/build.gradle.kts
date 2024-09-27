@@ -195,6 +195,7 @@ kotlin {
         }
         val desktopMain by getting {
             dependsOn(nonMobileMain)
+            dependsOn(mobileMain)
             dependsOn(nonAndroidMain)
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -302,6 +303,7 @@ dependencies {
     implementation(libs.androidx.animation.core.android)
     listOf(
         "kspAndroid",
+        "kspDesktop",
         "kspIosSimulatorArm64",
         "kspIosX64",
         "kspIosArm64"
