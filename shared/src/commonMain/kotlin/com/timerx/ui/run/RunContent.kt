@@ -190,9 +190,7 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
                 controlsVisible = true
                 touchCounter++
             }
-            .vignetteShader(
-                100f, 0.25f
-            )
+            .vignetteShader()
             .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
