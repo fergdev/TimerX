@@ -260,10 +260,9 @@ private fun IntentReceiver<RunScreenIntent>.TimerInformation(
     }
     Spacer(modifier = Modifier.height(24.dp))
     AnimatedNumber(
-        value = state.time,
+        value = state.time.timeFormatted(),
         textStyle = typography.displayLarge,
         color = displayColor,
-        formatter = { it.timeFormatted() },
     )
     Spacer(modifier = Modifier.height(24.dp))
     Crossfade(

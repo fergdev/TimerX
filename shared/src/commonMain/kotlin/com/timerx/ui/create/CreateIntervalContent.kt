@@ -194,12 +194,11 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
                 )
 
                 NumberIncrement(
-                    modifier = Modifier.weight(1f),
                     value = interval.duration,
                     negativeButtonEnabled = interval.duration > 1,
                     color = contrastColor,
                     textStyle = MaterialTheme.typography.titleLarge,
-                    formatter = { it.timeFormatted() },
+                    formatter = { it.timeFormatted() }
                 ) {
                     intent(CreateScreenIntent.UpdateIntervalDuration(interval, it))
                 }
@@ -299,7 +298,6 @@ private fun IntervalCountDown(
             value = finalCountDown.duration,
             negativeButtonEnabled = finalCountDown.duration > 0,
             color = MaterialTheme.colorScheme.onSurface,
-            formatter = { "$it" }
         ) {
             onUpdate(finalCountDown.copy(duration = it))
         }

@@ -210,9 +210,9 @@ private fun IntentReceiver<AddSet>.FinalTimeRow(
         }
         AnimatedNumber(
             modifier = Modifier.align(Alignment.TopCenter),
-            value = state.sets.length(),
+            value = state.sets.length().timeFormatted(),
             textStyle = MaterialTheme.typography.displayMedium
-        ) { it.timeFormatted() }
+        )
     }
 }
 

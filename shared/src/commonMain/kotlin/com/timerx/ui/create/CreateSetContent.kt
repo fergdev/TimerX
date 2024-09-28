@@ -106,9 +106,9 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
             Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
                 AnimatedNumber(
                     modifier = Modifier.align(Alignment.Center),
-                    value = timerSet.length(),
+                    value = timerSet.length().timeFormatted(),
                     textStyle = MaterialTheme.typography.titleLarge
-                ) { it.timeFormatted() }
+                )
                 FilledTonalIconButton(
                     modifier = Modifier.align(Alignment.TopEnd),
                     onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }

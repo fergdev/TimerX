@@ -98,15 +98,16 @@ class MyPersistentListSerializer(
         ListSerializer(serializer).deserialize(decoder).toPersistentList()
 }
 
+
 fun Long.timeFormatted(): String {
-    val hours = this / (SECONDS_IN_MINUTE * MINUTES_IN_HOUR)
+    val hours = this / SECONDS_IN_HOUR
     val hoursString = if (hours == 0L) {
         ""
     } else {
-        "$hours:"
+        "$hours"
     }
 
-    val minutes = this / MINUTES_IN_HOUR
+    val minutes = this / MINUTES_IN_HOUR - hours * MINUTES_IN_HOUR
     val minutesString = if (minutes == 0L) {
         "00"
     } else if (minutes < SINGLE_DIGIT_MODULO) {
@@ -129,6 +130,7 @@ fun Long.timeFormatted(): String {
 
 private const val SECONDS_IN_MINUTE = 60L
 private const val MINUTES_IN_HOUR = 60L
+private const val SECONDS_IN_HOUR = SECONDS_IN_MINUTE * MINUTES_IN_HOUR
 private const val SINGLE_DIGIT_MODULO = 10L
 
 fun Timer.length() = sets.fold(0L) { acc, i ->
