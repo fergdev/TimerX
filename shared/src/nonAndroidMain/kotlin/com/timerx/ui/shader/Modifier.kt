@@ -75,5 +75,4 @@ private class ShaderUniformProviderImpl(
     override fun uniform(name: String, value1: Float, value2: Float) {
         runtimeShaderBuilder.uniform(name, value1, value2)
     }
-
 }
