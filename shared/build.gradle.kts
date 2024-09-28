@@ -103,6 +103,7 @@ kotlin {
                 api(libs.decompose)
                 api(libs.decompose.compose)
                 api(libs.essenty.lifecycle)
+                api(libs.essenty.lifecycle.coroutines)
                 api(libs.essenty.stateKeeper)
                 api(libs.essenty.instanceKeeper)
                 api(libs.essenty.backHandler)
@@ -116,6 +117,7 @@ kotlin {
                 implementation(libs.kotlin.immutable)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.reorderable)
                 implementation(libs.kotlin.coroutines.core)
                 implementation(libs.multiplatform.settings)
@@ -165,7 +167,6 @@ kotlin {
                 implementation(libs.firebase.crashlytics)
                 implementation(libs.androidx.glance.appwidget)
                 implementation(libs.androidx.glance.material3)
-                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.androidx.core.splashscreen)
             }
         }
@@ -206,6 +207,8 @@ kotlin {
             dependsOn(nonMobileMain)
             dependsOn(nonAndroidMain)
             dependencies {
+                implementation(libs.kstore)
+                implementation(libs.kstore.storage)
                 implementation(libs.essenty.stateKeeper)
             }
         }

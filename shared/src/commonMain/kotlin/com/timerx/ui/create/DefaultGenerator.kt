@@ -13,14 +13,8 @@ import kotlinx.collections.immutable.persistentListOf
 
 internal class DefaultGenerator {
     private var defaultIdGenerator = 0L
-    private val workString by lazy {
-//        GlobalScope.launch { getString(Res.string.work) }
-        "work"
-    }
-    private val restString by lazy {
-//        GlobalScope.launch { getString(Res.string.rest) }
-        "rest"
-    }
+    private val workString by lazy { "work" }
+    private val restString by lazy { "rest" }
 
     fun getNextId(): Long = defaultIdGenerator++
     fun defaultTimerSet() =
@@ -54,7 +48,7 @@ internal class DefaultGenerator {
             repetitions = 1,
             intervals = persistentListOf(
                 TimerInterval(
-                    name = "prepare",//runBlocking { getString(Res.string.prepare) },
+                    name = "prepare",
                     duration = 10,
                     color = yellow,
                     skipOnLastSet = false,

@@ -38,7 +38,6 @@ internal class MainContainer(
                             startedCount = roomTimer.startedCount,
                             completedCount = roomTimer.completedCount,
                             sortOrder = roomTimer.sortOrder,
-                            lastRunMillis = roomTimer.lastRun?.toEpochMilliseconds() ?: 0L,
                             lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never run"
                         )
                     }

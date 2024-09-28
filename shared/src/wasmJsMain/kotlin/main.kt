@@ -20,7 +20,6 @@ private const val KEY_SAVED_STATE = "saved_state"
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalDecomposeApi::class)
 fun main() {
-    println("maininin")
     startKoin()
     val registry = LifecycleRegistry()
 //    val stateKeeper = StateKeeperDispatcher(

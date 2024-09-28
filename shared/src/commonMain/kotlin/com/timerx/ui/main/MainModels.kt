@@ -35,7 +35,6 @@ internal data class MainTimer(
     val startedCount: Long,
     val completedCount: Long,
     val sortOrder: Long,
-    val lastRunMillis: Long,
     val lastRunFormatted: String,
 ) : MainListItem
 
