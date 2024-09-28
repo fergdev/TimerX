@@ -107,7 +107,7 @@ private fun reduceIntent(
 
         is DeleteSet ->
             updateState {
-                copy(sets = sets.filter { set -> it.set == set }.toPersistentList())
+                copy(sets = sets.filter { set -> it.set.id != set.id }.toPersistentList())
             }
 
         is DuplicateSet -> {
