@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,9 +32,11 @@ import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.rememberRevealState
+import com.timerx.ui.common.reset
 import com.timerx.ui.create.CreateScreenIntent.DeleteSet
 import com.timerx.ui.create.CreateScreenIntent.DuplicateSet
 import com.timerx.ui.create.CreateScreenIntent.UpdateSetRepetitions
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.api.IntentReceiver
 import sh.calvin.reorderable.ReorderableColumn
@@ -51,31 +55,43 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
 ) {
     val revealState = rememberRevealState(
         maxRevealDp = 100.dp,
-        directions = setOf(
-            RevealDirection.EndToStart
-        )
+        directions = setOf(RevealDirection.EndToStart)
     )
+    val coroutineScope = rememberCoroutineScope()
+    val hideReveal = {
+        coroutineScope.launch {
+            revealState.reset()
+        }
+    }
     RevealSwipe(
         state = revealState,
-        backgroundCardEndColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.large,
+        backgroundCardStartColor = MaterialTheme.colorScheme.surface,
+        backgroundCardEndColor = MaterialTheme.colorScheme.surfaceVariant,
         card = { shape, content ->
-            ElevatedCard(
+            Card(
                 modifier = Modifier.matchParentSize(),
                 shape = shape,
+                colors = CardDefaults.cardColors(),
                 content = content
             )
         },
         hiddenContentEnd = {
             Row {
-                FilledTonalIconButton(onClick = { intent(DuplicateSet(timerSet)) }) {
+                FilledTonalIconButton(onClick = {
+                    hideReveal()
+                    intent(DuplicateSet(timerSet))
+                }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy)
                     )
                 }
-                FilledTonalIconButton(onClick = { intent(DeleteSet(timerSet)) }) {
+                FilledTonalIconButton(onClick = {
+                    hideReveal()
+                    intent(DeleteSet(timerSet))
+                }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete)
@@ -84,39 +100,41 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
             }
         }
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            SetTopControls(timerSet, reorderableScope)
-            ReorderableColumn(
-                list = timerSet.intervals,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                onSettle = { from, to ->
-                    intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
-                },
-            ) { _, timerInterval, _ ->
-                key(timerInterval.id) {
-                    CreateIntervalContent(
-                        interval = timerInterval,
-                        canSkipOnLastSet = timerSet.repetitions > 1,
-                        scope = this@ReorderableColumn
-                    )
+        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                SetTopControls(timerSet, reorderableScope)
+                ReorderableColumn(
+                    list = timerSet.intervals,
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    onSettle = { from, to ->
+                        intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
+                    },
+                ) { _, timerInterval, _ ->
+                    key(timerInterval.id) {
+                        CreateIntervalContent(
+                            interval = timerInterval,
+                            canSkipOnLastSet = timerSet.repetitions > 1,
+                            scope = this@ReorderableColumn
+                        )
+                    }
                 }
-            }
 
-            Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                AnimatedNumber(
-                    modifier = Modifier.align(Alignment.Center),
-                    value = timerSet.length().timeFormatted(),
-                    textStyle = MaterialTheme.typography.titleLarge
-                )
-                FilledTonalIconButton(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(Res.string.add)
+                Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                    AnimatedNumber(
+                        modifier = Modifier.align(Alignment.Center),
+                        value = timerSet.length().timeFormatted(),
+                        textStyle = MaterialTheme.typography.titleLarge
                     )
+                    FilledTonalIconButton(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(Res.string.add)
+                        )
+                    }
                 }
             }
         }

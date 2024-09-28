@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -49,7 +48,7 @@ import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.TMenuItemIcon
-import com.timerx.ui.common.UnderlinedField
+import com.timerx.ui.common.UnderlinedTextField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.lightDisplayColor
 import com.timerx.ui.common.rainbow
@@ -61,6 +60,7 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalCountUp
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalManualNext
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalName
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalSkipOnLastSet
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.api.IntentReceiver
@@ -78,7 +78,6 @@ import timerx.shared.generated.resources.skip_on_last_set
 
 private const val COLOR_ANIMATION_DURATION = 400
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
     interval: TimerInterval,
@@ -98,123 +97,132 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
         }
     }
     RevealSwipe(
+        modifier = Modifier.padding(4.dp),
         state = revealState,
         backgroundCardEndColor = MaterialTheme.colorScheme.surface,
         hiddenContentEnd = {
-            var settingsBottomSheetVisible by remember { mutableStateOf(false) }
-            if (settingsBottomSheetVisible) {
-                val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-                ModalBottomSheet(
-                    sheetState = sheetState,
-                    onDismissRequest = { settingsBottomSheetVisible = false }
-                ) {
-                    IntervalSwitches(
-                        canSkipOnLastSet,
-                        interval,
-                    )
-                }
-            }
-            Row {
-                var colorPickerVisible by remember { mutableStateOf(false) }
-                IconButton(onClick = {
-                    colorPickerVisible = true
-                    hideReveal()
-                }) {
-                    TMenuItemIcon(
-                        imageVector = CustomIcons.colorFill,
-                        contentDescription = "Interval color",
-                        tint = rainbow[0]
-                    )
-                }
-
-                if (colorPickerVisible) {
-                    ColorPickerModalBottomSheet(size = 64.dp) {
-                        it?.let { intent(UpdateIntervalColor(interval, it)) }
-                        colorPickerVisible = false
-                    }
-                }
-                IconButton(onClick = {
-                    intent(DuplicateInterval(interval))
-                    hideReveal()
-                }) {
-                    TMenuItemIcon(
-                        imageVector = CustomIcons.contentCopy,
-                        contentDescription = stringResource(Res.string.copy),
-                        tint = rainbow[3]
-                    )
-                }
-                IconButton(onClick = {
-                    intent(CreateScreenIntent.DeleteInterval(interval))
-                    hideReveal()
-                }) {
-                    TMenuItemIcon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(Res.string.delete),
-                        tint = rainbow[6]
-                    )
-                }
-                IconButton(onClick = {
-                    hideReveal()
-                    settingsBottomSheetVisible = true
-                }) {
-                    TMenuItemIcon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = stringResource(Res.string.settings),
-                        tint = rainbow[9]
-                    )
-                }
-            }
+            HiddenIntervalControls(canSkipOnLastSet, interval, hideReveal)
         }
     ) {
-        Surface {
-            Row(
-                modifier = Modifier
-                    .background(backgroundColor, MaterialTheme.shapes.medium)
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                UnderlinedField(
-                    modifier = Modifier.weight(1f),
-                    value = interval.name,
-                    maxLines = 1,
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.titleLarge,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    onValueChange = {
-                        intent(UpdateIntervalName(interval, it))
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(Res.string.interval_name),
-                            fontStyle = FontStyle.Italic
-                        )
-                    },
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface)
-                )
-
-                NumberIncrement(
-                    value = interval.duration,
-                    negativeButtonEnabled = interval.duration > 1,
-                    color = contrastColor,
-                    textStyle = MaterialTheme.typography.titleLarge,
-                    formatter = { it.timeFormatted() }
-                ) {
-                    intent(CreateScreenIntent.UpdateIntervalDuration(interval, it))
-                }
-                Box(modifier = Modifier.weight(1f)) {
-                    Icon(
-                        modifier = with(scope) {
-                            Modifier.size(CustomIcons.defaultIconSize)
-                                .align(Alignment.TopEnd)
-                                .draggableHandle()
-                        },
-                        imageVector = CustomIcons.dragHandle,
-                        contentDescription = stringResource(Res.string.settings),
-                        tint = contrastColor
+        Row(
+            modifier = Modifier
+                .background(backgroundColor, MaterialTheme.shapes.medium)
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            UnderlinedTextField(
+                modifier = Modifier.weight(1f),
+                value = interval.name,
+                maxLines = 1,
+                singleLine = true,
+                textStyle = MaterialTheme.typography.titleLarge,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                onValueChange = {
+                    intent(UpdateIntervalName(interval, it))
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(Res.string.interval_name),
+                        fontStyle = FontStyle.Italic
                     )
-                }
+                },
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface)
+            )
+
+            NumberIncrement(
+                value = interval.duration,
+                negativeButtonEnabled = interval.duration > 1,
+                color = contrastColor,
+                textStyle = MaterialTheme.typography.titleLarge,
+                formatter = { it.timeFormatted() }
+            ) {
+                intent(CreateScreenIntent.UpdateIntervalDuration(interval, it))
             }
+            Box(modifier = Modifier.weight(1f)) {
+                Icon(
+                    modifier = with(scope) {
+                        Modifier.size(CustomIcons.defaultIconSize)
+                            .align(Alignment.TopEnd)
+                            .draggableHandle()
+                    },
+                    imageVector = CustomIcons.dragHandle,
+                    contentDescription = stringResource(Res.string.settings),
+                    tint = contrastColor
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
+    canSkipOnLastSet: Boolean,
+    interval: TimerInterval,
+    hideReveal: () -> Job
+) {
+    var settingsBottomSheetVisible by remember { mutableStateOf(false) }
+    if (settingsBottomSheetVisible) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { settingsBottomSheetVisible = false }
+        ) {
+            IntervalSwitches(
+                canSkipOnLastSet,
+                interval,
+            )
+        }
+    }
+    Row {
+        var colorPickerVisible by remember { mutableStateOf(false) }
+        IconButton(onClick = {
+            colorPickerVisible = true
+            hideReveal()
+        }) {
+            TMenuItemIcon(
+                imageVector = CustomIcons.colorFill,
+                contentDescription = "Interval color",
+                tint = rainbow[0]
+            )
+        }
+
+        if (colorPickerVisible) {
+            ColorPickerModalBottomSheet(size = 64.dp) {
+                it?.let { intent(UpdateIntervalColor(interval, it)) }
+                colorPickerVisible = false
+            }
+        }
+        IconButton(onClick = {
+            intent(DuplicateInterval(interval))
+            hideReveal()
+        }) {
+            TMenuItemIcon(
+                imageVector = CustomIcons.contentCopy,
+                contentDescription = stringResource(Res.string.copy),
+                tint = rainbow[3]
+            )
+        }
+        IconButton(onClick = {
+            intent(CreateScreenIntent.DeleteInterval(interval))
+            hideReveal()
+        }) {
+            TMenuItemIcon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(Res.string.delete),
+                tint = rainbow[6]
+            )
+        }
+        IconButton(onClick = {
+            hideReveal()
+            settingsBottomSheetVisible = true
+        }) {
+            TMenuItemIcon(
+                imageVector = Icons.Filled.Settings,
+                contentDescription = stringResource(Res.string.settings),
+                tint = rainbow[9]
+            )
         }
     }
 }

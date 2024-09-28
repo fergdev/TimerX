@@ -13,10 +13,15 @@ import kotlinx.collections.immutable.persistentListOf
 
 internal class DefaultGenerator {
     private var defaultIdGenerator = 0L
+
     private val workString by lazy { "work" }
     private val restString by lazy { "rest" }
 
     fun getNextId(): Long = defaultIdGenerator++
+    fun setMaxId(maxId: Long) {
+        defaultIdGenerator = maxId
+    }
+
     fun defaultTimerSet() =
         TimerSet(
             id = defaultIdGenerator++,
@@ -42,7 +47,7 @@ internal class DefaultGenerator {
             )
         )
 
-    fun prepare() =
+    fun prepareSet() =
         TimerSet(
             id = defaultIdGenerator++,
             repetitions = 1,

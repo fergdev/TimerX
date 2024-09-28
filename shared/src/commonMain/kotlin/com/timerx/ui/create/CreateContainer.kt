@@ -43,6 +43,7 @@ import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.plugins.init
 import pro.respawn.flowmvi.plugins.reducePlugin
+import kotlin.math.max
 
 internal class CreateContainer(
     timerId: Long,
@@ -57,6 +58,7 @@ internal class CreateContainer(
                 val timer = timerDatabase.getTimer(timerId).first()
                 if (timer != null) {
                     updateState {
+                        defaultGenerator.setMaxId(timer.sets.getMaxId())
                         CreateScreenState(
                             timerNameModel = TimerNameModel(timer.name),
                             sets = timer.sets.toPersistentList(),
@@ -70,7 +72,7 @@ internal class CreateContainer(
                     updateState {
                         CreateScreenState(
                             sets = persistentListOf(
-                                defaultGenerator.prepare(),
+                                defaultGenerator.prepareSet(),
                                 defaultGenerator.defaultTimerSet()
                             )
                         )
@@ -90,6 +92,13 @@ internal class CreateContainer(
         )
     }
 }
+
+private fun List<TimerSet>.getMaxId() =
+    this.maxOf { set ->
+        max(set.id, set.intervals.maxOf { interval ->
+            interval.id
+        })
+    } + 1L
 
 private fun reduceIntent(
     defaultGenerator: DefaultGenerator,
