@@ -139,10 +139,10 @@ internal fun MainContent(mainComponent: MainComponent) {
                     is MainState.Content -> {
                         with(state as MainState.Content) {
                             Content(
-                                this,
-                                mainComponent,
-                                appBarScrollBehavior,
-                                padding
+                                state = this,
+                                mainComponent = mainComponent,
+                                appBarScrollBehavior = appBarScrollBehavior,
+                                padding = padding
                             )
                             if (this.showNotificationsPermissionRequest) {
                                 NotificationPermissions()

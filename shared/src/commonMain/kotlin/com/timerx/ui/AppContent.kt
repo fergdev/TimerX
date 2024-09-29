@@ -1,8 +1,6 @@
 package com.timerx.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
@@ -14,6 +12,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.timerx.ui.common.TBackground
 import com.timerx.ui.create.CreateContent
 import com.timerx.ui.main.MainContent
 import com.timerx.ui.navigation.RootComponent
@@ -24,8 +23,8 @@ import com.timerx.ui.theme.TimerXTheme
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun AppContent(rootComponent: RootComponent) = TimerXTheme {
+    TBackground()
     val state = rootComponent.stack.subscribeAsState()
-
     val animation: StackAnimation<Any, RootComponent.Child> = predictiveBackAnimation(
         backHandler = rootComponent.backHandler,
         fallbackAnimation = stackAnimation(fade() + scale()),
@@ -33,7 +32,7 @@ fun AppContent(rootComponent: RootComponent) = TimerXTheme {
     )
     Children(
         stack = state.value,
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        modifier = Modifier.fillMaxSize(),
         animation = animation
     ) {
         val child = it.instance

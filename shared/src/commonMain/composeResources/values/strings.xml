@@ -2,14 +2,19 @@
     <string name="add">Add</string>
     <string name="alerts">Alerts</string>
     <string name="alerts_subtitle">Control how Tx interacts with you</string>
+    <string name="alpha">Alpha</string>
     <string name="amoled">Amoled</string>
     <string name="app_name">TimerX</string>
     <string name="app_os_settings">App OS Settings</string>
     <string name="back">Back</string>
+    <string name="background">Background</string>
+    <string name="background_subtitle">Set the background to make the app beautiful</string>
     <string name="beep">Beep</string>
     <string name="close">Close</string>
     <string name="completed_value">Completed: %1$s</string>
     <string name="contrast_level">Contrast level</string>
+    <string name="colors">Colors</string>
+    <string name="colors_subtitle">Define your color scheme</string>
     <string name="copy">Copy</string>
     <string name="copy_parenthesis">(copy)</string>
     <string name="count_down">Count down</string>
@@ -47,6 +52,7 @@
     <string name="no_timers">No timers</string>
     <string name="notifications">Notifications</string>
     <string name="palette_style">Palette style</string>
+    <string name="pattern">Pattern</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>
     <string name="prepare">Prepare</string>

@@ -35,7 +35,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -60,6 +59,7 @@ import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.ColorPickerModalBottomSheet
 import com.timerx.ui.common.CustomIcons
+import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.TTopBar
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.branded
@@ -100,7 +100,7 @@ internal fun CreateContent(createComponent: CreateComponent) {
             }
         }
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-        Scaffold(
+        TScaffold(
             topBar = {
                 TTopBar(
                     scrollBehavior = appBarScrollBehavior,
@@ -150,21 +150,23 @@ private fun IntentReceiver<Save>.TopAppBarActions() {
 private fun IntentReceiver<UpdateTimerName>.TimerNameTextField(
     timerNameModel: TimerNameModel
 ) {
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
-        value = timerNameModel.name,
-        maxLines = 1,
-        onValueChange = { intent(UpdateTimerName(it)) },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        placeholder = { Text(text = stringResource(Res.string.timer_name)) },
-        label = { Text(text = stringResource(Res.string.timer_name)) },
-        isError = timerNameModel.isError,
-        supportingText = {
-            if (timerNameModel.isError) {
-                Text(text = stringResource(Res.string.timer_name_required))
+    ElevatedCard(modifier = Modifier.padding(bottom = 16.dp)) {
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            value = timerNameModel.name,
+            maxLines = 1,
+            onValueChange = { intent(UpdateTimerName(it)) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            placeholder = { Text(text = stringResource(Res.string.timer_name)) },
+            label = { Text(text = stringResource(Res.string.timer_name)) },
+            isError = timerNameModel.isError,
+            supportingText = {
+                if (timerNameModel.isError) {
+                    Text(text = stringResource(Res.string.timer_name_required))
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable

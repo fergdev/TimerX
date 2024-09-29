@@ -19,3 +19,9 @@ fun <T> Flow<T?>.mapIfNull(t: T): Flow<T> =
 
 
 public fun String?.takeIfValid(): String? = if (isValid()) this else null
+
+fun String.capitalize(): String =
+    this.replaceFirstChar { name ->
+        if (name.isLowerCase()) name.uppercaseChar()
+        else name
+    }

@@ -57,6 +57,7 @@ import com.timerx.ui.run.RunScreenState.Loaded.Finished
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing
 import com.timerx.ui.shader.vignetteShader
+import com.timerx.ui.theme.Animation
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -78,8 +79,6 @@ import timerx.shared.generated.resources.skip_previous
 
 private const val CONTROLS_HIDE_DELAY = 3000L
 private val CORNER_ICON_SIZE = 48.dp
-
-private const val CROSS_FADE_DURATION = 600
 
 @Composable
 fun RunContent(runComponent: RunComponent) {
@@ -134,7 +133,7 @@ private fun IntentReceiver<RunScreenIntent>.LoadedContent(
 
     val animatedColor by animateColorAsState(
         backgroundColor,
-        animationSpec = tween(CROSS_FADE_DURATION)
+        animationSpec = tween(Animation.medium)
     )
     contrastSystemBarColor(animatedColor)
 
@@ -241,7 +240,7 @@ private fun IntentReceiver<RunScreenIntent>.TimerInformation(
 ) {
     Crossfade(
         targetState = state.index,
-        animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
+        animationSpec = tween(durationMillis = Animation.medium)
     ) {
         Text(
             textAlign = TextAlign.Center,
@@ -260,7 +259,7 @@ private fun IntentReceiver<RunScreenIntent>.TimerInformation(
     Spacer(modifier = Modifier.height(24.dp))
     Crossfade(
         targetState = state.intervalName,
-        animationSpec = tween(durationMillis = CROSS_FADE_DURATION)
+        animationSpec = tween(durationMillis = Animation.medium)
     ) {
         Text(
             textAlign = TextAlign.Center,

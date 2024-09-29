@@ -19,6 +19,7 @@ data class AlertSettings(
 interface ITimerXSettings {
     val alertSettingsManager: AlertSettingsManager
     val themeSettingsManager: ThemeSettingsManager
+    val backgroundSettingsManager: BackgroundSettingsManager
     val sortTimersBy: Flow<SortTimersBy>
     val keepScreenOn: Flow<Boolean>
     suspend fun setKeepScreenOn(keepScreenOn: Boolean)
@@ -41,7 +42,7 @@ class TimerXSettings : ITimerXSettings {
     override val keepScreenOn: Flow<Boolean> =
         flowSettings.getBooleanOrNullFlow(KEEP_SCREEN_ON).mapIfNull(true)
 
-    override suspend fun setKeepScreenOn(keepScreenOn : Boolean){
+    override suspend fun setKeepScreenOn(keepScreenOn: Boolean) {
         flowSettings.putBoolean(KEEP_SCREEN_ON, keepScreenOn)
     }
 
@@ -50,4 +51,6 @@ class TimerXSettings : ITimerXSettings {
     }
 
     override val themeSettingsManager: ThemeSettingsManager = ThemeSettingsManagerImpl(flowSettings)
+    override val backgroundSettingsManager: BackgroundSettingsManager =
+        BackgroundSettingsManagerImpl(flowSettings)
 }

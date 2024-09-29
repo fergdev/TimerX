@@ -10,8 +10,14 @@ import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
+import com.timerx.ui.settings.SettingsComponent.Child.Alerts
+import com.timerx.ui.settings.SettingsComponent.Child.Background
+import com.timerx.ui.settings.SettingsComponent.Child.Main
+import com.timerx.ui.settings.SettingsComponent.Child.Theme
 import com.timerx.ui.settings.alerts.AlertSettingsComponent
 import com.timerx.ui.settings.alerts.DefaultAlertSettingsComponent
+import com.timerx.ui.settings.background.BackgroundSettingsComponent
+import com.timerx.ui.settings.background.DefaultBackgroundSettingsComponent
 import com.timerx.ui.settings.main.DefaultMainSettingsComponent
 import com.timerx.ui.settings.main.MainSettingsComponent
 import com.timerx.ui.settings.theme.DefaultThemeSettingsComponent
@@ -30,6 +36,7 @@ interface SettingsComponent : BackHandlerOwner {
         class Main(val component: MainSettingsComponent) : Child()
         class Alerts(val component: AlertSettingsComponent) : Child()
         class Theme(val component: ThemeSettingsComponent) : Child()
+        class Background(val component: BackgroundSettingsComponent) : Child()
     }
 }
 
@@ -54,27 +61,38 @@ internal class DefaultSettingsComponent(
         componentContext: ComponentContext
     ): SettingsComponent.Child =
         when (config) {
-            is SettingsConfig.Main -> SettingsComponent.Child.Main(DefaultMainSettingsComponent(
-                backClicked = { onBackClicked() },
-                alertClicked = { nav.push(SettingsConfig.Alerts) },
-                themeClicked = { nav.push(SettingsConfig.Theme) },
-                componentContext,
-                koin::get
-            ))
-
-            is SettingsConfig.Alerts -> SettingsComponent.Child.Alerts(
-                DefaultAlertSettingsComponent(
-                    backClicked = { nav.pop() },
-                    koin::get,
-                    componentContext
+            is SettingsConfig.Main -> Main(
+                DefaultMainSettingsComponent(
+                    backClicked = { onBackClicked() },
+                    alertClicked = { nav.push(SettingsConfig.Alerts) },
+                    themeClicked = { nav.push(SettingsConfig.Theme) },
+                    backgroundSettings = { nav.push(SettingsConfig.Background) },
+                    context = componentContext,
+                    factory = koin::get
                 )
             )
 
-            is SettingsConfig.Theme -> SettingsComponent.Child.Theme(
+            is SettingsConfig.Alerts -> Alerts(
+                DefaultAlertSettingsComponent(
+                    backClicked = { nav.pop() },
+                    factory = koin::get,
+                    context = componentContext
+                )
+            )
+
+            is SettingsConfig.Theme -> Theme(
                 DefaultThemeSettingsComponent(
                     backClicked = { nav.pop() },
-                    koin::get,
-                    componentContext
+                    factory = koin::get,
+                    context = componentContext
+                )
+            )
+
+            is SettingsConfig.Background -> Background(
+                DefaultBackgroundSettingsComponent(
+                    backClicked = { nav.pop() },
+                    factory = koin::get,
+                    context = componentContext
                 )
             )
         }
@@ -102,4 +120,7 @@ private sealed interface SettingsConfig {
 
     @Serializable
     data object Theme : SettingsConfig
+
+    @Serializable
+    data object Background : SettingsConfig
 }
