@@ -17,6 +17,6 @@ val wasmCapabilities =
 actual val platformModule = module {
     includes(nonMobileModule)
     single<ITimerRepository> { KStoreDatabase() }
-    single { wasmCapabilities}
+    single { wasmCapabilities }
     singleOf(::ABeepManager) { bind<IBeepManager>() }
 }

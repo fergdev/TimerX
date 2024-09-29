@@ -8,7 +8,6 @@ import org.koin.dsl.module
 actual val platformModule = module {
     includes(nonMobileModule)
     includes(mobileModule)
-    single{ desktopCapabilities }
+    single { desktopCapabilities }
     single<IBeepManager> { BeepManager }
 }
-

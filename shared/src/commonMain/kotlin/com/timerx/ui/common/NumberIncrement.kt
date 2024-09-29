@@ -134,9 +134,9 @@ fun AnimatedNumber(
                         targetState = char.digitToInt(),
                         transitionSpec = {
                             if (targetState > initialState) {
-                                slideInVertically { -it } togetherWith  slideOutVertically { it }
+                                slideInVertically { -it } togetherWith slideOutVertically { it }
                             } else {
-                                slideInVertically { it } togetherWith  slideOutVertically { -it }
+                                slideInVertically { it } togetherWith slideOutVertically { -it }
                             }
                         }
                     ) { digit ->

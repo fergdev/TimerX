@@ -44,7 +44,6 @@ import timerx.shared.generated.resources.theme
 fun BackgroundSettingsContent(
     component: BackgroundSettingsComponent
 ) = with(component) {
-
     TScaffold(
         title = stringResource(Res.string.theme),
         onBack = ::onBackClicked

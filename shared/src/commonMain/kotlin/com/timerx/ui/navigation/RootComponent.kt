@@ -24,4 +24,3 @@ interface RootComponent : BackHandlerOwner {
 
     fun navigateTo(config: DefaultRootComponent.Config)
 }
-

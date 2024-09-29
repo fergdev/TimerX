@@ -98,7 +98,6 @@ class MyPersistentListSerializer(
         ListSerializer(serializer).deserialize(decoder).toPersistentList()
 }
 
-
 fun Long.timeFormatted(): String {
     val hours = this / SECONDS_IN_HOUR
     val hoursString = if (hours == 0L) {

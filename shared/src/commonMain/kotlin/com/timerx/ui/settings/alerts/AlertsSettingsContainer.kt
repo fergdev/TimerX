@@ -31,13 +31,11 @@ class AlertsSettingsContainer(
 
             reduce { settingsIntent ->
                 when (settingsIntent) {
-                    is AlertsSettingsIntent.UpdateVolume -> {
+                    is AlertsSettingsIntent.UpdateVolume ->
                         timerXSettings.alertSettingsManager.setVolume(settingsIntent.volume)
-                    }
 
-                    is AlertsSettingsIntent.UpdateVibration -> {
+                    is AlertsSettingsIntent.UpdateVibration ->
                         timerXSettings.alertSettingsManager.setVibrationEnabled(settingsIntent.enabled)
-                    }
 
                     is AlertsSettingsIntent.EnableNotifications -> {
                         permissionsHandler.requestPermission(Permission.Notification)
@@ -46,9 +44,8 @@ class AlertsSettingsContainer(
                         }
                     }
 
-                    is AlertsSettingsIntent.OpenAppSettings -> {
+                    is AlertsSettingsIntent.OpenAppSettings ->
                         permissionsHandler.openAppSettings()
-                    }
                 }
             }
         }

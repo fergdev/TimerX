@@ -51,7 +51,7 @@ fun TBackground(modifier: Modifier = Modifier.fillMaxSize()) {
         targetState = backgroundSettings.pattern,
         transitionSpec = {
             fadeIn(animationSpec = tween(durationMillis = Animation.fast)) togetherWith
-                    fadeOut(animationSpec = tween(durationMillis = Animation.fast))
+                fadeOut(animationSpec = tween(durationMillis = Animation.fast))
         },
     ) {
         Image(

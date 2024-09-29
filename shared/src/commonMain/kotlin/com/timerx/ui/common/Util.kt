@@ -124,4 +124,3 @@ fun Modifier.noIndicationClickable(
     role = role,
     onClick = onClick
 )
-

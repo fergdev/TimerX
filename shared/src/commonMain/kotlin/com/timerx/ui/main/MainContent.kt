@@ -125,28 +125,28 @@ internal fun MainContent(mainComponent: MainComponent) {
                 }
             }
         ) { padding ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                when (state) {
-                    is MainState.Loading -> DefaultLoading()
-                    is MainState.Empty -> {
+            when (state) {
+                is MainState.Loading -> DefaultLoading()
+                is MainState.Empty -> {
+                    Box(modifier = Modifier.fillMaxSize()) {
                         Text(
                             modifier = Modifier.padding(16.dp).align(Alignment.Center),
                             text = stringResource(Res.string.no_timers),
                             style = MaterialTheme.typography.headlineLarge
                         )
                     }
+                }
 
-                    is MainState.Content -> {
-                        with(state as MainState.Content) {
-                            Content(
-                                state = this,
-                                mainComponent = mainComponent,
-                                appBarScrollBehavior = appBarScrollBehavior,
-                                padding = padding
-                            )
-                            if (this.showNotificationsPermissionRequest) {
-                                NotificationPermissions()
-                            }
+                is MainState.Content -> {
+                    with(state as MainState.Content) {
+                        Content(
+                            state = this,
+                            mainComponent = mainComponent,
+                            appBarScrollBehavior = appBarScrollBehavior,
+                            padding = padding
+                        )
+                        if (this.showNotificationsPermissionRequest) {
+                            NotificationPermissions()
                         }
                     }
                 }
@@ -209,9 +209,7 @@ private fun IntentReceiver<MainIntent>.Content(
                     }
 
                     is Ad -> {
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
+                        Box(contentAlignment = Alignment.Center) {
                             GoogleAd()
                         }
                     }

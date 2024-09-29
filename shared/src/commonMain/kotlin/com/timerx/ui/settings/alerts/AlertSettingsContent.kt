@@ -14,7 +14,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -54,10 +53,11 @@ internal fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) =
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val state by subscribe(DefaultLifecycle)
-                VolumeCard(state.volume)
-                VibrationCard(state.isVibrationEnabled)
-                NotificationsCard(state.isNotificationsEnabled)
+                with(subscribe(DefaultLifecycle).value) {
+                    VolumeCard(volume)
+                    VibrationCard(isVibrationEnabled)
+                    NotificationsCard(isNotificationsEnabled)
+                }
             }
         }
     }
@@ -93,9 +93,11 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         intent(UpdateVibration(isVibrationEnabled.not()))
     }
-    AlertCard(modifier = Modifier.clickable {
-        updateVibration()
-    }) {
+    AlertCard(
+        modifier = Modifier.clickable {
+            updateVibration()
+        }
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.vibration))
             Spacer(modifier = Modifier.weight(1f))

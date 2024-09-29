@@ -1,6 +1,5 @@
 package com.timerx.domain
 
-import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.beep.IBeepManager
 import com.timerx.database.ITimerRepository
 import com.timerx.notification.ITimerXNotificationManager
@@ -16,7 +15,6 @@ class TimerManager(
     private val beepManager: IBeepManager,
     private val vibrationManager: IVibrationManager,
     private val notificationManager: ITimerXNotificationManager,
-    private val timerXAnalytics: ITimerXAnalytics,
     private val timerRepository: ITimerRepository
 ) {
     private var timerStateMachine: TimerStateMachineImpl? = null

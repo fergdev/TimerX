@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 // region buildconfig
+
 @Language("Kotlin")
 // language=kotlin
 val BuildConfig = """

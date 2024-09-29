@@ -6,9 +6,11 @@ import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-private const val VIBRATION_ENABLED = "vibrationEnabled"
-private const val VOLUME = "volume"
-private const val SET_IGNORE_NOTIFICATIONS_PERMISSION = "setIgnoreNotificationsPermission"
+private const val ALERT_SETTINGS = "alertSettings_"
+private const val VIBRATION_ENABLED = "${ALERT_SETTINGS}vibrationEnabled"
+private const val VOLUME = "${ALERT_SETTINGS}volume"
+private const val SET_IGNORE_NOTIFICATIONS_PERMISSION =
+    "${ALERT_SETTINGS}setIgnoreNotificationsPermission"
 
 interface AlertSettingsManager {
     val alertSettings: Flow<AlertSettings>
@@ -27,11 +29,11 @@ class AlertSettingsManagerImpl(private val flowSettings: FlowSettings) : AlertSe
 
     override val alertSettings: Flow<AlertSettings> = combine(
         volume, vibrationEnabled, ignoreNotificationsPermissions
-    ) { a, b, c ->
+    ) { volume, vibrationEnabled, ignoreNotificationPermissions ->
         AlertSettings(
-            volume = a,
-            vibrationEnabled = b,
-            ignoreNotificationsPermissions = c,
+            volume = volume,
+            vibrationEnabled = vibrationEnabled,
+            ignoreNotificationsPermissions = ignoreNotificationPermissions,
         )
     }
 
@@ -46,6 +48,4 @@ class AlertSettingsManagerImpl(private val flowSettings: FlowSettings) : AlertSe
     override suspend fun setIgnoreNotificationPermissions() {
         flowSettings.putBoolean(SET_IGNORE_NOTIFICATIONS_PERMISSION, true)
     }
-
 }
-

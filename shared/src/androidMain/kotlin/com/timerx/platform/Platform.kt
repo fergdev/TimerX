@@ -8,5 +8,6 @@ internal val androidCapabilities =
         isDynamicThemeSupported = supportsDynamicColors,
         vibration = true
     )
+
 @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
 internal val supportsDynamicColors get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

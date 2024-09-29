@@ -12,13 +12,14 @@ import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private const val SEED_COLOR = "seedColor"
-private const val PALETTE_STYLE = "paletteStyle"
-private const val DARK_THEME = "darkTheme"
-private const val DYNAMIC_THEME = "dynamicTheme"
-private const val IS_AMOLED = "isAmoled"
-private const val IS_HIGH_FIDELITY = "isHighFidelity"
-private const val THEME_CONTRAST = "contrast"
+private const val THEME_SETTINGS = "themeSettings_"
+private const val SEED_COLOR = "${THEME_SETTINGS}seedColor"
+private const val PALETTE_STYLE = "${THEME_SETTINGS}paletteStyle"
+private const val DARK_THEME = "${THEME_SETTINGS}darkTheme"
+private const val DYNAMIC_THEME = "${THEME_SETTINGS}dynamicTheme"
+private const val IS_AMOLED = "${THEME_SETTINGS}isAmoled"
+private const val IS_HIGH_FIDELITY = "${THEME_SETTINGS}isHighFidelity"
+private const val THEME_CONTRAST = "${THEME_SETTINGS}contrast"
 
 interface ThemeSettingsManager {
     val themeSettings: Flow<ThemeSettings>
@@ -43,8 +44,8 @@ internal class ThemeSettingsManagerImpl(
     }
     private val isAmoled = flowSettings.getBooleanOrNullFlow(IS_AMOLED).mapIfNull(false)
     private val seedColor =
-        flowSettings.getIntOrNullFlow(SEED_COLOR).map{
-            if(it == null) blue
+        flowSettings.getIntOrNullFlow(SEED_COLOR).map {
+            if (it == null) blue
             else Color(it)
         }
     private val style = flowSettings.getIntOrNullFlow(PALETTE_STYLE).map {

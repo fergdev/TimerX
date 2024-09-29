@@ -95,9 +95,12 @@ internal class CreateContainer(
 
 private fun List<TimerSet>.getMaxId() =
     this.maxOf { set ->
-        max(set.id, set.intervals.maxOf { interval ->
-            interval.id
-        })
+        max(
+            set.id,
+            set.intervals.maxOf { interval ->
+                interval.id
+            }
+        )
     } + 1L
 
 private fun reduceIntent(
@@ -170,9 +173,11 @@ private fun reduceIntent(
                         val index = set.intervals.indexOf(it.interval)
                         if (index != -1) {
                             set.copy(
-                                intervals = (set.intervals + set.intervals[index].copy(
-                                    id = defaultGenerator.getNextId()
-                                )).toPersistentList()
+                                intervals = (
+                                    set.intervals + set.intervals[index].copy(
+                                        id = defaultGenerator.getNextId()
+                                    )
+                                    ).toPersistentList()
                             )
                         } else {
                             set

@@ -31,5 +31,5 @@ interface ThemeSettingsIntent : MVIIntent {
     data class UpdateIsHighFidelity(val isHighFidelity: Boolean) : ThemeSettingsIntent
     data class UpdateContrast(val contrast: Double) : ThemeSettingsIntent
     data class UpdatePaletteStyle(val paletteStyle: PaletteStyle) : ThemeSettingsIntent
-    data class UpdateSeedColor(val seedColor: Color): ThemeSettingsIntent
+    data class UpdateSeedColor(val seedColor: Color) : ThemeSettingsIntent
 }

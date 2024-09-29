@@ -47,10 +47,12 @@ class MainActivity : ComponentActivity() {
         val root = DefaultRootComponent(
             componentContext = defaultComponentContext()
         )
-        loadKoinModules(module {
-            single<ComponentActivity> { this@MainActivity }
-            single<RootComponent> { root }
-        })
+        loadKoinModules(
+            module {
+                single<ComponentActivity> { this@MainActivity }
+                single<RootComponent> { root }
+            }
+        )
         setContent { AppContent(root) }
         parseIntent(intent)
     }

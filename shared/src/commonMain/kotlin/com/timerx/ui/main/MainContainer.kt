@@ -63,37 +63,31 @@ internal class MainContainer(
         }
         reduce {
             when (it) {
-                is MainIntent.DeleteTimer -> {
+                is MainIntent.DeleteTimer ->
                     timerRepository.deleteTimer(it.mainTimer.id)
-                }
 
-                is MainIntent.DuplicateTimer -> {
+                is MainIntent.DuplicateTimer ->
                     timerRepository.duplicate(it.mainTimer.id)
-                }
 
                 MainIntent.HidePermissionsDialog -> {
                 }
 
-                MainIntent.IgnoreNotificationsPermission -> {
+                MainIntent.IgnoreNotificationsPermission ->
                     timerXSettings.alertSettingsManager.setIgnoreNotificationPermissions()
-                }
 
-                MainIntent.RequestNotificationsPermission -> {
+                MainIntent.RequestNotificationsPermission ->
                     permissionsHandler.requestPermission(Permission.Notification)
-                }
 
-                is MainIntent.SwapTimers -> {
+                is MainIntent.SwapTimers ->
                     timerRepository.swapTimers(
                         it.from.id,
                         it.from.sortOrder,
                         it.to.id,
                         it.to.sortOrder
                     )
-                }
 
-                is MainIntent.UpdateSortTimersBy -> {
+                is MainIntent.UpdateSortTimersBy ->
                     timerXSettings.setSortTimersBy(it.sortTimersBy)
-                }
             }
         }
     }

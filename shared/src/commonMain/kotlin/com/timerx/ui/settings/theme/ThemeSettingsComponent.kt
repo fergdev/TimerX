@@ -6,7 +6,7 @@ import pro.respawn.flowmvi.essenty.dsl.retainedStore
 
 typealias ThemeStore = Store<ThemeSettingsState, ThemeSettingsIntent, Nothing>
 
-interface ThemeSettingsComponent: ThemeStore {
+interface ThemeSettingsComponent : ThemeStore {
     fun onBackClicked()
 }
 

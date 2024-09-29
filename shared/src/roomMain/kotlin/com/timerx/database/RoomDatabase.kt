@@ -96,8 +96,8 @@ interface RoomTimerDao {
 
     @Query(
         "UPDATE RoomTimer " +
-                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-                "WHERE id = :timerId"
+            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+            "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,
@@ -393,7 +393,7 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
     }
 
     override suspend fun getTimer(timerId: Long) =
-        timerDao.getTimer(timerId).map { it?.let{getRestOfTimer(it)} }
+        timerDao.getTimer(timerId).map { it?.let { getRestOfTimer(it) } }
 
     override suspend fun swapTimers(
         fromId: Long,

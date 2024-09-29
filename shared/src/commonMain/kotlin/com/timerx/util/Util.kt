@@ -4,7 +4,6 @@ import com.timerx.ui.common.isValid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
 /**
  * A middle point of the range. The value is rounded down.
  */
@@ -16,7 +15,6 @@ fun <T> Flow<T?>.mapIfNull(t: T): Flow<T> =
     this.map {
         it ?: t
     }
-
 
 public fun String?.takeIfValid(): String? = if (isValid()) this else null
 

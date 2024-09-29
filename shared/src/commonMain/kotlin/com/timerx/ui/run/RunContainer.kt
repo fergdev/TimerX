@@ -120,7 +120,6 @@ internal fun observeTimerPlugin(
     }
 }
 
-
 internal fun reducePlugin(
     timerManager: TimerManager,
     timerXSettings: ITimerXSettings,

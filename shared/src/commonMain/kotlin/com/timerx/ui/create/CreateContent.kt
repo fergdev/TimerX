@@ -265,11 +265,13 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(finishColor: Co
         targetValue = finishColor.lightDisplayColor(),
         animationSpec = tween(Animation.fast)
     )
-    Box(modifier = Modifier.clickable { colorPickerVisible = true }
-        .background(
-            color = backgroundColor,
-            shape = MaterialTheme.shapes.medium
-        )) {
+    Box(
+        modifier = Modifier.clickable { colorPickerVisible = true }
+            .background(
+                color = backgroundColor,
+                shape = MaterialTheme.shapes.medium
+            )
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically

@@ -31,4 +31,3 @@ fun Modifier.discoShader(running: Boolean = true) = composed {
         uniform("time", time)
     }
 }
-

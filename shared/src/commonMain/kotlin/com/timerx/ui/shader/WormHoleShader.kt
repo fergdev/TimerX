@@ -31,7 +31,7 @@ private val shader = """
 
 fun Modifier.wormHoleShader(running: Boolean = true) = composed {
     var time by remember { mutableFloatStateOf(0f) }
-     FPSLaunchedEffect { time = it  }
+    FPSLaunchedEffect { time = it }
     this then runtimeShader(shader) {
         uniform("time", time)
     }

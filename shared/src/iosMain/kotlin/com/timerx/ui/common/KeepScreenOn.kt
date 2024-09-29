@@ -6,7 +6,7 @@ import platform.UIKit.UIApplication
 
 @Composable
 actual fun KeepScreenOn() {
-    DisposableEffect(Unit){
+    DisposableEffect(Unit) {
         UIApplication.sharedApplication.setIdleTimerDisabled(true)
         onDispose {
             UIApplication.sharedApplication.setIdleTimerDisabled(false)

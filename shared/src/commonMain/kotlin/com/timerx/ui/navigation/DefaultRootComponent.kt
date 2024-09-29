@@ -114,5 +114,3 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
         data class Run(val timerId: Long) : Config
     }
 }
-
-

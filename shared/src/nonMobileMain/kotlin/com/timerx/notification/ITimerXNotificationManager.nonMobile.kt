@@ -4,7 +4,6 @@ import com.timerx.domain.TimerEvent
 
 object NotificationManager : ITimerXNotificationManager {
     override fun start() {
-
     }
 
     override fun stop() {

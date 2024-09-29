@@ -184,9 +184,11 @@ private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(isSystemDynam
     val updateIsSystemDynamic = {
         intent(UpdateIsSystemDynamic(isSystemDynamic.not()))
     }
-    ThemeCard(modifier = Modifier.clickable {
-        updateIsSystemDynamic()
-    }) {
+    ThemeCard(
+        modifier = Modifier.clickable {
+            updateIsSystemDynamic()
+        }
+    ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.system_dynamic_colors))
             Spacer(modifier = Modifier.weight(1f))
@@ -205,9 +207,11 @@ private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
     val updateIsAmoled = {
         intent(UpdateIsAmoled(isAmoled.not()))
     }
-    ThemeCard(modifier = Modifier.clickable {
-        updateIsAmoled()
-    }) {
+    ThemeCard(
+        modifier = Modifier.clickable {
+            updateIsAmoled()
+        }
+    ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.amoled))
             Spacer(modifier = Modifier.weight(1f))
