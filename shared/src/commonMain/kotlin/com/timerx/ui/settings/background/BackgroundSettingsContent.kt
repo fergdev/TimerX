@@ -72,7 +72,7 @@ fun BackgroundSettingsContent(
 }
 
 @Composable
-private fun IntentReceiver<BackgroundSettingsIntent>.LoadedContent(state: BackgroundSettingsState.LoadedState) =
+private fun IntentReceiver<BackgroundSettingsIntent>.LoadedContent(state: LoadedState) =
     with(state) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AlphaCard(alpha)
