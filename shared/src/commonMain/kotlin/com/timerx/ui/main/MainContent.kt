@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -58,6 +57,7 @@ import com.timerx.domain.next
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.ads.GoogleAd
 import com.timerx.ui.common.CustomIcons
+import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.TIcon
@@ -127,14 +127,12 @@ internal fun MainContent(mainComponent: MainComponent) {
         ) { padding ->
             Box(modifier = Modifier.fillMaxSize()) {
                 when (state) {
-                    is MainState.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                    }
-
+                    is MainState.Loading -> DefaultLoading()
                     is MainState.Empty -> {
                         Text(
                             modifier = Modifier.padding(16.dp).align(Alignment.Center),
-                            text = stringResource(Res.string.no_timers)
+                            text = stringResource(Res.string.no_timers),
+                            style = MaterialTheme.typography.headlineLarge
                         )
                     }
 

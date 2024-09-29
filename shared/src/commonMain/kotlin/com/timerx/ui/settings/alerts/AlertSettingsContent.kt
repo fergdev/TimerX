@@ -14,7 +14,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +26,6 @@ import com.timerx.ui.settings.alerts.AlertsSettingsIntent.OpenAppSettings
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.UpdateVibration
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.UpdateVolume
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import pro.respawn.flowmvi.api.IntentReceiver
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
@@ -42,13 +40,11 @@ import timerx.shared.generated.resources.volume
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) {
-    with(koinInject<AlertsSettingsContainer>().store) {
-        LaunchedEffect(Unit) { start(this).join() }
-        val state by subscribe(DefaultLifecycle)
+internal fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) =
+    with(rootComponent) {
         TScaffold(
             title = stringResource(Res.string.alerts),
-            onBack = rootComponent::onBackClicked
+            onBack = ::onBackClicked
         ) { scaffoldPadding ->
             Column(
                 modifier = Modifier.padding(
@@ -58,16 +54,16 @@ fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) {
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                val state by subscribe(DefaultLifecycle)
                 VolumeCard(state.volume)
                 VibrationCard(state.isVibrationEnabled)
                 NotificationsCard(state.isNotificationsEnabled)
             }
         }
     }
-}
 
 @Composable
-private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(isNotificationsEnabled:Boolean) {
+private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(isNotificationsEnabled: Boolean) {
     AlertCard {
         Row(
             modifier = Modifier.padding(vertical = 16.dp),

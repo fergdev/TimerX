@@ -14,7 +14,7 @@ import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
-internal class ThemeSettingsContainer(
+class ThemeSettingsContainer(
     private val timerXSettings: ITimerXSettings,
     private val platformCapabilities: PlatformCapabilities
 ) : Container<ThemeSettingsState, ThemeSettingsIntent, Nothing> {

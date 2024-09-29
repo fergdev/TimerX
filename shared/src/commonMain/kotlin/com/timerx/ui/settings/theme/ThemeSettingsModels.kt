@@ -8,7 +8,7 @@ import com.timerx.ui.common.blue
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
-internal interface ThemeSettingsState : MVIState {
+interface ThemeSettingsState : MVIState {
 
     data object Loading : ThemeSettingsState
 
@@ -24,7 +24,7 @@ internal interface ThemeSettingsState : MVIState {
     ) : ThemeSettingsState
 }
 
-internal interface ThemeSettingsIntent : MVIIntent {
+interface ThemeSettingsIntent : MVIIntent {
     data class UpdateDarkTheme(val settingsDarkTheme: SettingsDarkTheme) : ThemeSettingsIntent
     data class UpdateIsSystemDynamic(val isSystemDynamic: Boolean) : ThemeSettingsIntent
     data class UpdateIsAmoled(val isAmoled: Boolean) : ThemeSettingsIntent

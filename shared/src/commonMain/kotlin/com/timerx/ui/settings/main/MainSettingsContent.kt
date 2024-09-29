@@ -8,8 +8,8 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.TMenuItem
@@ -17,7 +17,6 @@ import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.main.MainSettingsIntent.KeepScreenOn
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
@@ -31,21 +30,19 @@ import timerx.shared.generated.resources.theme_subtitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun MainSettingsContent(
-    component: MainSettingsComponent
-) {
-    with(koinInject<MainSettingsContainer>().store) {
-        LaunchedEffect(Unit) { start(this).join() }
-        val state by subscribe(DefaultLifecycle)
+internal fun MainSettingsContent(component: MainSettingsComponent) =
+    with(component) {
         TScaffold(
             title = stringResource(Res.string.settings),
             onBack = component::onBackClicked
         ) { padding ->
+            val state by subscribe(DefaultLifecycle)
             Column(
                 modifier = Modifier.padding(
                     top = padding.calculateTopPadding(),
                     bottom = padding.calculateBottomPadding()
-                )
+                ),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TMenuItem(
                     title = stringResource(Res.string.alerts),
@@ -81,4 +78,3 @@ internal fun MainSettingsContent(
             }
         }
     }
-}

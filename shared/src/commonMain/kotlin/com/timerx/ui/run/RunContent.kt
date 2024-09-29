@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
+import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.KeepScreenOn
 import com.timerx.ui.common.contrastColor
 import com.timerx.ui.common.contrastSystemBarColor
@@ -89,19 +89,12 @@ fun RunContent(runComponent: RunComponent) {
         val state by subscribe(DefaultLifecycle)
 
         when (state) {
-            RunScreenState.Loading -> LoadingContent()
+            RunScreenState.Loading -> DefaultLoading()
             RunScreenState.NoTimer -> NoTimerContent(runComponent)
             is Loaded -> {
                 LoadedContent(state as Loaded, runComponent)
             }
         }
-    }
-}
-
-@Composable
-private fun LoadingContent() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
     }
 }
 

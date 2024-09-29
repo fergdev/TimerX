@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,7 +27,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -37,7 +35,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +46,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
 import com.timerx.settings.SettingsDarkTheme
+import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
@@ -59,10 +57,10 @@ import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsSystemDynamic
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdatePaletteStyle
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateSeedColor
 import com.timerx.ui.settings.theme.ThemeSettingsState.LoadedState
+import com.timerx.ui.settings.theme.ThemeSettingsState.Loading
 import com.timerx.ui.theme.Animation
 import com.timerx.ui.theme.isDarkTheme
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import pro.respawn.flowmvi.api.IntentReceiver
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
@@ -81,29 +79,19 @@ import timerx.shared.generated.resources.user
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent) {
-    TScaffold(
-        title = stringResource(Res.string.theme),
-        onBack = themeSettingsComponent::onBackClicked
-    ) { padding ->
-        with(koinInject<ThemeSettingsContainer>().store) {
-            LaunchedEffect(Unit) { start(this).join() }
+internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent) =
+    with(themeSettingsComponent) {
+        TScaffold(
+            title = stringResource(Res.string.theme),
+            onBack = themeSettingsComponent::onBackClicked
+        ) { padding ->
             val state by subscribe(DefaultLifecycle)
-
             when (state) {
-                ThemeSettingsState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                is LoadedState -> {
-                    LoadedContent(state as LoadedState, padding)
-                }
+                Loading -> DefaultLoading()
+                is LoadedState -> LoadedContent(state as LoadedState, padding)
             }
         }
     }
-}
 
 @Composable
 private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
@@ -112,7 +100,9 @@ private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     Column(
-        modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
             .padding(
                 top = scaffoldPadding.calculateTopPadding(),
                 bottom = scaffoldPadding.calculateBottomPadding() + systemBarPadding.calculateBottomPadding(),
@@ -121,13 +111,13 @@ private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
             ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        val isDarkTheme = isDarkTheme(state.settingsDarkTheme)
         DarkModeRow(state.settingsDarkTheme)
         if (state.isDynamicThemeSupported) {
             DynamicColorsRow(state.isSystemDynamic)
         }
         AnimatedVisibility(state.isSystemDynamic.not()) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                val isDarkTheme = isDarkTheme(state.settingsDarkTheme)
                 AnimatedVisibility(isDarkTheme) {
                     AmoledRow(state.isAmoled)
                 }

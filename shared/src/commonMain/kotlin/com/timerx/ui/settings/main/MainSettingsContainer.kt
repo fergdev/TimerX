@@ -6,7 +6,7 @@ import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
-internal class MainSettingsContainer(
+class MainSettingsContainer(
     private val settings: TimerXSettings
 ) : Container<MainSettingsState, MainSettingsIntent, Nothing> {
     override val store = store(MainSettingsState()) {

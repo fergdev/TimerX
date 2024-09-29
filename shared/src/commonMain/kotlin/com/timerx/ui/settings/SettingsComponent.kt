@@ -17,6 +17,7 @@ import com.timerx.ui.settings.main.MainSettingsComponent
 import com.timerx.ui.settings.theme.DefaultThemeSettingsComponent
 import com.timerx.ui.settings.theme.ThemeSettingsComponent
 import kotlinx.serialization.Serializable
+import org.koin.mp.KoinPlatform
 
 interface SettingsComponent : BackHandlerOwner {
 
@@ -33,10 +34,11 @@ interface SettingsComponent : BackHandlerOwner {
 }
 
 @OptIn(DelicateDecomposeApi::class)
-class DefaultSettingsComponent(
+internal class DefaultSettingsComponent(
     componentContext: ComponentContext,
     private val onBack: () -> Unit
 ) : SettingsComponent, ComponentContext by componentContext {
+    private val koin = KoinPlatform.getKoin()
     private val nav = StackNavigation<SettingsConfig>()
     private val _stack = childStack(
         source = nav,
@@ -44,6 +46,7 @@ class DefaultSettingsComponent(
         initialStack = { listOf(SettingsConfig.Main) },
         childFactory = ::child,
     )
+
     override val stack: Value<ChildStack<*, SettingsComponent.Child>> = _stack
 
     private fun child(
@@ -54,16 +57,24 @@ class DefaultSettingsComponent(
             is SettingsConfig.Main -> SettingsComponent.Child.Main(DefaultMainSettingsComponent(
                 backClicked = { onBackClicked() },
                 alertClicked = { nav.push(SettingsConfig.Alerts) },
-                themeClicked = { nav.push(SettingsConfig.Theme) }
+                themeClicked = { nav.push(SettingsConfig.Theme) },
+                componentContext,
+                koin::get
             ))
 
-            is SettingsConfig.Alerts -> SettingsComponent.Child.Alerts(DefaultAlertSettingsComponent(
-                backClicked = { nav.pop() }
-            ))
+            is SettingsConfig.Alerts -> SettingsComponent.Child.Alerts(
+                DefaultAlertSettingsComponent(
+                    backClicked = { nav.pop() },
+                    koin::get,
+                    componentContext
+                )
+            )
 
             is SettingsConfig.Theme -> SettingsComponent.Child.Theme(
                 DefaultThemeSettingsComponent(
-                    backClicked = { nav.pop() }
+                    backClicked = { nav.pop() },
+                    koin::get,
+                    componentContext
                 )
             )
         }

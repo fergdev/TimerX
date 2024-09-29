@@ -63,6 +63,7 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", ve
 flowext = { module = "io.github.hoc081098:FlowExt", version.ref = "flowext" }
 flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowMvi" }
 flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowMvi" }
+flowmvi-essenty = { module = "pro.respawn.flowmvi:essenty", version.ref = "flowMvi" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

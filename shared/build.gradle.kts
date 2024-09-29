@@ -112,6 +112,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(libs.flowmvi.compose)
                 implementation(libs.flowmvi.core)
+                implementation(libs.flowmvi.essenty)
                 implementation(libs.koin)
                 implementation(libs.koin.compose)
                 implementation(libs.kotlin.immutable)

@@ -10,7 +10,7 @@ import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
-internal class AlertsSettingsContainer(
+class AlertsSettingsContainer(
     private val timerXSettings: ITimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
 ) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
