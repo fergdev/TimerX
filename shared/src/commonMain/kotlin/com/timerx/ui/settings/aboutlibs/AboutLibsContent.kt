@@ -1,5 +1,6 @@
 package com.timerx.ui.settings.aboutlibs
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -19,10 +20,12 @@ import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.rememberLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.util.author
 import com.timerx.ui.common.PaddedElevatedCard
@@ -51,6 +54,7 @@ fun AboutLibsContent(component: AboutLibsComponent) {
             item {
                 Spacer(modifier = Modifier.height(scaffoldPadding.calculateTopPadding()))
             }
+            LibraryDefaults
             items(items = libraries) { Library(library = it) }
             item {
                 Spacer(modifier = Modifier.height(scaffoldPadding.calculateBottomPadding()))
@@ -59,16 +63,26 @@ fun AboutLibsContent(component: AboutLibsComponent) {
     }
 }
 
+@Suppress("SwallowedException")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun Library(
     library: Library,
-    showAuthor: Boolean = true,
-    showVersion: Boolean = true,
-    showLicenseBadges: Boolean = true,
     typography: Typography = MaterialTheme.typography,
 ) {
-    PaddedElevatedCard(modifier = Modifier.widthIn(max = 600.dp)) {
+    val uriHandler = LocalUriHandler.current
+    PaddedElevatedCard(modifier = Modifier.widthIn(max = 600.dp).clickable {
+        val license = library.licenses.firstOrNull()
+        if (!license?.url.isNullOrBlank()) {
+            license?.url?.also {
+                try {
+                    uriHandler.openUri(it)
+                } catch (t: IllegalArgumentException) {
+                    println("Failed to open url: $it")
+                }
+            }
+        }
+    }) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -82,7 +96,7 @@ internal fun Library(
                 overflow = TextOverflow.Ellipsis
             )
             val version = library.artifactVersion
-            if (version != null && showVersion) {
+            if (version != null) {
                 Text(
                     version,
                     style = typography.bodyMedium,
@@ -91,13 +105,13 @@ internal fun Library(
             }
         }
         val author = library.author
-        if (showAuthor && author.isNotBlank()) {
+        if (author.isNotBlank()) {
             Text(
                 text = author,
                 style = typography.bodyMedium,
             )
         }
-        if (showLicenseBadges && library.licenses.isNotEmpty()) {
+        if (library.licenses.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier.padding(top = 4.dp)
             ) {
