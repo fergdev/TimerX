@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,61 +35,45 @@ fun TMenuItem(
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    Row(
+    PaddedElevatedCard(
         modifier = modifier
+            .wrapContentHeight()
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .animateContentSize()
             .widthIn(max = 600.dp)
             .then(if (onClick != null) Modifier.noIndicationClickable(onClick = onClick) else Modifier),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        AnimatedVisibility(
-            visible = icon != null,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            icon?.let { it() }
-        }
-
-        Column(modifier = Modifier.weight(1f, true), verticalArrangement = Arrangement.Center) {
-            Box(Modifier.padding(2.dp)) {
-                title()
+            AnimatedVisibility(
+                visible = icon != null,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                icon?.let { it() }
             }
-            AnimatedVisibility(secondary != null) {
-                Box(modifier = Modifier.padding(2.dp)) {
-                    secondary?.let { it() }
+
+            Column(modifier = Modifier.weight(1f, true), verticalArrangement = Arrangement.Center) {
+                Box(Modifier.padding(2.dp)) {
+                    title()
+                }
+                AnimatedVisibility(secondary != null) {
+                    Box(modifier = Modifier.padding(2.dp)) {
+                        secondary?.let { it() }
+                    }
                 }
             }
-        }
 
-        AnimatedVisibility(
-            visible = trailing != null,
-            modifier = Modifier.padding(2.dp),
-        ) {
-            trailing?.let { it() }
+            AnimatedVisibility(
+                visible = trailing != null,
+                modifier = Modifier.padding(2.dp),
+            ) {
+                trailing?.let { it() }
+            }
         }
     }
 }
-
-@Suppress("ComposableParametersOrdering") // as intended
-@Composable
-fun TMenuItem(
-    icon: ImageVector?,
-    color: Color,
-    contentDescription: String,
-    title: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    secondary: (@Composable () -> Unit)? = null,
-    onClick: (() -> Unit)? = null,
-    trailing: (@Composable () -> Unit)? = null,
-) = TMenuItem(
-    icon = icon?.let { { TMenuItemIcon(it, color, contentDescription = contentDescription) } },
-    title = title,
-    modifier = modifier,
-    onClick = onClick,
-    secondary = secondary,
-    trailing = trailing,
-)
 
 @Composable
 fun TMenuItem(

@@ -1,5 +1,8 @@
 @file:Suppress("UnusedPrivateProperty")
 
+import com.mikepenz.aboutlibraries.plugin.DuplicateMode
+import com.mikepenz.aboutlibraries.plugin.DuplicateRule
+import com.mikepenz.aboutlibraries.plugin.StrictMode
 import org.intellij.lang.annotations.Language
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -16,8 +19,8 @@ plugins {
     // TODO add plugin back in when this is supported again
 //    alias(libs.plugins.room)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.aboutLibs)
 }
-// region buildconfig
 
 @Language("Kotlin")
 // language=kotlin
@@ -37,7 +40,6 @@ val generateBuildConfig by tasks.registering(Sync::class) {
     // the target directory
     into(layout.buildDirectory.dir("generated/kotlin/src/commonMain"))
 }
-// endregion
 
 kotlin {
     applyDefaultHierarchyTemplate()
@@ -128,6 +130,7 @@ kotlin {
                 implementation(libs.multiplatform.settings.observable)
                 implementation(libs.material.kolor)
                 implementation(libs.flowext)
+                implementation(libs.aboutLibs)
             }
         }
         val commonTest by getting {
@@ -321,4 +324,45 @@ composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
     metricsDestination = layout.buildDirectory.dir("compose_compiler")
     stabilityConfigurationFile = rootProject.file("shared/compose_stability_config.conf")
+}
+
+// endregion
+// endregion
+// It is possible to define a custom config path with custom mappings
+aboutLibraries {
+    // - if the automatic registered android tasks are disabled, a similar thing can be achieved manually
+    // - `./gradlew app:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/res/raw`
+    // - the resulting file can for example be added as part of the SCM
+    // registerAndroidTasks = false
+
+    // define the path configuration files are located in. E.g. additional libraries, licenses to add to the target .json
+    configPath = "config"
+    // allow to enable "offline mode", will disable any network check of the plugin (including [fetchRemoteLicense] or pulling spdx license texts)
+    offlineMode = false
+    // enable fetching of "remote" licenses. Uses the GitHub API
+    fetchRemoteLicense = true
+
+    // Full license text for license IDs mentioned here will be included, even if no detected dependency uses them.
+    // additionalLicenses = ["mit", "mpl_2_0"]
+
+    // Allows to exclude some fields from the generated meta data field.
+    // excludeFields = ["developers", "funding"]
+
+    // Define the strict mode, will fail if the project uses licenses not allowed
+    // - This will only automatically fail for Android projects which have `registerAndroidTasks` enabled
+    // For non Android projects, execute `exportLibraryDefinitions`
+    strictMode = StrictMode.FAIL
+    // Allowed set of licenses, this project will be able to use without build failure
+    allowedLicenses = arrayOf("Apache-2.0", "MIT", "BSD-3-Clause", "ASDKL")
+    // Allowed set of licenses for specific dependencies, this project will be able to use without build failure
+    allowedLicensesMap = mapOf(Pair("asdkl", listOf("androidx.jetpack.library")))
+    // Enable the duplication mode, allows to merge, or link dependencies which relate
+    duplicationMode = DuplicateMode.LINK
+    // Configure the duplication rule, to match "duplicates" with
+    duplicationRule = DuplicateRule.SIMPLE
+    // Enable pretty printing for the generated JSON file
+    prettyPrint = true
+
+    // Allows to only collect dependencies of specific variants during the `collectDependencies` step.
+    // filterVariants = ["debug"]
 }

@@ -113,7 +113,7 @@ fun TScaffold(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .thenIf(fadeContent) { fadingEdge(FadingEdge.Top, ContentFadeDistance) }
+                .thenIf(fadeContent) { fadingEdge(FadingEdge.Top, ContentFadeDistance) },
         ) {
             content(padding)
         }

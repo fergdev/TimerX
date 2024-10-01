@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,6 +19,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.timerx.settings.Pattern
@@ -51,14 +53,15 @@ fun BackgroundSettingsContent(
         val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
         Column(
             modifier = Modifier
-                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(
                     top = scaffoldPadding.calculateTopPadding(),
                     bottom = scaffoldPadding.calculateBottomPadding() + systemBarPadding.calculateBottomPadding(),
                     start = 16.dp,
                     end = 16.dp
-                ),
+                )
+                .widthIn(max = 600.dp)
+                .align(Alignment.TopCenter),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val state by subscribe(DefaultLifecycle)

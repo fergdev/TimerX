@@ -11,6 +11,7 @@ interface MainSettingsComponent : MainSettingsStore {
     fun onAlert()
     fun onTheme()
     fun onBackgroundSettings()
+    fun onAboutLibs()
 }
 
 class DefaultMainSettingsComponent(
@@ -18,6 +19,7 @@ class DefaultMainSettingsComponent(
     private val alertClicked: () -> Unit,
     private val themeClicked: () -> Unit,
     private val backgroundSettings: () -> Unit,
+    private val aboutLibs: () -> Unit,
     context: ComponentContext,
     factory: () -> MainSettingsContainer
 ) : ComponentContext by context,
@@ -37,5 +39,9 @@ class DefaultMainSettingsComponent(
 
     override fun onBackgroundSettings() {
         backgroundSettings()
+    }
+
+    override fun onAboutLibs() {
+        aboutLibs()
     }
 }

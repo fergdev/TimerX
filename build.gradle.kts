@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.aboutLibs) apply false
 }
 
 versionCatalogUpdate {

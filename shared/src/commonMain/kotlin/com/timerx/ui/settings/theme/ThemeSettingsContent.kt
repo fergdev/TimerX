@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -88,20 +89,24 @@ internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent
             val state by subscribe(DefaultLifecycle)
             when (state) {
                 Loading -> DefaultLoading()
-                is LoadedState -> LoadedContent(state as LoadedState, padding)
+                is LoadedState -> LoadedContent(
+                    modifier = Modifier.widthIn(max = 600.dp).align(Alignment.TopCenter),
+                    state = state as LoadedState,
+                    scaffoldPadding = padding
+                )
             }
         }
     }
 
 @Composable
 private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
+    modifier: Modifier,
     state: LoadedState,
     scaffoldPadding: PaddingValues
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(
                 top = scaffoldPadding.calculateTopPadding(),

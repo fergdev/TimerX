@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PaddedElevatedCard(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     ElevatedCard(modifier = modifier) {
         Column(modifier = Modifier.padding(8.dp)) {

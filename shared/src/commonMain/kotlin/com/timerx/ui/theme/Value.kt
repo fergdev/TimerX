@@ -17,6 +17,7 @@ object Size {
     val smallIcon = 18.dp
     val fab = 56.dp
     val touchTarget = 40.dp // iOS accessibility recommended (android is 48)
+    val maxWidth = 600.dp
 }
 
 object Padding {

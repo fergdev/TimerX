@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -140,6 +141,7 @@ internal fun MainContent(mainComponent: MainComponent) {
                 is MainState.Content -> {
                     with(state as MainState.Content) {
                         Content(
+                            modifier = Modifier.widthIn(max = 600.dp).align(Alignment.TopCenter),
                             state = this,
                             mainComponent = mainComponent,
                             appBarScrollBehavior = appBarScrollBehavior,
@@ -158,15 +160,16 @@ internal fun MainContent(mainComponent: MainComponent) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IntentReceiver<MainIntent>.Content(
+    modifier: Modifier = Modifier,
     state: MainState.Content,
     mainComponent: MainComponent,
     appBarScrollBehavior: TopAppBarScrollBehavior,
-    padding: PaddingValues
+    padding: PaddingValues,
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .nestedScroll(appBarScrollBehavior.nestedScrollConnection),
     ) {

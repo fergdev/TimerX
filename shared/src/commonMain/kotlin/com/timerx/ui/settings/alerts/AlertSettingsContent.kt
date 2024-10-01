@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,7 +51,9 @@ internal fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) =
                     top = scaffoldPadding.calculateTopPadding(),
                     start = 16.dp,
                     end = 16.dp
-                ),
+                )
+                    .widthIn(max = 600.dp)
+                    .align(Alignment.TopCenter),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 with(subscribe(DefaultLifecycle).value) {

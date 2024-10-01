@@ -1,5 +1,7 @@
 <resources>
     <string name="add">Add</string>
+    <string name="about_libs">About libraries</string>
+    <string name="about_libs_subtitle">List of libraries and Licenses used by Tx</string>
     <string name="alerts">Alerts</string>
     <string name="alerts_subtitle">Control how Tx interacts with you</string>
     <string name="alpha">Alpha</string>
