@@ -1,7 +1,7 @@
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.beep.Beep
+import com.timerx.sound.Beep
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet

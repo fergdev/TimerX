@@ -1,6 +1,6 @@
 package com.timerx.permissions
 
-object PermissionHandler : IPermissionsHandler {
+class PermissionsHandler : IPermissionsHandler {
     override suspend fun requestPermission(permission: Permission) {
     }
 

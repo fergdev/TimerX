@@ -3,7 +3,7 @@ package com.timerx.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.timerx.domain.TimerManager
+import com.timerx.timermanager.TimerManager
 import org.koin.mp.KoinPlatform
 
 class NotificationBroadcastReceiver : BroadcastReceiver() {

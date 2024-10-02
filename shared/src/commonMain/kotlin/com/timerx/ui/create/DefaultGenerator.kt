@@ -1,7 +1,7 @@
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.beep.Beep
+import com.timerx.sound.Beep
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
@@ -39,6 +39,7 @@ internal class DefaultGenerator {
             duration = 30,
             color = color,
             vibration = Vibration.Medium,
+            textToSpeech = true,
             beep = Beep.Alert,
             finalCountDown = FinalCountDown(
                 duration = 3,
@@ -59,6 +60,7 @@ internal class DefaultGenerator {
                     skipOnLastSet = false,
                     countUp = false,
                     manualNext = false,
+                    textToSpeech = true,
                     beep = Beep.Alert,
                     vibration = Vibration.Medium,
                     finalCountDown = FinalCountDown(

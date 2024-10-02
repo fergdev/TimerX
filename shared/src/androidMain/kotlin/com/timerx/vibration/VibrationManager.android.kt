@@ -3,7 +3,6 @@ package com.timerx.vibration
 import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
-import com.timerx.beep.BEEP_VIBRATION_DELAY
 import com.timerx.settings.ITimerXSettings
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
@@ -64,7 +63,7 @@ class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibration
                     VibrationEffect.DEFAULT_AMPLITUDE
                 )
             )
-            delay(BEEP_VIBRATION_DELAY)
+            delay(VIBRATION_DELAY)
         }
     }
 }

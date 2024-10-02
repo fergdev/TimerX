@@ -1,6 +1,5 @@
 package com.timerx.vibration
 
-import com.timerx.beep.BEEP_VIBRATION_DELAY
 import com.timerx.settings.ITimerXSettings
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
@@ -40,7 +39,7 @@ class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibration
         val generator = UIImpactFeedbackGenerator(style)
         repeat(vibration.repeat) {
             generator.impactOccurred()
-            delay(BEEP_VIBRATION_DELAY)
+            delay(VIBRATION_DELAY)
         }
     }
 }

@@ -1,25 +1,29 @@
-package com.timerx.beep
+package com.timerx.sound
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.speech.tts.TextToSpeech
+import androidx.core.os.bundleOf
 import com.timerx.R
 import com.timerx.settings.ITimerXSettings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 
-class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
+class SoundManager(timerXSettings: ITimerXSettings, context: Context) :
+    ISoundManager(timerXSettings) {
     private val context: Context = KoinPlatform.getKoin().get()
     private var mediaPlayer: MediaPlayer? = null
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
-    private var volume: Float = 1f
+    private val textToSpeech: TextToSpeech
+    private var ttsSupported = false
+    override val isTTSSupported: Boolean
+        get() = ttsSupported
 
     init {
-        coroutineScope.launch {
-            timerXSettings.alertSettingsManager.alertSettings.collect { volume = it.volume }
+        textToSpeech = TextToSpeech(context) { status ->
+            ttsSupported = status == TextToSpeech.SUCCESS
+            if (status != TextToSpeech.SUCCESS) {
+                println("There was an error getting text to speech")
+            }
         }
     }
 
@@ -35,6 +39,14 @@ class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
             delay(BEEP_VIBRATION_DELAY)
         }
     }
+
+    override suspend fun textToSpeech(text: String) {
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, textToSpeechParams(), text)
+    }
+
+    private fun textToSpeechParams() = bundleOf(
+        Pair(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume)
+    )
 }
 
 private fun Beep.toResource() =

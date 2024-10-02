@@ -206,7 +206,10 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlin.coroutines.swing)
+                implementation(libs.korge.core)
+                implementation(libs.freetts)
             }
+
         }
         val wasmJsMain by getting {
             dependsOn(nonMobileMain)
@@ -326,9 +329,6 @@ composeCompiler {
     stabilityConfigurationFile = rootProject.file("shared/compose_stability_config.conf")
 }
 
-// endregion
-// endregion
-// It is possible to define a custom config path with custom mappings
 aboutLibraries {
     // - if the automatic registered android tasks are disabled, a similar thing can be achieved manually
     // - `./gradlew app:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/res/raw`

@@ -2,7 +2,7 @@ package com.timerx.domain
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.timerx.beep.Beep
+import com.timerx.sound.Beep
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -55,6 +55,7 @@ data class TimerInterval(
     val skipOnLastSet: Boolean = false,
     val countUp: Boolean = false,
     val manualNext: Boolean = false,
+    val textToSpeech: Boolean = true,
     val beep: Beep = Beep.Alert,
     val vibration: Vibration = Vibration.Medium,
     val finalCountDown: FinalCountDown = FinalCountDown()

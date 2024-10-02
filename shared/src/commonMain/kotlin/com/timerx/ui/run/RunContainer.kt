@@ -2,9 +2,9 @@ package com.timerx.ui.run
 
 import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.database.ITimerRepository
-import com.timerx.domain.TimerEvent
-import com.timerx.domain.TimerManager
-import com.timerx.domain.TimerState
+import com.timerx.timermanager.TimerEvent
+import com.timerx.timermanager.TimerManager
+import com.timerx.timermanager.TimerState
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.ITimerXSettings
@@ -143,7 +143,6 @@ internal fun reducePlugin(
             RunScreenIntent.RestartTimer -> timerManager.restartCurrentTimer()
             is RunScreenIntent.UpdateVibrationEnabled ->
                 timerXSettings.alertSettingsManager.setVibrationEnabled(it.enabled)
-
             is RunScreenIntent.UpdateVolume -> timerXSettings.alertSettingsManager.setVolume(it.volume)
         }
     }

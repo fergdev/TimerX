@@ -1,6 +1,6 @@
 package com.timerx.notification
 
-import com.timerx.domain.TimerEvent
+import com.timerx.timermanager.TimerEvent
 
 interface ITimerXNotificationManager {
 

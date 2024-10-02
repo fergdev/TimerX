@@ -1,5 +1,6 @@
 package com.timerx.vibration
 
+const val VIBRATION_DELAY: Long = 500L
 interface IVibrationManager {
     suspend fun vibrate(vibration: Vibration)
 }

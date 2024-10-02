@@ -7,7 +7,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.IBinder
-import com.timerx.domain.TimerManager
+import com.timerx.timermanager.TimerManager
 import org.koin.mp.KoinPlatform
 
 class NotificationService : Service() {

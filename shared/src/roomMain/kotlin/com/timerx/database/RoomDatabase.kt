@@ -16,7 +16,7 @@ import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import com.timerx.beep.Beep
+import com.timerx.sound.Beep
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.NO_SORT_ORDER
 import com.timerx.domain.Timer
@@ -293,6 +293,8 @@ data class RoomInterval(
     val countUp: Boolean,
     @ColumnInfo("manual_next")
     val manualNext: Boolean,
+    @ColumnInfo("text_to_speech")
+    val textToSpeech: Boolean,
     @ColumnInfo("beep_id")
     val beepId: Int,
     @ColumnInfo("vibration_id")
@@ -439,6 +441,7 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
                             skipOnLastSet = roomInterval.skipOnLastSet,
                             countUp = roomInterval.countUp,
                             manualNext = roomInterval.manualNext,
+                            textToSpeech = roomInterval.textToSpeech,
                             beep = Beep.entries[roomInterval.beepId],
                             vibration = Vibration.entries[roomInterval.vibrationId],
                             finalCountDown = FinalCountDown(
@@ -469,7 +472,7 @@ private fun Timer.toRoomTimer() =
         finishBeepId = this.finishBeep.ordinal,
         finishVibration = this.finishVibration.ordinal,
         sortOrder = this.sortOrder,
-        duration = this.length().toLong(),
+        duration = this.length(),
         createdAt = this.createdAt,
         lastRun = this.lastRun
     )
@@ -489,6 +492,7 @@ private fun TimerInterval.toRoomInterval() =
         skipOnLastSet = this.skipOnLastSet,
         countUp = this.countUp,
         manualNext = this.manualNext,
+        textToSpeech = this.textToSpeech,
         beepId = this.beep.ordinal,
         vibrationId = this.vibration.ordinal,
         finalCountDownDuration = this.finalCountDown.duration,

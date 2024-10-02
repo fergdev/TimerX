@@ -1,13 +1,13 @@
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.beep.Beep
-import com.timerx.beep.IBeepManager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.sound.Beep
+import com.timerx.sound.ISoundManager
 import com.timerx.ui.create.CreateScreenIntent.AddSet
 import com.timerx.ui.create.CreateScreenIntent.DeleteInterval
 import com.timerx.ui.create.CreateScreenIntent.DeleteSet
@@ -48,7 +48,7 @@ import kotlin.math.max
 internal class CreateContainer(
     timerId: Long,
     private val timerDatabase: ITimerRepository,
-    private val beepManager: IBeepManager,
+    private val soundManager: ISoundManager,
     private val vibrationManger: IVibrationManager
 ) : Container<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     private val defaultGenerator = DefaultGenerator()
@@ -85,7 +85,7 @@ internal class CreateContainer(
             reduceIntent(
                 defaultGenerator,
                 timerDatabase,
-                beepManager,
+                soundManager,
                 vibrationManger,
                 timerId
             )
@@ -106,9 +106,9 @@ private fun List<TimerSet>.getMaxId() =
 private fun reduceIntent(
     defaultGenerator: DefaultGenerator,
     timerDatabase: ITimerRepository,
-    beepManager: IBeepManager,
+    beepManager: ISoundManager,
     vibrationManger: IVibrationManager,
-    timerId: Long
+    timerId: Long,
 ) = reducePlugin<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     when (it) {
         is UpdateTimerName -> updateState { copy(timerNameModel = TimerNameModel(name = it.timerName)) }
@@ -250,7 +250,6 @@ private fun reduceIntent(
                     )
                 )
             }
-            beepManager.beep(it.beep)
         }
 
         is UpdateIntervalColor -> updateState {
@@ -375,6 +374,7 @@ private fun PersistentList<TimerSet>.updateInterval(
     skipOnLastSet: Boolean? = null,
     countUp: Boolean? = null,
     manualNext: Boolean? = null,
+    textToSpeech: Boolean? = null,
     beep: Beep? = null,
     vibration: Vibration? = null,
     finalCountDown: FinalCountDown? = null
@@ -389,6 +389,7 @@ private fun PersistentList<TimerSet>.updateInterval(
             skipOnLastSet = skipOnLastSet ?: interval.skipOnLastSet,
             countUp = countUp ?: interval.countUp,
             manualNext = manualNext ?: interval.manualNext,
+            textToSpeech = textToSpeech ?: interval.textToSpeech,
             beep = beep ?: interval.beep,
             vibration = vibration ?: interval.vibration,
             finalCountDown = finalCountDown ?: interval.finalCountDown

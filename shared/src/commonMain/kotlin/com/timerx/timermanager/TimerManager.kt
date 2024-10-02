@@ -1,7 +1,8 @@
-package com.timerx.domain
+package com.timerx.timermanager
 
-import com.timerx.beep.IBeepManager
+import com.timerx.sound.ISoundManager
 import com.timerx.database.ITimerRepository
+import com.timerx.domain.Timer
 import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
 class TimerManager(
-    private val beepManager: IBeepManager,
+    private val beepManager: ISoundManager,
     private val vibrationManager: IVibrationManager,
     private val notificationManager: ITimerXNotificationManager,
     private val timerRepository: ITimerRepository
@@ -43,24 +44,24 @@ class TimerManager(
                     }
 
                     is TimerEvent.Finished -> {
-                        beepManager.beep(timerEvent.beep)
+                        beepManager.makeIntervalSound(timerEvent.intervalSound)
                         vibrationManager.vibrate(timerEvent.vibration)
                         notificationManager.stop()
                         updateTimerFinishedStats(timer)
                     }
 
                     is TimerEvent.NextInterval -> {
-                        beepManager.beep(timerEvent.beep)
+                        beepManager.makeIntervalSound(timerEvent.intervalSound)
                         vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.PreviousInterval -> {
-                        beepManager.beep(timerEvent.beep)
+                        beepManager.makeIntervalSound(timerEvent.intervalSound)
                         vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.Started -> {
-                        beepManager.beep(timerEvent.beep)
+                        beepManager.makeIntervalSound(timerEvent.intervalSound)
                         vibrationManager.vibrate(timerEvent.vibration)
                         notificationManager.start()
                     }
@@ -143,9 +144,4 @@ class TimerManager(
     }
 
     fun isRunning() = timerStateMachine != null
-
-    companion object {
-        private const val TICKER = "Ticker"
-        private const val ELAPSED = "elapsed"
-    }
 }

@@ -1,7 +1,13 @@
-package com.timerx.domain
+package com.timerx.timermanager
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.beep.Beep
+import com.timerx.domain.Timer
+import com.timerx.domain.TimerInterval
+import com.timerx.sound.Beep
+import com.timerx.sound.IntervalSound
+import com.timerx.timermanager.TimerEvent.PreviousInterval
+import com.timerx.timermanager.TimerEvent.Started
+import com.timerx.util.ifTake
 import com.timerx.vibration.Vibration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -20,25 +26,25 @@ sealed interface TimerEvent {
 
     data class Started(
         override val runState: RunState,
-        val beep: Beep,
+        val intervalSound: IntervalSound,
         val vibration: Vibration
     ) : TimerEvent
 
     data class NextInterval(
         override val runState: RunState,
-        val beep: Beep,
+        val intervalSound: IntervalSound,
         val vibration: Vibration
     ) : TimerEvent
 
     data class PreviousInterval(
         override val runState: RunState,
-        val beep: Beep,
+        val intervalSound: IntervalSound,
         val vibration: Vibration
     ) : TimerEvent
 
     data class Finished(
         override val runState: RunState,
-        val beep: Beep,
+        val intervalSound: IntervalSound,
         val vibration: Vibration
     ) : TimerEvent
 
@@ -118,13 +124,15 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
 
     init {
         updateRunState(0, 0, 0)
-        _eventState = MutableStateFlow(
-            TimerEvent.Started(
-                runState.value,
-                getCurrentInterval().beep,
-                getCurrentInterval().vibration
+        with(getCurrentInterval()) {
+            _eventState = MutableStateFlow(
+                Started(
+                    runState = runState.value,
+                    intervalSound = intervalSound(),
+                    vibration = vibration
+                )
             )
-        )
+        }
         startTicker()
     }
 
@@ -190,10 +198,11 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
                 repetitionIndex,
                 intervalIndex,
             )
+            val currentInterval = getCurrentInterval()
             _eventState.value = TimerEvent.NextInterval(
                 runState.value,
-                getCurrentInterval().beep,
-                getCurrentInterval().vibration
+                currentInterval.intervalSound(),
+                currentInterval.vibration
             )
         }
     }
@@ -209,11 +218,12 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
 
         if (runState.value.elapsed != 0L) {
             runState.value = runState.value.copy(elapsed = 0)
+            val currentInterval = getCurrentInterval()
             _eventState.value =
-                TimerEvent.PreviousInterval(
-                    runState.value,
-                    getCurrentInterval().beep,
-                    getCurrentInterval().vibration
+                PreviousInterval(
+                    runState = runState.value,
+                    intervalSound = currentInterval.intervalSound(),
+                    vibration = currentInterval.vibration
                 )
             return
         }
@@ -252,15 +262,17 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
         }
 
         updateRunState(
-            setIndex,
-            repetitionIndex,
-            intervalIndex,
+            setIndex = setIndex,
+            repetitionIndex = repetitionIndex,
+            intervalIndex = intervalIndex,
         )
-        _eventState.value = TimerEvent.PreviousInterval(
-            runState.value,
-            getCurrentInterval().beep,
-            getCurrentInterval().vibration
-        )
+        with(getCurrentInterval()) {
+            _eventState.value = PreviousInterval(
+                runState = runState.value,
+                intervalSound = intervalSound(),
+                vibration = vibration
+            )
+        }
     }
 
     override fun destroy() {
@@ -350,8 +362,17 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
         )
         tickerJob?.cancel()
         _eventState.value =
-            TimerEvent.Finished(runState.value, timer.finishBeep, timer.finishVibration)
+            TimerEvent.Finished(
+                runState.value,
+                IntervalSound(timer.finishBeep, "Finished"),
+                timer.finishVibration
+            )
     }
+
+    private fun TimerInterval.intervalSound() = IntervalSound(
+        beep,
+        textToSpeech.ifTake(name)
+    )
 
     companion object {
         private const val TICKER_DELAY = 1000L

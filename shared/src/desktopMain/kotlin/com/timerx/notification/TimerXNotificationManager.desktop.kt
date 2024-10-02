@@ -1,10 +1,10 @@
 package com.timerx.notification
 
-import com.timerx.domain.TimerEvent
-import com.timerx.domain.TimerEvent.Finished
-import com.timerx.domain.TimerEvent.NextInterval
-import com.timerx.domain.TimerEvent.PreviousInterval
-import com.timerx.domain.TimerEvent.Started
+import com.timerx.timermanager.TimerEvent
+import com.timerx.timermanager.TimerEvent.Finished
+import com.timerx.timermanager.TimerEvent.NextInterval
+import com.timerx.timermanager.TimerEvent.PreviousInterval
+import com.timerx.timermanager.TimerEvent.Started
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import java.awt.SystemTray
 import java.awt.Toolkit
 import java.awt.TrayIcon
 
-object NotificationManager : ITimerXNotificationManager {
+class NotificationManager : ITimerXNotificationManager {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     override fun start() {
     }

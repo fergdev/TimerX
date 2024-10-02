@@ -1,6 +1,6 @@
 package com.timerx.di
 
-import com.timerx.domain.TimerManager
+import com.timerx.timermanager.TimerManager
 import com.timerx.settings.ITimerXSettings
 import com.timerx.settings.TimerXSettings
 import com.timerx.ui.di.containerModule

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "91de0e4d377e01d214cf1b1143a78815",
+    "identityHash": "98081f7067d919472da21e38d140fd81",
     "entities": [
       {
         "tableName": "RoomTimer",
@@ -255,7 +255,7 @@
       },
       {
         "tableName": "RoomInterval",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `color` INTEGER NOT NULL, `skip_on_last_set` INTEGER NOT NULL, `count_up` INTEGER NOT NULL, `manual_next` INTEGER NOT NULL, `beep_id` INTEGER NOT NULL, `vibration_id` INTEGER NOT NULL, `final_count_down_duration` INTEGER NOT NULL, `final_count_down_beep_id` INTEGER NOT NULL, `final_count_down_vibration_id` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `color` INTEGER NOT NULL, `skip_on_last_set` INTEGER NOT NULL, `count_up` INTEGER NOT NULL, `manual_next` INTEGER NOT NULL, `text_to_speech` INTEGER NOT NULL, `beep_id` INTEGER NOT NULL, `vibration_id` INTEGER NOT NULL, `final_count_down_duration` INTEGER NOT NULL, `final_count_down_beep_id` INTEGER NOT NULL, `final_count_down_vibration_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -300,6 +300,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "textToSpeech",
+            "columnName": "text_to_speech",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "beepId",
             "columnName": "beep_id",
             "affinity": "INTEGER",
@@ -340,7 +346,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '91de0e4d377e01d214cf1b1143a78815')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '98081f7067d919472da21e38d140fd81')"
     ]
   }
 }

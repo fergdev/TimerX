@@ -4,7 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.timerx.beep.Beep
+import com.timerx.sound.Beep
 import com.timerx.ui.common.BeepPicker
 import de.mannodermaus.junit5.compose.createComposeExtension
 import org.hamcrest.CoreMatchers.`is`

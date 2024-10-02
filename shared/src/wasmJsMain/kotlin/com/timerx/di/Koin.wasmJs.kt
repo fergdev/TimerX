@@ -1,7 +1,7 @@
 package com.timerx.di
 
-import com.timerx.beep.ABeepManager
-import com.timerx.beep.IBeepManager
+import com.timerx.sound.SoundManager
+import com.timerx.sound.ISoundManager
 import com.timerx.database.ITimerRepository
 import com.timerx.database.KStoreDatabase
 import com.timerx.notification.ITimerXNotificationManager
@@ -20,7 +20,7 @@ actual val platformModule = module {
     single<ITimerRepository> { KStoreDatabase() }
     single<IVibrationManager> { VibrationManager() }
     single { wasmCapabilities }
-    singleOf(::ABeepManager) { bind<IBeepManager>() }
+    singleOf(::SoundManager) { bind<ISoundManager>() }
     single<ITimerXNotificationManager> { NotificationManager }
     single<IPermissionsHandler> { PermissionManager }
 }

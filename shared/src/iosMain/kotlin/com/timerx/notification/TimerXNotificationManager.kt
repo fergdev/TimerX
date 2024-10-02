@@ -1,6 +1,6 @@
 package com.timerx.notification
 
-import com.timerx.domain.TimerEvent
+import com.timerx.timermanager.TimerEvent
 import com.timerx.domain.timeFormatted
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationRequest

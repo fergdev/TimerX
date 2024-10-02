@@ -1,8 +1,9 @@
-package com.timerx.beep
+package com.timerx.sound
 
 import com.timerx.settings.ITimerXSettings
 import com.timerx.util.NSErrorException
 import com.timerx.util.throwNSErrors
+import com.timerx.vibration.VIBRATION_DELAY
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +13,8 @@ import kotlinx.coroutines.launch
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryOptionMixWithOthers
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
+import platform.AVFAudio.AVSpeechSynthesizer
+import platform.AVFAudio.AVSpeechUtterance
 import platform.AVFAudio.setActive
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.AVPlayerItem
@@ -21,8 +24,12 @@ import platform.AVFoundation.volume
 import platform.Foundation.NSBundle
 
 @OptIn(ExperimentalForeignApi::class)
-class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
+class SoundManager(timerXSettings: ITimerXSettings) : ISoundManager(timerXSettings) {
+    override val isTTSSupported: Boolean
+        get() = true
+
     private val avPlayer = AVPlayer()
+    private val synthesizer = AVSpeechSynthesizer()
 
     init {
         try {
@@ -58,7 +65,13 @@ class BeepManager(private val timerXSettings: ITimerXSettings) : IBeepManager {
             avPlayer.error?.let {
                 println("AVPlayer error? = ${it.localizedDescription}")
             }
-            delay(BEEP_VIBRATION_DELAY)
+            delay(VIBRATION_DELAY)
         }
+    }
+
+    override suspend fun textToSpeech(text: String) {
+        val utterance = AVSpeechUtterance(string = text)
+        utterance.setVolume(volume)
+        synthesizer.speakUtterance(utterance)
     }
 }

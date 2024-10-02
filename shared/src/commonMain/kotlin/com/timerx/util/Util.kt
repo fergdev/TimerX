@@ -23,3 +23,5 @@ fun String.capitalize(): String =
         if (name.isLowerCase()) name.uppercaseChar()
         else name
     }
+
+fun <T> Boolean.ifTake(t: T): T? = if (this) t else null
