@@ -3,6 +3,7 @@ package com.timerx.ui.settings.alerts
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.ITimerXSettings
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
@@ -13,6 +14,7 @@ import pro.respawn.flowmvi.plugins.whileSubscribed
 class AlertsSettingsContainer(
     private val timerXSettings: ITimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
+    private val platformCapabilities: PlatformCapabilities
 ) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
 
     override val store =
@@ -23,6 +25,7 @@ class AlertsSettingsContainer(
                         AlertsSettingsState(
                             volume = it.volume,
                             isVibrationEnabled = it.vibrationEnabled,
+                            canVibrate = platformCapabilities.canVibrate,
                             isNotificationsEnabled = isNotificationsEnabled()
                         )
                     }

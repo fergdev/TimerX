@@ -58,7 +58,9 @@ internal fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) =
             ) {
                 with(subscribe(DefaultLifecycle).value) {
                     VolumeCard(volume)
-                    VibrationCard(isVibrationEnabled)
+                    if (canVibrate) {
+                        VibrationCard(isVibrationEnabled)
+                    }
                     NotificationsCard(isNotificationsEnabled)
                 }
             }

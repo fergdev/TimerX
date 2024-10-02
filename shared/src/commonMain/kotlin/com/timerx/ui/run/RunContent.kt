@@ -194,9 +194,10 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
         ) {
             AnimatedVisibility(controlsVisible) {
                 TopControls(
-                    contrastDisplayColor,
-                    state.volume,
-                    state.vibrationEnabled
+                    displayColor = contrastDisplayColor,
+                    volume = state.volume,
+                    vibrationEnabled = state.vibrationEnabled,
+                    canVibrate = state.canVibrate
                 ) {
                     controlsVisible = true
                     touchCounter++
@@ -282,6 +283,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
     displayColor: Color,
     volume: Float,
     vibrationEnabled: Boolean,
+    canVibrate: Boolean,
     onIncrementTouchCounter: () -> Unit,
 ) {
     Row {
@@ -311,17 +313,19 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
                 inactiveTrackColor = displayColor.copy(alpha = 0.3F)
             )
         )
-        IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            onIncrementTouchCounter()
-            intent(RunScreenIntent.UpdateVibrationEnabled(vibrationEnabled.not()))
-        }) {
-            Icon(
-                modifier = Modifier.size(CORNER_ICON_SIZE),
-                imageVector = CustomIcons.vibration,
-                contentDescription = stringResource(Res.string.next),
-                tint = if (vibrationEnabled) displayColor else displayColor.copy(alpha = 0.5f)
-            )
+        if (canVibrate) {
+            IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onIncrementTouchCounter()
+                intent(RunScreenIntent.UpdateVibrationEnabled(vibrationEnabled.not()))
+            }) {
+                Icon(
+                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    imageVector = CustomIcons.vibration,
+                    contentDescription = stringResource(Res.string.next),
+                    tint = if (vibrationEnabled) displayColor else displayColor.copy(alpha = 0.5f)
+                )
+            }
         }
         IconButton(onClick = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)

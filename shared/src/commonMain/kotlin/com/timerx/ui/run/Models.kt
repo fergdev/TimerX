@@ -13,6 +13,7 @@ internal sealed interface RunScreenState : MVIState {
         val backgroundColor: Color
         val volume: Float
         val vibrationEnabled: Boolean
+        val canVibrate: Boolean
         val timerName: String
         val keepScreenOn: Boolean
 
@@ -36,6 +37,7 @@ internal sealed interface RunScreenState : MVIState {
                 override val manualNext: Boolean,
                 override val index: String,
                 override val keepScreenOn: Boolean,
+                override val canVibrate: Boolean,
             ) : NotFinished
 
             data class Paused(
@@ -48,6 +50,7 @@ internal sealed interface RunScreenState : MVIState {
                 override val manualNext: Boolean,
                 override val index: String,
                 override val keepScreenOn: Boolean,
+                override val canVibrate: Boolean,
             ) : NotFinished
         }
 
@@ -57,6 +60,7 @@ internal sealed interface RunScreenState : MVIState {
             override val vibrationEnabled: Boolean,
             override val timerName: String,
             override val keepScreenOn: Boolean,
+            override val canVibrate: Boolean,
         ) : Loaded
     }
 }

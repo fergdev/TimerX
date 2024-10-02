@@ -5,8 +5,12 @@ import com.timerx.database.ITimerRepository
 import com.timerx.domain.TimerEvent
 import com.timerx.domain.TimerManager
 import com.timerx.domain.TimerState
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.ITimerXSettings
+import com.timerx.ui.run.RunScreenState.Loaded.Finished
+import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
+import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -20,6 +24,7 @@ internal class RunContainer(
     private val timerId: Long,
     private val timerXSettings: ITimerXSettings,
     private val timerManager: TimerManager,
+    private val platformCapabilities: PlatformCapabilities,
     timerRepository: ITimerRepository,
     timerXAnalytics: ITimerXAnalytics,
 ) : Container<RunScreenState, RunScreenIntent, Nothing> {
@@ -40,7 +45,7 @@ internal class RunContainer(
         }
 
         install(
-            observeTimerPlugin(timerManager, timerXSettings),
+            observeTimerPlugin(timerManager, timerXSettings, platformCapabilities),
             reducePlugin(timerManager, timerXSettings)
         )
     }
@@ -48,7 +53,8 @@ internal class RunContainer(
 
 internal fun observeTimerPlugin(
     timerManager: TimerManager,
-    timerXSettings: ITimerXSettings
+    timerXSettings: ITimerXSettings,
+    platformCapabilities: PlatformCapabilities
 ) = plugin<RunScreenState, RunScreenIntent, Nothing> {
     onSubscribe {
         launch {
@@ -74,7 +80,7 @@ internal fun observeTimerPlugin(
                 updateState {
                     when (timerEvent.runState.timerState) {
                         TimerState.Running -> {
-                            RunScreenState.Loaded.NotFinished.Playing(
+                            Playing(
                                 volume = settings.volume,
                                 vibrationEnabled = settings.vibrationEnabled,
                                 timerName = timerEvent.runState.timerName,
@@ -83,12 +89,13 @@ internal fun observeTimerPlugin(
                                 time = elapsed,
                                 intervalName = timerEvent.runState.intervalName,
                                 manualNext = timerEvent.runState.manualNext,
-                                keepScreenOn = it.third
+                                keepScreenOn = it.third,
+                                canVibrate = platformCapabilities.canVibrate
                             )
                         }
 
                         TimerState.Paused -> {
-                            RunScreenState.Loaded.NotFinished.Paused(
+                            Paused(
                                 volume = settings.volume,
                                 vibrationEnabled = settings.vibrationEnabled,
                                 timerName = timerEvent.runState.timerName,
@@ -97,17 +104,19 @@ internal fun observeTimerPlugin(
                                 time = elapsed,
                                 intervalName = timerEvent.runState.intervalName,
                                 manualNext = timerEvent.runState.manualNext,
-                                keepScreenOn = it.third
+                                keepScreenOn = it.third,
+                                canVibrate = platformCapabilities.canVibrate
                             )
                         }
 
                         TimerState.Finished -> {
-                            RunScreenState.Loaded.Finished(
+                            Finished(
                                 volume = settings.volume,
                                 vibrationEnabled = settings.vibrationEnabled,
                                 timerName = timerEvent.runState.timerName,
                                 backgroundColor = timerEvent.runState.backgroundColor,
-                                keepScreenOn = it.third
+                                keepScreenOn = it.third,
+                                canVibrate = platformCapabilities.canVibrate
                             )
                         }
                     }
@@ -132,9 +141,8 @@ internal fun reducePlugin(
             RunScreenIntent.Pause -> timerManager.playPause()
             RunScreenIntent.Play -> timerManager.playPause()
             RunScreenIntent.RestartTimer -> timerManager.restartCurrentTimer()
-            is RunScreenIntent.UpdateVibrationEnabled -> timerXSettings.alertSettingsManager.setVibrationEnabled(
-                it.enabled
-            )
+            is RunScreenIntent.UpdateVibrationEnabled ->
+                timerXSettings.alertSettingsManager.setVibrationEnabled(it.enabled)
 
             is RunScreenIntent.UpdateVolume -> timerXSettings.alertSettingsManager.setVolume(it.volume)
         }

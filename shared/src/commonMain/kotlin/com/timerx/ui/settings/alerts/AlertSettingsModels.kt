@@ -9,6 +9,7 @@ data class AlertsSettingsState(
     val volume: Float = 1.0F,
     val isVibrationEnabled: Boolean = false,
     val isNotificationsEnabled: Boolean = false,
+    val canVibrate: Boolean = false,
 ) : MVIState
 
 interface AlertsSettingsIntent : MVIIntent {

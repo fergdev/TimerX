@@ -1,6 +1,5 @@
-package com.timerx.di
+package com.timerx.platform
 
-import com.timerx.platform.PlatformCapabilities
 import kotlinx.browser.window
 import org.jetbrains.skiko.OS
 
@@ -24,7 +23,7 @@ private fun detectHostOs(): OS {
     }
 }
 
-private val supportsVibration = arrayOf(OS.Ios, OS.Android)
+private val supportsVibration = arrayOf(OS.Android)
 internal val wasmCapabilities =
     PlatformCapabilities(
         canSystemDynamic = false,

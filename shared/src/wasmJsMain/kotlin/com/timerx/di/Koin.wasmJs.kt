@@ -8,6 +8,7 @@ import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionManager
+import com.timerx.platform.wasmCapabilities
 import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.VibrationManager
 import org.koin.core.module.dsl.bind
