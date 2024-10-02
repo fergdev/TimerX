@@ -2,12 +2,12 @@ package com.timerx.ui.run
 
 import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.database.ITimerRepository
-import com.timerx.timermanager.TimerEvent
-import com.timerx.timermanager.TimerManager
-import com.timerx.timermanager.TimerState
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.ITimerXSettings
+import com.timerx.timermanager.TimerEvent
+import com.timerx.timermanager.TimerManager
+import com.timerx.timermanager.TimerState
 import com.timerx.ui.run.RunScreenState.Loaded.Finished
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing

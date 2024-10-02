@@ -209,7 +209,6 @@ kotlin {
                 implementation(libs.korge.core)
                 implementation(libs.freetts)
             }
-
         }
         val wasmJsMain by getting {
             dependsOn(nonMobileMain)

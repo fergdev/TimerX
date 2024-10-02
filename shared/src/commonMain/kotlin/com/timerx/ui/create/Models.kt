@@ -1,10 +1,10 @@
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.sound.Beep
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.sound.Beep
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf

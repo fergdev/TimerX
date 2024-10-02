@@ -16,9 +16,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.timerx.MainActivity
 import com.timerx.R
+import com.timerx.domain.timeFormatted
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerState
-import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.contrastColor
 
 const val NOTIFICATION_APP_REQUEST_CODE = 0

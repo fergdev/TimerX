@@ -71,18 +71,20 @@ internal fun Library(
     typography: Typography = MaterialTheme.typography,
 ) {
     val uriHandler = LocalUriHandler.current
-    PaddedElevatedCard(modifier = Modifier.widthIn(max = 600.dp).clickable {
-        val license = library.licenses.firstOrNull()
-        if (!license?.url.isNullOrBlank()) {
-            license?.url?.also {
-                try {
-                    uriHandler.openUri(it)
-                } catch (t: IllegalArgumentException) {
-                    println("Failed to open url: $it")
+    PaddedElevatedCard(
+        modifier = Modifier.widthIn(max = 600.dp).clickable {
+            val license = library.licenses.firstOrNull()
+            if (!license?.url.isNullOrBlank()) {
+                license?.url?.also {
+                    try {
+                        uriHandler.openUri(it)
+                    } catch (t: IllegalArgumentException) {
+                        println("Failed to open url: $it")
+                    }
                 }
             }
         }
-    }) {
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,

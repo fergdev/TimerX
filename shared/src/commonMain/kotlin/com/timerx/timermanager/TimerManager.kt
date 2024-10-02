@@ -1,9 +1,9 @@
 package com.timerx.timermanager
 
-import com.timerx.sound.ISoundManager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.notification.ITimerXNotificationManager
+import com.timerx.sound.ISoundManager
 import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

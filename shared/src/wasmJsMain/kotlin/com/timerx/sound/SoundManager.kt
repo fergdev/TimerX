@@ -16,7 +16,7 @@ class SoundManager(settings: ITimerXSettings) : ISoundManager(settings) {
         speak(text, volume.toDouble())
     }
 
-    private fun Beep.uri() = Res.getUri("files/${path}.mp3")
+    private fun Beep.uri() = Res.getUri("files/$path.mp3")
 }
 
 @Suppress("UnusedParameter", "TrimMultilineRawString")

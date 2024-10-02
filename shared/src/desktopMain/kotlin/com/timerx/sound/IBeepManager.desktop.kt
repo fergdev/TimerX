@@ -39,5 +39,5 @@ class SoundManager(timerXSettings: TimerXSettings) : ISoundManager(timerXSetting
         }
     }
 
-    private fun Beep.localPath() = Res.getUri("files/${path}.mp3").removePrefix("file:")
+    private fun Beep.localPath() = Res.getUri("files/$path.mp3").removePrefix("file:")
 }

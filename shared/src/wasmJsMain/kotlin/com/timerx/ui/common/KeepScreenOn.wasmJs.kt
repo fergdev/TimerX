@@ -1,10 +1,10 @@
 package com.timerx.ui.common
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 
 private fun requestWakeLock() {
-    js("""
+    js(
+        """
    if(isScreenLockSupported()){
       let screenLock;
       try {
@@ -19,7 +19,8 @@ private fun requestWakeLock() {
 }
 
 private fun releaseWakeLock() {
-    js(""" 
+    js(
+        """ 
     if(typeof screenLock !== "undefined" && screenLock != null) {
        screenLock.release()
        .then(() => {

@@ -16,13 +16,13 @@ import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import com.timerx.sound.Beep
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.NO_SORT_ORDER
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
+import com.timerx.sound.Beep
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
