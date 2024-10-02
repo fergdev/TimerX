@@ -25,7 +25,7 @@ class ThemeSettingsContainer(
                 updateState {
                     ThemeSettingsState.LoadedState(
                         seedColor = it.seedColor,
-                        isDynamicThemeSupported = platformCapabilities.isDynamicThemeSupported,
+                        isDynamicThemeSupported = platformCapabilities.canSystemDynamic,
                         isSystemDynamic = it.isSystemDynamic,
                         settingsDarkTheme = it.settingsDarkTheme,
                         isAmoled = it.isAmoled,

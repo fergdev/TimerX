@@ -1,4 +1,5 @@
 [versions]
+aboutLibs = "11.2.3"
 agp = "8.8.0-alpha04"
 android-test-extensions = "1.5.0"
 androidJunit5Plugin = "1.11.0.0"
@@ -21,7 +22,7 @@ flowext = "1.0.0"
 glanceAppwidget = "1.1.0"
 googleServices = "4.4.2"
 gradleDoctorPlugin = "0.10.0"
-jetbrains-compose = "1.7.0-rc01+build1854-release-1.7"
+jetbrains-compose = "1.7.0-rc01"
 junit = "5.11.1"
 koin = "4.0.0"
 kotlin = "2.0.20"
@@ -34,13 +35,13 @@ kstore = "0.8.0"
 materialKolor = "1.7.1"
 mockery = "2.3.0"
 multiplatformSettings = "1.2.0"
-playServicesAds = "23.3.0"
+playServicesAds = "23.4.0"
 reorderable = "2.3.2"
 sqlite = "2.5.0-SNAPSHOT"
 versionCatalogUpdatePlugin = "0.8.4"
-aboutLibs = "11.2.3"
 
 [libraries]
+aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-animation-core-android = { module = "androidx.compose.animation:animation-core-android", version.ref = "animationCoreAndroid" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -93,9 +94,9 @@ multiplatform-settings-observable = { module = "com.russhwolf:multiplatform-sett
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
-aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
 
 [plugins]
+aboutLibs = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibs" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidJunit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -114,4 +115,3 @@ mokkery = { id = "dev.mokkery", version.ref = "mockery" }
 # Add this back in when the plugin is supported
 #room = { id = "androidx.room", version.ref = "androidx-room" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }
-aboutLibs = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibs" }

@@ -5,8 +5,8 @@ import androidx.annotation.ChecksSdkIntAtLeast
 
 internal val androidCapabilities =
     PlatformCapabilities(
-        isDynamicThemeSupported = supportsDynamicColors,
-        vibration = true
+        canSystemDynamic = supportsDynamicColors,
+        canVibrate = true
     )
 
 @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)

@@ -35,7 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.about_libs
 
-private const val FILES_ABOUT_LIBRARIES_JSON = "files/aboutLibraries.json"
+private const val FILES_ABOUT_LIBRARIES_JSON = "files/aboutlibraries.json"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

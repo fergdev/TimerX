@@ -152,7 +152,7 @@ private fun reduceIntent(
             updateState {
                 copy(
                     sets = sets.map { set ->
-                        if (set.intervals.contains(it.interval)) {
+                        if (set.intervals.any { interval -> interval.id == it.interval.id }) {
                             set.copy(
                                 intervals = set.intervals.filter { interval ->
                                     it.interval.id != interval.id
@@ -174,10 +174,10 @@ private fun reduceIntent(
                         if (index != -1) {
                             set.copy(
                                 intervals = (
-                                    set.intervals + set.intervals[index].copy(
-                                        id = defaultGenerator.getNextId()
-                                    )
-                                    ).toPersistentList()
+                                        set.intervals + set.intervals[index].copy(
+                                            id = defaultGenerator.getNextId()
+                                        )
+                                        ).toPersistentList()
                             )
                         } else {
                             set
