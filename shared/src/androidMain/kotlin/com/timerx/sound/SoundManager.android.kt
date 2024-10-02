@@ -42,7 +42,7 @@ class SoundManager(timerXSettings: ITimerXSettings, context: Context) :
     }
 
     override suspend fun textToSpeech(text: String) {
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, textToSpeechParams(), text)
+        textToSpeech.speak(text, TextToSpeech.QUEUE_ADD, textToSpeechParams(), text)
     }
 
     private fun textToSpeechParams() = bundleOf(
