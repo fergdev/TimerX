@@ -353,7 +353,7 @@ aboutLibraries {
     // For non Android projects, execute `exportLibraryDefinitions`
     strictMode = StrictMode.FAIL
     // Allowed set of licenses, this project will be able to use without build failure
-    allowedLicenses = arrayOf("Apache-2.0", "MIT", "BSD-3-Clause", "ASDKL")
+    allowedLicenses = arrayOf("Apache-2.0", "MIT", "BSD-3-Clause", "ASDKL", "NOASSERTION")
     // Allowed set of licenses for specific dependencies, this project will be able to use without build failure
     allowedLicensesMap = mapOf(Pair("asdkl", listOf("androidx.jetpack.library")))
     // Enable the duplication mode, allows to merge, or link dependencies which relate
@@ -362,7 +362,4 @@ aboutLibraries {
     duplicationRule = DuplicateRule.SIMPLE
     // Enable pretty printing for the generated JSON file
     prettyPrint = true
-
-    // Allows to only collect dependencies of specific variants during the `collectDependencies` step.
-    // filterVariants = ["debug"]
 }
