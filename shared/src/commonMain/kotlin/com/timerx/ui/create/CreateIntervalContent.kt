@@ -1,5 +1,6 @@
 package com.timerx.ui.create
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +26,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -38,7 +44,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.timerx.domain.FinalCountDown
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.BeepSelector
@@ -57,9 +62,11 @@ import com.timerx.ui.common.reset
 import com.timerx.ui.create.CreateScreenIntent.DuplicateInterval
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalColor
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalCountUp
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalFinalCountDown
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalManualNext
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalName
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalSkipOnLastSet
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalTextToSpeech
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -82,6 +89,7 @@ private const val COLOR_ANIMATION_DURATION = 400
 internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
     interval: TimerInterval,
     canSkipOnLastSet: Boolean,
+    canVibrate: Boolean,
     scope: ReorderableScope,
 ) {
     val backgroundColor by animateColorAsState(
@@ -101,7 +109,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
         state = revealState,
         backgroundCardEndColor = MaterialTheme.colorScheme.surface,
         hiddenContentEnd = {
-            HiddenIntervalControls(canSkipOnLastSet, interval, hideReveal)
+            HiddenIntervalControls(canVibrate, canSkipOnLastSet, interval, hideReveal)
         }
     ) {
         Row(
@@ -158,6 +166,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
+    canVibrate: Boolean,
     canSkipOnLastSet: Boolean,
     interval: TimerInterval,
     hideReveal: () -> Job
@@ -169,7 +178,8 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
             sheetState = sheetState,
             onDismissRequest = { settingsBottomSheetVisible = false }
         ) {
-            IntervalSwitches(
+            IntervalSettings(
+                canVibrate = canVibrate,
                 canSkipOnLastSet,
                 interval,
             )
@@ -228,65 +238,104 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
 }
 
 @Composable
-private fun IntentReceiver<CreateScreenIntent>.IntervalSwitches(
+private fun IntentReceiver<CreateScreenIntent>.IntervalSettings(
+    canVibrate: Boolean,
     canSkipOnLastSet: Boolean,
     interval: TimerInterval,
 ) {
     Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedCard {
-            Column(modifier = Modifier.padding(8.dp)) {
-                if (canSkipOnLastSet) {
-                    val updateIntervalSkipOnLastSet = {
-                        intent(UpdateIntervalSkipOnLastSet(interval, interval.skipOnLastSet.not()))
-                    }
-                    RowSwitch(
-                        modifier = Modifier.clickable { updateIntervalSkipOnLastSet() },
-                        label = stringResource(Res.string.skip_on_last_set),
-                        value = interval.skipOnLastSet
-                    ) {
-                        updateIntervalSkipOnLastSet()
-                    }
-                }
-                val updateIntervalCountUp = {
-                    intent(UpdateIntervalCountUp(interval, interval.countUp.not()))
+        IntervalBehaviourControls(canSkipOnLastSet, interval)
+        IntervalAlertControls(canVibrate, interval)
+        IntervalFinalCountDown(interval, canVibrate)
+    }
+}
+
+@Composable
+private fun IntentReceiver<CreateScreenIntent>.IntervalBehaviourControls(
+    canSkipOnLastSet: Boolean,
+    interval: TimerInterval
+) {
+    OutlinedCard {
+        Column(modifier = Modifier.padding(8.dp)) {
+            if (canSkipOnLastSet) {
+                val updateIntervalSkipOnLastSet = {
+                    intent(UpdateIntervalSkipOnLastSet(interval, interval.skipOnLastSet.not()))
                 }
                 RowSwitch(
-                    modifier = Modifier.clickable { updateIntervalCountUp() },
-                    label = stringResource(Res.string.count_up),
-                    value = interval.countUp
+                    modifier = Modifier.clickable { updateIntervalSkipOnLastSet() },
+                    label = stringResource(Res.string.skip_on_last_set),
+                    value = interval.skipOnLastSet
                 ) {
-                    updateIntervalCountUp()
-                }
-                val updateIntervalManualNext = {
-                    intent(UpdateIntervalManualNext(interval, interval.manualNext.not()))
-                }
-                RowSwitch(
-                    modifier = Modifier.clickable { updateIntervalManualNext() },
-                    label = stringResource(Res.string.manual_next),
-                    value = interval.manualNext
-                ) {
-                    updateIntervalManualNext()
+                    updateIntervalSkipOnLastSet()
                 }
             }
-        }
-
-        OutlinedCard {
-            Column(modifier = Modifier.padding(8.dp)) {
-                Text(text = stringResource(Res.string.finish))
-                BeepSelector(selected = interval.beep) {
-                    intent(CreateScreenIntent.UpdateIntervalBeep(interval, it))
-                }
-                VibrationSelector(selected = interval.vibration) {
-                    intent(CreateScreenIntent.UpdateIntervalVibration(interval, it))
-                }
+            val updateIntervalCountUp = {
+                intent(UpdateIntervalCountUp(interval, interval.countUp.not()))
+            }
+            RowSwitch(
+                modifier = Modifier.clickable { updateIntervalCountUp() },
+                label = stringResource(Res.string.count_up),
+                value = interval.countUp
+            ) {
+                updateIntervalCountUp()
+            }
+            val updateIntervalManualNext = {
+                intent(UpdateIntervalManualNext(interval, interval.manualNext.not()))
+            }
+            RowSwitch(
+                modifier = Modifier.clickable { updateIntervalManualNext() },
+                label = stringResource(Res.string.manual_next),
+                value = interval.manualNext
+            ) {
+                updateIntervalManualNext()
             }
         }
+    }
+}
 
+@Composable
+private fun IntentReceiver<CreateScreenIntent>.IntervalFinalCountDown(
+    interval: TimerInterval,
+    canVibrate: Boolean
+) {
+    with(interval.finalCountDown) {
         OutlinedCard {
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(text = stringResource(Res.string.count_down))
-                IntervalCountDown(interval.finalCountDown) {
-                    intent(CreateScreenIntent.UpdateIntervalFinalCountDown(interval, it))
+                Row(
+                    modifier = Modifier.height(32.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    NumberIncrement(
+                        value = duration,
+                        negativeButtonEnabled = duration > 0,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ) {
+                        intent(
+                            UpdateIntervalFinalCountDown(
+                                interval = interval,
+                                finalCountDown = copy(duration = it)
+                            )
+                        )
+                    }
+                }
+                BeepSelector(selected = beep) {
+                    intent(
+                        UpdateIntervalFinalCountDown(
+                            interval = interval,
+                            finalCountDown = copy(beep = it)
+                        )
+                    )
+                }
+                if (canVibrate) {
+                    VibrationSelector(selected = vibration) {
+                        intent(
+                            UpdateIntervalFinalCountDown(
+                                interval = interval,
+                                finalCountDown = copy(vibration = it)
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -294,27 +343,65 @@ private fun IntentReceiver<CreateScreenIntent>.IntervalSwitches(
 }
 
 @Composable
-private fun IntervalCountDown(
-    finalCountDown: FinalCountDown,
-    onUpdate: (FinalCountDown) -> Unit
+private fun IntentReceiver<CreateScreenIntent>.IntervalAlertControls(
+    canVibrate: Boolean,
+    interval: TimerInterval
 ) {
-    Row(
-        modifier = Modifier.height(32.dp).fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        NumberIncrement(
-            value = finalCountDown.duration,
-            negativeButtonEnabled = finalCountDown.duration > 0,
-            color = MaterialTheme.colorScheme.onSurface,
+    OutlinedCard {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            onUpdate(finalCountDown.copy(duration = it))
+            Text(text = stringResource(Res.string.finish))
+            SingleChoiceSegmentedButtonRow {
+                SegmentedButton(
+                    selected = interval.textToSpeech.not(),
+                    onClick = {
+                        intent(
+                            UpdateIntervalTextToSpeech(
+                                interval,
+                                interval.textToSpeech.not()
+                            )
+                        )
+                    },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = 0,
+                        count = 2
+                    ),
+                    icon = {}
+                ) {
+                    Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
+                }
+                SegmentedButton(
+                    selected = interval.textToSpeech,
+                    onClick = {
+                        intent(
+                            UpdateIntervalTextToSpeech(
+                                interval,
+                                interval.textToSpeech.not()
+                            )
+                        )
+                    },
+                    icon = {},
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = 1,
+                        count = 2
+                    ),
+                ) {
+                    Icon(imageVector = Icons.Default.Person, contentDescription = null)
+                }
+            }
+            AnimatedVisibility(interval.textToSpeech.not()) {
+                BeepSelector(selected = interval.beep) {
+                    intent(CreateScreenIntent.UpdateIntervalBeep(interval, it))
+                }
+            }
+            if (canVibrate) {
+                VibrationSelector(selected = interval.vibration) {
+                    intent(CreateScreenIntent.UpdateIntervalVibration(interval, it))
+                }
+            }
         }
-    }
-    BeepSelector(selected = finalCountDown.beep) {
-        onUpdate(finalCountDown.copy(beep = it))
-    }
-    VibrationSelector(selected = finalCountDown.vibration) {
-        onUpdate(finalCountDown.copy(vibration = it))
     }
 }
 

@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
+import com.timerx.sound.Beep
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.ColorPickerModalBottomSheet
@@ -73,6 +74,7 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateFinishColor
 import com.timerx.ui.create.CreateScreenIntent.UpdateFinishVibration
 import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
 import com.timerx.ui.theme.Animation
+import com.timerx.vibration.Vibration
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -190,7 +192,12 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
         TimerNameTextField(state.timerNameModel)
         SetColumn(state)
         FinalTimeRow(state)
-        FinishControls(state)
+        FinishControls(
+            finishColor = state.finishColor,
+            finishBeep = state.finishBeep,
+            finishVibration = state.finishVibration,
+            canVibrate = state.canVibrate
+        )
         Spacer(
             Modifier.height(
                 WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -231,26 +238,33 @@ private fun IntentReceiver<CreateScreenIntent>.SetColumn(state: CreateScreenStat
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) { _, set, _ ->
         key(set.id) {
-            CreateSetContent(timerSet = set, this)
+            CreateSetContent(timerSet = set, canVibrate = state.canVibrate, reorderableScope = this)
         }
     }
 }
 
 @Composable
-private fun IntentReceiver<CreateScreenIntent>.FinishControls(state: CreateScreenState) {
+private fun IntentReceiver<CreateScreenIntent>.FinishControls(
+    finishColor: Color,
+    finishBeep: Beep,
+    finishVibration: Vibration,
+    canVibrate: Boolean
+) {
     ElevatedCard {
-        FinishColorPicker(state.finishColor)
+        FinishColorPicker(finishColor)
         BeepSelector(
             modifier = Modifier.padding(horizontal = 16.dp),
-            selected = state.finishBeep
+            selected = finishBeep
         ) {
             intent(UpdateFinishBeep(it))
         }
-        VibrationSelector(
-            modifier = Modifier.padding(16.dp),
-            selected = state.finishVibration
-        ) {
-            intent(UpdateFinishVibration(it))
+        if (canVibrate) {
+            VibrationSelector(
+                modifier = Modifier.padding(16.dp),
+                selected = finishVibration
+            ) {
+                intent(UpdateFinishVibration(it))
+            }
         }
     }
 }

@@ -6,7 +6,6 @@ import android.speech.tts.TextToSpeech
 import androidx.core.os.bundleOf
 import com.timerx.R
 import com.timerx.settings.ITimerXSettings
-import com.timerx.vibration.VIBRATION_DELAY
 import kotlinx.coroutines.delay
 import org.koin.mp.KoinPlatform
 
@@ -37,7 +36,7 @@ class SoundManager(timerXSettings: ITimerXSettings, context: Context) :
             }
             mediaPlayer?.setVolume(volume, volume)
             mediaPlayer?.start()
-            delay(VIBRATION_DELAY)
+            delay(BEEP_DELAY)
         }
     }
 

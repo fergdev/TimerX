@@ -37,6 +37,7 @@ data class IntervalSound(
 )
 
 const val DEFAULT_VOLUME = 0.5f
+const val BEEP_DELAY = 500L
 
 enum class Beep(val displayName: String, val path: String, val repeat: Int) {
     Alert("Alert", "alert", 1),

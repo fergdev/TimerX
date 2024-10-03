@@ -51,6 +51,7 @@ import timerx.shared.generated.resources.sets
 @Composable
 internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
     timerSet: TimerSet,
+    canVibrate: Boolean,
     reorderableScope: ReorderableScope
 ) {
     val revealState = rememberRevealState(
@@ -115,6 +116,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
                         CreateIntervalContent(
                             interval = timerInterval,
                             canSkipOnLastSet = timerSet.repetitions > 1,
+                            canVibrate = canVibrate,
                             scope = this@ReorderableColumn
                         )
                     }

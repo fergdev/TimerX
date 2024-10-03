@@ -23,6 +23,7 @@ internal data class CreateScreenState(
     val finishBeep: Beep = Beep.End,
     val finishVibration: Vibration = Vibration.Heavy,
     val isEditing: Boolean = false,
+    val canVibrate : Boolean = false,
     val sets: PersistentList<TimerSet> = persistentListOf()
 ) : MVIState
 
@@ -73,6 +74,8 @@ sealed interface CreateScreenIntent : MVIIntent {
     ) : CreateScreenIntent
 
     data class UpdateIntervalVibration(val interval: TimerInterval, val vibration: Vibration) :
+        CreateScreenIntent
+    data class UpdateIntervalTextToSpeech(val interval: TimerInterval, val textToSpeech: Boolean) :
         CreateScreenIntent
 }
 

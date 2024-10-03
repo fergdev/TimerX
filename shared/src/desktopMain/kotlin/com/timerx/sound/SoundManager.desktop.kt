@@ -5,15 +5,14 @@ import com.sun.speech.freetts.VoiceManager
 import com.timerx.settings.TimerXSettings
 import korlibs.audio.sound.readSound
 import korlibs.io.file.std.localVfs
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import timerx.shared.generated.resources.Res
 
 class SoundManager(timerXSettings: TimerXSettings) : ISoundManager(timerXSettings) {
     private val voiceManager = VoiceManager.getInstance()
     private val voice: Voice
-    private val ioScope = CoroutineScope(Dispatchers.IO)
     override val isTTSSupported: Boolean
         get() = true
 
@@ -29,11 +28,14 @@ class SoundManager(timerXSettings: TimerXSettings) : ISoundManager(timerXSetting
     override suspend fun beep(beep: Beep) {
         val sound = localVfs(beep.localPath()).readSound()
         sound.volume = volume.toDouble()
-        sound.play(coroutineContext = Dispatchers.IO)
+        repeat(beep.repeat) {
+            sound.play(coroutineContext = Dispatchers.IO)
+            delay(BEEP_DELAY)
+        }
     }
 
     override suspend fun textToSpeech(text: String) {
-        ioScope.launch {
+        withContext(Dispatchers.IO) {
             voice.volume = volume
             voice.speak(text)
         }

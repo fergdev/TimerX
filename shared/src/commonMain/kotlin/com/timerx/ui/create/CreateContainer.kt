@@ -6,6 +6,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.sound.Beep
 import com.timerx.sound.ISoundManager
 import com.timerx.ui.create.CreateScreenIntent.AddSet
@@ -28,6 +29,7 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalFinalCountDown
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalManualNext
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalName
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalSkipOnLastSet
+import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalTextToSpeech
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalVibration
 import com.timerx.ui.create.CreateScreenIntent.UpdateSetRepetitions
 import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
@@ -49,10 +51,15 @@ internal class CreateContainer(
     timerId: Long,
     private val timerDatabase: ITimerRepository,
     private val soundManager: ISoundManager,
-    private val vibrationManger: IVibrationManager
+    private val vibrationManger: IVibrationManager,
+    private val platformCapabilities: PlatformCapabilities
 ) : Container<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     private val defaultGenerator = DefaultGenerator()
-    override val store = store(CreateScreenState()) {
+    override val store = store(
+        CreateScreenState(
+            canVibrate = platformCapabilities.canVibrate,
+        )
+    ) {
         init {
             launch {
                 val timer = timerDatabase.getTimer(timerId).first()
@@ -63,6 +70,7 @@ internal class CreateContainer(
                             timerNameModel = TimerNameModel(timer.name),
                             sets = timer.sets.toPersistentList(),
                             isEditing = true,
+                            canVibrate = platformCapabilities.canVibrate,
                             finishColor = timer.finishColor,
                             finishBeep = timer.finishBeep,
                             finishVibration = timer.finishVibration,
@@ -71,6 +79,7 @@ internal class CreateContainer(
                 } else {
                     updateState {
                         CreateScreenState(
+                            canVibrate = platformCapabilities.canVibrate,
                             sets = persistentListOf(
                                 defaultGenerator.prepareSet(),
                                 defaultGenerator.defaultTimerSet()
@@ -174,10 +183,10 @@ private fun reduceIntent(
                         if (index != -1) {
                             set.copy(
                                 intervals = (
-                                    set.intervals + set.intervals[index].copy(
-                                        id = defaultGenerator.getNextId()
-                                    )
-                                    ).toPersistentList()
+                                        set.intervals + set.intervals[index].copy(
+                                            id = defaultGenerator.getNextId()
+                                        )
+                                        ).toPersistentList()
                             )
                         } else {
                             set
@@ -230,11 +239,7 @@ private fun reduceIntent(
             beepManager.beep(it.beep)
         }
 
-        is UpdateFinishColor -> {
-            updateState {
-                copy(finishColor = it.color)
-            }
-        }
+        is UpdateFinishColor -> updateState { copy(finishColor = it.color) }
 
         is UpdateFinishVibration -> {
             updateState { copy(finishVibration = finishVibration) }
@@ -250,6 +255,7 @@ private fun reduceIntent(
                     )
                 )
             }
+            beepManager.beep(it.beep)
         }
 
         is UpdateIntervalColor -> updateState {
@@ -307,6 +313,17 @@ private fun reduceIntent(
                 )
             }
             vibrationManger.vibrate(it.vibration)
+        }
+
+        is UpdateIntervalTextToSpeech -> {
+            updateState {
+                copy(
+                    sets = sets.updateInterval(
+                        interval = it.interval,
+                        textToSpeech = it.textToSpeech
+                    )
+                )
+            }
         }
 
         Save -> {
