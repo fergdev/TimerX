@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.timerx.ui.common
 
@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -29,8 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.timerx.ui.theme.Montserrat
+import com.timerx.ui.theme.Opacity
 import com.timerx.ui.theme.Size
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.app_name
@@ -81,7 +80,7 @@ fun TTopBar(
     actions = actions,
     scrollBehavior = scrollBehavior,
     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-        containerColor = Color.Transparent,
+        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = Opacity.semiTransparent),
         scrolledContainerColor = Color.Transparent,
     ),
 )
