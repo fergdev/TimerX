@@ -5,6 +5,15 @@ import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.ITimerXSettings
+import com.timerx.sound.ISoundManager
+import com.timerx.sound.VoiceInformation
+import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
+import com.timerx.ui.settings.alerts.AlertsSettingsIntent.OpenAppSettings
+import com.timerx.ui.settings.alerts.AlertsSettingsIntent.SetTTSVoice
+import com.timerx.ui.settings.alerts.AlertsSettingsIntent.UpdateVibration
+import com.timerx.ui.settings.alerts.AlertsSettingsIntent.UpdateVolume
+import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.delay
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.dsl.updateState
@@ -12,21 +21,25 @@ import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
 class AlertsSettingsContainer(
-    private val timerXSettings: ITimerXSettings,
+    private val settings: ITimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
-    private val platformCapabilities: PlatformCapabilities
+    private val platformCapabilities: PlatformCapabilities,
+    private val soundManager: ISoundManager
 ) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
 
     override val store =
         store(AlertsSettingsState()) {
             whileSubscribed {
-                timerXSettings.alertSettingsManager.alertSettings.collect {
+                settings.alertSettingsManager.alertSettings.collect {
                     updateState<AlertsSettingsState, _> {
+                        val voices = soundManager.voices()
                         AlertsSettingsState(
                             volume = it.volume,
                             isVibrationEnabled = it.vibrationEnabled,
                             canVibrate = platformCapabilities.canVibrate,
-                            isNotificationsEnabled = isNotificationsEnabled()
+                            isNotificationsEnabled = isNotificationsEnabled(),
+                            selectedVoice = voices.selected(it.ttsVoiceName),
+                            availableVoices = voices.sortedBy { it.name }.toPersistentSet()
                         )
                     }
                 }
@@ -34,24 +47,33 @@ class AlertsSettingsContainer(
 
             reduce { settingsIntent ->
                 when (settingsIntent) {
-                    is AlertsSettingsIntent.UpdateVolume ->
-                        timerXSettings.alertSettingsManager.setVolume(settingsIntent.volume)
+                    is UpdateVolume ->
+                        settings.alertSettingsManager.setVolume(settingsIntent.volume)
 
-                    is AlertsSettingsIntent.UpdateVibration ->
-                        timerXSettings.alertSettingsManager.setVibrationEnabled(settingsIntent.enabled)
+                    is UpdateVibration ->
+                        settings.alertSettingsManager.setVibrationEnabled(settingsIntent.enabled)
 
-                    is AlertsSettingsIntent.EnableNotifications -> {
+                    is EnableNotifications -> {
                         permissionsHandler.requestPermission(Permission.Notification)
-                        updateState {
-                            copy(isNotificationsEnabled = isNotificationsEnabled())
-                        }
+                        updateState { copy(isNotificationsEnabled = isNotificationsEnabled()) }
                     }
 
-                    is AlertsSettingsIntent.OpenAppSettings ->
+                    is OpenAppSettings ->
                         permissionsHandler.openAppSettings()
+
+                    is SetTTSVoice -> {
+                        settings.alertSettingsManager.setTTSVoice(settingsIntent.voiceId)
+                        // Work around for collectors not receiving data before put returns
+                        // https://github.com/xxfast/KStore/issues/129
+                        delay(100)
+                        soundManager.textToSpeech("Work. Rest. Finished.")
+                    }
                 }
             }
         }
+
+    private fun List<VoiceInformation>.selected(voiceId: String?) =
+        this.firstOrNull { it.id == voiceId } ?: VoiceInformation.DeviceDefault
 
     private suspend fun isNotificationsEnabled() =
         permissionsHandler.getPermissionState(Permission.Notification) == PermissionState.Granted

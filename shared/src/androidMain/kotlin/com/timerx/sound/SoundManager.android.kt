@@ -4,9 +4,11 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.speech.tts.TextToSpeech
 import androidx.core.os.bundleOf
+import co.touchlab.kermit.Logger
 import com.timerx.R
 import com.timerx.settings.ITimerXSettings
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 
 class SoundManager(timerXSettings: ITimerXSettings, context: Context) :
@@ -22,7 +24,20 @@ class SoundManager(timerXSettings: ITimerXSettings, context: Context) :
         textToSpeech = TextToSpeech(context) { status ->
             ttsSupported = status == TextToSpeech.SUCCESS
             if (status != TextToSpeech.SUCCESS) {
-                println("There was an error getting text to speech")
+                Logger.e { "There was an error getting text to speech" }
+            } else {
+                observeVoiceChange(timerXSettings)
+            }
+        }
+    }
+
+    private fun observeVoiceChange(timerXSettings: ITimerXSettings) {
+        coroutineScope.launch {
+            timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
+                val voice = textToSpeech.voices.firstOrNull { voice ->
+                    voice.name == alertSettings.ttsVoiceName
+                } ?: return@collect
+                textToSpeech.voice = voice
             }
         }
     }
@@ -42,6 +57,13 @@ class SoundManager(timerXSettings: ITimerXSettings, context: Context) :
 
     override suspend fun textToSpeech(text: String) {
         textToSpeech.speak(text, TextToSpeech.QUEUE_ADD, textToSpeechParams(), text)
+    }
+
+    override fun voices(): List<VoiceInformation> {
+        if (!ttsSupported) return emptyList()
+        return textToSpeech.voices.map {
+            VoiceInformation(it.name, it.locale.displayName)
+        }
     }
 
     private fun textToSpeechParams() = bundleOf(

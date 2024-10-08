@@ -131,6 +131,7 @@ kotlin {
                 implementation(libs.material.kolor)
                 implementation(libs.flowext)
                 implementation(libs.aboutLibs)
+                implementation(libs.kermit)
             }
         }
         val commonTest by getting {

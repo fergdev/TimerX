@@ -1,5 +1,8 @@
 package com.timerx.ui.settings.alerts
 
+import com.timerx.sound.VoiceInformation
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.serialization.Serializable
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
@@ -10,6 +13,8 @@ data class AlertsSettingsState(
     val isVibrationEnabled: Boolean = false,
     val isNotificationsEnabled: Boolean = false,
     val canVibrate: Boolean = false,
+    val selectedVoice: VoiceInformation = VoiceInformation.DeviceDefault,
+    val availableVoices: ImmutableSet<VoiceInformation> = persistentSetOf()
 ) : MVIState
 
 interface AlertsSettingsIntent : MVIIntent {
@@ -17,4 +22,5 @@ interface AlertsSettingsIntent : MVIIntent {
     data class UpdateVibration(val enabled: Boolean) : AlertsSettingsIntent
     data object EnableNotifications : AlertsSettingsIntent
     data object OpenAppSettings : AlertsSettingsIntent
+    data class SetTTSVoice(val voiceId: String) : AlertsSettingsIntent
 }

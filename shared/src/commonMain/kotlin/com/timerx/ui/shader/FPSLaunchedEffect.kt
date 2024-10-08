@@ -3,6 +3,7 @@ package com.timerx.ui.shader
 import androidx.compose.animation.core.withInfiniteAnimationFrameNanos
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import co.touchlab.kermit.Logger
 import kotlin.time.TimeSource
 
 @Composable
@@ -24,7 +25,7 @@ internal fun FPSLaunchedEffect(onTimeUpdate: (Float) -> Unit) {
                     frameCount = 0
                 }
                 val value = inWholeNanoseconds / 1e9f
-                println("Time $value frameRate $frameRate")
+                Logger.i { "Time $value frameRate $frameRate" }
                 onTimeUpdate(value)
             }
         }

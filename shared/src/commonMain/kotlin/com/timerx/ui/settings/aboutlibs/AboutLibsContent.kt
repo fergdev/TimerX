@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.rememberLibraries
@@ -79,7 +80,7 @@ internal fun Library(
                     try {
                         uriHandler.openUri(it)
                     } catch (t: IllegalArgumentException) {
-                        println("Failed to open url: $it")
+                        Logger.e { "Failed to open url: $it" }
                     }
                 }
             }

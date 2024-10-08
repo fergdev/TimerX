@@ -1,18 +1,17 @@
 package com.timerx.sound
 
+import co.touchlab.kermit.Logger
 import com.timerx.settings.ITimerXSettings
 import com.timerx.util.NSErrorException
 import com.timerx.util.throwNSErrors
 import com.timerx.vibration.VIBRATION_DELAY
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryOptionMixWithOthers
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
+import platform.AVFAudio.AVSpeechSynthesisVoice
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
 import platform.AVFAudio.setActive
@@ -30,6 +29,8 @@ class SoundManager(timerXSettings: ITimerXSettings) : ISoundManager(timerXSettin
 
     private val avPlayer = AVPlayer()
     private val synthesizer = AVSpeechSynthesizer()
+    private var voice: AVSpeechSynthesisVoice? = null
+    private val voiceInformation: List<VoiceInformation>
 
     init {
         try {
@@ -43,12 +44,22 @@ class SoundManager(timerXSettings: ITimerXSettings) : ISoundManager(timerXSettin
                 audioSession.setActive(true, it)
             }
         } catch (e: NSErrorException) {
-            println("Error setting up audio session: ${e.message}")
+            Logger.e { "Error setting up audio session: ${e.message}" }
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            timerXSettings.alertSettingsManager.alertSettings.collect {
-                avPlayer.volume = it.volume
+        voiceInformation = mappedVoices().map {
+            VoiceInformation(
+                it.identifier,
+                "${it.language} - ${it.name}"
+            )
+        }
+
+        coroutineScope.launch {
+            timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
+                avPlayer.volume = alertSettings.volume
+                voice = mappedVoices().firstOrNull {
+                    it.identifier == alertSettings.ttsVoiceName
+                }
             }
         }
     }
@@ -56,14 +67,14 @@ class SoundManager(timerXSettings: ITimerXSettings) : ISoundManager(timerXSettin
     override suspend fun beep(beep: Beep) {
         val soundURL = NSBundle.mainBundle.URLForResource(beep.path, "mp3")
         if (soundURL == null) {
-            println("Beep not found $beep")
+            Logger.e { "Beep not found $beep" }
             return
         }
         repeat(beep.repeat) {
             avPlayer.replaceCurrentItemWithPlayerItem(AVPlayerItem(soundURL))
             avPlayer.play()
             avPlayer.error?.let {
-                println("AVPlayer error? = ${it.localizedDescription}")
+                Logger.e { "AVPlayer error? = ${it.localizedDescription}" }
             }
             delay(VIBRATION_DELAY)
         }
@@ -72,6 +83,13 @@ class SoundManager(timerXSettings: ITimerXSettings) : ISoundManager(timerXSettin
     override suspend fun textToSpeech(text: String) {
         val utterance = AVSpeechUtterance(string = text)
         utterance.setVolume(volume)
+        utterance.voice = voice
         synthesizer.speakUtterance(utterance)
+    }
+
+    override fun voices(): List<VoiceInformation> = voiceInformation
+
+    private fun mappedVoices() = AVSpeechSynthesisVoice.speechVoices().map {
+        it as AVSpeechSynthesisVoice
     }
 }

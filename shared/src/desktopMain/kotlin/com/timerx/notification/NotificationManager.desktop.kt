@@ -1,5 +1,6 @@
 package com.timerx.notification
 
+import co.touchlab.kermit.Logger
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerEvent.Finished
 import com.timerx.timermanager.TimerEvent.NextInterval
@@ -37,7 +38,7 @@ class NotificationManager : ITimerXNotificationManager {
                         TrayIcon.MessageType.INFO
                     )
                 } else {
-                    println("System tray is not supported")
+                    Logger.e { "System tray is not supported" }
                 }
             }
         }

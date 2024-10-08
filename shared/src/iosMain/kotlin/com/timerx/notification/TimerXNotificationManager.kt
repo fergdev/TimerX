@@ -1,5 +1,6 @@
 package com.timerx.notification
 
+import co.touchlab.kermit.Logger
 import com.timerx.domain.timeFormatted
 import com.timerx.timermanager.TimerEvent
 import platform.UserNotifications.UNMutableNotificationContent
@@ -20,7 +21,7 @@ class TimerXNotificationManager : ITimerXNotificationManager {
             UNNotificationRequest.requestWithIdentifier("LocalNotification1", content, trigger)
 
         center.addNotificationRequest(request) { error ->
-            error?.let { println("Error: $it") }
+            error?.let { Logger.e { "Error: $it" } }
         }
     }
 
@@ -43,7 +44,7 @@ class TimerXNotificationManager : ITimerXNotificationManager {
 
         UNUserNotificationCenter.currentNotificationCenter()
             .addNotificationRequest(request) { error ->
-                if (error != null) println("Notification error: $error")
+                if (error != null) Logger.e { "Notification error: $error" }
             }
     }
 

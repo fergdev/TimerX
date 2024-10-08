@@ -1,5 +1,6 @@
 package com.timerx.permissions
 
+import co.touchlab.kermit.Logger
 import org.w3c.notifications.GRANTED
 import org.w3c.notifications.Notification
 import org.w3c.notifications.NotificationPermission
@@ -7,7 +8,7 @@ import org.w3c.notifications.NotificationPermission
 object PermissionManager : IPermissionsHandler {
     override suspend fun requestPermission(permission: Permission) {
         Notification.requestPermission {
-            println("On permission result $it")
+            Logger.d { "On permission result $it" }
         }
     }
 

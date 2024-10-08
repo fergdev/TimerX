@@ -4,13 +4,11 @@ import com.timerx.settings.ITimerXSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 abstract class ISoundManager(timerXSettings: ITimerXSettings) {
     abstract val isTTSSupported: Boolean
-    abstract suspend fun beep(beep: Beep)
-    abstract suspend fun textToSpeech(text: String)
-
-    internal val coroutineScope = CoroutineScope(Dispatchers.Main)
+    internal val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     internal var volume: Float = DEFAULT_VOLUME
 
@@ -20,6 +18,12 @@ abstract class ISoundManager(timerXSettings: ITimerXSettings) {
         }
     }
 
+    abstract suspend fun beep(beep: Beep)
+
+    abstract suspend fun textToSpeech(text: String)
+
+    abstract fun voices(): List<VoiceInformation>
+
     suspend fun makeIntervalSound(intervalSound: IntervalSound) {
         with(intervalSound) {
             if (text != null) {
@@ -28,6 +32,18 @@ abstract class ISoundManager(timerXSettings: ITimerXSettings) {
                 beep(beep)
             }
         }
+    }
+}
+
+@Serializable
+data class VoiceInformation(
+    val id: String,
+    val name: String
+) {
+    companion object {
+        val DeviceDefault = VoiceInformation(
+            "", "DeviceDefault"
+        )
     }
 }
 
