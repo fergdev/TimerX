@@ -183,10 +183,10 @@ private fun reduceIntent(
                         if (index != -1) {
                             set.copy(
                                 intervals = (
-                                        set.intervals + set.intervals[index].copy(
-                                            id = defaultGenerator.getNextId()
-                                        )
-                                        ).toPersistentList()
+                                    set.intervals + set.intervals[index].copy(
+                                        id = defaultGenerator.getNextId()
+                                    )
+                                    ).toPersistentList()
                             )
                         } else {
                             set
