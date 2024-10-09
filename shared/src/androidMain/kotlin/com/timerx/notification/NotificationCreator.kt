@@ -9,7 +9,9 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
+import android.os.Build
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -48,77 +50,27 @@ fun createNotification(
     val skipPreviousPendingIntent = skipPreviousPendingIntent(context)
     val skipNextPendingIntent = skipNextPendingIntent(context)
 
-    val customLayout = RemoteViews(context.packageName, R.layout.custom_notification).apply {
-        setTextViewText(R.id.notification_interval, timerEvent.runState.intervalName)
-        setTextColor(R.id.notification_interval, contrastColor)
+    val customLayout = getSmallView(
+        context,
+        timerEvent,
+        contrastColor,
+        time,
+        isRunning,
+        playPausePendingIntent,
+        stopPendingIntent
+    )
 
-        setTextViewText(R.id.notification_time, time)
-        setTextColor(R.id.notification_time, contrastColor)
-
-        setImageViewIcon(
-            R.id.notification_pause,
-            getTintedIcon(
-                context,
-                if (isRunning) R.drawable.pause else R.drawable.play_arrow,
-                contrastColor
-            )
-        )
-        setImageViewIcon(
-            R.id.notification_cancel,
-            getTintedIcon(
-                context,
-                R.drawable.close,
-                contrastColor
-            )
-        )
-        setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
-        setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
-    }
-
-    val large = RemoteViews(context.packageName, R.layout.custom_notification_large).apply {
-        setTextViewText(R.id.notification_interval, timerEvent.runState.intervalName)
-        setTextColor(R.id.notification_interval, contrastColor)
-
-        setTextViewText(R.id.notification_time, time)
-        setTextColor(R.id.notification_time, contrastColor)
-
-        setImageViewIcon(
-            R.id.notification_pause,
-            getTintedIcon(
-                context,
-                if (isRunning) R.drawable.pause else R.drawable.play_arrow,
-                contrastColor
-            )
-        )
-        setImageViewIcon(
-            R.id.notification_cancel,
-            getTintedIcon(
-                context,
-                R.drawable.close,
-                contrastColor
-            )
-        )
-        setImageViewIcon(
-            R.id.notification_skip_next,
-            getTintedIcon(
-                context,
-                R.drawable.skip_next,
-                contrastColor
-            )
-        )
-        setImageViewIcon(
-            R.id.notification_skip_previous,
-            getTintedIcon(
-                context,
-                R.drawable.skip_previous,
-                contrastColor
-            )
-        )
-        setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
-        setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
-        setOnClickPendingIntent(R.id.notification_skip_next, skipNextPendingIntent)
-        setOnClickPendingIntent(R.id.notification_skip_previous, skipPreviousPendingIntent)
-    }
+    val large = getLargeView(
+        context,
+        timerEvent,
+        contrastColor,
+        time,
+        isRunning,
+        playPausePendingIntent,
+        stopPendingIntent,
+        skipNextPendingIntent,
+        skipPreviousPendingIntent
+    )
 
     return NotificationCompat.Builder(context, NotificationService.CHANNEL_ID).apply {
         setAutoCancel(false)
@@ -141,6 +93,112 @@ fun createNotification(
         setSound(Uri.EMPTY)
         setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
     }.build()
+}
+
+private fun getSmallView(
+    context: Context,
+    timerEvent: TimerEvent,
+    contrastColor: Int,
+    time: String,
+    isRunning: Boolean,
+    playPausePendingIntent: PendingIntent,
+    stopPendingIntent: PendingIntent
+): RemoteViews {
+    val customLayout = RemoteViews(context.packageName, R.layout.custom_notification).apply {
+        setTextViewText(R.id.notification_interval, timerEvent.runState.intervalName)
+        setTextColor(R.id.notification_interval, contrastColor)
+
+        setTextViewText(R.id.notification_time, time)
+        setTextColor(R.id.notification_time, contrastColor)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setImageViewIcon(
+                R.id.notification_pause,
+                getTintedIcon(
+                    context,
+                    if (isRunning) R.drawable.pause else R.drawable.play_arrow,
+                    contrastColor
+                )
+            )
+            setImageViewIcon(
+                R.id.notification_cancel,
+                getTintedIcon(
+                    context,
+                    R.drawable.close,
+                    contrastColor
+                )
+            )
+        }
+        setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
+        setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
+    }
+    return customLayout
+}
+
+private fun getLargeView(
+    context: Context,
+    timerEvent: TimerEvent,
+    contrastColor: Int,
+    time: String,
+    isRunning: Boolean,
+    playPausePendingIntent: PendingIntent,
+    stopPendingIntent: PendingIntent,
+    skipNextPendingIntent: PendingIntent,
+    skipPreviousPendingIntent: PendingIntent
+): RemoteViews {
+    val large = RemoteViews(context.packageName, R.layout.custom_notification_large).apply {
+        setTextViewText(R.id.notification_interval, timerEvent.runState.intervalName)
+        setTextColor(R.id.notification_interval, contrastColor)
+
+        setTextViewText(R.id.notification_time, time)
+        setTextColor(R.id.notification_time, contrastColor)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setImageViewIcon(
+                R.id.notification_pause,
+                getTintedIcon(
+                    context,
+                    if (isRunning) R.drawable.pause else R.drawable.play_arrow,
+                    contrastColor
+                )
+            )
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setImageViewIcon(
+                R.id.notification_cancel,
+                getTintedIcon(
+                    context,
+                    R.drawable.close,
+                    contrastColor
+                )
+            )
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setImageViewIcon(
+                R.id.notification_skip_next,
+                getTintedIcon(
+                    context,
+                    R.drawable.skip_next,
+                    contrastColor
+                )
+            )
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setImageViewIcon(
+                R.id.notification_skip_previous,
+                getTintedIcon(
+                    context,
+                    R.drawable.skip_previous,
+                    contrastColor
+                )
+            )
+        }
+        setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
+        setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
+        setOnClickPendingIntent(R.id.notification_skip_next, skipNextPendingIntent)
+        setOnClickPendingIntent(R.id.notification_skip_previous, skipPreviousPendingIntent)
+    }
+    return large
 }
 
 private fun destroyPendingIntent(context: Context): PendingIntent {
@@ -206,6 +264,7 @@ private fun appPendingIntent(context: Context): PendingIntent {
     return appPendingIntent
 }
 
+@RequiresApi(Build.VERSION_CODES.M)
 private fun getTintedIcon(context: Context, drawableId: Int, color: Int): Icon {
     val drawable: Drawable = ContextCompat.getDrawable(context, drawableId)!!
     val bitmap = Bitmap.createBitmap(

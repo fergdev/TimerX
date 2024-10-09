@@ -1,6 +1,7 @@
 package com.timerx.vibration
 
 import android.content.Context
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import com.timerx.settings.ITimerXSettings
@@ -29,9 +30,6 @@ import org.koin.mp.KoinPlatform
 class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibrationManager {
     private val context: Context = KoinPlatform.getKoin().get()
 
-    // TODO Fix this for lower api targets
-    private val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
-
     private var vibrationEnabled = true
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -47,23 +45,27 @@ class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibration
         if (vibrationEnabled.not()) {
             return
         }
-        val millis = when (vibration) {
-            Heavy, HeavyX2, HeavyX3 -> 1000L
-            Medium, MediumX2, MediumX3 -> 750L
-            Rigid, RigidX2, RigidX3 -> 500L
-            Light, LightX2, LightX3 -> 250L
-            Soft, SoftX2, SoftX3 -> 100L
-            None -> return
-        }
+        // TODO Fix this for lower api targets
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
+            val millis = when (vibration) {
+                Heavy, HeavyX2, HeavyX3 -> 1000L
+                Medium, MediumX2, MediumX3 -> 750L
+                Rigid, RigidX2, RigidX3 -> 500L
+                Light, LightX2, LightX3 -> 250L
+                Soft, SoftX2, SoftX3 -> 100L
+                None -> return
+            }
 
-        repeat(vibration.repeat) {
-            vibrator.vibrate(
-                VibrationEffect.createOneShot(
-                    millis,
-                    VibrationEffect.DEFAULT_AMPLITUDE
+            repeat(vibration.repeat) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        millis,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
                 )
-            )
-            delay(VIBRATION_DELAY)
+                delay(VIBRATION_DELAY)
+            }
         }
     }
 }

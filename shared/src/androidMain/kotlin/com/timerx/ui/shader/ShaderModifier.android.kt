@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 actual fun Modifier.shader(
     shader: String,
     uniformsBlock: (ShaderUniformProvider.() -> Unit)?,
-): Modifier = this then composed {
+): Modifier = composed {
     val runtimeShader = remember { RuntimeShader(shader) }
     val shaderUniformProvider = remember { ShaderUniformProviderImpl(runtimeShader) }
     graphicsLayer {
@@ -36,7 +36,7 @@ actual fun Modifier.runtimeShader(
     shader: String,
     uniformName: String,
     uniformsBlock: (ShaderUniformProvider.() -> Unit)?,
-): Modifier = this then composed {
+): Modifier = composed {
     val runtimeShader = remember { RuntimeShader(shader) }
     val shaderUniformProvider = remember { ShaderUniformProviderImpl(runtimeShader) }
     graphicsLayer {
