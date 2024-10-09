@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "798882514249",
+    "firebase_url": "https://timerx-b7d18.firebaseio.com",
+    "project_id": "timerx-b7d18",
+    "storage_bucket": "timerx-b7d18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798882514249:android:9044ffd1871530067fc698",
+        "android_client_info": {
+          "package_name": "com.timerx.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "798882514249-la7qe74mcfb0j0g91323d292cb6gbpf7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsOoPl9koe8TMKKMYpGwh50FxiX3yyO6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "798882514249-la7qe74mcfb0j0g91323d292cb6gbpf7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-2499949091653906~3086757678"
+    }
+  ],
+  "configuration_version": "1"
+}
