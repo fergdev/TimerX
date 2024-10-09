@@ -112,6 +112,7 @@ private fun List<TimerSet>.getMaxId() =
         )
     } + 1L
 
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 private fun reduceIntent(
     defaultGenerator: DefaultGenerator,
     timerDatabase: ITimerRepository,

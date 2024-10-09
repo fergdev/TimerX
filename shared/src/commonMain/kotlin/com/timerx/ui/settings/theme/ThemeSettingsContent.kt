@@ -100,9 +100,9 @@ internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent
 
 @Composable
 private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
-    modifier: Modifier,
+    scaffoldPadding: PaddingValues,
     state: LoadedState,
-    scaffoldPadding: PaddingValues
+    modifier: Modifier = Modifier,
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     Column(

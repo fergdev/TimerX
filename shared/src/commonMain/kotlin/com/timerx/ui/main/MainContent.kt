@@ -160,11 +160,11 @@ internal fun MainContent(mainComponent: MainComponent) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IntentReceiver<MainIntent>.Content(
-    modifier: Modifier = Modifier,
     state: MainState.Content,
     mainComponent: MainComponent,
     appBarScrollBehavior: TopAppBarScrollBehavior,
     padding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()

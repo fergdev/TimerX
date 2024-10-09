@@ -1,3 +1,5 @@
+@file:Suppress("OPT_IN_USAGE")
+
 package com.timerx.ui.navigation
 
 import com.arkivanov.decompose.ComponentContext
@@ -36,13 +38,13 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
     override val stack: Value<ChildStack<*, RootComponent.Child>> = _stack
 
     init {
-//        webHistoryController?.attach(
-//            navigator = nav,
-//            serializer = Config.serializer(),
-//            stack = _stack,
-//            getPath = ::getPathForConfig,
-//            getConfiguration = ::getConfigForPath,
-//        )
+        webHistoryController?.attach(
+            navigator = nav,
+            serializer = Config.serializer(),
+            stack = _stack,
+            getPath = { "" },
+            getConfiguration = { Config.Main }
+        )
     }
 
     @OptIn(DelicateDecomposeApi::class)

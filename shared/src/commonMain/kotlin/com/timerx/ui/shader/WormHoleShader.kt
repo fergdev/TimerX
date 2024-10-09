@@ -29,7 +29,7 @@ private val shader = """
     }
 """.trimIndent()
 
-fun Modifier.wormHoleShader(running: Boolean = true) = composed {
+fun Modifier.wormHoleShader() = composed {
     var time by remember { mutableFloatStateOf(0f) }
     FPSLaunchedEffect { time = it }
     this then runtimeShader(shader) {

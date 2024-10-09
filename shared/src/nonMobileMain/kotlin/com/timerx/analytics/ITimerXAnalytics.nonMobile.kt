@@ -1,3 +1,4 @@
+@file:Suppress("Filename")
 package com.timerx.analytics
 
 import co.touchlab.kermit.Logger

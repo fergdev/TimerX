@@ -24,7 +24,7 @@ private val shader = """
     }
 """.trimIndent()
 
-fun Modifier.discoShader(running: Boolean = true) = composed {
+fun Modifier.discoShader() = composed {
     var time by remember { mutableStateOf(0f) }
     FPSLaunchedEffect { time = it }
     this then runtimeShader(shader) {

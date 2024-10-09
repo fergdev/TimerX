@@ -16,28 +16,16 @@ import kotlinx.browser.window
 import org.koin.compose.KoinContext
 import org.w3c.dom.Document
 
-private const val KEY_SAVED_STATE = "saved_state"
-
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalDecomposeApi::class)
 fun main() {
     startKoin()
     val registry = LifecycleRegistry()
-//    val stateKeeper = StateKeeperDispatcher(
-//        savedState = localStorage.getItem(KEY_SAVED_STATE)?.decodeSerializableContainer()
-//                savedState = localStorage.getItem(KEY_SAVED_STATE)//?.decodeSerializableContainer()
-//    )
     val root = DefaultRootComponent(
         webHistoryController = DefaultWebHistoryController(),
-        componentContext = DefaultComponentContext(
-            lifecycle = registry,
-//            stateKeeper = stateKeeper,
-        ),
+        componentContext = DefaultComponentContext(lifecycle = registry)
     )
     registry.attachToDocument()
-    window.onbeforeunload = {
-//        localStorage.setItem(KEY_SAVED_STATE, stateKeeper.save().encodeToString())
-        null
-    }
+    window.onbeforeunload = { null }
     ComposeViewport(document.body!!) { KoinContext { AppContent(root) } }
 }
 

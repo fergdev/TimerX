@@ -7,6 +7,7 @@ interface CreateComponent {
     fun onBackClicked()
 }
 
+@Suppress("UnusedPrivateProperty")
 class DefaultCreateComponent(
     componentContext: ComponentContext,
     override val timerId: Long,

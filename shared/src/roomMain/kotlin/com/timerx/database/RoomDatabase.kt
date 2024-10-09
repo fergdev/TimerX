@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
+@Suppress("TooManyFunctions", "ComplexInterface")
 @Dao
 interface RoomTimerDao {
 

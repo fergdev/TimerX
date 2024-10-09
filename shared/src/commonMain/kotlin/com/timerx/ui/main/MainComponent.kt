@@ -8,6 +8,7 @@ interface MainComponent {
     fun onRunClicked(id: Long)
 }
 
+@Suppress("UnusedPrivateProperty")
 class DefaultMainComponent(
     componentContext: ComponentContext,
     private val onRunTimer: (Long) -> Unit,

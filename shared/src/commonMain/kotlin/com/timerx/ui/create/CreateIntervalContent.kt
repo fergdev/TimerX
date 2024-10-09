@@ -407,9 +407,9 @@ private fun IntentReceiver<CreateScreenIntent>.IntervalAlertControls(
 
 @Composable
 private fun RowSwitch(
-    modifier: Modifier = Modifier,
     label: String,
     value: Boolean,
+    modifier: Modifier = Modifier,
     onValueChange: (Boolean) -> Unit
 ) {
     Row(

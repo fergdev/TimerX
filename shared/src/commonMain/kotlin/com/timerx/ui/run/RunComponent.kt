@@ -7,6 +7,7 @@ interface RunComponent {
     fun onBackClicked()
 }
 
+@Suppress("UnusedPrivateProperty")
 class DefaultRunComponent(
     componentContext: ComponentContext,
     override val timerId: Long,

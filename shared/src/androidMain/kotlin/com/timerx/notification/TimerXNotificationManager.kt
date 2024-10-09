@@ -1,3 +1,4 @@
+@file:Suppress("Filename")
 package com.timerx.notification
 
 import android.app.NotificationManager
@@ -8,7 +9,9 @@ import org.koin.mp.KoinPlatform
 
 class NotificationManager : ITimerXNotificationManager {
     private val context: Context = KoinPlatform.getKoin().get()
-    private val notificationManager by lazy { context.getSystemService(NotificationManager::class.java) }
+    private val androidNotificationManager by lazy {
+        context.getSystemService(NotificationManager::class.java)
+    }
 
     override fun start() {
         context.startForegroundService(Intent(context, NotificationService::class.java))
@@ -17,7 +20,7 @@ class NotificationManager : ITimerXNotificationManager {
     override fun updateNotification(
         timerEvent: TimerEvent
     ) {
-        notificationManager.notify(
+        androidNotificationManager.notify(
             NotificationService.NOTIFICATION_ID,
             createNotification(context, timerEvent)
         )
@@ -25,6 +28,6 @@ class NotificationManager : ITimerXNotificationManager {
 
     override fun stop() {
         context.stopService(Intent(context, NotificationService::class.java))
-        notificationManager.cancelAll()
+        androidNotificationManager.cancelAll()
     }
 }

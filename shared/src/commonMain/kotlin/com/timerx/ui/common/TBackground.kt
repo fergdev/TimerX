@@ -31,7 +31,7 @@ import timerx.shared.generated.resources.rectangles
 import timerx.shared.generated.resources.triangles
 
 @Composable
-fun TBackground(modifier: Modifier = Modifier.fillMaxSize()) {
+fun TBackground(modifier: Modifier = Modifier) {
     val backgroundSettings by koinInject<ITimerXSettings>()
         .backgroundSettingsManager
         .backgroundSettings
@@ -56,6 +56,7 @@ fun TBackground(modifier: Modifier = Modifier.fillMaxSize()) {
     ) {
         Image(
             modifier = modifier
+                .fillMaxSize()
                 .graphicsLayer(alpha = backgroundSettings.alpha)
                 .drawWithCache {
                     onDrawWithContent {
