@@ -122,7 +122,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
                     }
                 }
 
-                Box(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                Box(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).fillMaxWidth()) {
                     AnimatedNumber(
                         modifier = Modifier.align(Alignment.Center),
                         value = timerSet.length().timeFormatted(),

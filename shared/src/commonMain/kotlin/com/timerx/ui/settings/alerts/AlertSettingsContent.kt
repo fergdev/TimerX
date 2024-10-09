@@ -63,13 +63,14 @@ internal fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) =
         ) { scaffoldPadding ->
             Column(
                 modifier = Modifier.padding(
-                    top = scaffoldPadding.calculateTopPadding(),
+                    top = scaffoldPadding.calculateTopPadding().plus(8.dp),
                     start = 16.dp,
-                    end = 16.dp
+                    end = 16.dp,
+                    bottom = 8.dp
                 )
                     .widthIn(max = 600.dp)
                     .align(Alignment.TopCenter),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 with(subscribe(DefaultLifecycle).value) {
                     VolumeCard(volume)
@@ -92,7 +93,7 @@ fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
     var voiceSelectorVisible by remember { mutableStateOf(false) }
     AlertCard(modifier = Modifier.clickable { voiceSelectorVisible = true }) {
         Row {
-            Text(text = "Selected voice")
+            Text(text = "Voice")
             Spacer(modifier = Modifier.weight(1f))
             Text(text = selectedVoice.name)
         }

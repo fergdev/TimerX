@@ -109,12 +109,12 @@ private fun IntentReceiver<ThemeSettingsIntent>.LoadedContent(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(
-                top = scaffoldPadding.calculateTopPadding(),
+                top = scaffoldPadding.calculateTopPadding().plus(8.dp),
                 bottom = scaffoldPadding.calculateBottomPadding() + systemBarPadding.calculateBottomPadding(),
                 start = 16.dp,
-                end = 16.dp
+                end = 16.dp,
             ),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         DarkModeRow(state.settingsDarkTheme)
         if (state.isDynamicThemeSupported) {

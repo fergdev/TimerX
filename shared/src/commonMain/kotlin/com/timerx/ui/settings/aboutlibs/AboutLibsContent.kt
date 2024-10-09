@@ -50,7 +50,6 @@ fun AboutLibsContent(component: AboutLibsComponent) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
                 Spacer(modifier = Modifier.height(scaffoldPadding.calculateTopPadding()))
@@ -73,18 +72,21 @@ internal fun Library(
 ) {
     val uriHandler = LocalUriHandler.current
     PaddedElevatedCard(
-        modifier = Modifier.widthIn(max = 600.dp).clickable {
-            val license = library.licenses.firstOrNull()
-            if (!license?.url.isNullOrBlank()) {
-                license?.url?.also {
-                    try {
-                        uriHandler.openUri(it)
-                    } catch (t: IllegalArgumentException) {
-                        Logger.e { "Failed to open url: $it" }
+        modifier = Modifier
+            .padding(top = 8.dp, bottom = 8.dp)
+            .widthIn(max = 600.dp)
+            .clickable {
+                val license = library.licenses.firstOrNull()
+                if (!license?.url.isNullOrBlank()) {
+                    license?.url?.also {
+                        try {
+                            uriHandler.openUri(it)
+                        } catch (t: IllegalArgumentException) {
+                            Logger.e { "Failed to open url: $it" }
+                        }
                     }
                 }
             }
-        }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

@@ -55,14 +55,13 @@ fun BackgroundSettingsContent(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .padding(
-                    top = scaffoldPadding.calculateTopPadding(),
+                    top = scaffoldPadding.calculateTopPadding().plus(8.dp),
                     bottom = scaffoldPadding.calculateBottomPadding() + systemBarPadding.calculateBottomPadding(),
                     start = 16.dp,
                     end = 16.dp
                 )
                 .widthIn(max = 600.dp)
                 .align(Alignment.TopCenter),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val state by subscribe(DefaultLifecycle)
             when (state) {
@@ -76,7 +75,7 @@ fun BackgroundSettingsContent(
 @Composable
 private fun IntentReceiver<BackgroundSettingsIntent>.LoadedContent(state: LoadedState) =
     with(state) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             AlphaCard(alpha)
             PatternCard(pattern)
         }

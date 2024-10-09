@@ -67,7 +67,7 @@ internal class CreateContainer(
                     updateState {
                         defaultGenerator.setMaxId(timer.sets.getMaxId())
                         CreateScreenState(
-                            timerNameModel = TimerNameModel(timer.name),
+                            timerNameState = TimerNameState(timer.name),
                             sets = timer.sets.toPersistentList(),
                             isEditing = true,
                             canVibrate = platformCapabilities.canVibrate,
@@ -120,7 +120,7 @@ private fun reduceIntent(
     timerId: Long,
 ) = reducePlugin<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     when (it) {
-        is UpdateTimerName -> updateState { copy(timerNameModel = TimerNameModel(name = it.timerName)) }
+        is UpdateTimerName -> updateState { copy(timerNameState = TimerNameState(name = it.timerName)) }
         AddSet ->
             updateState {
                 copy(sets = (sets + defaultGenerator.defaultTimerSet()).toPersistentList())
@@ -328,9 +328,9 @@ private fun reduceIntent(
 
         Save -> {
             withState {
-                if (timerNameModel.name.isBlank()) {
+                if (timerNameState.name.isBlank()) {
                     updateState {
-                        copy(timerNameModel = timerNameModel.copy(isError = true))
+                        copy(timerNameState = timerNameState.copy(isError = true))
                     }
                     return@withState
                 }
@@ -342,7 +342,7 @@ private fun reduceIntent(
                             Timer(
                                 id = timerEditing.id,
                                 sortOrder = timerEditing.sortOrder,
-                                name = timerNameModel.name,
+                                name = timerNameState.name,
                                 sets = newSets,
                                 finishColor = finishColor,
                                 finishBeep = finishBeep,
@@ -355,7 +355,7 @@ private fun reduceIntent(
                     } else {
                         timerDatabase.insertTimer(
                             Timer(
-                                name = timerNameModel.name,
+                                name = timerNameState.name,
                                 sets = newSets,
                                 finishColor = finishColor,
                                 finishBeep = finishBeep,

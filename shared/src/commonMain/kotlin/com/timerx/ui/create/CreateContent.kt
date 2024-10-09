@@ -153,20 +153,20 @@ private fun IntentReceiver<Save>.TopAppBarActions() {
 
 @Composable
 private fun IntentReceiver<UpdateTimerName>.TimerNameTextField(
-    timerNameModel: TimerNameModel
+    timerNameState: TimerNameState
 ) {
-    ElevatedCard(modifier = Modifier.padding(bottom = 16.dp)) {
+    ElevatedCard(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().padding(8.dp),
-            value = timerNameModel.name,
+            value = timerNameState.name,
             maxLines = 1,
             onValueChange = { intent(UpdateTimerName(it)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             placeholder = { Text(text = stringResource(Res.string.timer_name)) },
             label = { Text(text = stringResource(Res.string.timer_name)) },
-            isError = timerNameModel.isError,
+            isError = timerNameState.isError,
             supportingText = {
-                if (timerNameModel.isError) {
+                if (timerNameState.isError) {
                     Text(text = stringResource(Res.string.timer_name_required))
                 }
             }
@@ -189,7 +189,7 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
             .verticalScroll(scrollState)
     ) {
         Spacer(Modifier.height(paddingValues.calculateTopPadding()))
-        TimerNameTextField(state.timerNameModel)
+        TimerNameTextField(state.timerNameState)
         SetColumn(state)
         FinalTimeRow(state)
         FinishControls(
@@ -210,27 +210,30 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
 private fun IntentReceiver<AddSet>.FinalTimeRow(
     state: CreateScreenState
 ) {
-    Box(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp).fillMaxWidth()) {
-        FilledIconButton(
-            modifier = Modifier.align(Alignment.CenterEnd),
-            onClick = { intent(AddSet) }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = stringResource(Res.string.add)
+    ElevatedCard(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
+        Box(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).fillMaxWidth()) {
+            FilledIconButton(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                onClick = { intent(AddSet) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(Res.string.add)
+                )
+            }
+            AnimatedNumber(
+                modifier = Modifier.align(Alignment.TopCenter),
+                value = state.sets.length().timeFormatted(),
+                textStyle = MaterialTheme.typography.displayMedium
             )
         }
-        AnimatedNumber(
-            modifier = Modifier.align(Alignment.TopCenter),
-            value = state.sets.length().timeFormatted(),
-            textStyle = MaterialTheme.typography.displayMedium
-        )
     }
 }
 
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.SetColumn(state: CreateScreenState) {
     ReorderableColumn(
+        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
         list = state.sets,
         onSettle = { from, to ->
             intent(SwapSet(from, to))
@@ -250,7 +253,9 @@ private fun IntentReceiver<CreateScreenIntent>.FinishControls(
     finishVibration: Vibration,
     canVibrate: Boolean
 ) {
-    ElevatedCard {
+    ElevatedCard(
+        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+    ) {
         FinishColorPicker(finishColor)
         BeepSelector(
             modifier = Modifier.padding(horizontal = 16.dp),

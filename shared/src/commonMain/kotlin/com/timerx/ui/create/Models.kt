@@ -12,13 +12,13 @@ import pro.respawn.flowmvi.api.MVIAction
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
-internal data class TimerNameModel(
+internal data class TimerNameState(
     val name: String = "",
     val isError: Boolean = false
 )
 
 internal data class CreateScreenState(
-    val timerNameModel: TimerNameModel = TimerNameModel(),
+    val timerNameState: TimerNameState = TimerNameState(),
     val finishColor: Color = Color.Red,
     val finishBeep: Beep = Beep.End,
     val finishVibration: Vibration = Vibration.Heavy,
