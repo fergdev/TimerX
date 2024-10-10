@@ -31,7 +31,7 @@ class VibrationManager(private val timerXSettings: ITimerXSettings, context: Con
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     @Suppress("Deprecated")
-    private val vibrator =  context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+    private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
     init {
         coroutineScope.launch {
             timerXSettings.alertSettingsManager.alertSettings.collect {
