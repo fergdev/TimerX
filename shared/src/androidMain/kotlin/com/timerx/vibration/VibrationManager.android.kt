@@ -1,9 +1,8 @@
 package com.timerx.vibration
 
 import android.content.Context
-import android.os.Build
 import android.os.VibrationEffect
-import android.os.VibratorManager
+import android.os.Vibrator
 import com.timerx.settings.ITimerXSettings
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
@@ -25,14 +24,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform
 
-class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibrationManager {
-    private val context: Context = KoinPlatform.getKoin().get()
+class VibrationManager(private val timerXSettings: ITimerXSettings, context: Context) : IVibrationManager {
 
     private var vibrationEnabled = true
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
+    @Suppress("Deprecated")
+    private val vibrator =  context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
     init {
         coroutineScope.launch {
             timerXSettings.alertSettingsManager.alertSettings.collect {
@@ -45,27 +44,23 @@ class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibration
         if (vibrationEnabled.not()) {
             return
         }
-        // TODO Fix this for lower api targets
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
-            val millis = when (vibration) {
-                Heavy, HeavyX2, HeavyX3 -> 1000L
-                Medium, MediumX2, MediumX3 -> 750L
-                Rigid, RigidX2, RigidX3 -> 500L
-                Light, LightX2, LightX3 -> 250L
-                Soft, SoftX2, SoftX3 -> 100L
-                None -> return
-            }
+        val millis = when (vibration) {
+            Heavy, HeavyX2, HeavyX3 -> 1000L
+            Medium, MediumX2, MediumX3 -> 750L
+            Rigid, RigidX2, RigidX3 -> 500L
+            Light, LightX2, LightX3 -> 250L
+            Soft, SoftX2, SoftX3 -> 100L
+            None -> return
+        }
 
-            repeat(vibration.repeat) {
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(
-                        millis,
-                        VibrationEffect.DEFAULT_AMPLITUDE
-                    )
+        repeat(vibration.repeat) {
+            vibrator?.vibrate(
+                VibrationEffect.createOneShot(
+                    millis,
+                    VibrationEffect.DEFAULT_AMPLITUDE
                 )
-                delay(VIBRATION_DELAY)
-            }
+            )
+            delay(VIBRATION_DELAY)
         }
     }
 }

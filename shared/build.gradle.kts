@@ -173,7 +173,6 @@ kotlin {
                 implementation(libs.firebase.crashlytics)
                 implementation(libs.androidx.glance.appwidget)
                 implementation(libs.androidx.glance.material3)
-                implementation(libs.androidx.core.splashscreen)
             }
         }
         val androidUnitTest by getting {

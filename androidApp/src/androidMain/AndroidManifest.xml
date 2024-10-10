@@ -10,13 +10,12 @@
         android:name="com.timerx.android.App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/appName"
-        android:supportsRtl="true"
-        android:theme="@style/TimerXSplashScreen">
+        android:supportsRtl="true">
         <activity
             android:name="com.timerx.MainActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
-            android:theme="@style/TimerXSplashScreen">
+            android:theme="@style/AppTheme"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

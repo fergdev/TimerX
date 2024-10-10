@@ -6,7 +6,6 @@ androidJunit5Plugin = "1.11.2.0"
 androidx-activityCompose = "1.10.0-alpha02"
 androidx-room = "2.7.0-alpha09"
 animationCoreAndroid = "1.8.0-alpha03"
-coreSplashscreen = "1.2.0-alpha02"
 coroutines = "1.9.0"
 crashlytics = "3.0.2"
 decompose = "3.2.0-beta02"
@@ -47,7 +46,6 @@ versionCatalogUpdatePlugin = "0.8.4"
 aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-animation-core-android = { module = "androidx.compose.animation:animation-core-android", version.ref = "animationCoreAndroid" }
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }

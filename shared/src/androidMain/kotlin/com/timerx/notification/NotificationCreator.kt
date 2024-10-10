@@ -11,7 +11,6 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -38,7 +37,11 @@ fun createNotification(
     context: Context,
     timerEvent: TimerEvent,
 ): Notification {
-    val backgroundColor = timerEvent.runState.backgroundColor.toArgb()
+    val backgroundColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        timerEvent.runState.backgroundColor.toArgb()
+    } else {
+        Color.White.toArgb()
+    }
     val isRunning = timerEvent.runState.timerState == TimerState.Running
     val contrastColor = Color(backgroundColor).contrastColor().toArgb()
     val time = (timerEvent.runState.intervalDuration - timerEvent.runState.elapsed).timeFormatted()
@@ -75,7 +78,7 @@ fun createNotification(
     return NotificationCompat.Builder(context, NotificationService.CHANNEL_ID).apply {
         setAutoCancel(false)
         setCategory(NotificationCompat.CATEGORY_TRANSPORT)
-        setColor(backgroundColor)
+        setColor(Color.Red.toArgb())
         setColorized(true)
         setContentIntent(appPendingIntent)
 
@@ -111,24 +114,22 @@ private fun getSmallView(
         setTextViewText(R.id.notification_time, time)
         setTextColor(R.id.notification_time, contrastColor)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setImageViewIcon(
-                R.id.notification_pause,
-                getTintedIcon(
-                    context,
-                    if (isRunning) R.drawable.pause else R.drawable.play_arrow,
-                    contrastColor
-                )
+        setImageViewIcon(
+            R.id.notification_pause,
+            getTintedIcon(
+                context,
+                if (isRunning) R.drawable.pause else R.drawable.play_arrow,
+                contrastColor
             )
-            setImageViewIcon(
-                R.id.notification_cancel,
-                getTintedIcon(
-                    context,
-                    R.drawable.close,
-                    contrastColor
-                )
+        )
+        setImageViewIcon(
+            R.id.notification_cancel,
+            getTintedIcon(
+                context,
+                R.drawable.close,
+                contrastColor
             )
-        }
+        )
         setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
         setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
     }
@@ -153,46 +154,38 @@ private fun getLargeView(
         setTextViewText(R.id.notification_time, time)
         setTextColor(R.id.notification_time, contrastColor)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setImageViewIcon(
-                R.id.notification_pause,
-                getTintedIcon(
-                    context,
-                    if (isRunning) R.drawable.pause else R.drawable.play_arrow,
-                    contrastColor
-                )
+        setImageViewIcon(
+            R.id.notification_pause,
+            getTintedIcon(
+                context,
+                if (isRunning) R.drawable.pause else R.drawable.play_arrow,
+                contrastColor
             )
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setImageViewIcon(
-                R.id.notification_cancel,
-                getTintedIcon(
-                    context,
-                    R.drawable.close,
-                    contrastColor
-                )
+        )
+        setImageViewIcon(
+            R.id.notification_cancel,
+            getTintedIcon(
+                context,
+                R.drawable.close,
+                contrastColor
             )
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setImageViewIcon(
-                R.id.notification_skip_next,
-                getTintedIcon(
-                    context,
-                    R.drawable.skip_next,
-                    contrastColor
-                )
+        )
+        setImageViewIcon(
+            R.id.notification_skip_next,
+            getTintedIcon(
+                context,
+                R.drawable.skip_next,
+                contrastColor
             )
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setImageViewIcon(
-                R.id.notification_skip_previous,
-                getTintedIcon(
-                    context,
-                    R.drawable.skip_previous,
-                    contrastColor
-                )
+        )
+        setImageViewIcon(
+            R.id.notification_skip_previous,
+            getTintedIcon(
+                context,
+                R.drawable.skip_previous,
+                contrastColor
             )
-        }
+        )
         setOnClickPendingIntent(R.id.notification_pause, playPausePendingIntent)
         setOnClickPendingIntent(R.id.notification_cancel, stopPendingIntent)
         setOnClickPendingIntent(R.id.notification_skip_next, skipNextPendingIntent)
@@ -264,7 +257,6 @@ private fun appPendingIntent(context: Context): PendingIntent {
     return appPendingIntent
 }
 
-@RequiresApi(Build.VERSION_CODES.M)
 private fun getTintedIcon(context: Context, drawableId: Int, color: Int): Icon {
     val drawable: Drawable = ContextCompat.getDrawable(context, drawableId)!!
     val bitmap = Bitmap.createBitmap(

@@ -11,47 +11,47 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 actual fun Modifier.shader(
     shader: String,
     uniformsBlock: (ShaderUniformProvider.() -> Unit)?,
-): Modifier = composed {
-    val runtimeShader = remember { RuntimeShader(shader) }
-    val shaderUniformProvider = remember { ShaderUniformProviderImpl(runtimeShader) }
-    graphicsLayer {
-        clip = true
-        renderEffect = RenderEffect
-            .createShaderEffect(
-                runtimeShader.apply {
-                    uniformsBlock?.invoke(shaderUniformProvider)
-                    shaderUniformProvider.updateResolution(size)
-                },
-            )
-            .asComposeRenderEffect()
-    }
-}
+): Modifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    composed {
+        val runtimeShader = remember { RuntimeShader(shader) }
+        val shaderUniformProvider = remember { ShaderUniformProviderImpl(runtimeShader) }
+        graphicsLayer {
+            clip = true
+            renderEffect = RenderEffect
+                .createShaderEffect(
+                    runtimeShader.apply {
+                        uniformsBlock?.invoke(shaderUniformProvider)
+                        shaderUniformProvider.updateResolution(size)
+                    },
+                )
+                .asComposeRenderEffect()
+        }
+    } else Modifier
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 actual fun Modifier.runtimeShader(
     shader: String,
     uniformName: String,
     uniformsBlock: (ShaderUniformProvider.() -> Unit)?,
-): Modifier = composed {
-    val runtimeShader = remember { RuntimeShader(shader) }
-    val shaderUniformProvider = remember { ShaderUniformProviderImpl(runtimeShader) }
-    graphicsLayer {
-        clip = true
-        renderEffect = RenderEffect
-            .createRuntimeShaderEffect(
-                runtimeShader.apply {
-                    uniformsBlock?.invoke(shaderUniformProvider)
-                    shaderUniformProvider.updateResolution(size)
-                },
-                uniformName,
-            )
-            .asComposeRenderEffect()
-    }
-}
+): Modifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    composed {
+        val runtimeShader = remember { RuntimeShader(shader) }
+        val shaderUniformProvider = remember { ShaderUniformProviderImpl(runtimeShader) }
+        graphicsLayer {
+            clip = true
+            renderEffect = RenderEffect
+                .createRuntimeShaderEffect(
+                    runtimeShader.apply {
+                        uniformsBlock?.invoke(shaderUniformProvider)
+                        shaderUniformProvider.updateResolution(size)
+                    },
+                    uniformName,
+                )
+                .asComposeRenderEffect()
+        }
+    } else Modifier
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private class ShaderUniformProviderImpl(

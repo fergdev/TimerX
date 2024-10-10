@@ -15,7 +15,7 @@ internal actual fun systemDynamicColorScheme(dark: Boolean): ColorScheme? {
         when {
             supportsDynamicColors && dark -> dynamicDarkColorScheme(context).copy()
             supportsDynamicColors && !dark -> dynamicLightColorScheme(context).copy()
-            else -> throw IllegalStateException("Call to system dynamic color scheme when not supported")
+            else -> null
         }
     }
 }
