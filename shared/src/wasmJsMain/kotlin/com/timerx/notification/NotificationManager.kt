@@ -26,14 +26,10 @@ internal class NotificationManager(timerManager: TimerManager) {
                             title = getString(Res.string.app_name),
                             options = NotificationOptions(
                                 body = it.runState.intervalName,
-                                // TODO set icon
                             )
                         )
                     }
-
-                    else -> {
-                        // ignore
-                    }
+                    else -> { /* ignore */ }
                 }
             }
         }
