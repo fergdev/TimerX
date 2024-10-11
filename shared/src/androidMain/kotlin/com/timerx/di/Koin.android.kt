@@ -8,8 +8,7 @@ import com.timerx.permissions.PermissionsHandler
 import com.timerx.platform.androidCapabilities
 import com.timerx.sound.ISoundManager
 import com.timerx.sound.SoundManager
-import com.timerx.vibration.IVibrationManager
-import com.timerx.vibration.VibrationManager
+import com.timerx.vibration.AndroidVibrator
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
@@ -24,7 +23,7 @@ actual val platformModule = module {
         createdAtStart()
     }
     singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
-    singleOf(::VibrationManager) { bind<IVibrationManager>() }
+    singleOf(::AndroidVibrator) { createdAtStart() }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::NotificationManager) { createdAtStart() }
 }

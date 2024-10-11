@@ -9,8 +9,7 @@ import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
 import com.timerx.sound.ISoundManager
 import com.timerx.sound.SoundManager
-import com.timerx.vibration.IVibrationManager
-import com.timerx.vibration.VibrationManager
+import com.timerx.vibration.IosVibrationManager
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
@@ -21,7 +20,7 @@ actual val platformModule = module {
     single { iosCapabilities }
     singleOf(::SoundManager) { bind<ISoundManager>() }
     singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
-    singleOf(::VibrationManager) { bind<IVibrationManager>() }
+    singleOf(::IosVibrationManager)
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::BackgroundManager) { createdAtStart() }
     singleOf(::NotificationManager) { createdAtStart() }

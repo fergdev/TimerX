@@ -3,7 +3,6 @@ package com.timerx.timermanager
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.sound.ISoundManager
-import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,11 +12,10 @@ import kotlinx.datetime.Clock
 
 class TimerManager(
     private val beepManager: ISoundManager,
-    private val vibrationManager: IVibrationManager,
     private val timerRepository: ITimerRepository
 ) {
     private var timerStateMachine: TimerStateMachineImpl? = null
-    private val coroutineScope = CoroutineScope(Dispatchers.Unconfined)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     private val _eventState = MutableStateFlow<TimerEvent>(TimerEvent.Idle)
     val eventState: StateFlow<TimerEvent> = _eventState
@@ -38,28 +36,23 @@ class TimerManager(
                 when (timerEvent) {
                     is TimerEvent.Ticker -> {
                         timerEvent.beep?.let { beepManager.beep(it) }
-                        timerEvent.vibration?.let { vibrationManager.vibrate(it) }
                     }
 
                     is TimerEvent.Finished -> {
                         beepManager.makeIntervalSound(timerEvent.intervalSound)
-                        vibrationManager.vibrate(timerEvent.vibration)
                         updateTimerFinishedStats(timer)
                     }
 
                     is TimerEvent.NextInterval -> {
                         beepManager.makeIntervalSound(timerEvent.intervalSound)
-                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.PreviousInterval -> {
                         beepManager.makeIntervalSound(timerEvent.intervalSound)
-                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.Started -> {
                         beepManager.makeIntervalSound(timerEvent.intervalSound)
-                        vibrationManager.vibrate(timerEvent.vibration)
                     }
 
                     is TimerEvent.Resumed -> {

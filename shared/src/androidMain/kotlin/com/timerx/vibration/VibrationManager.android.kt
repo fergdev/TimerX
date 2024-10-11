@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.VibrationEffect
 import android.os.Vibrator
 import com.timerx.settings.ITimerXSettings
+import com.timerx.timermanager.TimerManager
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
 import com.timerx.vibration.Vibration.HeavyX3
@@ -20,30 +21,19 @@ import com.timerx.vibration.Vibration.RigidX3
 import com.timerx.vibration.Vibration.Soft
 import com.timerx.vibration.Vibration.SoftX2
 import com.timerx.vibration.Vibration.SoftX3
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-class VibrationManager(private val timerXSettings: ITimerXSettings, context: Context) : IVibrationManager {
-
-    private var vibrationEnabled = true
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+class AndroidVibrator(
+    timerXSettings: ITimerXSettings,
+    timerManager: TimerManager,
+    context: Context
+) : VibrationManager(timerXSettings, timerManager) {
 
     @Suppress("Deprecated")
     private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-    init {
-        coroutineScope.launch {
-            timerXSettings.alertSettingsManager.alertSettings.collect {
-                vibrationEnabled = it.vibrationEnabled
-            }
-        }
-    }
 
     override suspend fun vibrate(vibration: Vibration) {
-        if (vibrationEnabled.not()) {
-            return
-        }
+        if(!isVibrationEnabled) return
         val millis = when (vibration) {
             Heavy, HeavyX2, HeavyX3 -> 1000L
             Medium, MediumX2, MediumX3 -> 750L

@@ -1,6 +1,7 @@
 package com.timerx.vibration
 
 import com.timerx.settings.ITimerXSettings
+import com.timerx.timermanager.TimerManager
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
 import com.timerx.vibration.Vibration.HeavyX3
@@ -18,16 +19,16 @@ import com.timerx.vibration.Vibration.Soft
 import com.timerx.vibration.Vibration.SoftX2
 import com.timerx.vibration.Vibration.SoftX3
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import platform.UIKit.UIImpactFeedbackGenerator
 import platform.UIKit.UIImpactFeedbackStyle
 
-class VibrationManager(private val timerXSettings: ITimerXSettings) : IVibrationManager {
+class IosVibrationManager(
+    timerXSettings: ITimerXSettings,
+    timerManager: TimerManager,
+) : VibrationManager(timerXSettings, timerManager) {
 
     override suspend fun vibrate(vibration: Vibration) {
-        if (timerXSettings.alertSettingsManager.alertSettings.first().vibrationEnabled.not()) {
-            return
-        }
+        if (!isVibrationEnabled) return
         val style = when (vibration) {
             Heavy, HeavyX2, HeavyX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleHeavy
             Medium, MediumX2, MediumX3 -> UIImpactFeedbackStyle.UIImpactFeedbackStyleMedium

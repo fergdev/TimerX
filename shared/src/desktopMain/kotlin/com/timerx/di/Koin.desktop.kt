@@ -6,7 +6,6 @@ import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
 import com.timerx.sound.ISoundManager
 import com.timerx.sound.SoundManager
-import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.NoopVibrationManager
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
@@ -22,7 +21,7 @@ actual val platformModule = module {
         // Give TTS time to init
         createdAtStart()
     }
-    singleOf(::NoopVibrationManager) { bind<IVibrationManager>() }
+    singleOf(::NoopVibrationManager)
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::NotificationManager) { createdAtStart() }
 }

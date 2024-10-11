@@ -33,8 +33,8 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalTextToSpeech
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalVibration
 import com.timerx.ui.create.CreateScreenIntent.UpdateSetRepetitions
 import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
-import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.Vibration
+import com.timerx.vibration.VibrationManager
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -51,7 +51,7 @@ internal class CreateContainer(
     timerId: Long,
     private val timerDatabase: ITimerRepository,
     private val soundManager: ISoundManager,
-    private val vibrationManger: IVibrationManager,
+    private val vibrationManger: VibrationManager,
     private val platformCapabilities: PlatformCapabilities
 ) : Container<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     private val defaultGenerator = DefaultGenerator()
@@ -117,7 +117,7 @@ private fun reduceIntent(
     defaultGenerator: DefaultGenerator,
     timerDatabase: ITimerRepository,
     beepManager: ISoundManager,
-    vibrationManger: IVibrationManager,
+    vibrationManger: VibrationManager,
     timerId: Long,
 ) = reducePlugin<CreateScreenState, CreateScreenIntent, RunScreenAction> {
     when (it) {

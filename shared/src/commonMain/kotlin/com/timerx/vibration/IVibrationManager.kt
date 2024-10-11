@@ -1,8 +1,46 @@
 package com.timerx.vibration
 
+import com.timerx.settings.ITimerXSettings
+import com.timerx.timermanager.TimerEvent
+import com.timerx.timermanager.TimerManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
+
 const val VIBRATION_DELAY: Long = 500L
-interface IVibrationManager {
-    suspend fun vibrate(vibration: Vibration)
+
+abstract class VibrationManager(
+    private val timerXSettings: ITimerXSettings,
+    private val timerManager: TimerManager
+) {
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var _isVibrationEnabled: Boolean = false
+    internal val isVibrationEnabled: Boolean
+        get() = _isVibrationEnabled
+
+    init {
+        coroutineScope.launch {
+            combine(
+                timerManager.eventState,
+                timerXSettings.alertSettingsManager.alertSettings
+            ) { timerEvent, alertSettings ->
+                _isVibrationEnabled = alertSettings.vibrationEnabled
+                if (alertSettings.vibrationEnabled.not()) return@combine
+
+                when (timerEvent) {
+                    is TimerEvent.Ticker -> timerEvent.vibration?.let { vibrate(it) }
+                    is TimerEvent.Finished -> vibrate(timerEvent.vibration)
+                    is TimerEvent.NextInterval -> vibrate(timerEvent.vibration)
+                    is TimerEvent.PreviousInterval -> vibrate(timerEvent.vibration)
+                    is TimerEvent.Started -> vibrate(timerEvent.vibration)
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    abstract suspend fun vibrate(vibration: Vibration)
 }
 
 enum class Vibration(val displayName: String, val repeat: Int) {
