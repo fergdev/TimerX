@@ -7,13 +7,15 @@ import androidx.core.os.bundleOf
 import co.touchlab.kermit.Logger
 import com.timerx.R
 import com.timerx.settings.ITimerXSettings
+import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform
 
-class SoundManager(timerXSettings: ITimerXSettings, context: Context) :
-    ISoundManager(timerXSettings) {
-    private val context: Context = KoinPlatform.getKoin().get()
+class AndroidSoundManager(
+    timerXSettings: ITimerXSettings,
+    private val context: Context,
+    timerManager: TimerManager
+) : SoundManager(timerXSettings, timerManager) {
     private var mediaPlayer: MediaPlayer? = null
     private val textToSpeech: TextToSpeech
     private var ttsSupported = false

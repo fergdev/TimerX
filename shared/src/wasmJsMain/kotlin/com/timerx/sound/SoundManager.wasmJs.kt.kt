@@ -1,6 +1,7 @@
 package com.timerx.sound
 
 import com.timerx.settings.ITimerXSettings
+import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.w3c.dom.Audio
@@ -8,7 +9,8 @@ import timerx.shared.generated.resources.Res
 
 private const val DEFAULT_VOICE_ID = "null"
 
-class SoundManager(settings: ITimerXSettings) : ISoundManager(settings) {
+class WasmSoundManager(settings: ITimerXSettings, timerManager: TimerManager) :
+    SoundManager(settings, timerManager) {
     private var selectedVoiceId: String = DEFAULT_VOICE_ID
     override val isTTSSupported: Boolean
         get() = true
@@ -22,7 +24,7 @@ class SoundManager(settings: ITimerXSettings) : ISoundManager(settings) {
     }
 
     override suspend fun beep(beep: Beep) {
-        Audio(beep.uri()).apply { volume = this@SoundManager.volume.toDouble() }.play()
+        Audio(beep.uri()).apply { volume = this@WasmSoundManager.volume.toDouble() }.play()
     }
 
     override suspend fun textToSpeech(text: String) {

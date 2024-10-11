@@ -1,12 +1,16 @@
 package com.timerx.sound
 
 import com.timerx.settings.ITimerXSettings
+import com.timerx.timermanager.TimerEvent
+import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
-abstract class ISoundManager(timerXSettings: ITimerXSettings) {
+abstract class SoundManager(
+    timerXSettings: ITimerXSettings, timerManager: TimerManager
+) {
     abstract val isTTSSupported: Boolean
     internal val coroutineScope = CoroutineScope(Dispatchers.Default)
 
@@ -16,6 +20,20 @@ abstract class ISoundManager(timerXSettings: ITimerXSettings) {
         coroutineScope.launch {
             timerXSettings.alertSettingsManager.alertSettings.collect { volume = it.volume }
         }
+
+        coroutineScope.launch {
+            timerManager.eventState.collect { timerEvent ->
+                when (timerEvent) {
+                    is TimerEvent.Ticker -> timerEvent.beep?.let { beep(it) }
+                    is TimerEvent.Finished -> makeIntervalSound(timerEvent.intervalSound)
+                    is TimerEvent.NextInterval -> makeIntervalSound(timerEvent.intervalSound)
+                    is TimerEvent.PreviousInterval -> makeIntervalSound(timerEvent.intervalSound)
+                    is TimerEvent.Started -> makeIntervalSound(timerEvent.intervalSound)
+                    else -> { /* noop */
+                    }
+                }
+            }
+        }
     }
 
     abstract suspend fun beep(beep: Beep)
@@ -24,7 +42,7 @@ abstract class ISoundManager(timerXSettings: ITimerXSettings) {
 
     abstract fun voices(): List<VoiceInformation>
 
-    suspend fun makeIntervalSound(intervalSound: IntervalSound) {
+    private suspend fun makeIntervalSound(intervalSound: IntervalSound) {
         with(intervalSound) {
             if (text != null) {
                 textToSpeech(text)

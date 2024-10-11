@@ -2,7 +2,6 @@ package com.timerx.timermanager
 
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
-import com.timerx.sound.ISoundManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,10 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
-class TimerManager(
-    private val beepManager: ISoundManager,
-    private val timerRepository: ITimerRepository
-) {
+class TimerManager(private val timerRepository: ITimerRepository) {
     private var timerStateMachine: TimerStateMachineImpl? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -28,47 +24,18 @@ class TimerManager(
 
     private fun initTimerStateMachine(timer: Timer) {
         val timerStateMachine = TimerStateMachineImpl(timer, coroutineScope)
-        updateTimerStartStats(timer)
         this.timerStateMachine = timerStateMachine
         coroutineScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
                 _eventState.value = timerEvent
                 when (timerEvent) {
-                    is TimerEvent.Ticker -> {
-                        timerEvent.beep?.let { beepManager.beep(it) }
-                    }
-
-                    is TimerEvent.Finished -> {
-                        beepManager.makeIntervalSound(timerEvent.intervalSound)
-                        updateTimerFinishedStats(timer)
-                    }
-
-                    is TimerEvent.NextInterval -> {
-                        beepManager.makeIntervalSound(timerEvent.intervalSound)
-                    }
-
-                    is TimerEvent.PreviousInterval -> {
-                        beepManager.makeIntervalSound(timerEvent.intervalSound)
-                    }
-
-                    is TimerEvent.Started -> {
-                        beepManager.makeIntervalSound(timerEvent.intervalSound)
-                    }
-
-                    is TimerEvent.Resumed -> {
-                        // Noop
-                    }
-
-                    is TimerEvent.Paused -> {
-                        // noop
-                    }
-
+                    is TimerEvent.Finished -> updateTimerFinishedStats(timer)
+                    is TimerEvent.Started -> updateTimerStartStats(timer)
                     is TimerEvent.Destroy -> {
                         _eventState.value = TimerEvent.Idle
                     }
 
-                    TimerEvent.Idle -> {
-                    }
+                    else -> {}
                 }
             }
         }

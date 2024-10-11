@@ -6,8 +6,7 @@ import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
 import com.timerx.platform.androidCapabilities
-import com.timerx.sound.ISoundManager
-import com.timerx.sound.SoundManager
+import com.timerx.sound.AndroidSoundManager
 import com.timerx.vibration.AndroidVibrator
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
@@ -17,11 +16,7 @@ import org.koin.dsl.module
 actual val platformModule = module {
     includes(mobileModule)
     single { androidCapabilities }
-    singleOf(::SoundManager) {
-        bind<ISoundManager>()
-        // Created on start to give TTS time to init
-        createdAtStart()
-    }
+    singleOf(::AndroidSoundManager) { createdAtStart() }
     singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
     singleOf(::AndroidVibrator) { createdAtStart() }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }

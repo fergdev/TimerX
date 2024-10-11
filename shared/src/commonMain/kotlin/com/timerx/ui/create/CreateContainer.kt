@@ -8,7 +8,7 @@ import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.sound.Beep
-import com.timerx.sound.ISoundManager
+import com.timerx.sound.SoundManager
 import com.timerx.ui.create.CreateScreenIntent.AddSet
 import com.timerx.ui.create.CreateScreenIntent.DeleteInterval
 import com.timerx.ui.create.CreateScreenIntent.DeleteSet
@@ -50,7 +50,7 @@ import kotlin.math.max
 internal class CreateContainer(
     timerId: Long,
     private val timerDatabase: ITimerRepository,
-    private val soundManager: ISoundManager,
+    private val soundManager: SoundManager,
     private val vibrationManger: VibrationManager,
     private val platformCapabilities: PlatformCapabilities
 ) : Container<CreateScreenState, CreateScreenIntent, RunScreenAction> {
@@ -116,7 +116,7 @@ private fun List<TimerSet>.getMaxId() =
 private fun reduceIntent(
     defaultGenerator: DefaultGenerator,
     timerDatabase: ITimerRepository,
-    beepManager: ISoundManager,
+    beepManager: SoundManager,
     vibrationManger: VibrationManager,
     timerId: Long,
 ) = reducePlugin<CreateScreenState, CreateScreenIntent, RunScreenAction> {

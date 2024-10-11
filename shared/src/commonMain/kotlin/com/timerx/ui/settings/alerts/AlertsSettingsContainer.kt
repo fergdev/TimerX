@@ -5,7 +5,7 @@ import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.ITimerXSettings
-import com.timerx.sound.ISoundManager
+import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.OpenAppSettings
@@ -24,7 +24,7 @@ class AlertsSettingsContainer(
     private val settings: ITimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
     private val platformCapabilities: PlatformCapabilities,
-    private val soundManager: ISoundManager
+    private val soundManager: SoundManager
 ) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
 
     override val store =
