@@ -2,6 +2,7 @@ package com.timerx.di
 
 import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.analytics.TimerXAnalytics
+import com.timerx.background.BackgroundManager
 import com.timerx.capabilities.iosCapabilities
 import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.notification.TimerXNotificationManager
@@ -12,6 +13,7 @@ import com.timerx.sound.SoundManager
 import com.timerx.vibration.IVibrationManager
 import com.timerx.vibration.VibrationManager
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -23,4 +25,5 @@ actual val platformModule = module {
     singleOf(::VibrationManager) { bind<IVibrationManager>() }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::TimerXNotificationManager) { bind<ITimerXNotificationManager>() }
+    singleOf(::BackgroundManager) { createdAtStart() }
 }

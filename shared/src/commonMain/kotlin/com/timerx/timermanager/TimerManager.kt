@@ -83,9 +83,7 @@ class TimerManager(
                     }
                 }
 
-                if (timerEvent.shouldNotify()) {
-                    notificationManager.updateNotification(timerEvent)
-                }
+                notificationManager.updateNotification(timerEvent)
             }
         }
     }
@@ -117,9 +115,6 @@ class TimerManager(
             )
         }
     }
-
-    private fun TimerEvent.shouldNotify() =
-        this !is TimerEvent.Destroy && this !is TimerEvent.Finished
 
     fun playPause() {
         if (timerStateMachine?.eventState?.value?.runState?.timerState == TimerState.Running) {
