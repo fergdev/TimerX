@@ -4,8 +4,7 @@ import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.analytics.TimerXAnalytics
 import com.timerx.background.BackgroundManager
 import com.timerx.capabilities.iosCapabilities
-import com.timerx.notification.ITimerXNotificationManager
-import com.timerx.notification.TimerXNotificationManager
+import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
 import com.timerx.sound.ISoundManager
@@ -24,6 +23,6 @@ actual val platformModule = module {
     singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
     singleOf(::VibrationManager) { bind<IVibrationManager>() }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
-    singleOf(::TimerXNotificationManager) { bind<ITimerXNotificationManager>() }
     singleOf(::BackgroundManager) { createdAtStart() }
+    singleOf(::NotificationManager) { createdAtStart() }
 }

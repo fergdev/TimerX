@@ -6,29 +6,47 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import com.timerx.timermanager.TimerEvent
-import org.koin.mp.KoinPlatform
+import com.timerx.timermanager.TimerManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class NotificationManager : ITimerXNotificationManager {
-    private val context: Context = KoinPlatform.getKoin().get()
+class NotificationManager(
+    private val context: Context,
+    private val timerManager: TimerManager
+) {
     private val androidNotificationManager by lazy {
         context.getSystemService(NotificationManager::class.java)
     }
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    override fun start() {
-        context.startForegroundService(Intent(context, NotificationService::class.java))
-    }
+    init {
+        coroutineScope.launch {
+            timerManager.eventState.collect { timerEvent ->
+                when (timerEvent) {
+                    is TimerEvent.Started -> {
+                        context.startForegroundService(
+                            Intent(
+                                context,
+                                NotificationService::class.java
+                            )
+                        )
+                    }
 
-    override fun updateNotification(
-        timerEvent: TimerEvent
-    ) {
-        androidNotificationManager?.notify(
-            NotificationService.NOTIFICATION_ID,
-            createNotification(context, timerEvent)
-        )
-    }
+                    is TimerEvent.Idle -> {
+                        context.stopService(Intent(context, NotificationService::class.java))
+                        androidNotificationManager?.cancelAll()
+                    }
 
-    override fun stop() {
-        context.stopService(Intent(context, NotificationService::class.java))
-        androidNotificationManager?.cancelAll()
+                    else -> {
+                        androidNotificationManager?.notify(
+                            NotificationService.NOTIFICATION_ID,
+                            createNotification(context, timerEvent)
+                        )
+                    }
+                }
+
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.timerx.di
 
 import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.analytics.TimerXAnalytics
-import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
@@ -27,5 +26,5 @@ actual val platformModule = module {
     singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
     singleOf(::VibrationManager) { bind<IVibrationManager>() }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
-    singleOf(::NotificationManager) { bind<ITimerXNotificationManager>() }
+    singleOf(::NotificationManager) { createdAtStart() }
 }

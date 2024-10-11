@@ -2,7 +2,6 @@ package com.timerx.timermanager
 
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
-import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.sound.ISoundManager
 import com.timerx.vibration.IVibrationManager
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +14,6 @@ import kotlinx.datetime.Clock
 class TimerManager(
     private val beepManager: ISoundManager,
     private val vibrationManager: IVibrationManager,
-    private val notificationManager: ITimerXNotificationManager,
     private val timerRepository: ITimerRepository
 ) {
     private var timerStateMachine: TimerStateMachineImpl? = null
@@ -46,7 +44,6 @@ class TimerManager(
                     is TimerEvent.Finished -> {
                         beepManager.makeIntervalSound(timerEvent.intervalSound)
                         vibrationManager.vibrate(timerEvent.vibration)
-                        notificationManager.stop()
                         updateTimerFinishedStats(timer)
                     }
 
@@ -63,7 +60,6 @@ class TimerManager(
                     is TimerEvent.Started -> {
                         beepManager.makeIntervalSound(timerEvent.intervalSound)
                         vibrationManager.vibrate(timerEvent.vibration)
-                        notificationManager.start()
                     }
 
                     is TimerEvent.Resumed -> {
@@ -75,15 +71,12 @@ class TimerManager(
                     }
 
                     is TimerEvent.Destroy -> {
-                        notificationManager.stop()
                         _eventState.value = TimerEvent.Idle
                     }
 
                     TimerEvent.Idle -> {
                     }
                 }
-
-                notificationManager.updateNotification(timerEvent)
             }
         }
     }
@@ -133,7 +126,6 @@ class TimerManager(
     }
 
     fun destroy() {
-        notificationManager.stop()
         timerStateMachine?.destroy()
         timerStateMachine = null
     }

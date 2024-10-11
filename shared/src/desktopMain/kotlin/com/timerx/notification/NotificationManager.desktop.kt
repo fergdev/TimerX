@@ -6,6 +6,7 @@ import com.timerx.timermanager.TimerEvent.Finished
 import com.timerx.timermanager.TimerEvent.NextInterval
 import com.timerx.timermanager.TimerEvent.PreviousInterval
 import com.timerx.timermanager.TimerEvent.Started
+import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,29 +17,26 @@ import java.awt.SystemTray
 import java.awt.Toolkit
 import java.awt.TrayIcon
 
-class NotificationManager : ITimerXNotificationManager {
+class NotificationManager(timerManager: TimerManager) {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
-    override fun start() {
-    }
 
-    override fun stop() {
-    }
-
-    override fun updateNotification(timerEvent: TimerEvent) {
+    init {
         coroutineScope.launch {
-            if (timerEvent.shouldNotify()) {
-                if (SystemTray.isSupported()) {
-                    val tray = SystemTray.getSystemTray()
-                    val image = Toolkit.getDefaultToolkit().createImage("logo.webp")
-                    val trayIcon = TrayIcon(image, "Desktop Notification")
-                    tray.add(trayIcon)
-                    trayIcon.displayMessage(
-                        getString(Res.string.app_name),
-                        timerEvent.runState.intervalName,
-                        TrayIcon.MessageType.INFO
-                    )
-                } else {
-                    Logger.e { "System tray is not supported" }
+            timerManager.eventState.collect { timerEvent ->
+                if (timerEvent.shouldNotify()) {
+                    if (SystemTray.isSupported()) {
+                        val tray = SystemTray.getSystemTray()
+                        val image = Toolkit.getDefaultToolkit().createImage("logo.webp")
+                        val trayIcon = TrayIcon(image, "Desktop Notification")
+                        tray.add(trayIcon)
+                        trayIcon.displayMessage(
+                            getString(Res.string.app_name),
+                            timerEvent.runState.intervalName,
+                            TrayIcon.MessageType.INFO
+                        )
+                    } else {
+                        Logger.e { "System tray is not supported" }
+                    }
                 }
             }
         }
@@ -46,5 +44,5 @@ class NotificationManager : ITimerXNotificationManager {
 
     private fun TimerEvent.shouldNotify() =
         this is NextInterval || this is PreviousInterval ||
-            this is Finished || this is Started
+                this is Finished || this is Started
 }

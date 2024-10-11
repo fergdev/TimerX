@@ -1,7 +1,6 @@
 package com.timerx.di
 
 import com.timerx.capabilities.desktopCapabilities
-import com.timerx.notification.ITimerXNotificationManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
@@ -25,5 +24,5 @@ actual val platformModule = module {
     }
     singleOf(::NoopVibrationManager) { bind<IVibrationManager>() }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
-    singleOf(::NotificationManager) { bind<ITimerXNotificationManager>() }
+    singleOf(::NotificationManager) { createdAtStart() }
 }
