@@ -37,11 +37,6 @@ class NotificationManager(private val timerManager: TimerManager) {
             setSound(null)
         }
 
-//        val trigger = triggerWithTimeInterval(
-//            timeInterval = 0.0,
-//            repeats = false
-//        )
-
         val request = UNNotificationRequest.requestWithIdentifier(
             identifier = NOTIFICATION_ID,
             content = content,
