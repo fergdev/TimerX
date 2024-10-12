@@ -1,3 +1,5 @@
+@file:Suppress("Filename")
+
 package com.timerx.sound
 
 import co.touchlab.kermit.Logger

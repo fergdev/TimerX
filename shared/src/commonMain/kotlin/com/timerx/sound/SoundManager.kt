@@ -9,7 +9,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 abstract class SoundManager(
-    timerXSettings: ITimerXSettings, timerManager: TimerManager
+    timerXSettings: ITimerXSettings,
+    timerManager: TimerManager
 ) {
     abstract val isTTSSupported: Boolean
     internal val coroutineScope = CoroutineScope(Dispatchers.Default)
@@ -29,7 +30,8 @@ abstract class SoundManager(
                     is TimerEvent.NextInterval -> makeIntervalSound(timerEvent.intervalSound)
                     is TimerEvent.PreviousInterval -> makeIntervalSound(timerEvent.intervalSound)
                     is TimerEvent.Started -> makeIntervalSound(timerEvent.intervalSound)
-                    else -> { /* noop */
+                    else -> {
+                        /* noop */
                     }
                 }
             }

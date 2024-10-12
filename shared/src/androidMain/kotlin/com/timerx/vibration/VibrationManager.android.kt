@@ -1,3 +1,5 @@
+@file:Suppress("Filename")
+
 package com.timerx.vibration
 
 import android.content.Context
@@ -33,7 +35,7 @@ class AndroidVibrator(
     private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
 
     override suspend fun vibrate(vibration: Vibration) {
-        if(!isVibrationEnabled) return
+        if (!isVibrationEnabled) return
         val millis = when (vibration) {
             Heavy, HeavyX2, HeavyX3 -> 1000L
             Medium, MediumX2, MediumX3 -> 750L

@@ -1,3 +1,5 @@
+@file:Suppress("Filename")
+
 package com.timerx.vibration
 
 import com.timerx.settings.ITimerXSettings

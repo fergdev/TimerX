@@ -56,7 +56,7 @@ class NotificationManager(private val timerManager: TimerManager) {
 
     private fun TimerEvent.shouldNotify() =
         this is NextInterval || this is PreviousInterval ||
-                this is Finished || this is Started
+            this is Finished || this is Started
 
     companion object {
         private const val NOTIFICATION_ID = "1"

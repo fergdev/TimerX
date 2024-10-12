@@ -1380,5 +1380,4 @@ object CustomIcons {
         }
 
     private var _avTimer: ImageVector? = null
-
 }
