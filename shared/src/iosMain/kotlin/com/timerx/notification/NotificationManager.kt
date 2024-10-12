@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationRequest
-import platform.UserNotifications.UNTimeIntervalNotificationTrigger.Companion.triggerWithTimeInterval
 import platform.UserNotifications.UNUserNotificationCenter
 
 class NotificationManager(private val timerManager: TimerManager) {
@@ -38,15 +37,15 @@ class NotificationManager(private val timerManager: TimerManager) {
             setSound(null)
         }
 
-        val trigger = triggerWithTimeInterval(
-            timeInterval = 1.0,
-            repeats = false
-        )
+//        val trigger = triggerWithTimeInterval(
+//            timeInterval = 0.0,
+//            repeats = false
+//        )
 
         val request = UNNotificationRequest.requestWithIdentifier(
             identifier = NOTIFICATION_ID,
             content = content,
-            trigger = trigger
+            trigger = null
         )
 
         center.addNotificationRequest(request) { error ->
