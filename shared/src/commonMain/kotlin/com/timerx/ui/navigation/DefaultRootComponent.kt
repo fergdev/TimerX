@@ -11,12 +11,14 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
 import com.timerx.ui.create.DefaultCreateComponent
 import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
 import com.timerx.ui.settings.DefaultSettingsComponent
+import com.timerx.ui.splash.DefaultSplashComponent
 import kotlinx.serialization.Serializable
 
 class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
@@ -31,7 +33,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
         childStack(
             source = nav,
             serializer = Config.serializer(),
-            initialStack = { listOf(Config.Main) },
+            initialStack = { listOf(Config.Splash) },
             childFactory = ::child,
         )
 
@@ -85,6 +87,12 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
                         onBack = { nav.pop() }
                     )
                 )
+
+            Config.Splash -> RootComponent.Child.SplashChild(
+                DefaultSplashComponent(
+                    onFinished = { nav.replaceAll(Config.Main) }
+                )
+            )
         }
 
     override fun onBackClicked() {
@@ -103,6 +111,9 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
     // TODO consider keeping this private, this was made public to allow android intents to work
     @Serializable
     sealed interface Config {
+        @Serializable
+        data object Splash : Config
+
         @Serializable
         data object Main : Config
 

@@ -18,6 +18,7 @@ import com.timerx.ui.main.MainContent
 import com.timerx.ui.navigation.RootComponent
 import com.timerx.ui.run.RunContent
 import com.timerx.ui.settings.SettingsContent
+import com.timerx.ui.splash.SplashContent
 import com.timerx.ui.theme.TimerXTheme
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -41,6 +42,7 @@ fun AppContent(rootComponent: RootComponent) = TimerXTheme {
             is RootComponent.Child.MainChild -> MainContent(child.component)
             is RootComponent.Child.RunChild -> RunContent(child.component)
             is RootComponent.Child.SettingsChild -> SettingsContent(child.component)
+            is RootComponent.Child.SplashChild -> SplashContent(child.component)
         }
     }
 }

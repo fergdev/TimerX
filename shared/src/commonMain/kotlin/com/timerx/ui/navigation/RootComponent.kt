@@ -7,6 +7,7 @@ import com.timerx.ui.create.CreateComponent
 import com.timerx.ui.main.MainComponent
 import com.timerx.ui.run.RunComponent
 import com.timerx.ui.settings.SettingsComponent
+import com.timerx.ui.splash.SplashComponent
 
 interface RootComponent : BackHandlerOwner {
 
@@ -16,6 +17,7 @@ interface RootComponent : BackHandlerOwner {
     fun onBackClicked(toIndex: Int)
 
     sealed class Child {
+        class SplashChild(val component: SplashComponent) : Child()
         class MainChild(val component: MainComponent) : Child()
         class SettingsChild(val component: SettingsComponent) : Child()
         class CreateChild(val component: CreateComponent) : Child()
