@@ -16,21 +16,14 @@ struct ContentView: View {
     let root: RootComponent
     @State private var isBannerVisible: Bool = true
     var body: some View {
-        VStack {
-            ComposeView(root: root)
-            if isBannerVisible {
-                BannerAdView(isBannerVisible: $isBannerVisible)
-                    .frame(width: GADAdSizeBanner.size.width, height: GADAdSizeBanner.size.height)
-                    .padding([.bottom], 20)
-            }
-        }
+        ComposeView(root: root)
         .ignoresSafeArea(edges: .all)
             .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
     }
 }
 
 struct BannerAdView: UIViewRepresentable {
-    @Binding var isBannerVisible: Bool
+
     var adUnitID = "ca-app-pub-2499949091653906/4852400953"
 
     func makeUIView(context: Context) -> GADBannerView {
@@ -59,13 +52,19 @@ struct BannerAdView: UIViewRepresentable {
         // Called when ad is successfully loaded
         func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
             print("Ad loaded")
-            parent.isBannerVisible = true
         }
 
         // Called when ad fails to load
         func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
             print("Ad failed to load: \(error.localizedDescription)")
-            parent.isBannerVisible = false
+        }
+        
+        func bannerViewDidRecordImpression(_ bannerView: GADBannerView){
+            print("Ad did record impression")
+        }
+        
+        func bannerViewDidRecordClick(_ bannerView: GADBannerView){
+            print("Ad did record click")
         }
     }
 }

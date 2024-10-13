@@ -5,7 +5,9 @@ import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
 import com.timerx.sound.DesktopSoundManager
+import com.timerx.sound.SoundManager
 import com.timerx.vibration.NoopVibrationManager
+import com.timerx.vibration.VibrationManager
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
@@ -15,8 +17,13 @@ actual val platformModule = module {
     includes(nonMobileModule)
     includes(mobileModule)
     single { desktopCapabilities }
-    singleOf(::DesktopSoundManager) { createdAtStart() }
-    singleOf(::NoopVibrationManager)
+    singleOf(::DesktopSoundManager) {
+        createdAtStart()
+        bind<SoundManager>()
+    }
+    singleOf(::NoopVibrationManager) {
+        bind<VibrationManager>()
+    }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::NotificationManager) { createdAtStart() }
 }

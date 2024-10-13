@@ -17,6 +17,8 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.contrastSystemBarColor
 import kotlinx.coroutines.delay
 
+private const val SPLASH_DURATION = 750L
+
 @Composable
 internal fun SplashContent(component: SplashComponent) {
     val scale = remember { androidx.compose.animation.core.Animatable(0f) }
@@ -29,7 +31,7 @@ internal fun SplashContent(component: SplashComponent) {
                 stiffness = Spring.StiffnessMediumLow
             )
         )
-        delay(1000L)
+        delay(SPLASH_DURATION)
         component.finishSplash()
     }
     Box(

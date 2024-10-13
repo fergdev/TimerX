@@ -124,7 +124,8 @@ internal fun MainContent(mainComponent: MainComponent) {
                         contentDescription = stringResource(Res.string.add)
                     )
                 }
-            }
+            },
+            fadeContent = false
         ) { padding ->
             when (state) {
                 is MainState.Loading -> DefaultLoading()
@@ -212,7 +213,7 @@ private fun IntentReceiver<MainIntent>.Content(
                     }
 
                     is Ad -> {
-                        Box(contentAlignment = Alignment.Center) {
+                        Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                             GoogleAd()
                         }
                     }

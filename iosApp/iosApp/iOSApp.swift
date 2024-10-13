@@ -6,6 +6,7 @@ import shared
 import GoogleMobileAds
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    @State private var isBannerVisible: Bool = true
     let root: RootComponent = DefaultRootComponent(
         componentContext: DefaultComponentContext(
             lifecycle: ApplicationLifecycle()  
@@ -20,6 +21,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "16d05d566ddd35ca547efdf2eeb1496c" ]
         
+        Ads_iosKt.setFactory(adFactory :  {() -> UIViewController in
+                let ad = BannerAdView()
+                    .frame(width: GADAdSizeBanner.size.width, height: GADAdSizeBanner.size.height)
+                return UIHostingController(rootView: ad)
+            }
+        )
         return true
     }
 }
