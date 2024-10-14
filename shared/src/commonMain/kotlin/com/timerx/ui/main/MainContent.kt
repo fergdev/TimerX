@@ -62,13 +62,11 @@ import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.TIcon
-import com.timerx.ui.common.TMenuItemIcon
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.TTopBar
 import com.timerx.ui.common.branded
 import com.timerx.ui.common.contrastSystemBarColor
 import com.timerx.ui.common.doubleBranded
-import com.timerx.ui.common.rainbow
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import kotlinx.coroutines.launch
@@ -324,26 +322,23 @@ private fun IntentReceiver<MainIntent>.TimerCard(
                     intent(MainIntent.DuplicateTimer(mainTimer))
                     hideReveal()
                 }) {
-                    TMenuItemIcon(
+                    Icon(
                         imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy),
-                        tint = rainbow[0]
                     )
                 }
                 IconButton(onClick = { onNavigateEditScreen(mainTimer.id) }) {
-                    TMenuItemIcon(
+                    Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = stringResource(Res.string.edit),
-                        tint = rainbow[3]
                     )
                 }
                 IconButton(onClick = {
                     intent(MainIntent.DeleteTimer(mainTimer))
                 }) {
-                    TMenuItemIcon(
+                    Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete),
-                        tint = rainbow[6]
                     )
                 }
             }

@@ -40,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -52,11 +53,9 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
-import com.timerx.ui.common.TMenuItemIcon
 import com.timerx.ui.common.UnderlinedTextField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.lightDisplayColor
-import com.timerx.ui.common.rainbow
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import com.timerx.ui.create.CreateScreenIntent.DuplicateInterval
@@ -109,7 +108,13 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
         state = revealState,
         backgroundCardEndColor = MaterialTheme.colorScheme.surface,
         hiddenContentEnd = {
-            HiddenIntervalControls(canVibrate, canSkipOnLastSet, interval, hideReveal)
+            HiddenIntervalControls(
+                canVibrate = canVibrate,
+                canSkipOnLastSet = canSkipOnLastSet,
+                interval = interval,
+                contrastColor = contrastColor,
+                hideReveal = hideReveal
+            )
         }
     ) {
         Row(
@@ -169,7 +174,8 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
     canVibrate: Boolean,
     canSkipOnLastSet: Boolean,
     interval: TimerInterval,
-    hideReveal: () -> Job
+    contrastColor: Color,
+    hideReveal: () -> Job,
 ) {
     var settingsBottomSheetVisible by remember { mutableStateOf(false) }
     if (settingsBottomSheetVisible) {
@@ -191,10 +197,10 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
             colorPickerVisible = true
             hideReveal()
         }) {
-            TMenuItemIcon(
+            Icon(
                 imageVector = CustomIcons.colorFill,
                 contentDescription = "Interval color",
-                tint = rainbow[0]
+                tint = contrastColor
             )
         }
 
@@ -208,30 +214,30 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
             intent(DuplicateInterval(interval))
             hideReveal()
         }) {
-            TMenuItemIcon(
+            Icon(
                 imageVector = CustomIcons.contentCopy,
                 contentDescription = stringResource(Res.string.copy),
-                tint = rainbow[3]
+                tint = contrastColor
             )
         }
         IconButton(onClick = {
             intent(CreateScreenIntent.DeleteInterval(interval))
             hideReveal()
         }) {
-            TMenuItemIcon(
+            Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = stringResource(Res.string.delete),
-                tint = rainbow[6]
+                tint = contrastColor
             )
         }
         IconButton(onClick = {
             hideReveal()
             settingsBottomSheetVisible = true
         }) {
-            TMenuItemIcon(
+            Icon(
                 imageVector = Icons.Filled.Settings,
                 contentDescription = stringResource(Res.string.settings),
-                tint = rainbow[9]
+                tint = contrastColor
             )
         }
     }
