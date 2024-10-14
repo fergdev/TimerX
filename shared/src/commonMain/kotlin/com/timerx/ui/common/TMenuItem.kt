@@ -40,8 +40,8 @@ fun TMenuItem(
             .wrapContentHeight()
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .animateContentSize()
-            .widthIn(max = 600.dp)
-            .then(if (onClick != null) Modifier.noIndicationClickable(onClick = onClick) else Modifier),
+            .widthIn(max = 600.dp),
+        onClick = onClick
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,

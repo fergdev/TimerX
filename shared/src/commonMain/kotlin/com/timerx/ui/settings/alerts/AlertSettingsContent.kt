@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -32,6 +30,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.timerx.sound.VoiceInformation
+import com.timerx.ui.common.PaddedElevatedCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.thenIf
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
@@ -91,7 +90,7 @@ fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
     availableVoices: ImmutableSet<VoiceInformation>
 ) {
     var voiceSelectorVisible by remember { mutableStateOf(false) }
-    AlertCard(modifier = Modifier.clickable { voiceSelectorVisible = true }) {
+    PaddedElevatedCard(onClick = { voiceSelectorVisible = true }) {
         Row {
             Text(text = "Voice")
             Spacer(modifier = Modifier.weight(1f))
@@ -125,7 +124,7 @@ fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
 
 @Composable
 private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(isNotificationsEnabled: Boolean) {
-    AlertCard {
+    PaddedElevatedCard {
         Row(
             modifier = Modifier.padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -154,10 +153,8 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         intent(UpdateVibration(isVibrationEnabled.not()))
     }
-    AlertCard(
-        modifier = Modifier.clickable {
-            updateVibration()
-        }
+    PaddedElevatedCard (
+        onClick = { updateVibration() }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.vibration))
@@ -174,7 +171,7 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
 
 @Composable
 private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Float) {
-    AlertCard {
+    PaddedElevatedCard {
         Text(text = stringResource(Res.string.volume))
         Slider(
             value = volume,
@@ -183,11 +180,3 @@ private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Float) {
     }
 }
 
-@Composable
-private fun AlertCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    ElevatedCard(modifier = modifier) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            content()
-        }
-    }
-}

@@ -1,6 +1,5 @@
 package com.timerx.ui.main
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,7 +28,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -59,6 +57,7 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.ads.GoogleAd
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.DefaultLoading
+import com.timerx.ui.common.PaddedElevatedCard
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.TIcon
@@ -344,30 +343,28 @@ private fun IntentReceiver<MainIntent>.TimerCard(
             }
         },
     ) {
-        ElevatedCard(
+        PaddedElevatedCard(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onNavigateRunScreen(mainTimer.id) }
+                .fillMaxWidth(),
+            onClick = { onNavigateRunScreen(mainTimer.id) }
         ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Text(
+                text = mainTimer.name.branded(),
+                style = MaterialTheme.typography.displaySmall,
+                maxLines = 1
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
                 Text(
-                    text = mainTimer.name.branded(),
-                    style = MaterialTheme.typography.displaySmall,
-                    maxLines = 1
+                    text = mainTimer.duration.timeFormatted(),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row {
-                    Text(
-                        text = mainTimer.duration.timeFormatted(),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = mainTimer.lastRunFormatted,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = mainTimer.lastRunFormatted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

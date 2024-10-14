@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,7 +27,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -48,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
 import com.timerx.settings.SettingsDarkTheme
 import com.timerx.ui.common.DefaultLoading
+import com.timerx.ui.common.PaddedElevatedCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
@@ -147,7 +146,7 @@ private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
     val updateIsHighFidelity = {
         intent(UpdateIsHighFidelity(isHighFidelity.not()))
     }
-    ThemeCard(modifier = Modifier.clickable { updateIsHighFidelity() }) {
+    PaddedElevatedCard(onClick = { updateIsHighFidelity() }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.high_fidelity))
             Spacer(modifier = Modifier.weight(1f))
@@ -164,7 +163,7 @@ private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: Double) {
-    ThemeCard {
+    PaddedElevatedCard {
         Text(text = stringResource(Res.string.contrast_level))
         FlowRow(
             modifier = Modifier.fillMaxWidth().wrapContentWidth(),
@@ -189,7 +188,7 @@ private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(isSystemDynam
     val updateIsSystemDynamic = {
         intent(UpdateIsSystemDynamic(isSystemDynamic.not()))
     }
-    ThemeCard(
+    PaddedElevatedCard(
         modifier = Modifier.clickable {
             updateIsSystemDynamic()
         }
@@ -212,7 +211,7 @@ private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
     val updateIsAmoled = {
         intent(UpdateIsAmoled(isAmoled.not()))
     }
-    ThemeCard(
+    PaddedElevatedCard(
         modifier = Modifier.clickable {
             updateIsAmoled()
         }
@@ -233,7 +232,7 @@ private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(settingsDarkTheme: SettingsDarkTheme) {
-    ThemeCard {
+    PaddedElevatedCard {
         Text(text = stringResource(Res.string.dark_mode))
         FlowRow(
             modifier = Modifier.fillMaxWidth().wrapContentWidth(),
@@ -267,7 +266,7 @@ private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(settingsDarkTheme: Setti
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdatePaletteStyle>.PaletteRow(paletteStyle: PaletteStyle) {
-    ThemeCard {
+    PaddedElevatedCard {
         Text(text = stringResource(Res.string.palette_style))
         FlowRow(
             modifier = Modifier.fillMaxWidth().wrapContentWidth(),
@@ -286,7 +285,7 @@ private fun IntentReceiver<UpdatePaletteStyle>.PaletteRow(paletteStyle: PaletteS
 
 @Composable
 private fun ColorPreview() {
-    ThemeCard {
+    PaddedElevatedCard {
         Text(text = stringResource(Res.string.preview))
         Card {
             Column {
@@ -326,7 +325,7 @@ private fun ColorBox(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdateSeedColor>.SeedColorRow(seedColor: Color) {
-    ThemeCard {
+    PaddedElevatedCard {
         FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
             rainbow.forEach { color ->
                 val alpha by animateFloatAsState(
@@ -366,12 +365,3 @@ private fun colorSchemePairs() = listOf(
     "Surface" to (colorScheme.surface to colorScheme.onSurface),
     "SurfaceVariant" to (colorScheme.surfaceVariant to colorScheme.onSurfaceVariant),
 )
-
-@Composable
-private fun ThemeCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    ElevatedCard(modifier = modifier) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            content()
-        }
-    }
-}
