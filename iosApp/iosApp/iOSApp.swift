@@ -19,7 +19,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         StartKoinKt.startKoin()
         FirebaseApp.configure()
         TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "16d05d566ddd35ca547efdf2eeb1496c" ]
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "16d05d566ddd35ca547efdf2eeb1496c", "092ea52e6e29e1041f1216b949d6ab7d" ]
         
         Ads_iosKt.setFactory(adFactory :  {() -> UIViewController in
                 let ad = BannerAdView()
