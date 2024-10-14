@@ -30,6 +30,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -67,10 +70,10 @@ import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.amoled
 import timerx.shared.generated.resources.contrast_level
+import timerx.shared.generated.resources.dark
 import timerx.shared.generated.resources.dark_mode
-import timerx.shared.generated.resources.force_dark
-import timerx.shared.generated.resources.force_light
 import timerx.shared.generated.resources.high_fidelity
+import timerx.shared.generated.resources.light
 import timerx.shared.generated.resources.palette_style
 import timerx.shared.generated.resources.preview
 import timerx.shared.generated.resources.system_dynamic_colors
@@ -229,36 +232,30 @@ private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+private fun SettingsDarkTheme.label() = when (this) {
+    SettingsDarkTheme.User -> Res.string.user
+    SettingsDarkTheme.ForceLight -> Res.string.light
+    SettingsDarkTheme.ForceDark -> Res.string.dark
+}
+
 @Composable
 private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(settingsDarkTheme: SettingsDarkTheme) {
-    PaddedElevatedCard {
+    PaddedElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = stringResource(Res.string.dark_mode))
-        FlowRow(
-            modifier = Modifier.fillMaxWidth().wrapContentWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            FilterChip(
-                label = { Text(text = stringResource(Res.string.user)) },
-                selected = settingsDarkTheme == SettingsDarkTheme.User,
-                onClick = {
-                    intent(UpdateDarkTheme(SettingsDarkTheme.User))
-                },
-            )
-            FilterChip(
-                label = { Text(text = stringResource(Res.string.force_light)) },
-                selected = settingsDarkTheme == SettingsDarkTheme.ForceLight,
-                onClick = {
-                    intent(UpdateDarkTheme(SettingsDarkTheme.ForceLight))
-                },
-            )
-            FilterChip(
-                label = { Text(text = stringResource(Res.string.force_dark)) },
-                selected = settingsDarkTheme == SettingsDarkTheme.ForceDark,
-                onClick = {
-                    intent(UpdateDarkTheme(SettingsDarkTheme.ForceDark))
-                },
-            )
+        SingleChoiceSegmentedButtonRow {
+            SettingsDarkTheme.entries.forEach {
+                SegmentedButton(
+                    label = { Text(text = stringResource(it.label())) },
+                    selected = settingsDarkTheme == it,
+                    shape = SegmentedButtonDefaults.itemShape(it.ordinal, SettingsDarkTheme.entries.size),
+                    onClick = {
+                        intent(UpdateDarkTheme(it))
+                    },
+                )
+            }
         }
     }
 }

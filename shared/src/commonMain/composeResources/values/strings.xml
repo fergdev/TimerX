@@ -39,8 +39,8 @@
     <string name="finish_beep">Finish beep</string>
     <string name="finish_color">Finish color</string>
     <string name="finished">Finished</string>
-    <string name="force_dark">Force dark</string>
-    <string name="force_light">Force light</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
     <string name="high_fidelity">High fidelity</string>
     <string name="ignore">Ignore</string>
     <string name="interval">Interval</string>
