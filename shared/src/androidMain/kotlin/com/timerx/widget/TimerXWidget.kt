@@ -1,19 +1,21 @@
 package com.timerx.widget
 
 import android.content.Context
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
+import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
@@ -46,16 +48,8 @@ import com.timerx.KEY_CREATE_TIMER
 import com.timerx.KEY_RUN_TIMER_ID
 import com.timerx.MainActivity
 import com.timerx.R
-import com.timerx.domain.SortTimersBy
 import com.timerx.domain.timeFormatted
-import com.timerx.settings.ITimerXSettings
-import com.timerx.widget.TimerXWidget.Companion.BIG_SQUARE
-import com.timerx.widget.TimerXWidget.Companion.HORIZONTAL_RECTANGLE
 import com.timerx.widget.TimerXWidget.Companion.VERTICAL_RECTANGLE
-import com.timerx.widget.TimerXWidget.Companion.VERTICAL_RECTANGLE_LONG
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import org.koin.mp.KoinPlatform
 
 class TimerXWidget : GlanceAppWidget() {
     companion object {
@@ -80,17 +74,6 @@ class TimerXWidget : GlanceAppWidget() {
 
 private fun DpSize.isThinMode(): Boolean = this == VERTICAL_RECTANGLE
 
-private fun SortTimersBy.drawable() =
-    when (this) {
-        SortTimersBy.SORT_ORDER -> R.drawable.sort_gradient
-        SortTimersBy.RUN_DATE_ASC -> R.drawable.calendar_plus_gradient
-        SortTimersBy.RUN_DATE_DESC -> R.drawable.calendar_minus_gradient
-        SortTimersBy.NAME_ASC -> R.drawable.sort_alpha_down_gradient
-        SortTimersBy.NAME_DESC -> R.drawable.sort_alpha_up_alt_gradient
-        SortTimersBy.LENGTH_ASC -> R.drawable.sort_numeric_up_gradient
-        SortTimersBy.LENGTH_DESC -> R.drawable.sort_numeric_down_alt_gradient
-    }
-
 @Composable
 private fun MyContent() {
     val timerData = currentState<TimerWidgetInfo>()
@@ -103,12 +86,6 @@ private fun MyContent() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when (size) {
-            HORIZONTAL_RECTANGLE -> DebugText(text = "HR")
-            VERTICAL_RECTANGLE -> DebugText(text = "VR")
-            VERTICAL_RECTANGLE_LONG -> DebugText(text = "VRL")
-            BIG_SQUARE -> DebugText(text = "BS")
-        }
         Box(
             modifier = GlanceModifier.defaultWeight(),
             contentAlignment = Alignment.Center
@@ -147,115 +124,91 @@ private fun MyContent() {
             }
         }
         if (size.isThinMode()) {
-            WidgetButtonsThin(timerData)
+            WidgetButtonsThin()
         } else {
-            WidgetButtons(timerData)
+            WidgetButtons()
         }
     }
 }
 
 @Composable
-private fun WidgetButtons(timerData: TimerWidgetInfo) {
+private fun WidgetButtons() {
     Row(
         modifier = GlanceModifier
             .fillMaxWidth()
             .padding(8.dp),
     ) {
         Spacer(modifier = GlanceModifier.defaultWeight())
-        Image(
+        Icon(
             modifier = GlanceModifier
-                .clickable(actionStartActivity<MainActivity>())
                 .size(48.dp),
-            provider = ImageProvider(R.drawable.av_timer_gradient),
+            drawable = R.drawable.av_timer,
+            action = actionStartActivity<MainActivity>(),
             contentDescription = "Home"
         )
-        val coroutineScope = rememberCoroutineScope()
-        if (timerData is TimerWidgetInfo.Available && timerData.timers.size > 1) {
-            Spacer(modifier = GlanceModifier.defaultWeight())
-            Image(
-                modifier = GlanceModifier
-                    .size(48.dp)
-                    .clickable {
-                        coroutineScope.launch {
-                            val get = KoinPlatform.getKoin().get<ITimerXSettings>()
-                            get.setSortTimersBy(get.sortTimersBy.first())
-                        }
-                    },
-                contentDescription = "Sort",
-                provider = ImageProvider(timerData.sortTimersBy.drawable())
-            )
-        }
         Spacer(modifier = GlanceModifier.defaultWeight())
-        Image(
-            modifier = GlanceModifier
-                .defaultWeight()
-                .size(48.dp)
-                .clickable(
-                    actionStartActivity<MainActivity>(
-                        parameters =
-                        actionParametersOf(
-                            ActionParameters.Key<Boolean>(KEY_CREATE_TIMER) to true
-                        )
-                    )
-                ),
-            provider = ImageProvider(R.drawable.add_gradient),
-            contentDescription = "Create"
+        Icon(
+            modifier = GlanceModifier.defaultWeight(),
+            action =
+            actionStartActivity<MainActivity>(
+                parameters =
+                actionParametersOf(
+                    ActionParameters.Key<Boolean>(KEY_CREATE_TIMER) to true
+                )
+            ),
+            drawable = R.drawable.add,
         )
         Spacer(modifier = GlanceModifier.defaultWeight())
     }
 }
 
 @Composable
-private fun WidgetButtonsThin(timerData: TimerWidgetInfo) {
+private fun WidgetButtonsThin() {
     Column(
         modifier = GlanceModifier
             .fillMaxWidth()
             .padding(8.dp),
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally
     ) {
-        Image(
+        Icon(
             modifier = GlanceModifier
-                .clickable(actionStartActivity<MainActivity>())
                 .size(48.dp),
-            provider = ImageProvider(R.drawable.av_timer_gradient),
+            action = actionStartActivity<MainActivity>(),
+            drawable = R.drawable.av_timer,
             contentDescription = "Home"
         )
-        val coroutineScope = rememberCoroutineScope()
-        if (timerData is TimerWidgetInfo.Available && timerData.timers.size > 1) {
-            Spacer(modifier = GlanceModifier.height(8.dp))
-            Image(
-                modifier = GlanceModifier
-                    .size(48.dp)
-                    .clickable {
-                        coroutineScope.launch {
-                            val get = KoinPlatform.getKoin().get<ITimerXSettings>()
-                            get.setSortTimersBy(get.sortTimersBy.first())
-                        }
-                    },
-                contentDescription = "Sort",
-                provider = ImageProvider(timerData.sortTimersBy.drawable())
-            )
-        }
         Spacer(modifier = GlanceModifier.height(8.dp))
-        Image(
-            modifier = GlanceModifier
-                .defaultWeight()
-                .size(48.dp)
-                .clickable(
-                    actionStartActivity<MainActivity>(
-                        parameters =
-                        actionParametersOf(
-                            ActionParameters.Key<Boolean>(KEY_CREATE_TIMER) to true
-                        )
-                    )
-                ),
-            provider = ImageProvider(R.drawable.add_gradient),
-            contentDescription = "Create"
+        Icon(
+            modifier = GlanceModifier.defaultWeight(),
+            action = actionStartActivity<MainActivity>(
+                parameters =
+                actionParametersOf(
+                    ActionParameters.Key<Boolean>(KEY_CREATE_TIMER) to true
+                )
+            ),
+            drawable = R.drawable.add,
         )
     }
 }
 
-private const val FONT_SIZE_LARGE = 28F
+@Composable
+private fun Icon(
+    modifier: GlanceModifier,
+    action: Action,
+    @DrawableRes drawable: Int,
+    contentDescription: String = ""
+) {
+    Image(
+        modifier = modifier
+            .size(48.dp)
+            .clickable(action),
+        provider = ImageProvider(drawable),
+        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+        contentDescription = contentDescription
+    )
+}
+
+private const val FONT_SIZE_LARGE = 22f
 private const val FONT_SIZE = 16f
 
 @Composable
@@ -274,17 +227,26 @@ private fun GlanceTimer(timerData: TimerData) {
             ),
     ) {
         Spacer(modifier = GlanceModifier.height(8.dp))
-        Row(modifier = GlanceModifier.fillMaxWidth()) {
-            Column(modifier = GlanceModifier.wrapContentHeight().defaultWeight()) {
+        Column(modifier = GlanceModifier.wrapContentHeight().fillMaxWidth()) {
+            Text(
+                text = timerData.name,
+                style = TextStyle(
+                    fontSize = TextUnit(FONT_SIZE_LARGE, TextUnitType.Sp),
+                    color = GlanceTheme.colors.onSurface,
+                    fontWeight = FontWeight.Bold
+                ),
+                maxLines = 1
+            )
+            Row(modifier = GlanceModifier.fillMaxWidth()) {
                 Text(
-                    text = timerData.name,
+                    text = timerData.length.timeFormatted(),
                     style = TextStyle(
                         fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
-                        color = GlanceTheme.colors.onSurface,
-                        fontWeight = FontWeight.Bold
+                        color = GlanceTheme.colors.onSurfaceVariant
                     ),
                     maxLines = 1
                 )
+                Spacer(modifier = GlanceModifier.defaultWeight())
                 Text(
                     text = timerData.lastRun,
                     style = TextStyle(
@@ -294,14 +256,6 @@ private fun GlanceTimer(timerData: TimerData) {
                     maxLines = 1
                 )
             }
-            Text(
-                text = timerData.length.timeFormatted(),
-                style = TextStyle(
-                    fontSize = TextUnit(FONT_SIZE, TextUnitType.Sp),
-                    color = GlanceTheme.colors.onSurfaceVariant
-                ),
-                maxLines = 1
-            )
         }
         Spacer(modifier = GlanceModifier.height(8.dp))
         HorizontalDivider()
@@ -364,9 +318,4 @@ private fun HorizontalDivider(
             .height(thickness)
             .background(colorProvider = colorProvider)
     ) {}
-}
-
-@Composable
-fun DebugText(text: String) {
-    Text(text = text, style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant))
 }

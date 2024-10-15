@@ -57,10 +57,10 @@ class MainActivity : ComponentActivity() {
         intent.extras?.let {
             if (it.containsKey(KEY_RUN_TIMER_ID)) {
                 val timerId = it.getLong(KEY_RUN_TIMER_ID)
-                rootComponent.navigateTo(DefaultRootComponent.Config.Run(timerId))
+                rootComponent.navigateRun(timerId)
             } else if (it.containsKey(KEY_CREATE_TIMER)) {
                 ShortcutManagerCompat.reportShortcutUsed(this@MainActivity, KEY_CREATE_TIMER)
-                rootComponent.navigateTo(DefaultRootComponent.Config.Create(null))
+                rootComponent.navigateCreate()
             }
         }
     }

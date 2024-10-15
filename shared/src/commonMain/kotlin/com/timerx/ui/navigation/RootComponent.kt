@@ -24,5 +24,6 @@ interface RootComponent : BackHandlerOwner {
         class RunChild(val component: RunComponent) : Child()
     }
 
-    fun navigateTo(config: DefaultRootComponent.Config)
+    fun navigateCreate()
+    fun navigateRun(timerId: Long)
 }

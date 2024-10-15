@@ -13,7 +13,6 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
-import com.timerx.domain.SortTimersBy
 import com.timerx.settings.ITimerXSettings
 import com.timerx.util.toAgo
 import kotlinx.coroutines.MainScope
@@ -66,8 +65,7 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
                                 length = timer.duration,
                                 lastRun = timer.lastRun?.toAgo() ?: "Never"
                             )
-                        },
-                        sortTimersBy
+                        }
                     )
                 }
                 .collect { availableWidgetInfo ->
@@ -89,10 +87,7 @@ sealed interface TimerWidgetInfo {
     data object Loading : TimerWidgetInfo
 
     @Serializable
-    data class Available(
-        val timers: List<TimerData>,
-        val sortTimersBy: SortTimersBy
-    ) : TimerWidgetInfo
+    data class Available(val timers: List<TimerData>) : TimerWidgetInfo
 
     @Serializable
     data class Unavailable(val message: String) : TimerWidgetInfo

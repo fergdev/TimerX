@@ -37,7 +37,7 @@ class ShortcutManager(
             val shortcut = ShortcutInfoCompat.Builder(context, timer.shortcutId())
                 .setShortLabel(timer.name)
                 .setLongLabel(timer.name)
-                .setIcon(IconCompat.createWithResource(context, R.drawable.play_arrow_gradient))
+                .setIcon(IconCompat.createWithResource(context, R.drawable.play_arrow_black))
                 .setIntent(
                     Intent(
                         context,

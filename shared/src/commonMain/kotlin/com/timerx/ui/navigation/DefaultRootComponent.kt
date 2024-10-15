@@ -14,6 +14,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
+import com.hoc081098.flowext.timer
 import com.timerx.ui.create.DefaultCreateComponent
 import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
@@ -103,14 +104,16 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
         nav.popTo(index = toIndex)
     }
 
-    @OptIn(DelicateDecomposeApi::class)
-    override fun navigateTo(config: Config) {
-        nav.push(config)
+    override fun navigateRun(timerId: Long) {
+        nav.replaceAll(Config.Main, Config.Run(timerId))
     }
 
-    // TODO consider keeping this private, this was made public to allow android intents to work
+    override fun navigateCreate() {
+        nav.replaceAll(Config.Main, Config.Create())
+    }
+
     @Serializable
-    sealed interface Config {
+    private sealed interface Config {
         @Serializable
         data object Splash : Config
 
@@ -121,7 +124,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
         data object Settings : Config
 
         @Serializable
-        data class Create(val timerId: Long?) : Config
+        data class Create(val timerId: Long? = null) : Config
 
         @Serializable
         data class Run(val timerId: Long) : Config
