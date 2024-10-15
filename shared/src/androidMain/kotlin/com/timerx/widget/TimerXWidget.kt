@@ -193,9 +193,9 @@ private fun WidgetButtonsThin() {
 
 @Composable
 private fun Icon(
-    modifier: GlanceModifier,
     action: Action,
     @DrawableRes drawable: Int,
+    modifier: GlanceModifier = GlanceModifier,
     contentDescription: String = ""
 ) {
     Image(

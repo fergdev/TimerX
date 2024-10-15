@@ -13,7 +13,7 @@ actual fun GoogleAd() {
         UIKitViewController(
             factory = it,
             modifier = Modifier.size(320.dp, 50.dp),
-            )
+        )
     }
 }
 

@@ -153,7 +153,7 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         intent(UpdateVibration(isVibrationEnabled.not()))
     }
-    PaddedElevatedCard (
+    PaddedElevatedCard(
         onClick = { updateVibration() }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -179,4 +179,3 @@ private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Float) {
         )
     }
 }
-

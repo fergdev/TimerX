@@ -14,7 +14,6 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
-import com.hoc081098.flowext.timer
 import com.timerx.ui.create.DefaultCreateComponent
 import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
