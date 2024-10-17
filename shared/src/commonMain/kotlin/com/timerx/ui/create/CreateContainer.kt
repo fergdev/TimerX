@@ -9,6 +9,7 @@ import com.timerx.domain.TimerSet
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.sound.Beep
 import com.timerx.sound.SoundManager
+import com.timerx.ui.create.CreateAction.TimerUpdated
 import com.timerx.ui.create.CreateScreenIntent.AddSet
 import com.timerx.ui.create.CreateScreenIntent.DeleteInterval
 import com.timerx.ui.create.CreateScreenIntent.DeleteSet
@@ -47,13 +48,13 @@ import pro.respawn.flowmvi.plugins.init
 import pro.respawn.flowmvi.plugins.reducePlugin
 import kotlin.math.max
 
-internal class CreateContainer(
+class CreateContainer(
     timerId: Long,
     private val timerDatabase: ITimerRepository,
     private val soundManager: SoundManager,
     private val vibrationManger: VibrationManager,
-    private val platformCapabilities: PlatformCapabilities
-) : Container<CreateScreenState, CreateScreenIntent, RunScreenAction> {
+    private val platformCapabilities: PlatformCapabilities,
+) : Container<CreateScreenState, CreateScreenIntent, CreateAction> {
     private val defaultGenerator = DefaultGenerator()
     override val store = store(
         CreateScreenState(
@@ -96,7 +97,7 @@ internal class CreateContainer(
                 timerDatabase,
                 soundManager,
                 vibrationManger,
-                timerId
+                timerId,
             )
         )
     }
@@ -119,7 +120,7 @@ private fun reduceIntent(
     beepManager: SoundManager,
     vibrationManger: VibrationManager,
     timerId: Long,
-) = reducePlugin<CreateScreenState, CreateScreenIntent, RunScreenAction> {
+) = reducePlugin<CreateScreenState, CreateScreenIntent, CreateAction> {
     when (it) {
         is UpdateTimerName -> updateState { copy(timerNameState = TimerNameState(name = it.timerName)) }
         AddSet ->
@@ -184,10 +185,10 @@ private fun reduceIntent(
                         if (index != -1) {
                             set.copy(
                                 intervals = (
-                                    set.intervals + set.intervals[index].copy(
-                                        id = defaultGenerator.getNextId()
-                                    )
-                                    ).toPersistentList()
+                                        set.intervals + set.intervals[index].copy(
+                                            id = defaultGenerator.getNextId()
+                                        )
+                                        ).toPersistentList()
                             )
                         } else {
                             set
@@ -353,8 +354,9 @@ private fun reduceIntent(
                                 createdAt = timerEditing.createdAt
                             )
                         )
+                        action(TimerUpdated(timerId))
                     } else {
-                        timerDatabase.insertTimer(
+                        val id = timerDatabase.insertTimer(
                             Timer(
                                 name = timerNameState.name,
                                 sets = newSets,
@@ -364,8 +366,8 @@ private fun reduceIntent(
                                 createdAt = Clock.System.now()
                             )
                         )
+                        action(TimerUpdated(id))
                     }
-                    action(RunScreenAction.NavigateUp)
                 }
             }
         }

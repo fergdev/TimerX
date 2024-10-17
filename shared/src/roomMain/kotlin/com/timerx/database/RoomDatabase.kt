@@ -55,7 +55,7 @@ interface RoomTimerDao {
     suspend fun insertTimerTransaction(
         roomTimer: RoomTimer,
         roomTimerSets: List<Pair<RoomSet, List<RoomInterval>>>,
-    ) {
+    ): Long {
         val insertSortOrder = if (roomTimer.sortOrder == NO_SORT_ORDER) {
             getMaxSortOrder().first() + 1L
         } else {
@@ -76,6 +76,7 @@ interface RoomTimerDao {
                 insert(RoomSetInterval(0, setPrimaryKey, intervalPrimaryKey))
             }
         }
+        return timerPrimaryKey
     }
 
     @Query("SELECT sort_order FROM RoomTimer ORDER BY sort_order DESC LIMIT 1")
@@ -97,8 +98,8 @@ interface RoomTimerDao {
 
     @Query(
         "UPDATE RoomTimer " +
-            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-            "WHERE id = :timerId"
+                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+                "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,
@@ -340,12 +341,11 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
         }
     }
 
-    override suspend fun insertTimer(timer: Timer) {
+    override suspend fun insertTimer(timer: Timer): Long =
         appDatabase.timerDao().insertTimerTransaction(
             timer.toRoomTimer(),
             roomSetsAndIntervals(timer)
         )
-    }
 
     override suspend fun updateTimerStats(
         timerId: Long,
@@ -377,7 +377,7 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
         }
 
     override suspend fun duplicate(timerId: Long) {
-        getTimer(timerId)?.first()?.let {
+        getTimer(timerId).first()?.let {
             val toInsert = it.copy(
                 id = 0,
                 name = it.name + " (copy)",

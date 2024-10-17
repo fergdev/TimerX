@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 
 interface ITimerRepository {
     fun getShallowTimers(): Flow<List<Timer>>
-    suspend fun insertTimer(timer: Timer)
+    suspend fun insertTimer(timer: Timer): Long
     suspend fun updateTimerStats(
         timerId: Long,
         startedCount: Long,

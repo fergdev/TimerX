@@ -19,13 +19,18 @@ import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
 import com.timerx.ui.settings.DefaultSettingsComponent
 import com.timerx.ui.splash.DefaultSplashComponent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.Serializable
+import org.koin.core.parameter.parametersOf
+import org.koin.mp.KoinPlatform
 
 class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
     componentContext: ComponentContext,
     webHistoryController: WebHistoryController? = null
 ) : RootComponent,
     ComponentContext by componentContext {
+
+    private val koin = KoinPlatform.getKoin()
 
     private val nav = StackNavigation<Config>()
 
@@ -38,6 +43,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
         )
 
     override val stack: Value<ChildStack<*, RootComponent.Child>> = _stack
+    private val updatedTimerFlow = MutableSharedFlow<Long>(extraBufferCapacity = Int.MAX_VALUE)
 
     init {
         webHistoryController?.attach(
@@ -52,17 +58,18 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
     @OptIn(DelicateDecomposeApi::class)
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
         when (config) {
-            is Config.Main ->
+            Config.Main ->
                 RootComponent.Child.MainChild(
                     DefaultMainComponent(
                         componentContext = componentContext,
                         onRunTimer = { nav.push(Config.Run(it)) },
                         onSettings = { nav.push(Config.Settings) },
-                        onCreate = { nav.push(Config.Create(it)) }
+                        onCreate = { nav.push(Config.Create(it)) },
+                        factory = { koin.get(parameters = { parametersOf(updatedTimerFlow) }) },
                     )
                 )
 
-            is Config.Settings ->
+            Config.Settings ->
                 RootComponent.Child.SettingsChild(
                     DefaultSettingsComponent(
                         componentContext = componentContext,
@@ -70,14 +77,27 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
                     )
                 )
 
-            is Config.Create ->
+            is Config.Create -> {
                 RootComponent.Child.CreateChild(
                     DefaultCreateComponent(
                         componentContext = componentContext,
-                        timerId = config.timerId ?: -1L,
-                        onBack = { nav.pop() }
+                        onBack = {
+                            nav.pop()
+                        },
+                        timerUpdated = {
+                            nav.pop()
+                            updatedTimerFlow.tryEmit(it)
+                        },
+                        factory = {
+                            koin.get(parameters = {
+                                parametersOf(
+                                    config.timerId ?: -1L,
+                                )
+                            })
+                        },
                     )
                 )
+            }
 
             is Config.Run ->
                 RootComponent.Child.RunChild(

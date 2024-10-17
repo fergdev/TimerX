@@ -7,9 +7,12 @@ import com.timerx.permissions.PermissionState
 import com.timerx.settings.ITimerXSettings
 import com.timerx.util.toAgo
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
+import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 import kotlin.random.Random
@@ -17,49 +20,57 @@ import kotlin.random.Random
 internal class MainContainer(
     private val timerRepository: ITimerRepository,
     private val permissionsHandler: IPermissionsHandler,
-    private val timerXSettings: ITimerXSettings
-) : Container<MainState, MainIntent, Nothing> {
+    private val timerXSettings: ITimerXSettings,
+    private val timerCreateFlow: SharedFlow<Long>
+) : Container<MainState, MainIntent, MainAction> {
 
     override val store = store(MainState.Loading()) {
         whileSubscribed {
-            combine(
-                timerRepository.getShallowTimers(),
-                timerXSettings.alertSettingsManager.alertSettings,
-                timerXSettings.sortTimersBy
-            ) { timers, settings, sortTimersBy ->
-                if (timers.isEmpty()) {
-                    MainState.Empty(sortTimersBy)
-                } else {
-                    val stateMainTimers = sortTimersBy.sort(timers).map { roomTimer ->
-                        MainTimer(
-                            id = roomTimer.id,
-                            name = roomTimer.name,
-                            duration = roomTimer.duration,
-                            startedCount = roomTimer.startedCount,
-                            completedCount = roomTimer.completedCount,
-                            sortOrder = roomTimer.sortOrder,
-                            lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never run"
+            launch {
+                combine(
+                    timerRepository.getShallowTimers(),
+                    timerXSettings.alertSettingsManager.alertSettings,
+                    timerXSettings.sortTimersBy
+                ) { timers, settings, sortTimersBy ->
+                    if (timers.isEmpty()) {
+                        MainState.Empty(sortTimersBy)
+                    } else {
+                        val stateMainTimers = sortTimersBy.sort(timers).map { roomTimer ->
+                            MainTimer(
+                                id = roomTimer.id,
+                                name = roomTimer.name,
+                                duration = roomTimer.duration,
+                                startedCount = roomTimer.startedCount,
+                                completedCount = roomTimer.completedCount,
+                                sortOrder = roomTimer.sortOrder,
+                                lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never run"
+                            )
+                        }
+                        val listItems = stateMainTimers.chunked(2)
+                            .flatMap {
+                                if (it.size == 2) {
+                                    // TODO this is a bug
+                                    it + Ad(Random.nextLong())
+                                } else {
+                                    it
+                                }
+                            }
+                        MainState.Content(
+                            timers = listItems.toPersistentList(),
+                            sortTimersBy = sortTimersBy,
+                            showNotificationsPermissionRequest =
+                            settings.ignoreNotificationsPermissions.not() &&
+                                    permissionsHandler.getPermissionState(Permission.Notification)
+                                    != PermissionState.Granted
                         )
                     }
-                    val listItems = stateMainTimers.chunked(2)
-                        .flatMap {
-                            if (it.size == 2) {
-                                it + Ad(Random.nextLong())
-                            } else {
-                                it
-                            }
-                        }
-                    MainState.Content(
-                        timers = listItems.toPersistentList(),
-                        sortTimersBy = sortTimersBy,
-                        showNotificationsPermissionRequest =
-                        settings.ignoreNotificationsPermissions.not() &&
-                            permissionsHandler.getPermissionState(Permission.Notification)
-                            != PermissionState.Granted
-                    )
+                }.collect { updateState { it } }
+            }
+            launch {
+                timerCreateFlow.collect {
+                    action(MainAction.TimerUpdated(it))
                 }
             }
-                .collect { updateState { it } }
         }
         reduce {
             when (it) {
@@ -70,6 +81,9 @@ internal class MainContainer(
                     timerRepository.duplicate(it.mainTimer.id)
 
                 MainIntent.HidePermissionsDialog -> {
+                    updateState<MainState.Content, _> {
+                        copy(showNotificationsPermissionRequest = false)
+                    }
                 }
 
                 MainIntent.IgnoreNotificationsPermission ->

@@ -3,10 +3,11 @@ package com.timerx.ui.main
 import com.timerx.domain.SortTimersBy
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import pro.respawn.flowmvi.api.MVIAction
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
-internal sealed interface MainState : MVIState {
+sealed interface MainState : MVIState {
     val sortTimersBy: SortTimersBy
 
     data class Loading(
@@ -24,11 +25,11 @@ internal sealed interface MainState : MVIState {
     ) : MainState
 }
 
-internal sealed interface MainListItem {
+sealed interface MainListItem {
     val id: Long
 }
 
-internal data class MainTimer(
+data class MainTimer(
     override val id: Long,
     val name: String,
     val duration: Long,
@@ -38,9 +39,9 @@ internal data class MainTimer(
     val lastRunFormatted: String,
 ) : MainListItem
 
-internal data class Ad(override val id: Long) : MainListItem
+data class Ad(override val id: Long) : MainListItem
 
-internal sealed interface MainIntent : MVIIntent {
+sealed interface MainIntent : MVIIntent {
     data class DeleteTimer(val mainTimer: MainTimer) : MainIntent
     data class DuplicateTimer(val mainTimer: MainTimer) : MainIntent
     data class SwapTimers(val from: MainTimer, val to: MainTimer) : MainIntent
@@ -48,4 +49,8 @@ internal sealed interface MainIntent : MVIIntent {
     data object RequestNotificationsPermission : MainIntent
     data object IgnoreNotificationsPermission : MainIntent
     data class UpdateSortTimersBy(val sortTimersBy: SortTimersBy) : MainIntent
+}
+
+sealed interface MainAction : MVIAction {
+    data class TimerUpdated(val timerId: Long) : MainAction
 }

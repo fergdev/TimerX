@@ -1,19 +1,30 @@
 package com.timerx.ui.create
 
 import com.arkivanov.decompose.ComponentContext
+import pro.respawn.flowmvi.api.Store
+import pro.respawn.flowmvi.essenty.dsl.retainedStore
 
-interface CreateComponent {
-    val timerId: Long
+typealias CreateStore = Store<CreateScreenState, CreateScreenIntent, CreateAction>
+
+interface CreateComponent : CreateStore {
     fun onBackClicked()
+    fun onTimerUpdated(timerId: Long)
 }
 
-@Suppress("UnusedPrivateProperty")
 class DefaultCreateComponent(
     componentContext: ComponentContext,
-    override val timerId: Long,
-    private val onBack: () -> Unit
-) : CreateComponent {
+    private val onBack: () -> Unit,
+    private val timerUpdated: (Long) -> Unit,
+    factory: () -> CreateContainer
+) : ComponentContext by componentContext,
+    CreateStore by componentContext.retainedStore(factory = factory),
+    CreateComponent {
+
     override fun onBackClicked() {
         onBack()
+    }
+
+    override fun onTimerUpdated(timerId: Long) {
+        timerUpdated(timerId)
     }
 }

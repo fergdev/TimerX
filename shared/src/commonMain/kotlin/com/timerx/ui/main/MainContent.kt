@@ -1,5 +1,11 @@
 package com.timerx.ui.main
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -41,9 +48,11 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
@@ -70,7 +79,6 @@ import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import pro.respawn.flowmvi.api.IntentReceiver
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
@@ -91,10 +99,13 @@ import timerx.shared.generated.resources.sort_order
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainContent(mainComponent: MainComponent) {
-    with(koinInject<MainContainer>().store) {
-        LaunchedEffect(Unit) { start(this).join() }
-
-        val state by subscribe(DefaultLifecycle)
+    with(mainComponent) {
+        var scrollTo: Long? = null
+        val state by subscribe(DefaultLifecycle) {
+            when (it) {
+                is MainAction.TimerUpdated -> scrollTo = it.timerId
+            }
+        }
         contrastSystemBarColor(MaterialTheme.colorScheme.surface)
 
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -143,7 +154,8 @@ internal fun MainContent(mainComponent: MainComponent) {
                             state = this,
                             mainComponent = mainComponent,
                             appBarScrollBehavior = appBarScrollBehavior,
-                            padding = padding
+                            padding = padding,
+                            scrollTo = scrollTo,
                         )
                         if (this.showNotificationsPermissionRequest) {
                             NotificationPermissions()
@@ -163,13 +175,23 @@ private fun IntentReceiver<MainIntent>.Content(
     appBarScrollBehavior: TopAppBarScrollBehavior,
     padding: PaddingValues,
     modifier: Modifier = Modifier,
+    scrollTo: Long?,
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(scrollTo) {
+        val index = state.timers.indexOfFirst { it.id == scrollTo }
+        if (index >= 0) {
+            lazyListState.animateScrollToItem(index = index)
+        }
+    }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(appBarScrollBehavior.nestedScrollConnection),
+        state = lazyListState
     ) {
         item {
             Spacer(Modifier.height(padding.calculateTopPadding()))
@@ -206,6 +228,7 @@ private fun IntentReceiver<MainIntent>.Content(
                             onNavigateEditScreen = {
                                 mainComponent.onCreateClicked(timer.id)
                             },
+                            highlight = timer.id == scrollTo
                         )
                     }
 
@@ -291,6 +314,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
     mainTimer: MainTimer,
     onNavigateRunScreen: (Long) -> Unit,
     onNavigateEditScreen: (Long) -> Unit,
+    highlight: Boolean,
 ) {
     val revealState = rememberRevealState(
         200.dp, directions = setOf(RevealDirection.EndToStart)
@@ -343,10 +367,22 @@ private fun IntentReceiver<MainIntent>.TimerCard(
             }
         },
     ) {
+        val infiniteTransition = rememberInfiniteTransition()
+        val borderColor by if (highlight) infiniteTransition.animateColor(
+            initialValue = MaterialTheme.colorScheme.primary,
+            targetValue = MaterialTheme.colorScheme.surface,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000),
+                repeatMode = RepeatMode.Reverse
+            )
+        ) else {
+            mutableStateOf(Color.Transparent)
+        }
         PaddedElevatedCard(
             modifier = Modifier
+                .border(2.dp, borderColor, shape = MaterialTheme.shapes.medium)
                 .fillMaxWidth(),
-            onClick = { onNavigateRunScreen(mainTimer.id) }
+            onClick = { onNavigateRunScreen(mainTimer.id) },
         ) {
             Text(
                 text = mainTimer.name.branded(),

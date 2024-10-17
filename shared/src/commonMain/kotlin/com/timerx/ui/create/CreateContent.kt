@@ -39,7 +39,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -76,8 +75,6 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
 import com.timerx.ui.theme.Animation
 import com.timerx.vibration.Vibration
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
-import org.koin.core.parameter.parametersOf
 import pro.respawn.flowmvi.api.IntentReceiver
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
@@ -94,12 +91,11 @@ import timerx.shared.generated.resources.timer_name_required
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CreateContent(createComponent: CreateComponent) {
-    with(koinInject<CreateContainer> { parametersOf(createComponent.timerId) }.store) {
-        LaunchedEffect(Unit) { start(this).join() }
-
+    with(createComponent) {
         val state by subscribe(DefaultLifecycle) {
             when (it) {
-                RunScreenAction.NavigateUp -> createComponent.onBackClicked()
+                is CreateAction.TimerUpdated ->
+                    createComponent.onTimerUpdated(it.timerId)
             }
         }
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
