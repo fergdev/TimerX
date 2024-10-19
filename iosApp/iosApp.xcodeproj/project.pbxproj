@@ -24,6 +24,7 @@
 		AC9C5B002C1CFC0C005DB4D3 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AC9C5AFF2C1CFC0C005DB4D3 /* FirebaseAnalyticsSwift */; };
 		AC9C5B022C1CFC0C005DB4D3 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = AC9C5B012C1CFC0C005DB4D3 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		AC9C5B042C1CFC0C005DB4D3 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = AC9C5B032C1CFC0C005DB4D3 /* FirebaseAppCheck */; };
+		ACCBCF1D2CC3434500466DFF /* silence.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = ACCBCF1C2CC3434500466DFF /* silence.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +52,7 @@
 		AC68F1272C153C5F0066FA45 /* alert2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alert2.mp3; sourceTree = "<group>"; };
 		AC68F1292C153F050066FA45 /* end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = end.mp3; sourceTree = "<group>"; };
 		AC95AEE42C1D1A68003080AE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		ACCBCF1C2CC3434500466DFF /* silence.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = silence.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +116,7 @@
 		AC68F1242C1521DB0066FA45 /* alerts */ = {
 			isa = PBXGroup;
 			children = (
+				ACCBCF1C2CC3434500466DFF /* silence.mp3 */,
 				AC68F1272C153C5F0066FA45 /* alert2.mp3 */,
 				AC68F1292C153F050066FA45 /* end.mp3 */,
 				AC68F1252C1539AB0066FA45 /* whistle.mp3 */,
@@ -209,6 +212,7 @@
 				AC68F1282C153C5F0066FA45 /* alert2.mp3 in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				AC68F1262C1539AB0066FA45 /* whistle.mp3 in Resources */,
+				ACCBCF1D2CC3434500466DFF /* silence.mp3 in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				AC68F1232C150D740066FA45 /* alert.mp3 in Resources */,
 				AC95AEE52C1D1A68003080AE /* GoogleService-Info.plist in Resources */,

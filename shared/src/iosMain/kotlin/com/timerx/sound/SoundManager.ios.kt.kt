@@ -20,8 +20,10 @@ import platform.AVFAudio.AVSpeechUtterance
 import platform.AVFAudio.setActive
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.AVPlayerItem
+import platform.AVFoundation.AVPlayerTimeControlStatusPlaying
 import platform.AVFoundation.play
 import platform.AVFoundation.replaceCurrentItemWithPlayerItem
+import platform.AVFoundation.timeControlStatus
 import platform.AVFoundation.volume
 import platform.Foundation.NSBundle
 
@@ -89,6 +91,22 @@ class IosSoundManager(timerXSettings: ITimerXSettings, timerManager: TimerManage
         utterance.setVolume(volume)
         utterance.voice = voice
         synthesizer.speakUtterance(utterance)
+    }
+
+    fun playEmptySound() {
+        val isPlaying = avPlayer.timeControlStatus() == AVPlayerTimeControlStatusPlaying
+                || synthesizer.isSpeaking()
+        Logger.d { "is playing sound $isPlaying" }
+        avPlayer.status()
+        if (!isPlaying) {
+            val soundURL = NSBundle.mainBundle.URLForResource("silence", "mp3")!!
+            val item = AVPlayerItem(soundURL)
+            avPlayer.replaceCurrentItemWithPlayerItem(item)
+            avPlayer.play()
+            avPlayer.error?.let {
+                Logger.e { "AVPlayer error? = ${it.localizedDescription}" }
+            }
+        }
     }
 
     override fun voices(): List<VoiceInformation> = voiceInformation

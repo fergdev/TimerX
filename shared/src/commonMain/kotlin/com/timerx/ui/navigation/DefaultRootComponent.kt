@@ -30,7 +30,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
 ) : RootComponent,
     ComponentContext by componentContext {
 
-    private val koin = KoinPlatform.getKoin()
+    private val koin by lazy { KoinPlatform.getKoin() }
 
     private val nav = StackNavigation<Config>()
 

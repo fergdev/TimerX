@@ -1,6 +1,7 @@
 package com.timerx.background
 
 import co.touchlab.kermit.Logger
+import com.timerx.sound.IosSoundManager
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
@@ -9,7 +10,10 @@ import kotlinx.coroutines.launch
 import platform.Foundation.NSTimer
 import kotlin.experimental.ExperimentalNativeApi
 
-class BackgroundManager(private val timerManager: TimerManager) {
+class BackgroundManager(
+    private val timerManager: TimerManager,
+    private val iosSoundManager: IosSoundManager
+) {
 
     private var timer: NSTimer? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -34,6 +38,7 @@ class BackgroundManager(private val timerManager: TimerManager) {
         assert(timer == null)
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0, true) {
             Logger.v { "Keep Alive ${it?.fireDate?.description()}" }
+            iosSoundManager.playEmptySound()
         }
     }
 

@@ -22,6 +22,7 @@ actual val platformModule = module {
     singleOf(::IosSoundManager) {
         createdAtStart()
         bind<SoundManager>()
+        bind<IosSoundManager>()
     }
     singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
     singleOf(::IosVibrationManager) {
