@@ -25,7 +25,9 @@ object Config {
     const val targetSdk = compileSdk
     const val minSdk = 30
     const val appId = "todo-some-uuid"
-    const val supportEmail = "emailthis@mail.com"
+    const val supportEmail = "ferg.dev@outlook.com"
+    const val privacyPolicyUrl =
+        "https://doc-hosting.flycricket.io/timerx-privacy-policy/2fa3244e-cdef-4ec8-b776-6c03e94e8fab/privacy"
 
     val stabilityLevels = listOf("snapshot", "eap", "preview", "alpha", "beta", "m", "cr", "rc")
     val minStabilityLevel = stabilityLevels.indexOf("beta")

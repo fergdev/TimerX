@@ -59,6 +59,8 @@
     <string name="play">Play</string>
     <string name="prepare">Prepare</string>
     <string name="preview">Preview</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy_message">How Tx manages your privacy</string>
     <string name="rest">Rest</string>
     <string name="restart">Restart</string>
     <string name="save">Save</string>

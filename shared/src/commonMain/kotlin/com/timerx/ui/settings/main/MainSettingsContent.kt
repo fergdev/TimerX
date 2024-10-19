@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.TMenuItem
@@ -35,6 +36,8 @@ import timerx.shared.generated.resources.colors
 import timerx.shared.generated.resources.colors_subtitle
 import timerx.shared.generated.resources.keep_screen_on
 import timerx.shared.generated.resources.keep_screen_on_subtitle
+import timerx.shared.generated.resources.privacy_policy
+import timerx.shared.generated.resources.privacy_policy_message
 import timerx.shared.generated.resources.settings
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,6 +103,14 @@ internal fun MainSettingsContent(component: MainSettingsComponent) =
                     icon = Icons.Filled.Info,
                     subtitle = stringResource(Res.string.about_libs_subtitle),
                     onClick = { component.onAboutLibs() }
+                )
+                val uriHandler = LocalUriHandler.current
+                TMenuItem(
+                    title = stringResource(Res.string.privacy_policy),
+                    color = rainbow[5],
+                    icon = Icons.Filled.Lock,
+                    subtitle = stringResource(Res.string.privacy_policy_message),
+                    onClick = { uriHandler.openUri(state.privacyPolicyUri)}
                 )
             }
         }

@@ -22,8 +22,9 @@ class KStoreDatabase : ITimerRepository {
             }?.plus(1L) ?: 0L
         }
 
-    override suspend fun insertTimer(timer: Timer) {
+    override suspend fun insertTimer(timer: Timer): Long {
         store.plus(timer.prepareForInsert())
+        return nextTimerId
     }
 
     override suspend fun updateTimerStats(

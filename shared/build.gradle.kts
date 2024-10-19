@@ -28,7 +28,8 @@ val BuildConfig = """
     package ${Config.namespace}
 
     internal object BuildFlags {
-        const val VersionName = "${Config.versionName}"
+        const val versionName = "${Config.versionName}"
+        const val privacyPolicyUrl = "${Config.privacyPolicyUrl}"
     }
 """.trimIndent()
 
