@@ -31,6 +31,7 @@ interface CrashlyticsIosCallback {
 
 private var crashlyticsIosCallback: CrashlyticsIosCallback? = null
 
+@Suppress("Unused")
 fun setCrashlyticsCallback(callback: CrashlyticsIosCallback) {
     crashlyticsIosCallback = callback
 }
