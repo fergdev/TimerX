@@ -47,8 +47,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.LongPress
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.coerceAtLeast
@@ -228,11 +230,15 @@ private fun IntentReceiver<AddSet>.FinalTimeRow(
 
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.SetColumn(state: CreateScreenState) {
+    val hapticFeedback = LocalHapticFeedback.current
     ReorderableColumn(
         modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
         list = state.sets,
         onSettle = { from, to ->
             intent(SwapSet(from, to))
+        },
+        onMove = {
+            hapticFeedback.performHapticFeedback(LongPress)
         },
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) { _, set, _ ->

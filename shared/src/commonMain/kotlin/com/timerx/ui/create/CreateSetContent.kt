@@ -22,6 +22,9 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.LongPress
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.TextHandleMove
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
@@ -104,6 +107,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 SetTopControls(timerSet, reorderableScope)
+                val hapticFeedback = LocalHapticFeedback.current
                 ReorderableColumn(
                     list = timerSet.intervals,
                     modifier = Modifier.fillMaxWidth(),
@@ -111,6 +115,9 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
                     onSettle = { from, to ->
                         intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
                     },
+                    onMove = {
+                        hapticFeedback.performHapticFeedback(LongPress)
+                    }
                 ) { _, timerInterval, _ ->
                     key(timerInterval.id) {
                         CreateIntervalContent(
