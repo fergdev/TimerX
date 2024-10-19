@@ -89,8 +89,12 @@ internal class MainContainer(
                 MainIntent.IgnoreNotificationsPermission ->
                     timerXSettings.alertSettingsManager.setIgnoreNotificationPermissions()
 
-                MainIntent.RequestNotificationsPermission ->
+                MainIntent.RequestNotificationsPermission -> {
+                    updateState<MainState.Content, _> {
+                        copy(showNotificationsPermissionRequest = false)
+                    }
                     permissionsHandler.requestPermission(Permission.Notification)
+                }
 
                 is MainIntent.SwapTimers ->
                     timerRepository.swapTimers(

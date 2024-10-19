@@ -1,4 +1,8 @@
 @file:Suppress("UnusedPrivateProperty")
+
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -7,6 +11,10 @@ plugins {
     alias(libs.plugins.googleServices)
     alias(libs.plugins.crashlytics)
 }
+
+val keystorePropertiesFile = rootProject.file("keystore.properties");
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 kotlin {
     androidTarget()
@@ -34,9 +42,30 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        create("release") {
+            storePassword = keystoreProperties.getProperty("storePassword")
+            storeFile = File(keystoreProperties.getProperty("storeFile"))
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+        }
+    }
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
+        release {
+            isShrinkResources = true
+            isMinifyEnabled = true
+            proguardFiles(
+                // Includes the default ProGuard rules files that are packaged with
+                // the Android Gradle plugin. To learn more, go to the section about
+                // R8 configuration files.
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+
+                // Includes a local, custom Proguard rules file
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
+       }
+        debug {
         }
     }
     compileOptions {

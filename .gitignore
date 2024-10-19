@@ -39,3 +39,6 @@ xcuserdata/*
 
 # kotlin
 .kotlin/
+
+androidApp/release
+keystore.properties
