@@ -3,13 +3,12 @@ package com.timerx.analytics
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import org.koin.mp.KoinPlatform
+import com.timerx.settings.TimerXSettings
 
-class TimerXAnalytics : ITimerXAnalytics {
-    private val context: Context = KoinPlatform.getKoin().get()
+class TimerXAnalyticsImpl(timerXSettings: TimerXSettings, context: Context) : TimerXAnalytics(timerXSettings) {
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
-    override fun logEvent(eventName: String, params: Map<String, Any>) {
+    override fun doLogEvent(eventName: String, params: Map<String, Any>) {
         val bundle: Bundle? = params.let {
             if (it.isEmpty()) {
                 Bundle.EMPTY

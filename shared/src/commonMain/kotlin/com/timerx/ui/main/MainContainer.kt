@@ -4,7 +4,7 @@ import com.timerx.database.ITimerRepository
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.util.toAgo
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,7 +20,7 @@ import kotlin.random.Random
 internal class MainContainer(
     private val timerRepository: ITimerRepository,
     private val permissionsHandler: IPermissionsHandler,
-    private val timerXSettings: ITimerXSettings,
+    private val timerXSettings: TimerXSettings,
     private val timerCreateFlow: SharedFlow<Long>
 ) : Container<MainState, MainIntent, MainAction> {
 

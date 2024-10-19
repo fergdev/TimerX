@@ -3,7 +3,7 @@
 package com.timerx.sound
 
 import co.touchlab.kermit.Logger
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
 import com.timerx.util.NSErrorException
 import com.timerx.util.throwNSErrors
@@ -28,7 +28,7 @@ import platform.AVFoundation.volume
 import platform.Foundation.NSBundle
 
 @OptIn(ExperimentalForeignApi::class)
-class IosSoundManager(timerXSettings: ITimerXSettings, timerManager: TimerManager) :
+class IosSoundManager(timerXSettings: TimerXSettings, timerManager: TimerManager) :
     SoundManager(timerXSettings, timerManager) {
     override val isTTSSupported: Boolean
         get() = true

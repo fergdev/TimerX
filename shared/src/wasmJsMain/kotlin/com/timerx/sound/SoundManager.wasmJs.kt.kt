@@ -2,7 +2,7 @@
 
 package com.timerx.sound
 
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -11,7 +11,7 @@ import timerx.shared.generated.resources.Res
 
 private const val DEFAULT_VOICE_ID = "null"
 
-class WasmSoundManager(settings: ITimerXSettings, timerManager: TimerManager) :
+class WasmSoundManager(settings: TimerXSettings, timerManager: TimerManager) :
     SoundManager(settings, timerManager) {
     private var selectedVoiceId: String = DEFAULT_VOICE_ID
     override val isTTSSupported: Boolean

@@ -1,12 +1,14 @@
 package com.timerx.analytics
 
-class TimerXAnalytics : ITimerXAnalytics {
+import com.timerx.settings.TimerXSettings
 
-    override fun logEvent(eventName: String, params: Map<String, Any>) {
-        firebaseIosCallback?.logEvent(eventName, params.toString())
+class TimerXAnalyticsImpl(timerXSettings: TimerXSettings) : TimerXAnalytics(timerXSettings) {
+
+    override fun doLogEvent(eventName: String, params: Map<String, Any>) {
+        firebaseIosCallback?.logEvent(eventName, params.toLogString())
     }
 
-    private fun Map<String, Any>?.toString(): String {
+    private fun Map<String, Any>?.toLogString(): String {
         if (this == null) return ""
 
         val sb = StringBuilder()

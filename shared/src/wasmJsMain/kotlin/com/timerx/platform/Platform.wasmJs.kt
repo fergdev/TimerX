@@ -26,6 +26,7 @@ private fun detectHostOs(): OS {
 private val supportsVibration = arrayOf(OS.Android)
 internal val wasmCapabilities =
     PlatformCapabilities(
-        canSystemDynamic = false,
-        canVibrate = detectHostOs() in supportsVibration
+        canSystemDynamicTheme = false,
+        canVibrate = detectHostOs() in supportsVibration,
+        hasAnalytics = false
     )

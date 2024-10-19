@@ -1,10 +1,11 @@
 package com.timerx.di
 
-import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.analytics.TimerXAnalytics
+import com.timerx.analytics.TimerXAnalyticsImpl
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
+import com.timerx.crashlytics.CrashlyticsManager
 import com.timerx.platform.androidCapabilities
 import com.timerx.sound.AndroidSoundManager
 import com.timerx.sound.SoundManager
@@ -22,11 +23,12 @@ actual val platformModule = module {
         createdAtStart()
         bind<SoundManager>()
     }
-    singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
+    singleOf(::TimerXAnalyticsImpl) { bind<TimerXAnalytics>() }
     singleOf(::AndroidVibrator) {
         createdAtStart()
         bind<VibrationManager>()
     }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::NotificationManager) { createdAtStart() }
+    singleOf(::CrashlyticsManager) { createdAtStart() }
 }

@@ -1,6 +1,6 @@
 package com.timerx.vibration
 
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 const val VIBRATION_DELAY: Long = 500L
 
 abstract class VibrationManager(
-    private val timerXSettings: ITimerXSettings,
+    private val timerXSettings: TimerXSettings,
     private val timerManager: TimerManager
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)

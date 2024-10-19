@@ -4,7 +4,7 @@ import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.platform.PlatformCapabilities
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
@@ -21,7 +21,7 @@ import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
 class AlertsSettingsContainer(
-    private val settings: ITimerXSettings,
+    private val settings: TimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
     private val platformCapabilities: PlatformCapabilities,
     private val soundManager: SoundManager

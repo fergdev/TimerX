@@ -1,7 +1,7 @@
 @file:Suppress("Filename")
 package com.timerx.vibration
 
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
@@ -24,7 +24,7 @@ import platform.UIKit.UIImpactFeedbackGenerator
 import platform.UIKit.UIImpactFeedbackStyle
 
 class IosVibrationManager(
-    timerXSettings: ITimerXSettings,
+    timerXSettings: TimerXSettings,
     timerManager: TimerManager,
 ) : VibrationManager(timerXSettings, timerManager) {
 

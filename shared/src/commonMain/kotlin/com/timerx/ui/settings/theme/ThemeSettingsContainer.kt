@@ -1,7 +1,7 @@
 package com.timerx.ui.settings.theme
 
 import com.timerx.platform.PlatformCapabilities
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateDarkTheme
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsAmoled
@@ -15,7 +15,7 @@ import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
 class ThemeSettingsContainer(
-    private val timerXSettings: ITimerXSettings,
+    private val timerXSettings: TimerXSettings,
     private val platformCapabilities: PlatformCapabilities
 ) : Container<ThemeSettingsState, ThemeSettingsIntent, Nothing> {
 
@@ -25,7 +25,7 @@ class ThemeSettingsContainer(
                 updateState {
                     ThemeSettingsState.LoadedState(
                         seedColor = it.seedColor,
-                        isDynamicThemeSupported = platformCapabilities.canSystemDynamic,
+                        isDynamicThemeSupported = platformCapabilities.canSystemDynamicTheme,
                         isSystemDynamic = it.isSystemDynamic,
                         settingsDarkTheme = it.settingsDarkTheme,
                         isAmoled = it.isAmoled,

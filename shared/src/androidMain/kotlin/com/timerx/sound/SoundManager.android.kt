@@ -8,13 +8,13 @@ import android.speech.tts.TextToSpeech
 import androidx.core.os.bundleOf
 import co.touchlab.kermit.Logger
 import com.timerx.R
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AndroidSoundManager(
-    timerXSettings: ITimerXSettings,
+    timerXSettings: TimerXSettings,
     private val context: Context,
     timerManager: TimerManager
 ) : SoundManager(timerXSettings, timerManager) {
@@ -35,7 +35,7 @@ class AndroidSoundManager(
         }
     }
 
-    private fun observeVoiceChange(timerXSettings: ITimerXSettings) {
+    private fun observeVoiceChange(timerXSettings: TimerXSettings) {
         coroutineScope.launch {
             timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
                 val voice = textToSpeech.voices.firstOrNull { voice ->

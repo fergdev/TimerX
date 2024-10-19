@@ -13,7 +13,7 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.GlanceStateDefinition
 import com.timerx.database.ITimerRepository
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.util.toAgo
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.combine
@@ -30,7 +30,7 @@ class TimerXWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = TimerXWidget()
     private val coroutineScope = MainScope()
     private val timerRepository = KoinPlatform.getKoin().get<ITimerRepository>()
-    private val timerXSettings = KoinPlatform.getKoin().get<ITimerXSettings>()
+    private val timerXSettings = KoinPlatform.getKoin().get<TimerXSettings>()
 
     override fun onUpdate(
         context: Context,

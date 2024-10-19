@@ -4,8 +4,9 @@ import android.os.Build
 
 internal val androidCapabilities =
     PlatformCapabilities(
-        canSystemDynamic = supportsDynamicColors,
-        canVibrate = true
+        canSystemDynamicTheme = supportsDynamicColors,
+        canVibrate = true,
+        hasAnalytics = true
     )
 
 internal val supportsDynamicColors get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

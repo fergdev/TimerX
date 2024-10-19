@@ -16,6 +16,8 @@
     <string name="close">Close</string>
     <string name="completed_value">Completed: %1$s</string>
     <string name="contrast_level">Contrast level</string>
+    <string name="collect_analytics">Allow Tx to collect analytics</string>
+    <string name="collect_analytics_message">Without analytics we cannot fix bugs and learn how to improve the app</string>
     <string name="colors">Colors</string>
     <string name="colors_subtitle">Define your color scheme</string>
     <string name="copy">Copy</string>

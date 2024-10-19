@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 import pro.respawn.flowmvi.api.Store
 import pro.respawn.flowmvi.essenty.dsl.retainedStore
 
-typealias AboutStore = Store<AboutState, Nothing, Nothing>
+typealias AboutStore = Store<AboutState, AboutIntent, Nothing>
 
 interface AboutMainComponent : AboutStore {
 

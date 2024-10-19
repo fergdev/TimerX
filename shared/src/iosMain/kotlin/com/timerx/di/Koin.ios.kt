@@ -1,7 +1,7 @@
 package com.timerx.di
 
-import com.timerx.analytics.ITimerXAnalytics
 import com.timerx.analytics.TimerXAnalytics
+import com.timerx.analytics.TimerXAnalyticsImpl
 import com.timerx.background.BackgroundManager
 import com.timerx.capabilities.iosCapabilities
 import com.timerx.notification.NotificationManager
@@ -24,7 +24,7 @@ actual val platformModule = module {
         bind<SoundManager>()
         bind<IosSoundManager>()
     }
-    singleOf(::TimerXAnalytics) { bind<ITimerXAnalytics>() }
+    singleOf(::TimerXAnalyticsImpl) { bind<TimerXAnalytics>() }
     singleOf(::IosVibrationManager) {
         createdAtStart()
         bind<VibrationManager>()

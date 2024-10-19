@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.DynamicMaterialThemeState
 import com.materialkolor.rememberDynamicMaterialThemeState
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.settings.SettingsDarkTheme
 import com.timerx.settings.ThemeSettings
 import org.koin.compose.koinInject
@@ -26,7 +26,7 @@ private val shapes = Shapes(
 
 @Composable
 fun TimerXTheme(content: @Composable () -> Unit) {
-    val settings = koinInject<ITimerXSettings>().themeSettingsManager.themeSettings.collectAsState(ThemeSettings())
+    val settings = koinInject<TimerXSettings>().themeSettingsManager.themeSettings.collectAsState(ThemeSettings())
     val isDark = isDarkTheme(settings.value.settingsDarkTheme)
     val dynamic = systemDynamicColorScheme(isDark)
     // Required to regenerate colorscheme when the dynamic color has changed

@@ -18,8 +18,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         StartKoinKt.startKoin()
         FirebaseApp.configure()
+        
+        // TimerXCallbacks
         TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
+        CrashlyticsManager_iosKt.setCrashlyticsCallback(callback: CrashlyticsCallback())
+        
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "16d05d566ddd35ca547efdf2eeb1496c", "092ea52e6e29e1041f1216b949d6ab7d" ]
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
+
         
         Ads_iosKt.setFactory(adFactory :  {() -> UIViewController in
                 let ad = BannerAdView()
@@ -28,6 +34,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         )
         return true
+    }
+}
+
+class CrashlyticsCallback: CrashlyticsIosCallback {
+    
+    func setCrashlyticsCollectionEnabled(enabled: Bool) {
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(enabled)
     }
 }
 

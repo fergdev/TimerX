@@ -1,6 +1,6 @@
 package com.timerx.sound
 
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 abstract class SoundManager(
-    timerXSettings: ITimerXSettings,
+    timerXSettings: TimerXSettings,
     timerManager: TimerManager
 ) {
     abstract val isTTSSupported: Boolean

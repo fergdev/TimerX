@@ -1,10 +1,10 @@
 package com.timerx.ui.run
 
-import com.timerx.analytics.ITimerXAnalytics
+import com.timerx.analytics.TimerXAnalytics
 import com.timerx.database.ITimerRepository
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.AlertSettings
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import com.timerx.timermanager.TimerState
@@ -22,11 +22,11 @@ import pro.respawn.flowmvi.plugins.reducePlugin
 
 internal class RunContainer(
     private val timerId: Long,
-    private val timerXSettings: ITimerXSettings,
+    private val timerXSettings: TimerXSettings,
     private val timerManager: TimerManager,
     private val platformCapabilities: PlatformCapabilities,
     timerRepository: ITimerRepository,
-    timerXAnalytics: ITimerXAnalytics,
+    timerXAnalytics: TimerXAnalytics,
 ) : Container<RunScreenState, RunScreenIntent, Nothing> {
 
     override val store = store(RunScreenState.Loading) {
@@ -53,7 +53,7 @@ internal class RunContainer(
 
 internal fun observeTimerPlugin(
     timerManager: TimerManager,
-    timerXSettings: ITimerXSettings,
+    timerXSettings: TimerXSettings,
     platformCapabilities: PlatformCapabilities
 ) = plugin<RunScreenState, RunScreenIntent, Nothing> {
     onSubscribe {
@@ -131,7 +131,7 @@ internal fun observeTimerPlugin(
 
 internal fun reducePlugin(
     timerManager: TimerManager,
-    timerXSettings: ITimerXSettings,
+    timerXSettings: TimerXSettings,
 ) =
     reducePlugin<RunScreenState, RunScreenIntent, Nothing> {
         when (it) {

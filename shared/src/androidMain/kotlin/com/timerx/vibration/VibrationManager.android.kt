@@ -5,7 +5,7 @@ package com.timerx.vibration
 import android.content.Context
 import android.os.VibrationEffect
 import android.os.Vibrator
-import com.timerx.settings.ITimerXSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
 import com.timerx.vibration.Vibration.Heavy
 import com.timerx.vibration.Vibration.HeavyX2
@@ -26,7 +26,7 @@ import com.timerx.vibration.Vibration.SoftX3
 import kotlinx.coroutines.delay
 
 class AndroidVibrator(
-    timerXSettings: ITimerXSettings,
+    timerXSettings: TimerXSettings,
     timerManager: TimerManager,
     context: Context
 ) : VibrationManager(timerXSettings, timerManager) {

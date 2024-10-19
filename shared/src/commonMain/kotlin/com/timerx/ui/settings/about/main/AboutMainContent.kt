@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import com.timerx.ui.common.TMenuItem
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsContent
+import com.timerx.ui.settings.about.main.AboutIntent.UpdateCollectAnalytics
 import com.timerx.ui.theme.Size
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
@@ -40,6 +42,8 @@ import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.about_libs
 import timerx.shared.generated.resources.about_libs_subtitle
+import timerx.shared.generated.resources.collect_analytics
+import timerx.shared.generated.resources.collect_analytics_message
 import timerx.shared.generated.resources.privacy_policy
 import timerx.shared.generated.resources.privacy_policy_message
 
@@ -93,11 +97,31 @@ internal fun AboutMainContent(component: AboutMainComponent) {
                 val uriHandler = LocalUriHandler.current
                 TMenuItem(
                     title = stringResource(Res.string.privacy_policy),
-                    color = rainbow[5],
+                    color = rainbow[1],
                     icon = Icons.Filled.Lock,
                     subtitle = stringResource(Res.string.privacy_policy_message),
                     onClick = { uriHandler.openUri(state.privacyPolicyUri) }
                 )
+
+                if (state.hasAnalytics) {
+                    TMenuItem(
+                        title = stringResource(Res.string.collect_analytics),
+                        color = rainbow[2],
+                        icon = Icons.Filled.Lock,
+                        subtitle = stringResource(Res.string.collect_analytics_message),
+                        onClick = {
+                            intent(UpdateCollectAnalytics(state.collectAnalytics.not()))
+                        },
+                        trailing = {
+                            Switch(
+                                checked = state.collectAnalytics,
+                                onCheckedChange = {
+                                    intent(UpdateCollectAnalytics(state.collectAnalytics.not()))
+                                }
+                            )
+                        }
+                    )
+                }
             }
 
             val aboutLibsSlot by component.aboutLibsSlot.subscribeAsState()

@@ -1,7 +1,7 @@
 package com.timerx.di
 
-import com.timerx.settings.ITimerXSettings
 import com.timerx.settings.TimerXSettings
+import com.timerx.settings.TimerXSettingsImpl
 import com.timerx.timermanager.TimerManager
 import com.timerx.ui.di.containerModule
 import org.koin.core.module.Module
@@ -12,7 +12,7 @@ import org.koin.dsl.module
 val sharedModule = module {
     includes(platformModule)
     includes(containerModule)
-    singleOf(::TimerXSettings) { bind<ITimerXSettings>() }
+    singleOf(::TimerXSettingsImpl) { bind<TimerXSettings>() }
     singleOf(::TimerManager)
 }
 
