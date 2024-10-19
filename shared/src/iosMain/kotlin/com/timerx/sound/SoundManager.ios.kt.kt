@@ -94,8 +94,8 @@ class IosSoundManager(timerXSettings: ITimerXSettings, timerManager: TimerManage
     }
 
     fun playEmptySound() {
-        val isPlaying = avPlayer.timeControlStatus() == AVPlayerTimeControlStatusPlaying
-                || synthesizer.isSpeaking()
+        val isPlaying = avPlayer.timeControlStatus() == AVPlayerTimeControlStatusPlaying ||
+            synthesizer.isSpeaking()
         Logger.d { "is playing sound $isPlaying" }
         avPlayer.status()
         if (!isPlaying) {

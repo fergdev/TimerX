@@ -174,8 +174,8 @@ private fun IntentReceiver<MainIntent>.Content(
     mainComponent: MainComponent,
     appBarScrollBehavior: TopAppBarScrollBehavior,
     padding: PaddingValues,
-    modifier: Modifier = Modifier,
     scrollTo: Long?,
+    modifier: Modifier = Modifier,
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()

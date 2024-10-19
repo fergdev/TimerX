@@ -28,8 +28,8 @@ fun PaddedElevatedCard(
     ElevatedCard(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-        , colors = colors
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+        colors = colors
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(8.dp),
