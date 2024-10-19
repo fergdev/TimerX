@@ -6,6 +6,7 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.domain.SortTimersBy
 import com.timerx.util.mapIfNull
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -31,7 +32,7 @@ private const val KEEP_SCREEN_ON = "keepScreenOn"
 
 @OptIn(ExperimentalSettingsApi::class)
 class TimerXSettings : ITimerXSettings {
-    private val flowSettings = Settings().makeObservable().toFlowSettings()
+    private val flowSettings = Settings().makeObservable().toFlowSettings(Dispatchers.Main)
 
     override val alertSettingsManager = AlertSettingsManagerImpl(flowSettings)
 
