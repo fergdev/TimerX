@@ -1,5 +1,6 @@
 package com.timerx.crashlytics
 
+import co.touchlab.kermit.Logger
 import com.timerx.settings.TimerXSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,7 @@ internal class CrashlyticsManager(
                 assert(crashlyticsIosCallback != null){
                     "FirebaseCrashlyticsCallback not set"
                 }
+                Logger.d { "Setting crashlytics collection enabled to $it" }
                 crashlyticsIosCallback!!.setCrashlyticsCollectionEnabled(it)
             }
         }

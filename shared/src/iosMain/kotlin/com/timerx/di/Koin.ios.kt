@@ -4,6 +4,7 @@ import com.timerx.analytics.TimerXAnalytics
 import com.timerx.analytics.TimerXAnalyticsImpl
 import com.timerx.background.BackgroundManager
 import com.timerx.capabilities.iosCapabilities
+import com.timerx.crashlytics.CrashlyticsManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
@@ -32,4 +33,5 @@ actual val platformModule = module {
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::BackgroundManager) { createdAtStart() }
     singleOf(::NotificationManager) { createdAtStart() }
+    singleOf(::CrashlyticsManager) { createdAtStart() }
 }

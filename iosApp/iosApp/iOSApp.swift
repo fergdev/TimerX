@@ -19,7 +19,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         StartKoinKt.startKoin()
         FirebaseApp.configure()
         
-        // TimerXCallbacks
+        // Kotlin
         TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
         CrashlyticsManager_iosKt.setCrashlyticsCallback(callback: CrashlyticsCallback())
         
