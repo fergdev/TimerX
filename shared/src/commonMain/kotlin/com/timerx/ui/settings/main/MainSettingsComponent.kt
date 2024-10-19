@@ -7,41 +7,41 @@ import pro.respawn.flowmvi.essenty.dsl.retainedStore
 typealias MainSettingsStore = Store<MainSettingsState, MainSettingsIntent, Nothing>
 
 interface MainSettingsComponent : MainSettingsStore {
-    fun onBack()
-    fun onAlert()
-    fun onTheme()
-    fun onBackgroundSettings()
-    fun onAboutLibs()
+    fun onBackClicked()
+    fun onAlertsClicked()
+    fun onThemeClicked()
+    fun onBackgroundClicked()
+    fun onAboutClicked()
 }
 
 class DefaultMainSettingsComponent(
     private val backClicked: () -> Unit,
     private val alertClicked: () -> Unit,
     private val themeClicked: () -> Unit,
-    private val backgroundSettings: () -> Unit,
-    private val aboutLibs: () -> Unit,
+    private val backgroundClicked: () -> Unit,
+    private val aboutClicked: () -> Unit,
     context: ComponentContext,
     factory: () -> MainSettingsContainer
 ) : ComponentContext by context,
     MainSettingsStore by context.retainedStore(factory = factory),
     MainSettingsComponent {
-    override fun onBack() {
+    override fun onBackClicked() {
         backClicked()
     }
 
-    override fun onAlert() {
+    override fun onAlertsClicked() {
         alertClicked()
     }
 
-    override fun onTheme() {
+    override fun onThemeClicked() {
         themeClicked()
     }
 
-    override fun onBackgroundSettings() {
-        backgroundSettings()
+    override fun onBackgroundClicked() {
+        backgroundClicked()
     }
 
-    override fun onAboutLibs() {
-        aboutLibs()
+    override fun onAboutClicked() {
+        aboutClicked()
     }
 }

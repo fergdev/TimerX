@@ -1,6 +1,6 @@
 package com.timerx.ui.settings
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
@@ -12,11 +12,12 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.timerx.ui.settings.aboutlibs.AboutLibsContent
+import com.timerx.ui.settings.about.AboutContent
 import com.timerx.ui.settings.alerts.AlertsSettingsContent
 import com.timerx.ui.settings.background.BackgroundSettingsContent
 import com.timerx.ui.settings.main.MainSettingsContent
 import com.timerx.ui.settings.theme.ThemeSettingsContent
+import com.timerx.ui.theme.Size
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
@@ -30,7 +31,7 @@ internal fun SettingsContent(settingsComponent: SettingsComponent) {
     )
     Children(
         stack = state.value,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.widthIn(Size.maxWidth),
         animation = animation
     ) {
         val child = it.instance
@@ -39,7 +40,7 @@ internal fun SettingsContent(settingsComponent: SettingsComponent) {
             is SettingsComponent.Child.Alerts -> AlertsSettingsContent(child.component)
             is SettingsComponent.Child.Theme -> ThemeSettingsContent(child.component)
             is SettingsComponent.Child.Background -> BackgroundSettingsContent(child.component)
-            is SettingsComponent.Child.AboutLibs -> AboutLibsContent(child.component)
+            is SettingsComponent.Child.About -> AboutContent(child.component)
         }
     }
 }

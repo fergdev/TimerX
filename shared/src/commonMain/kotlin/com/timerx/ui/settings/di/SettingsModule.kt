@@ -1,5 +1,6 @@
 package com.timerx.ui.settings.di
 
+import com.timerx.ui.settings.about.main.AboutMainContainer
 import com.timerx.ui.settings.alerts.AlertsSettingsContainer
 import com.timerx.ui.settings.background.BackgroundSettingsContainer
 import com.timerx.ui.settings.main.MainSettingsContainer
@@ -12,4 +13,5 @@ val settingsModule = module {
     factoryOf(::ThemeSettingsContainer)
     factoryOf(::BackgroundSettingsContainer)
     factoryOf(::MainSettingsContainer)
+    factoryOf(::AboutMainContainer)
 }

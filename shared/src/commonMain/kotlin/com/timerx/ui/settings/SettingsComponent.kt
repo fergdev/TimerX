@@ -10,13 +10,12 @@ import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
-import com.timerx.ui.settings.SettingsComponent.Child.AboutLibs
 import com.timerx.ui.settings.SettingsComponent.Child.Alerts
 import com.timerx.ui.settings.SettingsComponent.Child.Background
 import com.timerx.ui.settings.SettingsComponent.Child.Main
 import com.timerx.ui.settings.SettingsComponent.Child.Theme
-import com.timerx.ui.settings.aboutlibs.AboutLibsComponent
-import com.timerx.ui.settings.aboutlibs.DefaultAboutLibsComponent
+import com.timerx.ui.settings.about.AboutComponent
+import com.timerx.ui.settings.about.DefaultAboutComponent
 import com.timerx.ui.settings.alerts.AlertSettingsComponent
 import com.timerx.ui.settings.alerts.DefaultAlertSettingsComponent
 import com.timerx.ui.settings.background.BackgroundSettingsComponent
@@ -40,7 +39,7 @@ interface SettingsComponent : BackHandlerOwner {
         class Alerts(val component: AlertSettingsComponent) : Child()
         class Theme(val component: ThemeSettingsComponent) : Child()
         class Background(val component: BackgroundSettingsComponent) : Child()
-        class AboutLibs(val component: AboutLibsComponent) : Child()
+        class About(val component: AboutComponent) : Child()
     }
 }
 
@@ -70,8 +69,8 @@ internal class DefaultSettingsComponent(
                     backClicked = { onBackClicked() },
                     alertClicked = { nav.push(SettingsConfig.Alerts) },
                     themeClicked = { nav.push(SettingsConfig.Theme) },
-                    backgroundSettings = { nav.push(SettingsConfig.Background) },
-                    aboutLibs = { nav.push(SettingsConfig.AboutLibs) },
+                    backgroundClicked = { nav.push(SettingsConfig.Background) },
+                    aboutClicked = { nav.push(SettingsConfig.About) },
                     context = componentContext,
                     factory = koin::get
                 )
@@ -101,10 +100,10 @@ internal class DefaultSettingsComponent(
                 )
             )
 
-            is SettingsConfig.AboutLibs -> AboutLibs(
-                DefaultAboutLibsComponent(
-                    backClicked = { nav.pop() },
-                    context = componentContext
+            is SettingsConfig.About -> SettingsComponent.Child.About(
+                DefaultAboutComponent(
+                    back = { nav.pop() },
+                    componentContext = componentContext
                 )
             )
         }
@@ -137,5 +136,5 @@ private sealed interface SettingsConfig {
     data object Background : SettingsConfig
 
     @Serializable
-    data object AboutLibs : SettingsConfig
+    data object About : SettingsConfig
 }

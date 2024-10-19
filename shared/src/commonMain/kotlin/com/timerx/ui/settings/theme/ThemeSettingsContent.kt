@@ -62,6 +62,7 @@ import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateSeedColor
 import com.timerx.ui.settings.theme.ThemeSettingsState.LoadedState
 import com.timerx.ui.settings.theme.ThemeSettingsState.Loading
 import com.timerx.ui.theme.Animation
+import com.timerx.ui.theme.Size
 import com.timerx.ui.theme.isDarkTheme
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.api.IntentReceiver
@@ -92,7 +93,7 @@ internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent
             when (state) {
                 Loading -> DefaultLoading()
                 is LoadedState -> LoadedContent(
-                    modifier = Modifier.widthIn(max = 600.dp).align(Alignment.TopCenter),
+                    modifier = Modifier.widthIn(max = Size.maxWidth).align(Alignment.TopCenter),
                     state = state as LoadedState,
                     scaffoldPadding = padding
                 )
