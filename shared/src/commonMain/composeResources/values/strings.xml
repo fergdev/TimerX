@@ -13,6 +13,7 @@
     <string name="background">Background</string>
     <string name="background_subtitle">Set the background to make the app beautiful</string>
     <string name="beep">Beep</string>
+    <string name="change_log">Change log</string>
     <string name="close">Close</string>
     <string name="collect_analytics">Allow Tx to collect analytics</string>
     <string name="collect_analytics_message">Without analytics we cannot fix bugs and learn how to improve the app</string>

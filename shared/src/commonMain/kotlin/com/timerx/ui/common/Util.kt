@@ -1,10 +1,7 @@
 package com.timerx.ui.common
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
@@ -13,7 +10,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,6 +39,12 @@ fun String.doubleBranded(color: Color = MaterialTheme.colorScheme.primary) = bui
             append(drop(1).dropLast(1))
             withStyle(style = SpanStyle(color = color)) { append(last()) }
         }
+    }
+}
+
+fun AnnotatedString.Builder.appendNewline(repeat: Int = 1) {
+    repeat(repeat) {
+        append("\n")
     }
 }
 
@@ -102,19 +104,3 @@ fun Modifier.fadingEdge(
         }
     }
 }
-
-@Suppress("ComposableParametersOrdering")
-@Composable
-fun Modifier.noIndicationClickable(
-    enabled: Boolean = true,
-    role: Role? = null,
-    onClickLabel: String? = null,
-    onClick: () -> Unit,
-) = clickable(
-    interactionSource = remember { MutableInteractionSource() },
-    indication = null,
-    enabled = enabled,
-    onClickLabel = onClickLabel,
-    role = role,
-    onClick = onClick
-)

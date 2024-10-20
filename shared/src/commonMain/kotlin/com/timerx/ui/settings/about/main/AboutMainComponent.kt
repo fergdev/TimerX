@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.value.Value
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
+import com.timerx.ui.settings.about.changelog.ChangeLogComponent
 import kotlinx.serialization.Serializable
 import pro.respawn.flowmvi.api.Store
 import pro.respawn.flowmvi.essenty.dsl.retainedStore
@@ -18,11 +19,16 @@ interface AboutMainComponent : AboutStore {
 
     val aboutLibsSlot: Value<ChildSlot<*, AboutLibsComponent>>
 
-    fun back()
+    fun onBackClicked()
 
-    fun onLibs()
+    fun onLibsClicked()
 
-    fun dismissLibs()
+    fun onDismissLibs()
+
+    fun onChangeLog()
+
+    fun onDismissChangeLog()
+    val changeLogSlot: Value<ChildSlot<*, ChangeLogComponent>>
 }
 
 class DefaultAboutMainComponent(
@@ -37,22 +43,43 @@ class DefaultAboutMainComponent(
     override val aboutLibsSlot: Value<ChildSlot<*, AboutLibsComponent>> =
         childSlot(
             source = aboutLibsNavigation,
+            key = "aboutLibs",
             serializer = AboutLibsConfig.serializer(),
             handleBackButton = true,
         ) { _, _ -> AboutLibsComponent }
 
-    override fun back() {
+    private val changeLogNavigation = SlotNavigation<ChangeLogConfig>()
+    override val changeLogSlot: Value<ChildSlot<*, ChangeLogComponent>> =
+        childSlot(
+            source = changeLogNavigation,
+            key = "changeLog",
+            serializer = ChangeLogConfig.serializer(),
+            handleBackButton = true,
+        ) { _, _ -> ChangeLogComponent }
+
+    override fun onBackClicked() {
         onBack()
     }
 
-    override fun onLibs() {
+    override fun onLibsClicked() {
         aboutLibsNavigation.activate(AboutLibsConfig)
     }
 
-    override fun dismissLibs() {
+    override fun onDismissLibs() {
         aboutLibsNavigation.dismiss()
+    }
+
+    override fun onChangeLog() {
+        changeLogNavigation.activate(ChangeLogConfig)
+    }
+
+    override fun onDismissChangeLog() {
+        changeLogNavigation.dismiss()
     }
 
     @Serializable
     private object AboutLibsConfig
+
+    @Serializable
+    private object ChangeLogConfig
 }

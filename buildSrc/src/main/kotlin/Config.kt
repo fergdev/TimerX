@@ -9,7 +9,7 @@ object Config {
     //    val jvmTarget = JvmTarget.JVM_11
 //    val idePluginJvmTarget = JvmTarget.JVM_17
 
-    const val name = "TimerX"
+    const val appName = "TimerX"
     const val namespace = "com.timerx"
     const val versionCode = 1
     const val majorRelease = 1
@@ -17,8 +17,11 @@ object Config {
     const val patch = 0
     const val majorVersionName = "$majorRelease.$minorRelease.$patch"
     const val versionName = "$majorRelease.$minorRelease.$patch"
-    const val appDescription = "The best timer in the world"
-    const val vendorName = "TimerX"
+
+    @Suppress("MaxLineLength")
+    const val appDescription =
+        "TimerX is a beautiful, fully customizable HIT timer designed to help you crush your fitness goals by keeping you focused and in control during every workout."
+    const val vendorName = "Ferg.Dev"
     const val licenseFile = "LICENSE.txt"
     val javaVersion = JavaVersion.VERSION_17
     const val compileSdk = 35

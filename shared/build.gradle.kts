@@ -265,8 +265,8 @@ compose {
                 val iconDir = rootProject.rootDir.resolve("docs").resolve("images")
 
                 macOS {
-                    packageName = Config.name
-                    dockName = Config.name
+                    packageName = Config.appName
+                    dockName = Config.appName
                     setDockNameSameAsPackageName = false
                     bundleID = Config.namespace
                     appCategory = "public.app-category.developer-tools"
