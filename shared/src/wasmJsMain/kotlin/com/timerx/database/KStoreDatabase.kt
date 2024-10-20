@@ -1,6 +1,7 @@
 package com.timerx.database
 
 import com.timerx.domain.Timer
+import com.timerx.util.assertNotNull
 import com.timerx.util.mapIfNull
 import io.github.xxfast.kstore.KStore
 import io.github.xxfast.kstore.extensions.plus
@@ -60,13 +61,19 @@ class KStoreDatabase : ITimerRepository {
             it?.filter { timer -> timer.id != timerId }
         }
 
-    override suspend fun duplicate(timerId: Long) {
+    override suspend fun duplicate(timerId: Long): Long {
+        val id = nextTimerId
         store.update { timerList ->
             val toDuplicate = timerList?.first { timer ->
                 timer.id == timerId
             }
-            toDuplicate?.let { timerList.plus(it.copy(id = nextTimerId)) }
+            assertNotNull(toDuplicate) { "Timer to duplicate not found $timerId" }
+            timerList.plus(toDuplicate.copy(
+                id = id,
+                name = toDuplicate.name + " (copy)",
+            ))
         }
+        return id
     }
 
     override suspend fun getTimer(timerId: Long): Flow<Timer?> =

@@ -16,7 +16,7 @@ interface ITimerRepository {
 
     suspend fun updateTimer(timer: Timer)
     suspend fun deleteTimer(timerId: Long)
-    suspend fun duplicate(timerId: Long)
+    suspend fun duplicate(timerId: Long) : Long
     suspend fun getTimer(timerId: Long): Flow<Timer?>
     suspend fun swapTimers(
         fromId: Long,

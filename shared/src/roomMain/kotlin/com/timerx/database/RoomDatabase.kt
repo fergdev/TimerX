@@ -23,6 +23,7 @@ import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
 import com.timerx.sound.Beep
+import com.timerx.util.assertNotNull
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -98,8 +99,8 @@ interface RoomTimerDao {
 
     @Query(
         "UPDATE RoomTimer " +
-            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-            "WHERE id = :timerId"
+                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+                "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,
@@ -376,23 +377,23 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
             Pair(timerSet.toRoomSet(), timerSet.intervals.map { it.toRoomInterval() })
         }
 
-    override suspend fun duplicate(timerId: Long) {
-        getTimer(timerId).first()?.let {
-            val toInsert = it.copy(
-                id = 0,
-                name = it.name + " (copy)",
-                sets = it.sets.map { timerSet ->
-                    timerSet.copy(
-                        id = 0,
-                        intervals = timerSet.intervals.map { timerInterval ->
-                            timerInterval.copy(id = 0)
-                        }.toPersistentList()
-                    )
-                }.toPersistentList(),
-                sortOrder = NO_SORT_ORDER
-            )
-            insertTimer(toInsert)
-        }
+    override suspend fun duplicate(timerId: Long): Long {
+        val toCopy = getTimer(timerId).first()
+        assertNotNull(toCopy) { "Attempting to copy null timer $timerId" }
+        val toInsert = toCopy.copy(
+            id = 0,
+            name = toCopy.name + " (copy)",
+            sets = toCopy.sets.map { timerSet ->
+                timerSet.copy(
+                    id = 0,
+                    intervals = timerSet.intervals.map { timerInterval ->
+                        timerInterval.copy(id = 0)
+                    }.toPersistentList()
+                )
+            }.toPersistentList(),
+            sortOrder = NO_SORT_ORDER
+        )
+        return insertTimer(toInsert)
     }
 
     override suspend fun getTimer(timerId: Long) =

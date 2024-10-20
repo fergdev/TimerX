@@ -100,10 +100,10 @@ import timerx.shared.generated.resources.sort_order
 @Composable
 internal fun MainContent(mainComponent: MainComponent) {
     with(mainComponent) {
-        var scrollTo: Long? = null
+        var timerUpdatedId: Long? = null
         val state by subscribe(DefaultLifecycle) {
             when (it) {
-                is MainAction.TimerUpdated -> scrollTo = it.timerId
+                is MainAction.TimerUpdated -> timerUpdatedId = it.timerId
             }
         }
         contrastSystemBarColor(MaterialTheme.colorScheme.surface)
@@ -155,7 +155,7 @@ internal fun MainContent(mainComponent: MainComponent) {
                             mainComponent = mainComponent,
                             appBarScrollBehavior = appBarScrollBehavior,
                             padding = padding,
-                            scrollTo = scrollTo,
+                            timerUpdatedId = timerUpdatedId,
                         )
                         if (this.showNotificationsPermissionRequest) {
                             NotificationPermissions()
@@ -174,15 +174,15 @@ private fun IntentReceiver<MainIntent>.Content(
     mainComponent: MainComponent,
     appBarScrollBehavior: TopAppBarScrollBehavior,
     padding: PaddingValues,
-    scrollTo: Long?,
+    timerUpdatedId: Long?,
     modifier: Modifier = Modifier,
 ) {
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     val displayCutoutPadding = WindowInsets.displayCutout.asPaddingValues()
     val lazyListState = rememberLazyListState()
 
-    LaunchedEffect(scrollTo) {
-        val index = state.timers.indexOfFirst { it.id == scrollTo }
+    LaunchedEffect(timerUpdatedId) {
+        val index = state.timers.indexOfFirst { it.id == timerUpdatedId }
         if (index >= 0) {
             lazyListState.animateScrollToItem(index = index)
         }
@@ -228,7 +228,7 @@ private fun IntentReceiver<MainIntent>.Content(
                             onNavigateEditScreen = {
                                 mainComponent.onCreateClicked(timer.id)
                             },
-                            highlight = timer.id == scrollTo
+                            highlight = timer.id == timerUpdatedId
                         )
                     }
 

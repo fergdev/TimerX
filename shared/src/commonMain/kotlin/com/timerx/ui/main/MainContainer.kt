@@ -1,5 +1,6 @@
 package com.timerx.ui.main
 
+import co.touchlab.kermit.Logger
 import com.timerx.database.ITimerRepository
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
@@ -60,8 +61,8 @@ internal class MainContainer(
                             sortTimersBy = sortTimersBy,
                             showNotificationsPermissionRequest =
                             settings.ignoreNotificationsPermissions.not() &&
-                                permissionsHandler.getPermissionState(Permission.Notification)
-                                != PermissionState.Granted
+                                    permissionsHandler.getPermissionState(Permission.Notification)
+                                    != PermissionState.Granted
                         )
                     }
                 }.collect { updateState { it } }
@@ -77,8 +78,11 @@ internal class MainContainer(
                 is MainIntent.DeleteTimer ->
                     timerRepository.deleteTimer(it.mainTimer.id)
 
-                is MainIntent.DuplicateTimer ->
-                    timerRepository.duplicate(it.mainTimer.id)
+                is MainIntent.DuplicateTimer -> {
+                    val newTimerId = timerRepository.duplicate(it.mainTimer.id)
+                    Logger.d { "New timer id: $newTimerId" }
+                    action(MainAction.TimerUpdated(newTimerId))
+                }
 
                 MainIntent.HidePermissionsDialog -> {
                     updateState<MainState.Content, _> {
