@@ -119,11 +119,6 @@ private fun rememberChangeLog(
     }
 
 @Composable
-fun BulletPoint() {
-    Text(text = "\u2022")
-}
-
-@Composable
 fun makeBulletedList(items: List<String>): AnnotatedString {
     val bulletString = "\u2022\t\t"
     val textStyle = LocalTextStyle.current
