@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.common.RScaffoldDefaults.ContentFadeDistance
 import androidx.compose.material3.FabPosition.Companion as Material3FabPosition
@@ -68,6 +69,46 @@ fun TScaffold(
             actions = actions,
             onNavigationIconClick = onBack,
             title = title?.branded(),
+            scrollBehavior = topBarScrollBehavior,
+        )
+    },
+    nestedScrollConnection = topBarScrollBehavior?.nestedScrollConnection,
+    snackbarHostState = snackbarHostState,
+    bottomBar = bottomBar,
+    containerColor = containerColor,
+    contentColor = contentColor,
+    fab = fab,
+    fadeContent = fadeContent,
+    contentWindowInsets = contentWindowInsets,
+    fabPosition = fabPosition,
+    content = content,
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TScaffold(
+    modifier: Modifier = Modifier,
+    title: AnnotatedString? = null,
+    onBack: (() -> Unit)? = null,
+    topBarScrollBehavior: TopAppBarScrollBehavior? = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+    snackbarHostState: SnackbarHostState? = null,
+    containerColor: Color = RScaffoldDefaults.containerColor,
+    contentColor: Color = RScaffoldDefaults.contentColor,
+    fabPosition: FabPosition = RScaffoldDefaults.FabPosition,
+    contentWindowInsets: WindowInsets? = RScaffoldDefaults.partialWindowInsets,
+    fadeContent: Boolean = true,
+    actions: @Composable RowScope.() -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
+    fab: @Composable () -> Unit = {},
+    content: @Composable BoxScope.(PaddingValues) -> Unit,
+) = TScaffold(
+    modifier = modifier,
+    topBar = bar@{
+        if (title == null && onBack == null) return@bar
+        TTopBar(
+            actions = actions,
+            onNavigationIconClick = onBack,
+            title = title,
             scrollBehavior = topBarScrollBehavior,
         )
     },

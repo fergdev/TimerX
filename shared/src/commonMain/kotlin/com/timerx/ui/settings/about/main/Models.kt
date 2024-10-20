@@ -5,7 +5,7 @@ import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
 data class AboutState(
-    val versionName: String = "TimerX v${BuildFlags.versionName}",
+    val versionName: String = BuildFlags.versionName,
     val privacyPolicyUri: String = BuildFlags.privacyPolicyUrl,
     val hasAnalytics: Boolean = true,
     val collectAnalytics: Boolean = true

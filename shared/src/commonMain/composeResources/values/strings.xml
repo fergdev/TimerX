@@ -1,8 +1,8 @@
 <resources>
-    <string name="add">Add</string>
-    <string name="about_tx">About Tx</string>
     <string name="about_libs">About libraries</string>
     <string name="about_libs_subtitle">List of Libraries and Licenses used by Tx</string>
+    <string name="about_tx">About Tx</string>
+    <string name="add">Add</string>
     <string name="alerts">Alerts</string>
     <string name="alerts_subtitle">Control how Tx interacts with you</string>
     <string name="alpha">Alpha</string>
@@ -14,12 +14,13 @@
     <string name="background_subtitle">Set the background to make the app beautiful</string>
     <string name="beep">Beep</string>
     <string name="close">Close</string>
-    <string name="completed_value">Completed: %1$s</string>
-    <string name="contrast_level">Contrast level</string>
     <string name="collect_analytics">Allow Tx to collect analytics</string>
     <string name="collect_analytics_message">Without analytics we cannot fix bugs and learn how to improve the app</string>
     <string name="colors">Colors</string>
     <string name="colors_subtitle">Define your color scheme</string>
+    <string name="completed_value">Completed: %1$s</string>
+    <string name="contact_support">Contact support</string>
+    <string name="contrast_level">Contrast level</string>
     <string name="copy">Copy</string>
     <string name="copy_parenthesis">(copy)</string>
     <string name="count_down">Count down</string>
@@ -29,6 +30,7 @@
     <string name="create">Create</string>
     <string name="create_timer">Create timer</string>
     <string name="created_value">Created %1$s</string>
+    <string name="dark">Dark</string>
     <string name="dark_mode">Dark mode</string>
     <string name="delete">Delete</string>
     <string name="down">Down</string>
@@ -42,14 +44,13 @@
     <string name="finish_beep">Finish beep</string>
     <string name="finish_color">Finish color</string>
     <string name="finished">Finished</string>
-    <string name="dark">Dark</string>
-    <string name="light">Light</string>
     <string name="high_fidelity">High fidelity</string>
     <string name="ignore">Ignore</string>
     <string name="interval">Interval</string>
     <string name="interval_name">Interval name</string>
     <string name="keep_screen_on">Keep screen on</string>
     <string name="keep_screen_on_subtitle">Allow Tx to keep the screen alive while a timer is running</string>
+    <string name="light">Light</string>
     <string name="manual_next">Manual next</string>
     <string name="minus">Minus</string>
     <string name="next">Next</string>

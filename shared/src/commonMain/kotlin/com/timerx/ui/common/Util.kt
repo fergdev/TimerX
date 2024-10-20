@@ -20,7 +20,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import kotlin.jvm.JvmName
 
 @Composable
 fun String.branded(color: Color = MaterialTheme.colorScheme.primary) = buildAnnotatedString {
@@ -46,11 +45,6 @@ fun String.doubleBranded(color: Color = MaterialTheme.colorScheme.primary) = bui
         }
     }
 }
-
-@Deprecated("Use the function version as it allows for smart-casting", ReplaceWith("this.isValid()"))
-@get:JvmName("getIsValid")
-val String?.isValid: Boolean
-    get() = !isNullOrBlank() && !equals("null", true)
 
 fun String?.isValid(): Boolean {
     kotlin.contracts.contract {

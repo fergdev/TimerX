@@ -29,11 +29,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.TMenuItem
 import com.timerx.ui.common.TScaffold
+import com.timerx.ui.common.branded
+import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsContent
 import com.timerx.ui.settings.about.main.AboutIntent.UpdateCollectAnalytics
@@ -44,8 +47,10 @@ import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.about_libs
 import timerx.shared.generated.resources.about_libs_subtitle
+import timerx.shared.generated.resources.app_name
 import timerx.shared.generated.resources.collect_analytics
 import timerx.shared.generated.resources.collect_analytics_message
+import timerx.shared.generated.resources.contact_support
 import timerx.shared.generated.resources.privacy_policy
 import timerx.shared.generated.resources.privacy_policy_message
 
@@ -55,7 +60,12 @@ internal fun AboutMainContent(component: AboutMainComponent) {
     with(component) {
         val state by subscribe(DefaultLifecycle)
         TScaffold(
-            title = state.versionName,
+            title = buildAnnotatedString {
+                append(stringResource(Res.string.app_name).doubleBranded())
+                append(" ")
+                append("v".branded())
+                append(state.versionName)
+            },
             onBack = component::back
         ) { padding ->
 
@@ -106,7 +116,7 @@ internal fun AboutMainContent(component: AboutMainComponent) {
                 )
 
                 TMenuItem(
-                    title = "Contact support",
+                    title = stringResource(Res.string.contact_support),
                     color = rainbow[2],
                     icon = Icons.Filled.Email,
                     onClick = { intent(AboutIntent.ContactSupport) }
