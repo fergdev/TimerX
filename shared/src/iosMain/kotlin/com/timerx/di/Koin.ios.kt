@@ -4,6 +4,8 @@ import com.timerx.analytics.TimerXAnalytics
 import com.timerx.analytics.TimerXAnalyticsImpl
 import com.timerx.background.BackgroundManager
 import com.timerx.capabilities.iosCapabilities
+import com.timerx.contact.ContactProvider
+import com.timerx.contact.ContactProviderIos
 import com.timerx.crashlytics.CrashlyticsManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
@@ -34,4 +36,7 @@ actual val platformModule = module {
     singleOf(::BackgroundManager) { createdAtStart() }
     singleOf(::NotificationManager) { createdAtStart() }
     singleOf(::CrashlyticsManager) { createdAtStart() }
+    singleOf(::ContactProviderIos) {
+        bind<ContactProvider>()
+    }
 }

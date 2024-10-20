@@ -1,5 +1,6 @@
 package com.timerx.ui.settings.about.main
 
+import com.timerx.contact.ContactProvider
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.TimerXSettings
 import com.timerx.util.assert
@@ -10,7 +11,8 @@ import pro.respawn.flowmvi.plugins.whileSubscribed
 
 class AboutMainContainer(
     private val timerXSettings: TimerXSettings,
-    private val platformCapabilities: PlatformCapabilities
+    private val platformCapabilities: PlatformCapabilities,
+    private val contactProvider: ContactProvider
 ) :
     Container<AboutState, AboutIntent, Nothing> {
     override val store = store(AboutState(hasAnalytics = platformCapabilities.hasAnalytics)) {
@@ -30,6 +32,8 @@ class AboutMainContainer(
                     }
                     timerXSettings.setCollectAnalytics(it.collectAnalytics)
                 }
+
+                AboutIntent.ContactSupport -> contactProvider.contact()
             }
         }
     }

@@ -1,6 +1,8 @@
 package com.timerx.di
 
 import com.timerx.capabilities.desktopCapabilities
+import com.timerx.contact.ContactProvider
+import com.timerx.contact.ContactProviderDesktop
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
@@ -26,4 +28,5 @@ actual val platformModule = module {
     }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::NotificationManager) { createdAtStart() }
+    singleOf(::ContactProviderDesktop) { bind<ContactProvider>() }
 }

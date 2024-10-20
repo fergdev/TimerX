@@ -2,10 +2,12 @@ package com.timerx.di
 
 import com.timerx.analytics.TimerXAnalytics
 import com.timerx.analytics.TimerXAnalyticsImpl
+import com.timerx.contact.ContactProvider
+import com.timerx.contact.ContactProviderAndroid
+import com.timerx.crashlytics.CrashlyticsManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
-import com.timerx.crashlytics.CrashlyticsManager
 import com.timerx.platform.androidCapabilities
 import com.timerx.sound.AndroidSoundManager
 import com.timerx.sound.SoundManager
@@ -31,4 +33,7 @@ actual val platformModule = module {
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::NotificationManager) { createdAtStart() }
     singleOf(::CrashlyticsManager) { createdAtStart() }
+    singleOf(::ContactProviderAndroid) {
+        bind<ContactProvider>()
+    }
 }

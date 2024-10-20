@@ -13,4 +13,5 @@ data class AboutState(
 
 sealed interface AboutIntent : MVIIntent {
     data class UpdateCollectAnalytics(val collectAnalytics: Boolean) : AboutIntent
+    data object ContactSupport : AboutIntent
 }

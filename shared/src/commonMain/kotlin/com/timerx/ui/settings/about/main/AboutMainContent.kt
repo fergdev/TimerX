@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -89,7 +91,7 @@ internal fun AboutMainContent(component: AboutMainComponent) {
 
                 TMenuItem(
                     title = stringResource(Res.string.about_libs),
-                    color = rainbow[1],
+                    color = rainbow[0],
                     icon = Icons.Filled.Info,
                     subtitle = stringResource(Res.string.about_libs_subtitle),
                     onClick = { component.onLibs() }
@@ -103,11 +105,18 @@ internal fun AboutMainContent(component: AboutMainComponent) {
                     onClick = { uriHandler.openUri(state.privacyPolicyUri) }
                 )
 
+                TMenuItem(
+                    title = "Contact support",
+                    color = rainbow[2],
+                    icon = Icons.Filled.Email,
+                    onClick = { intent(AboutIntent.ContactSupport) }
+                )
+
                 if (state.hasAnalytics) {
                     TMenuItem(
                         title = stringResource(Res.string.collect_analytics),
-                        color = rainbow[2],
-                        icon = Icons.Filled.Lock,
+                        color = rainbow[3],
+                        icon = Icons.Filled.Share,
                         subtitle = stringResource(Res.string.collect_analytics_message),
                         onClick = {
                             intent(UpdateCollectAnalytics(state.collectAnalytics.not()))

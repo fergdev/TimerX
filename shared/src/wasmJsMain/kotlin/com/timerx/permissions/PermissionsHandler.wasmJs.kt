@@ -6,7 +6,7 @@ import org.w3c.notifications.GRANTED
 import org.w3c.notifications.Notification
 import org.w3c.notifications.NotificationPermission
 
-object PermissionManager : IPermissionsHandler {
+class PermissionManager : IPermissionsHandler {
     override suspend fun requestPermission(permission: Permission) {
         Notification.requestPermission {
             Logger.d { "On permission result $it" }

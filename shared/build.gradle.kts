@@ -24,17 +24,18 @@ plugins {
 
 @Language("Kotlin")
 // language=kotlin
-val BuildConfig = """
+val buildConfig = """
     package ${Config.namespace}
 
     internal object BuildFlags {
         const val versionName = "${Config.versionName}"
         const val privacyPolicyUrl = "${Config.privacyPolicyUrl}"
+        const val supportEmail = "${Config.supportEmail}"
     }
 """.trimIndent()
 
 val generateBuildConfig by tasks.registering(Sync::class) {
-    from(resources.text.fromString(BuildConfig)) {
+    from(resources.text.fromString(buildConfig)) {
         rename { "BuildFlags.kt" }
         into(Config.namespace.replace(".", "/"))
     }
