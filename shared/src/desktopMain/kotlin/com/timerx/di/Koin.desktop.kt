@@ -1,6 +1,5 @@
 package com.timerx.di
 
-import com.timerx.capabilities.desktopCapabilities
 import com.timerx.contact.ContactProvider
 import com.timerx.contact.ContactProviderDesktop
 import com.timerx.notification.NotificationManager
@@ -18,7 +17,6 @@ import org.koin.dsl.module
 actual val platformModule = module {
     includes(nonMobileModule)
     includes(mobileModule)
-    single { desktopCapabilities }
     singleOf(::DesktopSoundManager) {
         createdAtStart()
         bind<SoundManager>()

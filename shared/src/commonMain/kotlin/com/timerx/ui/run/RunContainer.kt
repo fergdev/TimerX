@@ -2,7 +2,7 @@ package com.timerx.ui.run
 
 import com.timerx.analytics.TimerXAnalytics
 import com.timerx.database.ITimerRepository
-import com.timerx.platform.PlatformCapabilities
+import com.timerx.platform.platformCapabilities
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
@@ -24,7 +24,6 @@ internal class RunContainer(
     private val timerId: Long,
     private val timerXSettings: TimerXSettings,
     private val timerManager: TimerManager,
-    private val platformCapabilities: PlatformCapabilities,
     timerRepository: ITimerRepository,
     timerXAnalytics: TimerXAnalytics,
 ) : Container<RunScreenState, RunScreenIntent, Nothing> {
@@ -45,7 +44,7 @@ internal class RunContainer(
         }
 
         install(
-            observeTimerPlugin(timerManager, timerXSettings, platformCapabilities),
+            observeTimerPlugin(timerManager, timerXSettings),
             reducePlugin(timerManager, timerXSettings)
         )
     }
@@ -54,7 +53,6 @@ internal class RunContainer(
 internal fun observeTimerPlugin(
     timerManager: TimerManager,
     timerXSettings: TimerXSettings,
-    platformCapabilities: PlatformCapabilities
 ) = plugin<RunScreenState, RunScreenIntent, Nothing> {
     onSubscribe {
         launch {

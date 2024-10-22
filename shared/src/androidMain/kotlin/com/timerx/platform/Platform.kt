@@ -2,7 +2,7 @@ package com.timerx.platform
 
 import android.os.Build
 
-internal val androidCapabilities =
+actual val platformCapabilities =
     PlatformCapabilities(
         canSystemDynamicTheme = supportsDynamicColors,
         canVibrate = true,

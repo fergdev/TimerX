@@ -8,7 +8,6 @@ import com.timerx.crashlytics.CrashlyticsManager
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
-import com.timerx.platform.androidCapabilities
 import com.timerx.sound.AndroidSoundManager
 import com.timerx.sound.SoundManager
 import com.timerx.vibration.AndroidVibrator
@@ -20,7 +19,6 @@ import org.koin.dsl.module
 
 actual val platformModule = module {
     includes(mobileModule)
-    single { androidCapabilities }
     singleOf(::AndroidSoundManager) {
         createdAtStart()
         bind<SoundManager>()

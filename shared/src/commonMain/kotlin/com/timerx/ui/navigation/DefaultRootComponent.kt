@@ -14,7 +14,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
-import com.timerx.platform.PlatformCapabilities
+import com.timerx.platform.platformCapabilities
 import com.timerx.ui.create.DefaultCreateComponent
 import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
@@ -42,7 +42,6 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
             source = nav,
             serializer = Config.serializer(),
             initialStack = {
-                val platformCapabilities = koin.get<PlatformCapabilities>()
                 if (platformCapabilities.hasOwnSplashScreen) {
                     listOf(Config.Main)
                 } else {

@@ -6,7 +6,7 @@ import com.timerx.domain.FinalCountDown
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
-import com.timerx.platform.PlatformCapabilities
+import com.timerx.platform.platformCapabilities
 import com.timerx.sound.Beep
 import com.timerx.sound.SoundManager
 import com.timerx.ui.create.CreateAction.TimerUpdated
@@ -53,7 +53,6 @@ class CreateContainer(
     private val timerDatabase: ITimerRepository,
     private val soundManager: SoundManager,
     private val vibrationManger: VibrationManager,
-    private val platformCapabilities: PlatformCapabilities,
 ) : Container<CreateScreenState, CreateScreenIntent, CreateAction> {
     private val defaultGenerator = DefaultGenerator()
     override val store = store(
