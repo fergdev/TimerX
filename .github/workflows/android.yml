@@ -33,7 +33,7 @@ jobs:
 
     - name: Set secrets
       run: |
-        echo "storeFile=timerx.jks" >> keystore.properties
+        echo "storeFile=${{ steps.decode_keystore.outputs.filePath }}" >> keystore.properties
         echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> keystore.properties
         echo "keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }}" >> keystore.properties
         echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
