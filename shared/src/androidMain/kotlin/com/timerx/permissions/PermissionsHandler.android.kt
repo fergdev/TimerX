@@ -1,7 +1,6 @@
 package com.timerx.permissions
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -26,8 +25,7 @@ private data class PermissionCallback(
 )
 
 class PermissionsHandler : IPermissionsHandler {
-    private val context: Context = KoinPlatform.getKoin().get()
-    private val activity: ComponentActivity = KoinPlatform.getKoin().get()
+    val activity: ComponentActivity by lazy { KoinPlatform.getKoin().get() }
     private val mutex: Mutex = Mutex()
     private val key = UUID.randomUUID().toString()
     private var permissionCallback: PermissionCallback? = null
@@ -36,7 +34,7 @@ class PermissionsHandler : IPermissionsHandler {
         if (permission == Permission.Notification &&
             Build.VERSION.SDK_INT in VERSIONS_WITHOUT_NOTIFICATION_PERMISSION
         ) {
-            val isNotificationsEnabled = NotificationManagerCompat.from(context)
+            val isNotificationsEnabled = NotificationManagerCompat.from(activity)
                 .areNotificationsEnabled()
             return if (isNotificationsEnabled) {
                 PermissionState.Granted
@@ -47,7 +45,7 @@ class PermissionsHandler : IPermissionsHandler {
 
         val permissions: List<String> = permission.toPlatformPermission()
         val status: List<Int> = permissions.map {
-            ContextCompat.checkSelfPermission(context, it)
+            ContextCompat.checkSelfPermission(activity, it)
         }
         val isAllGranted: Boolean = status.all { it == PackageManager.PERMISSION_GRANTED }
         if (isAllGranted) return PermissionState.Granted
@@ -67,10 +65,10 @@ class PermissionsHandler : IPermissionsHandler {
     override fun openAppSettings() {
         val intent = Intent().apply {
             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            data = Uri.fromParts("package", context.packageName, null)
+            data = Uri.fromParts("package", activity.packageName, null)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        context.startActivity(intent)
+        activity.startActivity(intent)
     }
 
     override suspend fun requestPermission(permission: Permission) {

@@ -54,8 +54,8 @@ import timerx.shared.generated.resources.volume
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun AlertsSettingsContent(rootComponent: AlertSettingsComponent) =
-    with(rootComponent) {
+internal fun AlertsSettingsContent(alertSettingsComponent: AlertSettingsComponent) =
+    with(alertSettingsComponent) {
         TScaffold(
             title = stringResource(Res.string.alerts),
             onBack = ::onBackClicked

@@ -5,5 +5,6 @@ import com.timerx.platform.PlatformCapabilities
 val desktopCapabilities = PlatformCapabilities(
     canSystemDynamicTheme = false,
     canVibrate = false,
-    hasAnalytics = false
+    hasAnalytics = false,
+    hasOwnSplashScreen = false,
 )

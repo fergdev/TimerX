@@ -14,6 +14,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.ui.create.DefaultCreateComponent
 import com.timerx.ui.main.DefaultMainComponent
 import com.timerx.ui.run.DefaultRunComponent
@@ -34,16 +35,24 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
 
     private val nav = StackNavigation<Config>()
 
+    private val updatedTimerFlow = MutableSharedFlow<Long>(extraBufferCapacity = Int.MAX_VALUE)
+   
     private val _stack =
         childStack(
             source = nav,
             serializer = Config.serializer(),
-            initialStack = { listOf(Config.Splash) },
+            initialStack = {
+                val platformCapabilities = koin.get<PlatformCapabilities>()
+                if (platformCapabilities.hasOwnSplashScreen) {
+                    listOf(Config.Main)
+                } else {
+                    listOf(Config.Splash)
+                }
+            },
             childFactory = ::child,
         )
 
     override val stack: Value<ChildStack<*, RootComponent.Child>> = _stack
-    private val updatedTimerFlow = MutableSharedFlow<Long>(extraBufferCapacity = Int.MAX_VALUE)
 
     init {
         webHistoryController?.attach(

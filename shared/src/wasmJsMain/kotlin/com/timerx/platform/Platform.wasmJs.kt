@@ -28,5 +28,6 @@ internal val wasmCapabilities =
     PlatformCapabilities(
         canSystemDynamicTheme = false,
         canVibrate = detectHostOs() in supportsVibration,
-        hasAnalytics = false
+        hasAnalytics = false,
+        hasOwnSplashScreen = false,
     )

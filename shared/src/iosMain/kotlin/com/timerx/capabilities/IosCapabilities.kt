@@ -5,5 +5,6 @@ import com.timerx.platform.PlatformCapabilities
 val iosCapabilities = PlatformCapabilities(
     canVibrate = true,
     canSystemDynamicTheme = false,
-    hasAnalytics = true
+    hasAnalytics = true,
+    hasOwnSplashScreen = false,
 )
