@@ -11,10 +11,10 @@ object Config {
 
     const val appName = "TimerX"
     const val namespace = "com.timerx"
-    const val versionCode = 1
+    const val versionCode = 2
     const val majorRelease = 1
     const val minorRelease = 0
-    const val patch = 0
+    const val patch = 1
     const val majorVersionName = "$majorRelease.$minorRelease.$patch"
     const val versionName = "$majorRelease.$minorRelease.$patch"
 
