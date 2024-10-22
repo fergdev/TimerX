@@ -262,7 +262,7 @@ compose {
                 description = Config.appDescription
                 vendor = Config.vendorName
                 licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
-                val iconDir = rootProject.rootDir.resolve("docs").resolve("images")
+                val iconDir = rootProject.rootDir.resolve("playstore")
 
                 macOS {
                     packageName = Config.appName
@@ -278,12 +278,12 @@ compose {
                     shortcut = true
                     perUserInstall = true
                     upgradeUuid = Config.appId
-//                    iconFile = iconDir.resolve("favicon.ico")
+                    iconFile = iconDir.resolve("favicon.ico")
                 }
                 linux {
                     debMaintainer = Config.supportEmail
                     appCategory = "Development"
-//                    iconFile = iconDir.resolve("icon_512.png")
+                    iconFile = iconDir.resolve("icon_512.png")
                 }
             }
         }
