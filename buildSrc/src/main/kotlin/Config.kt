@@ -26,7 +26,7 @@ object Config {
     val javaVersion = JavaVersion.VERSION_17
     const val compileSdk = 35
     const val targetSdk = compileSdk
-    const val minSdk = 30
+    const val minSdk = 29
     const val appId = "todo-some-uuid"
     const val supportEmail = "ferg.dev@outlook.com"
     const val privacyPolicyUrl =
