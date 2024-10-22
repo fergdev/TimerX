@@ -61,7 +61,7 @@ internal fun ChangeLogContent() {
                 with(it) {
                     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = CenterVertically) {
                         Text(
-                            text = "v${version}".branded(),
+                            text = "v$version".branded(),
                             style = MaterialTheme.typography.displaySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))

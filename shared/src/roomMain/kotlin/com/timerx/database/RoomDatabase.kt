@@ -99,8 +99,8 @@ interface RoomTimerDao {
 
     @Query(
         "UPDATE RoomTimer " +
-                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-                "WHERE id = :timerId"
+            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+            "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,

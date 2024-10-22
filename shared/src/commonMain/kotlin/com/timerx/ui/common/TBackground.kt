@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import com.timerx.settings.BackgroundSettings
-import com.timerx.settings.TimerXSettings
 import com.timerx.settings.Pattern
+import com.timerx.settings.TimerXSettings
 import com.timerx.ui.theme.Animation
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource

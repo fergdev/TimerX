@@ -11,9 +11,9 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.DynamicMaterialThemeState
 import com.materialkolor.rememberDynamicMaterialThemeState
-import com.timerx.settings.TimerXSettings
 import com.timerx.settings.SettingsDarkTheme
 import com.timerx.settings.ThemeSettings
+import com.timerx.settings.TimerXSettings
 import org.koin.compose.koinInject
 
 private val shapes = Shapes(

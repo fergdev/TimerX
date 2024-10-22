@@ -70,4 +70,3 @@ internal class DefaultAboutComponent(
         data object Main : AboutConfig
     }
 }
-

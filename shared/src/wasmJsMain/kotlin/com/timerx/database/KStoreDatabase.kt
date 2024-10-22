@@ -68,10 +68,12 @@ class KStoreDatabase : ITimerRepository {
                 timer.id == timerId
             }
             assertNotNull(toDuplicate) { "Timer to duplicate not found $timerId" }
-            timerList.plus(toDuplicate.copy(
-                id = id,
-                name = toDuplicate.name + " (copy)",
-            ))
+            timerList.plus(
+                toDuplicate.copy(
+                    id = id,
+                    name = toDuplicate.name + " (copy)",
+                )
+            )
         }
         return id
     }

@@ -61,8 +61,8 @@ internal class MainContainer(
                             sortTimersBy = sortTimersBy,
                             showNotificationsPermissionRequest =
                             settings.ignoreNotificationsPermissions.not() &&
-                                    permissionsHandler.getPermissionState(Permission.Notification)
-                                    != PermissionState.Granted
+                                permissionsHandler.getPermissionState(Permission.Notification)
+                                != PermissionState.Granted
                         )
                     }
                 }.collect { updateState { it } }

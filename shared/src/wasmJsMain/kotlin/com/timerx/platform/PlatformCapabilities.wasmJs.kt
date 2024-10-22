@@ -31,4 +31,3 @@ actual val platformCapabilities: PlatformCapabilities = PlatformCapabilities(
     hasAnalytics = false,
     hasOwnSplashScreen = false,
 )
-

@@ -17,8 +17,8 @@ class ContactProviderDesktop : ContactProvider {
         } else {
             Logger.e {
                 "Could not send email" +
-                        " isDesktopSupported='${Desktop.isDesktopSupported()}' " +
-                        " isMailSupported='${desktop.isSupported(Desktop.Action.MAIL)}"
+                    " isDesktopSupported='${Desktop.isDesktopSupported()}' " +
+                    " isMailSupported='${desktop.isSupported(Desktop.Action.MAIL)}"
             }
         }
     }
