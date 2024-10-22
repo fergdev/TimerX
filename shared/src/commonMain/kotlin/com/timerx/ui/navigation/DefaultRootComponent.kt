@@ -36,7 +36,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
     private val nav = StackNavigation<Config>()
 
     private val updatedTimerFlow = MutableSharedFlow<Long>(extraBufferCapacity = Int.MAX_VALUE)
-   
+
     private val _stack =
         childStack(
             source = nav,
