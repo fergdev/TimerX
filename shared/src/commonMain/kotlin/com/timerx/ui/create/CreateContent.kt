@@ -186,7 +186,7 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
             .nestedScroll(nestedScrollConnection)
             .verticalScroll(scrollState)
     ) {
-        Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+        Spacer(Modifier.height(paddingValues.calculateTopPadding().plus(8.dp)))
         TimerNameTextField(state.timerNameState)
         SetColumn(state)
         FinalTimeRow(state)
