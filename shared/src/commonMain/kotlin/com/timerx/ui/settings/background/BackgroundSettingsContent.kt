@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.timerx.settings.Pattern
 import com.timerx.settings.backgroundAlphaRange
 import com.timerx.ui.common.DefaultLoading
-import com.timerx.ui.common.PaddedElevatedCard
+import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.settings.background.BackgroundSettingsIntent.UpdateAlpha
 import com.timerx.ui.settings.background.BackgroundSettingsIntent.UpdatePattern
@@ -84,7 +84,7 @@ private fun IntentReceiver<BackgroundSettingsIntent>.LoadedContent(state: Loaded
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdatePattern>.PatternCard(selectedPattern: Pattern) {
-    PaddedElevatedCard {
+    TCard {
         Text(text = stringResource(Res.string.pattern))
 
         FlowRow(
@@ -104,7 +104,7 @@ private fun IntentReceiver<UpdatePattern>.PatternCard(selectedPattern: Pattern) 
 
 @Composable
 private fun IntentReceiver<UpdateAlpha>.AlphaCard(volume: Float) {
-    PaddedElevatedCard {
+    TCard {
         Text(text = stringResource(Res.string.alpha))
         Slider(
             value = volume,

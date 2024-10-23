@@ -26,7 +26,7 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.rememberLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.util.author
-import com.timerx.ui.common.PaddedElevatedCard
+import com.timerx.ui.common.TCard
 import kotlinx.collections.immutable.persistentListOf
 import timerx.shared.generated.resources.Res
 
@@ -53,7 +53,7 @@ internal fun Library(
     typography: Typography = MaterialTheme.typography,
 ) {
     val uriHandler = LocalUriHandler.current
-    PaddedElevatedCard(
+    TCard(
         modifier = Modifier
             .padding(top = 8.dp, bottom = 8.dp)
             .widthIn(max = 600.dp)

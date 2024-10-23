@@ -30,7 +30,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.timerx.sound.VoiceInformation
-import com.timerx.ui.common.PaddedElevatedCard
+import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.thenIf
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
@@ -90,7 +90,7 @@ fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
     availableVoices: ImmutableSet<VoiceInformation>
 ) {
     var voiceSelectorVisible by remember { mutableStateOf(false) }
-    PaddedElevatedCard(onClick = { voiceSelectorVisible = true }) {
+    TCard(onClick = { voiceSelectorVisible = true }) {
         Row {
             Text(text = "Voice")
             Spacer(modifier = Modifier.weight(1f))
@@ -124,7 +124,7 @@ fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
 
 @Composable
 private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(isNotificationsEnabled: Boolean) {
-    PaddedElevatedCard {
+    TCard {
         Row(
             modifier = Modifier.padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -153,7 +153,7 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         intent(UpdateVibration(isVibrationEnabled.not()))
     }
-    PaddedElevatedCard(
+    TCard(
         onClick = { updateVibration() }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -171,7 +171,7 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
 
 @Composable
 private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Float) {
-    PaddedElevatedCard {
+    TCard {
         Text(text = stringResource(Res.string.volume))
         Slider(
             value = volume,

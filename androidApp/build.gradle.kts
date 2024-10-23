@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.crashlytics)
 }
 
-val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystorePropertiesFile = rootProject.file(Config.KeyStore.propertiesFile)
 val keystoreProperties = Properties()
 keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
@@ -28,14 +28,14 @@ kotlin {
 }
 
 android {
-    namespace = "com.timerx.android"
+    namespace = Config.namespaceAndroid
     compileSdk = Config.compileSdk
     defaultConfig {
-        applicationId = "com.timerx.android"
+        applicationId = Config.namespaceAndroid
         minSdk = Config.minSdk
         targetSdk = Config.targetSdk
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = Config.versionCode
+        versionName = Config.versionName
     }
     packaging {
         resources {
@@ -44,10 +44,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            storePassword = keystoreProperties.getProperty("storePassword")
-            storeFile = File(keystoreProperties.getProperty("storeFile"))
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            keyAlias = keystoreProperties.getProperty("keyAlias")
+            storePassword = keystoreProperties.getProperty(Config.KeyStore.storePasswordKey)
+            storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
+            keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
+            keyAlias = keystoreProperties.getProperty(Config.KeyStore.aliasKey)
         }
     }
     buildTypes {

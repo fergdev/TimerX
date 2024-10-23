@@ -35,7 +35,7 @@ fun TMenuItem(
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    PaddedElevatedCard(
+    TCard(
         modifier = modifier
             .wrapContentHeight()
             .padding(horizontal = 4.dp, vertical = 4.dp)

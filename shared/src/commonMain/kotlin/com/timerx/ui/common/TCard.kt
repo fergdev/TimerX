@@ -15,9 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.timerx.util.letThen
 
 @Composable
-fun PaddedElevatedCard(
+fun TCard(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
@@ -28,7 +29,7 @@ fun PaddedElevatedCard(
     ElevatedCard(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+            .letThen(onClick) { Modifier.clickable(onClick = it) },
         colors = colors
     ) {
         Column(

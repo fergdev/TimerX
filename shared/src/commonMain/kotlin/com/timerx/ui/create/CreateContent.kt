@@ -29,7 +29,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -62,6 +61,7 @@ import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.ColorPickerModalBottomSheet
 import com.timerx.ui.common.CustomIcons
+import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.TTopBar
 import com.timerx.ui.common.VibrationSelector
@@ -153,7 +153,7 @@ private fun IntentReceiver<Save>.TopAppBarActions() {
 private fun IntentReceiver<UpdateTimerName>.TimerNameTextField(
     timerNameState: TimerNameState
 ) {
-    ElevatedCard(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
+    TCard(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().padding(8.dp),
             value = timerNameState.name,
@@ -208,7 +208,7 @@ private fun IntentReceiver<CreateScreenIntent>.CreateContent(
 private fun IntentReceiver<AddSet>.FinalTimeRow(
     state: CreateScreenState
 ) {
-    ElevatedCard(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
+    TCard(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
         Box(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).fillMaxWidth()) {
             FilledIconButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
@@ -255,7 +255,7 @@ private fun IntentReceiver<CreateScreenIntent>.FinishControls(
     finishVibration: Vibration,
     canVibrate: Boolean
 ) {
-    ElevatedCard(
+    TCard(
         modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
     ) {
         FinishColorPicker(finishColor)

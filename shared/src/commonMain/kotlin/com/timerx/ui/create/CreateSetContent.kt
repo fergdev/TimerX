@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +32,7 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
+import com.timerx.ui.common.TCard
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import com.timerx.ui.create.CreateScreenIntent.DeleteSet
@@ -103,7 +103,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
             }
         }
     ) {
-        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        TCard(modifier = Modifier.fillMaxWidth()) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 SetTopControls(timerSet, reorderableScope)
                 val hapticFeedback = LocalHapticFeedback.current

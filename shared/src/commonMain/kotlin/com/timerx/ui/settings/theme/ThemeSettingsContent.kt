@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
 import com.timerx.settings.SettingsDarkTheme
 import com.timerx.ui.common.DefaultLoading
-import com.timerx.ui.common.PaddedElevatedCard
+import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
@@ -150,7 +150,7 @@ private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
     val updateIsHighFidelity = {
         intent(UpdateIsHighFidelity(isHighFidelity.not()))
     }
-    PaddedElevatedCard(onClick = { updateIsHighFidelity() }) {
+    TCard(onClick = { updateIsHighFidelity() }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.high_fidelity))
             Spacer(modifier = Modifier.weight(1f))
@@ -167,7 +167,7 @@ private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: Double) {
-    PaddedElevatedCard {
+    TCard {
         Text(text = stringResource(Res.string.contrast_level))
         FlowRow(
             modifier = Modifier.fillMaxWidth().wrapContentWidth(),
@@ -192,7 +192,7 @@ private fun IntentReceiver<UpdateIsSystemDynamic>.DynamicColorsRow(isSystemDynam
     val updateIsSystemDynamic = {
         intent(UpdateIsSystemDynamic(isSystemDynamic.not()))
     }
-    PaddedElevatedCard(
+    TCard(
         modifier = Modifier.clickable {
             updateIsSystemDynamic()
         }
@@ -215,7 +215,7 @@ private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
     val updateIsAmoled = {
         intent(UpdateIsAmoled(isAmoled.not()))
     }
-    PaddedElevatedCard(
+    TCard(
         modifier = Modifier.clickable {
             updateIsAmoled()
         }
@@ -241,7 +241,7 @@ private fun SettingsDarkTheme.label() = when (this) {
 
 @Composable
 private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(settingsDarkTheme: SettingsDarkTheme) {
-    PaddedElevatedCard(
+    TCard(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -264,7 +264,7 @@ private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(settingsDarkTheme: Setti
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdatePaletteStyle>.PaletteRow(paletteStyle: PaletteStyle) {
-    PaddedElevatedCard {
+    TCard {
         Text(text = stringResource(Res.string.palette_style))
         FlowRow(
             modifier = Modifier.fillMaxWidth().wrapContentWidth(),
@@ -283,7 +283,7 @@ private fun IntentReceiver<UpdatePaletteStyle>.PaletteRow(paletteStyle: PaletteS
 
 @Composable
 private fun ColorPreview() {
-    PaddedElevatedCard {
+    TCard {
         Text(text = stringResource(Res.string.preview))
         Card {
             Column {
@@ -323,7 +323,7 @@ private fun ColorBox(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntentReceiver<UpdateSeedColor>.SeedColorRow(seedColor: Color) {
-    PaddedElevatedCard {
+    TCard {
         FlowRow(modifier = Modifier.fillMaxWidth().wrapContentWidth()) {
             rainbow.forEach { color ->
                 val alpha by animateFloatAsState(

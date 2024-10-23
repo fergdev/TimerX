@@ -42,7 +42,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.timerx.ui.common.CustomIcons
-import com.timerx.ui.common.PaddedElevatedCard
+import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TMenuItem
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.appendNewline
@@ -111,7 +111,7 @@ internal fun AboutMainContent(component: AboutMainComponent) {
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
                 )
 
-                PaddedElevatedCard { Text(text = DeveloperMessage()) }
+                TCard { Text(text = DeveloperMessage()) }
 
                 val uriHandler = LocalUriHandler.current
                 TMenuItem(

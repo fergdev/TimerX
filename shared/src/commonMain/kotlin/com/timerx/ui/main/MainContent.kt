@@ -66,7 +66,7 @@ import com.timerx.domain.timeFormatted
 import com.timerx.ui.ads.GoogleAd
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.DefaultLoading
-import com.timerx.ui.common.PaddedElevatedCard
+import com.timerx.ui.common.TCard
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.TIcon
@@ -378,7 +378,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
         ) else {
             mutableStateOf(Color.Transparent)
         }
-        PaddedElevatedCard(
+        TCard(
             modifier = Modifier
                 .border(2.dp, borderColor, shape = MaterialTheme.shapes.medium)
                 .fillMaxWidth(),
