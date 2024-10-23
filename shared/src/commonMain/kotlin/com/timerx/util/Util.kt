@@ -27,9 +27,6 @@ fun <T> Collection<T>.withForEach(block: @Composable T.() -> Unit) {
     }
 }
 
-fun Modifier.ifThen(condition: Boolean, block: Modifier.() -> Modifier): Modifier =
-    if (condition) this.then(block())
-    else Modifier
 
 fun <T> Modifier.letThen(obj: T?, block: Modifier.(T) -> Modifier): Modifier =
     if (obj != null) this.then(block(obj))
