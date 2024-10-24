@@ -27,6 +27,7 @@ junit = "5.11.3"
 kermit = "2.0.4"
 koin = "4.0.0"
 korgeCore = "5.4.0"
+kotest = "6.0.0.M1"
 kotlin = "2.0.21"
 kotlinx-immutable = "0.3.8"
 kotlinx-serialization = "1.7.3"
@@ -79,6 +80,8 @@ koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 korge-core = { module = "com.soywiz.korge:korge-core", version.ref = "korgeCore" }
+kotest = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-junit = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
@@ -114,6 +117,7 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-comp
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotest = { id = "io.kotest.multiplatform", version = "5.0.2" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 mokkery = { id = "dev.mokkery", version.ref = "mockery" }
 # Add this back in when the plugin is supported

@@ -83,9 +83,6 @@ kotlin {
             export(libs.essenty.lifecycle)
         }
     }
-    // TODO enable native
-//    macosArm64()
-//    macosX64()
 
     sourceSets {
         val commonMain by getting {
@@ -140,6 +137,13 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.coroutines.test)
+                implementation(libs.kotest)
+            }
+        }
+
+        val desktopTest by getting {
+            dependencies {
+                implementation(libs.kotest.junit)
             }
         }
 
@@ -182,6 +186,7 @@ kotlin {
                 implementation(libs.junit)
                 implementation(libs.junit.api)
                 implementation(libs.junit.engine)
+                implementation(libs.kotest.junit)
             }
         }
         val androidInstrumentedTest by getting {
@@ -221,8 +226,6 @@ kotlin {
                 implementation(libs.essenty.stateKeeper)
             }
         }
-//        val nativeMain by getting
-//        val macosMain by getting
     }
 }
 
@@ -246,7 +249,6 @@ android {
 
 compose {
     resources {
-        // TODO change this to com.timerx
         packageOfResClass = "timerx.shared.generated.resources"
         publicResClass = true
     }
@@ -301,6 +303,10 @@ junitPlatform {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging {
+        showExceptions = true
+        showStandardStreams = true
+    }
 }
 
 // TODO enable room plugin when it works properly

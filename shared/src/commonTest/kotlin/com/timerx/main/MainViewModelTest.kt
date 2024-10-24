@@ -1,12 +1,10 @@
 package com.timerx.main
 
-import kotlin.test.Test
-import kotlin.test.assertTrue
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
-class MainViewModelTest {
-
-    @Test
-    fun feelGood() {
-        assertTrue { true }
+class MainViewModelTest : FunSpec({
+    test("my first test") {
+        1 + 2 shouldBe 3
     }
-}
+})

@@ -49,8 +49,3 @@ internal fun SortTimersBy.next(): SortTimersBy {
     }
     return SortTimersBy.entries[this.ordinal + 1]
 }
-
-fun Int.toSortTimersBy(): SortTimersBy {
-    if (this in 0 until SortTimersBy.entries.size) return SortTimersBy.entries[this]
-    return SortTimersBy.entries[0]
-}

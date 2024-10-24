@@ -15,8 +15,6 @@ fun String.capitalize(): String =
         else name
     }
 
-fun <T> Boolean.ifTake(t: T): T? = if (this) t else null
-
 @Composable
 fun <T> Collection<T>.withForEach(block: @Composable T.() -> Unit) {
     forEach {

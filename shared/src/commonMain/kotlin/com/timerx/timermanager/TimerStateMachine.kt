@@ -7,7 +7,6 @@ import com.timerx.sound.Beep
 import com.timerx.sound.IntervalSound
 import com.timerx.timermanager.TimerEvent.PreviousInterval
 import com.timerx.timermanager.TimerEvent.Started
-import com.timerx.util.ifTake
 import com.timerx.vibration.Vibration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -371,7 +370,7 @@ class TimerStateMachineImpl(private val timer: Timer, private val coroutineScope
 
     private fun TimerInterval.intervalSound() = IntervalSound(
         beep,
-        textToSpeech.ifTake(name)
+        name.takeIf { textToSpeech }
     )
 
     companion object {
