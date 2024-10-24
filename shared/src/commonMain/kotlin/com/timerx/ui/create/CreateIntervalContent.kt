@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -53,6 +52,7 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
+import com.timerx.ui.common.TIcon
 import com.timerx.ui.common.UnderlinedTextField
 import com.timerx.ui.common.VibrationSelector
 import com.timerx.ui.common.lightDisplayColor
@@ -106,7 +106,6 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
     RevealSwipe(
         modifier = Modifier.padding(4.dp),
         state = revealState,
-        backgroundCardEndColor = MaterialTheme.colorScheme.surface,
         hiddenContentEnd = {
             HiddenIntervalControls(
                 canVibrate = canVibrate,
@@ -153,9 +152,9 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
                 intent(CreateScreenIntent.UpdateIntervalDuration(interval, it))
             }
             Box(modifier = Modifier.weight(1f)) {
-                Icon(
+                TIcon(
                     modifier = with(scope) {
-                        Modifier.size(CustomIcons.defaultIconSize)
+                        Modifier
                             .align(Alignment.TopEnd)
                             .draggableHandle()
                     },
@@ -197,7 +196,7 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
             colorPickerVisible = true
             hideReveal()
         }) {
-            Icon(
+            TIcon(
                 imageVector = CustomIcons.colorFill,
                 contentDescription = "Interval color",
                 tint = contrastColor
@@ -214,7 +213,7 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
             intent(DuplicateInterval(interval))
             hideReveal()
         }) {
-            Icon(
+            TIcon(
                 imageVector = CustomIcons.contentCopy,
                 contentDescription = stringResource(Res.string.copy),
                 tint = contrastColor
@@ -224,7 +223,7 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
             intent(CreateScreenIntent.DeleteInterval(interval))
             hideReveal()
         }) {
-            Icon(
+            TIcon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = stringResource(Res.string.delete),
                 tint = contrastColor
@@ -234,7 +233,7 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
             hideReveal()
             settingsBottomSheetVisible = true
         }) {
-            Icon(
+            TIcon(
                 imageVector = Icons.Filled.Settings,
                 contentDescription = stringResource(Res.string.settings),
                 tint = contrastColor

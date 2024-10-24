@@ -25,3 +25,11 @@ fun <T> Collection<T>.withForEach(block: @Composable T.() -> Unit) {
         }
     }
 }
+
+@Composable
+fun <T> T?.composeLet(block: @Composable (T) -> Unit): (@Composable () -> Unit)? =
+    this?.let {
+        @Composable {
+            block(this)
+        }
+    }

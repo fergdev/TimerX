@@ -31,9 +31,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,16 +91,10 @@ fun RevealSwipe(
         )
     ),
     card: @Composable BoxScope.(
-        shape: Shape,
         content: @Composable ColumnScope.() -> Unit
-    ) -> Unit = { cardShape, cardContent ->
-        Card(
+    ) -> Unit = { cardContent ->
+        TCard(
             modifier = Modifier.matchParentSize(),
-            colors = CardDefaults.cardColors(
-                contentColor = MaterialTheme.colorScheme.onSecondary,
-                containerColor = Color.Transparent
-            ),
-            shape = cardShape,
             content = cardContent
         )
     },
@@ -282,7 +273,7 @@ fun RevealSwipe(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BaseRevealSwipe(
+private fun BaseRevealSwipe(
     modifier: Modifier = Modifier,
     enableSwipe: Boolean = true,
     animateBackgroundCardColor: Boolean = true,
@@ -298,7 +289,6 @@ fun BaseRevealSwipe(
         )
     ),
     card: @Composable BoxScope.(
-        shape: Shape,
         content: @Composable ColumnScope.() -> Unit
     ) -> Unit,
     hiddenContentEnd: @Composable BoxScope.() -> Unit = {},
@@ -389,7 +379,7 @@ fun BaseRevealSwipe(
             ) else backgroundCardStartColor
 
         // non swipeable with hidden content
-        card(shape) {
+        card {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -413,7 +403,8 @@ fun BaseRevealSwipe(
                             .width(state.maxRevealDp)
                             .align(Alignment.CenterEnd)
                             .fillMaxHeight()
-                            .background(animatedBackgroundEndColor),
+//                            .background(animatedBackgroundEndColor),
+                                ,
                         content = hiddenContentEnd
                     )
                 }

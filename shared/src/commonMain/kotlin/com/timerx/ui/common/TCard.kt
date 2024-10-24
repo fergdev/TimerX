@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.theme.Opacity
 
@@ -21,19 +22,18 @@ fun TCard(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    internalPadding: Dp = 8.dp,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.scrim.copy(alpha = Opacity.semiTransparent))
-            .thenLet(onClick) {
-                this.clickable(onClick = it)
-            }
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = Opacity.secondary))
+            .thenLet(onClick) { clickable(onClick = it) }
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            modifier = Modifier.fillMaxWidth().padding(internalPadding),
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment
         ) {

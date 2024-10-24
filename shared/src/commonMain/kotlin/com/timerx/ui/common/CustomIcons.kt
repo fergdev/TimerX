@@ -9,12 +9,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 object CustomIcons {
-
-    val defaultIconSize: Dp = 24.dp
 
     private var _checkIntermediateSmall: ImageVector? = null
     val checkIntermediateSmall: ImageVector

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,8 +34,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -128,7 +127,7 @@ internal fun MainContent(mainComponent: MainComponent) {
                     onClick = mainComponent::onCreateClicked
                 ) {
                     TIcon(
-                        icon = Icons.Default.Add,
+                        imageVector = Icons.Default.Add,
                         contentDescription = stringResource(Res.string.add)
                     )
                 }
@@ -329,13 +328,10 @@ private fun IntentReceiver<MainIntent>.TimerCard(
         modifier = Modifier.padding(vertical = 8.dp),
         state = revealState,
         shape = MaterialTheme.shapes.large,
-        backgroundCardStartColor = MaterialTheme.colorScheme.surface,
-        backgroundCardEndColor = MaterialTheme.colorScheme.surfaceVariant,
-        card = { shape, content ->
-            Card(
+        card = { content ->
+            TCard(
                 modifier = Modifier.matchParentSize(),
-                shape = shape,
-                colors = CardDefaults.cardColors(),
+                internalPadding = 0.dp,
                 content = content
             )
         },
@@ -345,13 +341,13 @@ private fun IntentReceiver<MainIntent>.TimerCard(
                     intent(MainIntent.DuplicateTimer(mainTimer))
                     hideReveal()
                 }) {
-                    Icon(
+                    TIcon(
                         imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy),
                     )
                 }
                 IconButton(onClick = { onNavigateEditScreen(mainTimer.id) }) {
-                    Icon(
+                    TIcon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = stringResource(Res.string.edit),
                     )
@@ -359,7 +355,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
                 IconButton(onClick = {
                     intent(MainIntent.DeleteTimer(mainTimer))
                 }) {
-                    Icon(
+                    TIcon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete),
                     )
@@ -378,29 +374,31 @@ private fun IntentReceiver<MainIntent>.TimerCard(
         ) else {
             mutableStateOf(Color.Transparent)
         }
-        TCard(
+        Box(
             modifier = Modifier
                 .border(2.dp, borderColor, shape = MaterialTheme.shapes.medium)
-                .fillMaxWidth(),
-            onClick = { onNavigateRunScreen(mainTimer.id) },
+                .fillMaxWidth()
+                .clickable { onNavigateRunScreen(mainTimer.id) },
         ) {
-            Text(
-                text = mainTimer.name.branded(),
-                style = MaterialTheme.typography.displaySmall,
-                maxLines = 1
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row {
+            Column(modifier = Modifier.padding(8.dp)) {
                 Text(
-                    text = mainTimer.duration.timeFormatted(),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = mainTimer.name.branded(),
+                    style = MaterialTheme.typography.displaySmall,
+                    maxLines = 1
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = mainTimer.lastRunFormatted,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Text(
+                        text = mainTimer.duration.timeFormatted(),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = mainTimer.lastRunFormatted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

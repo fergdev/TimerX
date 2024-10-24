@@ -49,8 +49,8 @@ fun TCircleIcon(
         content = {
             AnimatedContent(icon) {
                 TIcon(
-                    icon = it,
-                    color = animatedColor,
+                    imageVector = it,
+                    tint = animatedColor,
                     size = iconSize,
                     contentDescription = contentDescription
                 )

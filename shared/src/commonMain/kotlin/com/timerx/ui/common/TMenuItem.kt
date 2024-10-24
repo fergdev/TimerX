@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.theme.Opacity
+import com.timerx.util.composeLet
 
 @Suppress("ComposableParametersOrdering") // as intended
 @Composable
@@ -53,7 +54,10 @@ fun TMenuItem(
                 icon?.let { it() }
             }
 
-            Column(modifier = Modifier.weight(1f, true), verticalArrangement = Arrangement.Center) {
+            Column(
+                modifier = Modifier.weight(1f, true),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Box(Modifier.padding(2.dp)) {
                     title()
                 }
@@ -88,24 +92,24 @@ fun TMenuItem(
     val textColor =
         LocalContentColor.current.copy(alpha = if (enabled) Opacity.enabled else Opacity.disabled)
     TMenuItem(
-        icon = icon?.let {
-            {
-                TMenuItemIcon(
-                    imageVector = it,
-                    tint = if (enabled) color else LocalContentColor.current,
-                    contentDescription = title
-                )
-            }
+        icon = icon?.composeLet {
+            TMenuItemIcon(
+                imageVector = it,
+                tint = if (enabled) color else LocalContentColor.current,
+                contentDescription = title
+            )
         },
         title = {
             TMenuItemTitle(
-                title,
+                text = title,
                 color = textColor,
             )
         },
         modifier = modifier,
         onClick = onClick.takeIf { enabled },
-        secondary = subtitle.takeIfValid()?.let { { TMenuItemSubtitle(it, color = textColor) } },
+        secondary = subtitle
+            .takeIfValid()
+            .composeLet { TMenuItemSubtitle(text = it, color = textColor) },
         trailing = trailing,
     )
 }

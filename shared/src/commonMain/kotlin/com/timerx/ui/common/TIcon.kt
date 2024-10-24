@@ -25,19 +25,19 @@ import com.timerx.ui.theme.Size
 
 @Composable
 fun TIcon(
-    icon: ImageVector,
+    imageVector: ImageVector,
     contentDescription: String,
     modifier: Modifier = Modifier,
     size: Dp = Size.icon,
-    color: Color = Color.Unspecified,
+    tint: Color = Color.Unspecified,
     alpha: Float = Opacity.enabled,
 ) {
     Image(
-        imageVector = icon,
-        modifier = modifier.requiredSizeIn(maxWidth = size, maxHeight = size).testTag(icon.name),
+        imageVector = imageVector,
+        modifier = modifier.requiredSizeIn(maxWidth = size, maxHeight = size).testTag(imageVector.name),
         contentDescription = contentDescription,
         alpha = alpha,
-        colorFilter = ColorFilter.tint(color.takeOrElse { LocalContentColor.current }),
+        colorFilter = ColorFilter.tint(tint.takeOrElse { LocalContentColor.current }),
     )
 }
 
@@ -48,7 +48,7 @@ fun TIcon(
     contentDescription: String,
     modifier: Modifier = Modifier,
     size: Dp = Size.icon,
-    color: Color = Color.Unspecified,
+    tint: Color = Color.Unspecified,
     enabled: Boolean = true,
     enabledAlpha: Float = 1f,
 ) {
@@ -65,9 +65,9 @@ fun TIcon(
         contentAlignment = Alignment.Center,
     ) {
         TIcon(
-            icon = icon,
+            imageVector = icon,
             size = size,
-            color = color,
+            tint = tint,
             alpha = alpha,
             contentDescription = contentDescription
         )

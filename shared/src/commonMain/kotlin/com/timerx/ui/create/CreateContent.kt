@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -62,6 +61,7 @@ import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.ColorPickerModalBottomSheet
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.TCard
+import com.timerx.ui.common.TIcon
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.TTopBar
 import com.timerx.ui.common.VibrationSelector
@@ -141,8 +141,7 @@ internal fun CreateContent(createComponent: CreateComponent) {
 @Composable
 private fun IntentReceiver<Save>.TopAppBarActions() {
     IconButton(onClick = { intent(Save) }) {
-        Icon(
-            modifier = Modifier.size(CustomIcons.defaultIconSize),
+        TIcon(
             imageVector = Icons.Default.Done,
             contentDescription = stringResource(Res.string.save)
         )
@@ -302,10 +301,9 @@ private fun IntentReceiver<CreateScreenIntent>.FinishColorPicker(finishColor: Co
         ) {
             Text(text = stringResource(Res.string.finish_color))
             Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                modifier = Modifier.size(CustomIcons.defaultIconSize),
+            TIcon(
                 imageVector = CustomIcons.colorFill,
-                contentDescription = null,
+                contentDescription = "Finish color",
             )
         }
     }

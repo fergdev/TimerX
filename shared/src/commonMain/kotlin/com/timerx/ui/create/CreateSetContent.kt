@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +31,7 @@ import com.timerx.ui.common.NumberIncrement
 import com.timerx.ui.common.RevealDirection
 import com.timerx.ui.common.RevealSwipe
 import com.timerx.ui.common.TCard
+import com.timerx.ui.common.TIcon
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.reset
 import com.timerx.ui.create.CreateScreenIntent.DeleteSet
@@ -68,14 +67,11 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
     }
     RevealSwipe(
         state = revealState,
-        shape = MaterialTheme.shapes.large,
-        backgroundCardStartColor = MaterialTheme.colorScheme.surface,
-        backgroundCardEndColor = MaterialTheme.colorScheme.surfaceVariant,
-        card = { shape, content ->
-            Card(
+        shape = MaterialTheme.shapes.medium,
+        card = { content ->
+            TCard(
+                internalPadding = 0.dp,
                 modifier = Modifier.matchParentSize(),
-                shape = shape,
-                colors = CardDefaults.cardColors(),
                 content = content
             )
         },
@@ -85,7 +81,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
                     hideReveal()
                     intent(DuplicateSet(timerSet))
                 }) {
-                    Icon(
+                    TIcon(
                         modifier = Modifier.size(24.dp),
                         imageVector = CustomIcons.contentCopy,
                         contentDescription = stringResource(Res.string.copy)
@@ -95,7 +91,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
                     hideReveal()
                     intent(DeleteSet(timerSet))
                 }) {
-                    Icon(
+                    TIcon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.delete)
                     )
@@ -103,46 +99,44 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
             }
         }
     ) {
-        TCard(modifier = Modifier.fillMaxWidth()) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                SetTopControls(timerSet, reorderableScope)
-                val hapticFeedback = LocalHapticFeedback.current
-                ReorderableColumn(
-                    list = timerSet.intervals,
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    onSettle = { from, to ->
-                        intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
-                    },
-                    onMove = {
-                        hapticFeedback.performHapticFeedback(LongPress)
-                    }
-                ) { _, timerInterval, _ ->
-                    key(timerInterval.id) {
-                        CreateIntervalContent(
-                            interval = timerInterval,
-                            canSkipOnLastSet = timerSet.repetitions > 1,
-                            canVibrate = canVibrate,
-                            scope = this@ReorderableColumn
-                        )
-                    }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            SetTopControls(timerSet, reorderableScope)
+            val hapticFeedback = LocalHapticFeedback.current
+            ReorderableColumn(
+                list = timerSet.intervals,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                onSettle = { from, to ->
+                    intent(CreateScreenIntent.MoveInterval(timerSet, from, to))
+                },
+                onMove = {
+                    hapticFeedback.performHapticFeedback(LongPress)
                 }
-
-                Box(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).fillMaxWidth()) {
-                    AnimatedNumber(
-                        modifier = Modifier.align(Alignment.Center),
-                        value = timerSet.length().timeFormatted(),
-                        textStyle = MaterialTheme.typography.titleLarge
+            ) { _, timerInterval, _ ->
+                key(timerInterval.id) {
+                    CreateIntervalContent(
+                        interval = timerInterval,
+                        canSkipOnLastSet = timerSet.repetitions > 1,
+                        canVibrate = canVibrate,
+                        scope = this@ReorderableColumn
                     )
-                    FilledTonalIconButton(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(Res.string.add)
-                        )
-                    }
+                }
+            }
+
+            Box(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).fillMaxWidth()) {
+                AnimatedNumber(
+                    modifier = Modifier.align(Alignment.Center),
+                    value = timerSet.length().timeFormatted(),
+                    textStyle = MaterialTheme.typography.titleLarge
+                )
+                FilledTonalIconButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    onClick = { intent(CreateScreenIntent.NewInterval(timerSet)) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.add)
+                    )
                 }
             }
         }
@@ -178,12 +172,11 @@ private fun IntentReceiver<CreateScreenIntent>.SetTopControls(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
+            TIcon(
                 imageVector = CustomIcons.dragHandle,
                 contentDescription = stringResource(Res.string.down),
                 modifier = with(reorderableScope) {
-                    Modifier.size(CustomIcons.defaultIconSize)
-                        .draggableHandle()
+                    Modifier.draggableHandle()
                 }
             )
         }

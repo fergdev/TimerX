@@ -12,7 +12,6 @@ import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -66,8 +65,8 @@ fun NumberIncrement(
             onClick = {},
             enabled = negativeButtonEnabled
         ) {
-            Icon(
-                modifier = Modifier.size(CustomIcons.defaultIconSize)
+            TIcon(
+                modifier = Modifier
                     .repeatingClickable(
                         interactionSource = remember { MutableInteractionSource() },
                         enabled = true,
@@ -94,7 +93,7 @@ fun NumberIncrement(
             enabled = positiveButtonEnabled
         ) {
             Icon(
-                modifier = Modifier.size(CustomIcons.defaultIconSize)
+                modifier = Modifier
                     .repeatingClickable(
                         interactionSource = remember { MutableInteractionSource() },
                         enabled = true,
