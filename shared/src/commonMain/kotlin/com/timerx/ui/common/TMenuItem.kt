@@ -38,7 +38,6 @@ fun TMenuItem(
     TCard(
         modifier = modifier
             .wrapContentHeight()
-            .padding(horizontal = 4.dp, vertical = 4.dp)
             .animateContentSize()
             .widthIn(max = 600.dp),
         onClick = onClick

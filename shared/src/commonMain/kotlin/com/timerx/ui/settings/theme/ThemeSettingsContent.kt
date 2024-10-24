@@ -150,7 +150,7 @@ private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
     val updateIsHighFidelity = {
         intent(UpdateIsHighFidelity(isHighFidelity.not()))
     }
-    TCard(onClick = { updateIsHighFidelity() }) {
+    TCard(modifier = Modifier.clickable { updateIsHighFidelity() }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(Res.string.high_fidelity))
             Spacer(modifier = Modifier.weight(1f))
@@ -216,18 +216,17 @@ private fun IntentReceiver<UpdateIsAmoled>.AmoledRow(isAmoled: Boolean) {
         intent(UpdateIsAmoled(isAmoled.not()))
     }
     TCard(
-        modifier = Modifier.clickable {
-            updateIsAmoled()
-        }
+        modifier = Modifier.clickable { updateIsAmoled() }
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = stringResource(Res.string.amoled))
             Spacer(modifier = Modifier.weight(1f))
             Switch(
                 checked = isAmoled,
-                onCheckedChange = {
-                    updateIsAmoled()
-                }
+                onCheckedChange = { updateIsAmoled() }
             )
         }
     }
@@ -251,7 +250,10 @@ private fun IntentReceiver<UpdateDarkTheme>.DarkModeRow(settingsDarkTheme: Setti
                 SegmentedButton(
                     label = { Text(text = stringResource(it.label())) },
                     selected = settingsDarkTheme == it,
-                    shape = SegmentedButtonDefaults.itemShape(it.ordinal, SettingsDarkTheme.entries.size),
+                    shape = SegmentedButtonDefaults.itemShape(
+                        it.ordinal,
+                        SettingsDarkTheme.entries.size
+                    ),
                     onClick = {
                         intent(UpdateDarkTheme(it))
                     },
