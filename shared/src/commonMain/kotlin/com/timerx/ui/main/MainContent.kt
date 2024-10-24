@@ -75,7 +75,7 @@ import com.timerx.ui.common.branded
 import com.timerx.ui.common.contrastSystemBarColor
 import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rememberRevealState
-import com.timerx.ui.common.reset
+import com.timerx.ui.common.resetFast
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.api.IntentReceiver
@@ -321,7 +321,7 @@ private fun IntentReceiver<MainIntent>.TimerCard(
     val coroutineScope = rememberCoroutineScope()
     val hideReveal = {
         coroutineScope.launch {
-            revealState.reset()
+            revealState.resetFast()
         }
     }
     RevealSwipe(

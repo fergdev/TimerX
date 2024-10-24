@@ -8,7 +8,6 @@ import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -368,16 +367,6 @@ private fun BaseRevealSwipe(
         // cubic parameters can be evaluated here https://cubic-bezier.com/
         val alpha = alphaEasing.transform(draggedRatio)
 
-        val animatedBackgroundEndColor =
-            if (alpha in 0f..1f && animateBackgroundCardColor) backgroundCardEndColor.copy(
-                alpha = alpha
-            ) else backgroundCardEndColor
-
-        val animatedBackgroundStartColor =
-            if (alpha in 0f..1f && animateBackgroundCardColor) backgroundCardStartColor.copy(
-                alpha = alpha
-            ) else backgroundCardStartColor
-
         // non swipeable with hidden content
         card {
             Box(
@@ -392,8 +381,7 @@ private fun BaseRevealSwipe(
                         modifier = Modifier
                             .width(state.maxRevealDp)
                             .align(Alignment.CenterStart)
-                            .fillMaxHeight()
-                            .background(animatedBackgroundStartColor),
+                            .fillMaxHeight(),
                         content = hiddenContentStart
                     )
                 }
