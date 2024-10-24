@@ -40,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -79,8 +78,6 @@ fun RevealSwipe(
     closeOnBackgroundClick: Boolean = true,
     shape: CornerBasedShape = RoundedCornerShape(0.dp),
     alphaEasing: Easing = DEFAULT_EASING,
-    backgroundCardStartColor: Color = Color.Transparent,
-    backgroundCardEndColor: Color = Color.Transparent,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     state: RevealState = rememberRevealState(
         maxRevealDp = 75.dp,
@@ -156,11 +153,8 @@ fun RevealSwipe(
             }
         },
         enableSwipe = enableSwipe,
-        animateBackgroundCardColor = enableSwipe,
         shape = shape,
         alphaEasing = alphaEasing,
-        backgroundCardStartColor = backgroundCardStartColor,
-        backgroundCardEndColor = backgroundCardEndColor,
         card = card,
         state = state,
         hiddenContentEnd = {
@@ -275,11 +269,8 @@ fun RevealSwipe(
 private fun BaseRevealSwipe(
     modifier: Modifier = Modifier,
     enableSwipe: Boolean = true,
-    animateBackgroundCardColor: Boolean = true,
     shape: CornerBasedShape = RoundedCornerShape(8.dp),
     alphaEasing: Easing = DEFAULT_EASING,
-    backgroundCardStartColor: Color = Color.Transparent,
-    backgroundCardEndColor: Color = Color.Transparent,
     state: RevealState = rememberRevealState(
         maxRevealDp = 75.dp,
         directions = setOf(
@@ -390,9 +381,7 @@ private fun BaseRevealSwipe(
                         modifier = Modifier
                             .width(state.maxRevealDp)
                             .align(Alignment.CenterEnd)
-                            .fillMaxHeight()
-//                            .background(animatedBackgroundEndColor),
-                                ,
+                            .fillMaxHeight(),
                         content = hiddenContentEnd
                     )
                 }
