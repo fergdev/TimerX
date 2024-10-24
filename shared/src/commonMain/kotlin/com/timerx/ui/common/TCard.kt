@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.timerx.ui.theme.Opacity
 
 @Composable
 fun TCard(
@@ -29,7 +28,7 @@ fun TCard(
     Box(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = Opacity.secondary))
+            .background(containerColor())
             .thenLet(onClick) { clickable(onClick = it) }
     ) {
         Column(

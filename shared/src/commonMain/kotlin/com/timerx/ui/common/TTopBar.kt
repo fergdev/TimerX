@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.timerx.ui.theme.Montserrat
-import com.timerx.ui.theme.Opacity
 import com.timerx.ui.theme.Size
 import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
@@ -80,7 +79,7 @@ fun TTopBar(
     actions = actions,
     scrollBehavior = scrollBehavior,
     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = Opacity.semiTransparent),
+        containerColor = containerColor(),
         scrolledContainerColor = Color.Transparent,
     ),
 )

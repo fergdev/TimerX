@@ -52,7 +52,7 @@ internal fun MainSettingsContent(component: MainSettingsComponent) =
                     .align(Alignment.TopCenter)
                     .fillMaxSize()
                     .padding(
-                        top = padding.calculateTopPadding(),
+                        top = padding.calculateTopPadding().plus(8.dp),
                         bottom = padding.calculateBottomPadding(),
                         start = 16.dp,
                         end = 16.dp
