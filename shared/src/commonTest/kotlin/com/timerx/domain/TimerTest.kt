@@ -33,7 +33,7 @@ class TimerTest : FreeSpec({
             timerSetList(5).length() shouldBe 75000L
         }
 
-        "set list" {
+        "timer" {
             Timer(
                 name = "test",
                 createdAt = Instant.fromEpochMilliseconds(0),

@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.timerx.settings.BackgroundAlpha
 import com.timerx.settings.Pattern
 import com.timerx.settings.backgroundAlphaRange
 import com.timerx.ui.common.DefaultLoading
@@ -76,7 +77,7 @@ fun BackgroundSettingsContent(
 private fun IntentReceiver<BackgroundSettingsIntent>.LoadedContent(state: LoadedState) =
     with(state) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            AlphaCard(alpha)
+            AlphaCard(backgroundAlpha)
             PatternCard(pattern)
         }
     }
@@ -103,13 +104,13 @@ private fun IntentReceiver<UpdatePattern>.PatternCard(selectedPattern: Pattern) 
 }
 
 @Composable
-private fun IntentReceiver<UpdateAlpha>.AlphaCard(volume: Float) {
+private fun IntentReceiver<UpdateAlpha>.AlphaCard(backgroundAlpha: BackgroundAlpha) {
     TCard {
         Text(text = stringResource(Res.string.alpha))
         Slider(
-            value = volume,
+            value = backgroundAlpha.value,
             valueRange = backgroundAlphaRange,
-            onValueChange = { intent(UpdateAlpha(it)) }
+            onValueChange = { intent(UpdateAlpha(BackgroundAlpha(it))) }
         )
     }
 }

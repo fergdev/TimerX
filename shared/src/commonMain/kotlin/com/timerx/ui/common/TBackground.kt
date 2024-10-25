@@ -57,7 +57,7 @@ fun TBackground(modifier: Modifier = Modifier) {
         Image(
             modifier = modifier
                 .fillMaxSize()
-                .graphicsLayer(alpha = backgroundSettings.alpha)
+                .graphicsLayer(alpha = backgroundSettings.backgroundAlpha.value)
                 .drawWithCache {
                     onDrawWithContent {
                         drawContent()

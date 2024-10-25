@@ -1,6 +1,8 @@
 package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
+import com.timerx.settings.VibrationState
+import com.timerx.sound.Volume
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
@@ -11,16 +13,15 @@ internal sealed interface RunScreenState : MVIState {
     sealed interface Loaded : RunScreenState {
 
         val backgroundColor: Color
-        val volume: Float
-        val vibrationEnabled: Boolean
-        val canVibrate: Boolean
+        val volume: Volume
+        val vibrationState: VibrationState
         val timerName: String
         val keepScreenOn: Boolean
 
         sealed interface NotFinished : Loaded {
             override val backgroundColor: Color
-            override val volume: Float
-            override val vibrationEnabled: Boolean
+            override val volume: Volume
+            override val vibrationState: VibrationState
             override val timerName: String
             val time: Long
             val intervalName: String
@@ -29,38 +30,35 @@ internal sealed interface RunScreenState : MVIState {
 
             data class Playing(
                 override val backgroundColor: Color,
-                override val volume: Float,
-                override val vibrationEnabled: Boolean,
+                override val volume: Volume,
+                override val vibrationState: VibrationState,
                 override val timerName: String,
                 override val time: Long,
                 override val intervalName: String,
                 override val manualNext: Boolean,
                 override val index: String,
                 override val keepScreenOn: Boolean,
-                override val canVibrate: Boolean,
             ) : NotFinished
 
             data class Paused(
                 override val backgroundColor: Color,
-                override val volume: Float,
-                override val vibrationEnabled: Boolean,
+                override val volume: Volume,
+                override val vibrationState: VibrationState,
                 override val timerName: String,
                 override val time: Long,
                 override val intervalName: String,
                 override val manualNext: Boolean,
                 override val index: String,
                 override val keepScreenOn: Boolean,
-                override val canVibrate: Boolean,
             ) : NotFinished
         }
 
         data class Finished(
             override val backgroundColor: Color,
-            override val volume: Float,
-            override val vibrationEnabled: Boolean,
+            override val volume: Volume,
+            override val vibrationState: VibrationState,
             override val timerName: String,
             override val keepScreenOn: Boolean,
-            override val canVibrate: Boolean,
         ) : Loaded
     }
 }
@@ -72,6 +70,6 @@ internal sealed interface RunScreenIntent : MVIIntent {
     data object PreviousInterval : RunScreenIntent
     data object OnManualNext : RunScreenIntent
     data object RestartTimer : RunScreenIntent
-    data class UpdateVolume(val volume: Float) : RunScreenIntent
+    data class UpdateVolume(val volume: Volume) : RunScreenIntent
     data class UpdateVibrationEnabled(val enabled: Boolean) : RunScreenIntent
 }

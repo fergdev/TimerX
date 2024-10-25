@@ -46,6 +46,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
+import com.timerx.settings.VibrationState
+import com.timerx.sound.Volume
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.DefaultLoading
@@ -58,6 +60,7 @@ import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing
 import com.timerx.ui.shader.vignetteShader
 import com.timerx.ui.theme.Animation
+import com.timerx.util.letType
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -196,8 +199,7 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
                 TopControls(
                     displayColor = contrastDisplayColor,
                     volume = state.volume,
-                    vibrationEnabled = state.vibrationEnabled,
-                    canVibrate = state.canVibrate
+                    vibrationState = state.vibrationState,
                 ) {
                     controlsVisible = true
                     touchCounter++
@@ -281,9 +283,8 @@ private fun IntentReceiver<RunScreenIntent>.TimerInformation(
 @Composable
 private fun IntentReceiver<RunScreenIntent>.TopControls(
     displayColor: Color,
-    volume: Float,
-    vibrationEnabled: Boolean,
-    canVibrate: Boolean,
+    volume: Volume,
+    vibrationState: VibrationState,
     onIncrementTouchCounter: () -> Unit,
 ) {
     Row {
@@ -302,10 +303,10 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
         }
         Slider(
             modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
-            value = volume,
+            value = volume.value,
             valueRange = 0f..1f,
             onValueChange = {
-                intent(RunScreenIntent.UpdateVolume(it))
+                intent(RunScreenIntent.UpdateVolume(Volume(it)))
             },
             colors = SliderDefaults.colors(
                 thumbColor = displayColor,
@@ -313,17 +314,17 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
                 inactiveTrackColor = displayColor.copy(alpha = 0.3F)
             )
         )
-        if (canVibrate) {
+        vibrationState.letType<VibrationState.CanVibrate, _> {
             IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 onIncrementTouchCounter()
-                intent(RunScreenIntent.UpdateVibrationEnabled(vibrationEnabled.not()))
+                intent(RunScreenIntent.UpdateVibrationEnabled(enabled.not()))
             }) {
                 Icon(
                     modifier = Modifier.size(CORNER_ICON_SIZE),
                     imageVector = CustomIcons.vibration,
                     contentDescription = stringResource(Res.string.next),
-                    tint = if (vibrationEnabled) displayColor else displayColor.copy(alpha = 0.5f)
+                    tint = if (enabled) displayColor else displayColor.copy(alpha = 0.5f)
                 )
             }
         }

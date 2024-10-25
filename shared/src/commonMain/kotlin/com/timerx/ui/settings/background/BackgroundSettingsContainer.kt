@@ -20,7 +20,7 @@ class BackgroundSettingsContainer(
                     updateState {
                         with(it) {
                             BackgroundSettingsState.LoadedState(
-                                alpha = alpha,
+                                backgroundAlpha = backgroundAlpha,
                                 pattern = pattern
                             )
                         }
@@ -31,7 +31,7 @@ class BackgroundSettingsContainer(
             reduce {
                 when (it) {
                     is BackgroundSettingsIntent.UpdateAlpha ->
-                        backgroundSettingsManager.setAlpha(it.alpha)
+                        backgroundSettingsManager.setBackgroundAlpha(it.backgroundAlpha)
 
                     is BackgroundSettingsIntent.UpdatePattern ->
                         backgroundSettingsManager.setPattern(it.pattern)

@@ -66,7 +66,7 @@ internal class DefaultSettingsComponent(
         when (config) {
             is SettingsConfig.Main -> Main(
                 DefaultMainSettingsComponent(
-                    onBackClicked =  ::onBackClicked,
+                    onBackClicked = ::onBackClicked,
                     onAlertsClicked = { nav.push(SettingsConfig.Alerts) },
                     onThemeClicked = { nav.push(SettingsConfig.Theme) },
                     onBackgroundClicked = { nav.push(SettingsConfig.Background) },
@@ -78,7 +78,7 @@ internal class DefaultSettingsComponent(
 
             is SettingsConfig.Alerts -> Alerts(
                 DefaultAlertSettingsComponent(
-                    backClicked = { nav.pop() },
+                    onBackClicked = nav::pop,
                     factory = koin::get,
                     context = componentContext
                 )

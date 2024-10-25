@@ -14,10 +14,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AndroidSoundManager(
-    timerXSettings: TimerXSettings,
     private val context: Context,
-    timerManager: TimerManager
-) : SoundManager(timerXSettings, timerManager) {
+    timerXSettings: TimerXSettings,
+    timerManager: TimerManager,
+) : AbstractSoundManager(timerXSettings, timerManager) {
     private var mediaPlayer: MediaPlayer? = null
     private val textToSpeech: TextToSpeech
     private var ttsSupported = false
@@ -39,7 +39,7 @@ class AndroidSoundManager(
         coroutineScope.launch {
             timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
                 val voice = textToSpeech.voices.firstOrNull { voice ->
-                    voice.name == alertSettings.ttsVoiceName
+                    voice.name == alertSettings.ttsVoiceId
                 } ?: return@collect
                 textToSpeech.voice = voice
             }
@@ -53,7 +53,7 @@ class AndroidSoundManager(
                 it.reset()
                 it.release()
             }
-            mediaPlayer?.setVolume(volume, volume)
+            mediaPlayer?.setVolume(volume.value, volume.value)
             mediaPlayer?.start()
             delay(BEEP_DELAY)
         }
@@ -71,7 +71,7 @@ class AndroidSoundManager(
     }
 
     private fun textToSpeechParams() = bundleOf(
-        Pair(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume)
+        Pair(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume.value)
     )
 }
 

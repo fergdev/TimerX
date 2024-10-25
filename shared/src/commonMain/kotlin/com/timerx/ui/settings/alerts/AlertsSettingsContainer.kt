@@ -3,7 +3,6 @@ package com.timerx.ui.settings.alerts
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
-import com.timerx.platform.platformCapabilities
 import com.timerx.settings.TimerXSettings
 import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
@@ -20,10 +19,12 @@ import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
+const val DEMO_TTS_TEXT = "Work. Rest. Finished."
+
 class AlertsSettingsContainer(
     private val settings: TimerXSettings,
     private val permissionsHandler: IPermissionsHandler,
-    private val soundManager: SoundManager
+    private val soundManager: SoundManager,
 ) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
 
     override val store =
@@ -34,10 +35,9 @@ class AlertsSettingsContainer(
                         val voices = soundManager.voices()
                         AlertsSettingsState(
                             volume = it.volume,
-                            isVibrationEnabled = it.vibrationEnabled,
-                            canVibrate = platformCapabilities.canVibrate,
+                            vibration = it.vibrationState,
                             isNotificationsEnabled = isNotificationsEnabled(),
-                            selectedVoice = voices.selected(it.ttsVoiceName),
+                            selectedVoice = voices.selected(it.ttsVoiceId),
                             availableVoices = voices.sortedBy { it.name }.toPersistentSet()
                         )
                     }
@@ -61,11 +61,11 @@ class AlertsSettingsContainer(
                         permissionsHandler.openAppSettings()
 
                     is SetTTSVoice -> {
-                        settings.alertSettingsManager.setTTSVoice(settingsIntent.voiceId)
+                        settings.alertSettingsManager.setTTSVoice(settingsIntent.voiceInformation.id)
                         // Work around for collectors not receiving data before put returns
                         // https://github.com/xxfast/KStore/issues/129
                         delay(100)
-                        soundManager.textToSpeech("Work. Rest. Finished.")
+                        soundManager.textToSpeech(DEMO_TTS_TEXT)
                     }
                 }
             }

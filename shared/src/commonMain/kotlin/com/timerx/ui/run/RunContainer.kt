@@ -2,7 +2,6 @@ package com.timerx.ui.run
 
 import com.timerx.analytics.TimerXAnalytics
 import com.timerx.database.ITimerRepository
-import com.timerx.platform.platformCapabilities
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
@@ -80,7 +79,7 @@ internal fun observeTimerPlugin(
                         TimerState.Running -> {
                             Playing(
                                 volume = settings.volume,
-                                vibrationEnabled = settings.vibrationEnabled,
+                                vibrationState = settings.vibrationState,
                                 timerName = timerEvent.runState.timerName,
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 index = index,
@@ -88,14 +87,13 @@ internal fun observeTimerPlugin(
                                 intervalName = timerEvent.runState.intervalName,
                                 manualNext = timerEvent.runState.manualNext,
                                 keepScreenOn = it.third,
-                                canVibrate = platformCapabilities.canVibrate
                             )
                         }
 
                         TimerState.Paused -> {
                             Paused(
                                 volume = settings.volume,
-                                vibrationEnabled = settings.vibrationEnabled,
+                                vibrationState = settings.vibrationState,
                                 timerName = timerEvent.runState.timerName,
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 index = index,
@@ -103,18 +101,16 @@ internal fun observeTimerPlugin(
                                 intervalName = timerEvent.runState.intervalName,
                                 manualNext = timerEvent.runState.manualNext,
                                 keepScreenOn = it.third,
-                                canVibrate = platformCapabilities.canVibrate
                             )
                         }
 
                         TimerState.Finished -> {
                             Finished(
                                 volume = settings.volume,
-                                vibrationEnabled = settings.vibrationEnabled,
+                                vibrationState = settings.vibrationState,
                                 timerName = timerEvent.runState.timerName,
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 keepScreenOn = it.third,
-                                canVibrate = platformCapabilities.canVibrate
                             )
                         }
                     }

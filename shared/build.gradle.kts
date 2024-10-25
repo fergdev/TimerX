@@ -141,6 +141,7 @@ kotlin {
                 implementation(libs.kotest)
                 implementation(libs.flowmvi.test)
                 implementation(libs.turbine)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
             }
         }
 

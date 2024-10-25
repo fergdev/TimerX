@@ -1,0 +1,14 @@
+package com.timerx.platform
+
+fun platformCapabilitiesOf(
+    canSystemDynamicTheme: Boolean = false,
+    canVibrate: Boolean = false,
+    hasAnalytics: Boolean = false,
+    hasOwnSplashScreen: Boolean = false
+): PlatformCapabilities =
+    PlatformCapabilities(
+        canSystemDynamicTheme = canSystemDynamicTheme,
+        canVibrate = canVibrate,
+        hasAnalytics = hasAnalytics,
+        hasOwnSplashScreen = hasOwnSplashScreen
+    )

@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 import timerx.shared.generated.resources.Res
 
 class DesktopSoundManager(timerXSettings: TimerXSettings, timerManager: TimerManager) :
-    SoundManager(timerXSettings, timerManager) {
+    AbstractSoundManager(timerXSettings, timerManager) {
     private val voiceManager = VoiceManager.getInstance()
     private var voice: Voice
     override val isTTSSupported: Boolean
@@ -34,11 +34,11 @@ class DesktopSoundManager(timerXSettings: TimerXSettings, timerManager: TimerMan
         coroutineScope.launch {
             timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
                 voiceManager.voices
-                    .firstOrNull { it.name == alertSettings.ttsVoiceName }
+                    .firstOrNull { it.name == alertSettings.ttsVoiceId }
                     ?.let {
                         voice = it.apply {
                             allocate()
-                            volume = alertSettings.volume
+                            volume = alertSettings.volume.value
                         }
                     }
             }
@@ -47,7 +47,7 @@ class DesktopSoundManager(timerXSettings: TimerXSettings, timerManager: TimerMan
 
     override suspend fun beep(beep: Beep) {
         val sound = localVfs(beep.localPath()).readSound()
-        sound.volume = volume.toDouble()
+        sound.volume = volume.value.toDouble()
         repeat(beep.repeat) {
             sound.play(coroutineContext = Dispatchers.IO)
             delay(BEEP_DELAY)
@@ -56,7 +56,7 @@ class DesktopSoundManager(timerXSettings: TimerXSettings, timerManager: TimerMan
 
     override suspend fun textToSpeech(text: String) {
         withContext(Dispatchers.IO) {
-            voice.volume = volume
+            voice.volume = volume.value
             voice.speak(text)
         }
     }

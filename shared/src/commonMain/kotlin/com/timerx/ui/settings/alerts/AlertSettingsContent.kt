@@ -29,7 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.timerx.settings.VibrationState
 import com.timerx.sound.VoiceInformation
+import com.timerx.sound.Volume
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.thenIf
@@ -38,6 +40,7 @@ import com.timerx.ui.settings.alerts.AlertsSettingsIntent.OpenAppSettings
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.SetTTSVoice
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.UpdateVibration
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.UpdateVolume
+import com.timerx.util.letType
 import kotlinx.collections.immutable.ImmutableSet
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.api.IntentReceiver
@@ -58,7 +61,7 @@ internal fun AlertsSettingsContent(alertSettingsComponent: AlertSettingsComponen
     with(alertSettingsComponent) {
         TScaffold(
             title = stringResource(Res.string.alerts),
-            onBack = ::onBackClicked
+            onBack = onBackClicked
         ) { scaffoldPadding ->
             Column(
                 modifier = Modifier.padding(
@@ -73,8 +76,8 @@ internal fun AlertsSettingsContent(alertSettingsComponent: AlertSettingsComponen
             ) {
                 with(subscribe(DefaultLifecycle).value) {
                     VolumeCard(volume)
-                    if (canVibrate) {
-                        VibrationCard(isVibrationEnabled)
+                    vibration.letType<VibrationState.CanVibrate, _> {
+                        VibrationCard(enabled)
                     }
                     NotificationsCard(isNotificationsEnabled)
                     VoiceCard(selectedVoice, availableVoices)
@@ -106,7 +109,7 @@ fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { intent(SetTTSVoice(it.id)) }
+                            .clickable { intent(SetTTSVoice(it)) }
                             .thenIf(it.id == selectedVoice.id) {
                                 Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                             },
@@ -170,12 +173,12 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
 }
 
 @Composable
-private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Float) {
+private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Volume) {
     TCard {
         Text(text = stringResource(Res.string.volume))
         Slider(
-            value = volume,
-            onValueChange = { intent(UpdateVolume(it)) }
+            value = volume.value,
+            onValueChange = { intent(UpdateVolume(Volume(it))) }
         )
     }
 }

@@ -12,7 +12,7 @@ import timerx.shared.generated.resources.Res
 private const val DEFAULT_VOICE_ID = "null"
 
 class WasmSoundManager(settings: TimerXSettings, timerManager: TimerManager) :
-    SoundManager(settings, timerManager) {
+    AbstractSoundManager(settings, timerManager) {
     private var selectedVoiceId: String = DEFAULT_VOICE_ID
     override val isTTSSupported: Boolean
         get() = true
@@ -20,17 +20,17 @@ class WasmSoundManager(settings: TimerXSettings, timerManager: TimerManager) :
     init {
         coroutineScope.launch {
             settings.alertSettingsManager.alertSettings.collect {
-                selectedVoiceId = it.ttsVoiceName ?: DEFAULT_VOICE_ID
+                selectedVoiceId = it.ttsVoiceId ?: DEFAULT_VOICE_ID
             }
         }
     }
 
     override suspend fun beep(beep: Beep) {
-        Audio(beep.uri()).apply { volume = this@WasmSoundManager.volume.toDouble() }.play()
+        Audio(beep.uri()).apply { volume = this@WasmSoundManager.volume.value.toDouble() }.play()
     }
 
     override suspend fun textToSpeech(text: String) {
-        speak(text = text, volume = volume.toDouble(), voiceId = selectedVoiceId)
+        speak(text = text, volume = volume.value.toDouble(), voiceId = selectedVoiceId)
     }
 
     // This should be cached, but there is an issue with JS where

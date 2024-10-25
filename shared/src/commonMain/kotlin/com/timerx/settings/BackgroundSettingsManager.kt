@@ -2,7 +2,6 @@ package com.timerx.settings
 
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
-import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -13,7 +12,7 @@ private const val PATTERN = "${BACKGROUND_SETTINGS}pattern"
 
 interface BackgroundSettingsManager {
     val backgroundSettings: Flow<BackgroundSettings>
-    suspend fun setAlpha(alpha: Float)
+    suspend fun setBackgroundAlpha(backgroundAlpha: BackgroundAlpha)
     suspend fun setPattern(pattern: Pattern)
 }
 
@@ -22,7 +21,11 @@ internal class BackgroundSettingsManagerImpl(
     private val flowSettings: FlowSettings
 ) : BackgroundSettingsManager {
 
-    private val backgroundAlpha = flowSettings.getFloatOrNullFlow(ALPHA).mapIfNull(0.2f)
+    private val backgroundAlpha = flowSettings.getFloatOrNullFlow(ALPHA).map {
+        if (it == null) BackgroundAlpha.default
+        else BackgroundAlpha(it)
+    }
+
     private val pattern = flowSettings.getIntOrNullFlow(PATTERN).map {
         if (it == null) Pattern.Bubbles
         else Pattern.entries[it]
@@ -31,24 +34,20 @@ internal class BackgroundSettingsManagerImpl(
     override val backgroundSettings: Flow<BackgroundSettings> =
         combine(backgroundAlpha, pattern) { alpha, pattern ->
             BackgroundSettings(
-                alpha = alpha,
+                backgroundAlpha = alpha,
                 pattern = pattern
             )
         }
 
-    override suspend fun setAlpha(alpha: Float) {
-        flowSettings.putFloat(ALPHA, alpha)
-    }
+    override suspend fun setBackgroundAlpha(backgroundAlpha: BackgroundAlpha) =
+        flowSettings.putFloat(ALPHA, backgroundAlpha.value)
 
-    override suspend fun setPattern(pattern: Pattern) {
+    override suspend fun setPattern(pattern: Pattern) =
         flowSettings.putInt(PATTERN, pattern.ordinal)
-    }
 }
 
-val backgroundAlphaRange = 0.0f..0.99f
-
 data class BackgroundSettings(
-    val alpha: Float = 0.2f,
+    val backgroundAlpha: BackgroundAlpha = BackgroundAlpha.default,
     val pattern: Pattern = Pattern.Bubbles,
 )
 

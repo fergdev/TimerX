@@ -8,14 +8,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
-abstract class SoundManager(
-    timerXSettings: TimerXSettings,
-    timerManager: TimerManager
-) {
-    abstract val isTTSSupported: Boolean
-    internal val coroutineScope = CoroutineScope(Dispatchers.Default)
+interface SoundManager {
 
-    internal var volume: Float = DEFAULT_VOLUME
+    suspend fun beep(beep: Beep)
+
+    suspend fun textToSpeech(text: String)
+
+    fun voices(): List<VoiceInformation>
+}
+
+abstract class AbstractSoundManager(
+    timerXSettings: TimerXSettings,
+    timerManager: TimerManager,
+) : SoundManager {
+    abstract val isTTSSupported: Boolean
+
+    internal var volume: Volume = Volume.default
+    internal val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     init {
         coroutineScope.launch {
@@ -37,12 +46,6 @@ abstract class SoundManager(
             }
         }
     }
-
-    abstract suspend fun beep(beep: Beep)
-
-    abstract suspend fun textToSpeech(text: String)
-
-    abstract fun voices(): List<VoiceInformation>
 
     private suspend fun makeIntervalSound(intervalSound: IntervalSound) {
         with(intervalSound) {
@@ -72,7 +75,6 @@ data class IntervalSound(
     val text: String?,
 )
 
-const val DEFAULT_VOLUME = 0.5f
 const val BEEP_DELAY = 500L
 
 enum class Beep(val displayName: String, val path: String, val repeat: Int) {

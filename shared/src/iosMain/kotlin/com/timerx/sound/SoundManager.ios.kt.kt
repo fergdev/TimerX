@@ -29,7 +29,7 @@ import platform.Foundation.NSBundle
 
 @OptIn(ExperimentalForeignApi::class)
 class IosSoundManager(timerXSettings: TimerXSettings, timerManager: TimerManager) :
-    SoundManager(timerXSettings, timerManager) {
+    AbstractSoundManager(timerXSettings, timerManager) {
     override val isTTSSupported: Boolean
         get() = true
 
@@ -62,9 +62,9 @@ class IosSoundManager(timerXSettings: TimerXSettings, timerManager: TimerManager
 
         coroutineScope.launch {
             timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
-                avPlayer.volume = alertSettings.volume
+                avPlayer.volume = alertSettings.volume.value
                 voice = mappedVoices().firstOrNull {
-                    it.identifier == alertSettings.ttsVoiceName
+                    it.identifier == alertSettings.ttsVoiceId
                 }
             }
         }
@@ -88,7 +88,7 @@ class IosSoundManager(timerXSettings: TimerXSettings, timerManager: TimerManager
 
     override suspend fun textToSpeech(text: String) {
         val utterance = AVSpeechUtterance(string = text)
-        utterance.setVolume(volume)
+        utterance.setVolume(volume.value)
         utterance.voice = voice
         synthesizer.speakUtterance(utterance)
     }
