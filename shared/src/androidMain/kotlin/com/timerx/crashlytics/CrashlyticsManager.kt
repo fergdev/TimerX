@@ -3,6 +3,7 @@ package com.timerx.crashlytics
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.timerx.settings.TimerXSettings
+import com.timerx.settings.isEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,8 +16,8 @@ internal class CrashlyticsManager(
 
     init {
         coroutineScope.launch {
-            timerXSettings.collectAnalytics.collect {
-                Firebase.crashlytics.isCrashlyticsCollectionEnabled = it
+            timerXSettings.analytics.collect {
+                Firebase.crashlytics.isCrashlyticsCollectionEnabled = it.isEnabled()
             }
         }
     }

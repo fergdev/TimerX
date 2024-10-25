@@ -1,14 +1,14 @@
 package com.timerx.ui.settings.about.main
 
 import com.timerx.BuildFlags
+import com.timerx.settings.AnalyticsSettings
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
 data class AboutMainState(
     val versionName: String = BuildFlags.versionName,
     val privacyPolicyUri: String = BuildFlags.privacyPolicyUrl,
-    val hasAnalytics: Boolean = true,
-    val collectAnalytics: Boolean = true
+    val analyticsSettings: AnalyticsSettings = AnalyticsSettings.NotAvailable
 ) : MVIState
 
 sealed interface AboutMainIntent : MVIIntent {

@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.timerx.settings.AnalyticsSettings
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TMenuItem
@@ -53,6 +54,7 @@ import com.timerx.ui.settings.about.aboutlibs.AboutLibsContent
 import com.timerx.ui.settings.about.changelog.ChangeLogContent
 import com.timerx.ui.settings.about.main.AboutMainIntent.UpdateCollectAnalytics
 import com.timerx.ui.theme.Size
+import com.timerx.util.letType
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
@@ -144,21 +146,20 @@ internal fun AboutMainContent(component: AboutMainComponent) {
                     onClick = { intent(AboutMainIntent.ContactSupport) }
                 )
 
-                if (state.hasAnalytics) {
+                state.analyticsSettings.letType<AnalyticsSettings.Available, _> {
+                    val updateAnalytics = {
+                        intent(UpdateCollectAnalytics(enabled.not()))
+                    }
                     TMenuItem(
                         title = stringResource(Res.string.collect_analytics),
                         color = rainbow[4],
                         icon = Icons.Filled.Share,
                         subtitle = stringResource(Res.string.collect_analytics_message),
-                        onClick = {
-                            intent(UpdateCollectAnalytics(state.collectAnalytics.not()))
-                        },
+                        onClick = updateAnalytics,
                         trailing = {
                             Switch(
-                                checked = state.collectAnalytics,
-                                onCheckedChange = {
-                                    intent(UpdateCollectAnalytics(state.collectAnalytics.not()))
-                                }
+                                checked = enabled,
+                                onCheckedChange = { updateAnalytics() }
                             )
                         }
                     )

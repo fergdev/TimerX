@@ -4,20 +4,9 @@ import com.timerx.ui.settings.about.main.AboutMainComponentFake
 import com.timerx.util.assertActiveInstance
 import com.timerx.util.createComponent
 import io.kotest.core.spec.style.FreeSpec
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 
 class AboutComponentTest : FreeSpec({
-    beforeTest {
-        Dispatchers.setMain(UnconfinedTestDispatcher() as CoroutineDispatcher)
-    }
-    afterTest {
-        Dispatchers.resetMain()
-    }
-    "init" {
+    "init sets sets active child to main" {
         val defaultAboutComponent = createComponent {
             DefaultAboutComponent(
                 componentContext = it,

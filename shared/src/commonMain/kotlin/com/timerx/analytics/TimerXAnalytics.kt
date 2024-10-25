@@ -2,6 +2,7 @@ package com.timerx.analytics
 
 import co.touchlab.kermit.Logger
 import com.timerx.settings.TimerXSettings
+import com.timerx.settings.isEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,8 +13,8 @@ abstract class TimerXAnalytics(private val timerXSettings: TimerXSettings) {
 
     init {
         coroutineScope.launch {
-            timerXSettings.collectAnalytics.collect {
-                collectAnalytics = it
+            timerXSettings.analytics.collect {
+                collectAnalytics = it.isEnabled()
             }
         }
     }

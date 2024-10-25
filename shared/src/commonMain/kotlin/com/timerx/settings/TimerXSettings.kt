@@ -6,6 +6,7 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.domain.SortTimersBy
 import com.timerx.platform.platformCapabilities
+import com.timerx.util.assert
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,11 +18,19 @@ interface TimerXSettings {
     val backgroundSettingsManager: BackgroundSettingsManager
     val sortTimersBy: Flow<SortTimersBy>
     val keepScreenOn: Flow<Boolean>
-    val collectAnalytics: Flow<Boolean>
+    val analytics: Flow<AnalyticsSettings>
     suspend fun setKeepScreenOn(keepScreenOn: Boolean)
     suspend fun setSortTimersBy(sortTimersBy: SortTimersBy)
     suspend fun setCollectAnalytics(collectAnalytics: Boolean)
 }
+
+sealed interface AnalyticsSettings {
+    data class Available(val enabled: Boolean) : AnalyticsSettings
+    data object NotAvailable : AnalyticsSettings
+}
+
+fun AnalyticsSettings.isEnabled(): Boolean =
+    this is AnalyticsSettings.Available && enabled
 
 private const val SORT_TIMERS_BY = "sortTimersBy"
 private const val KEEP_SCREEN_ON = "keepScreenOn"
@@ -43,8 +52,12 @@ internal class TimerXSettingsImpl : TimerXSettings {
     override val keepScreenOn: Flow<Boolean> =
         flowSettings.getBooleanOrNullFlow(KEEP_SCREEN_ON).mapIfNull(true)
 
-    override val collectAnalytics: Flow<Boolean> =
-        flowSettings.getBooleanOrNullFlow(COLLECT_ANALYTICS).mapIfNull(true)
+    override val analytics: Flow<AnalyticsSettings> =
+        flowSettings.getBooleanOrNullFlow(COLLECT_ANALYTICS).map {
+            if (!platformCapabilities.hasAnalytics) AnalyticsSettings.NotAvailable
+            if (it == null) AnalyticsSettings.Available(false)
+            else AnalyticsSettings.Available(it)
+        }
 
     override suspend fun setKeepScreenOn(keepScreenOn: Boolean) =
         flowSettings.putBoolean(KEEP_SCREEN_ON, keepScreenOn)
@@ -52,8 +65,12 @@ internal class TimerXSettingsImpl : TimerXSettings {
     override suspend fun setSortTimersBy(sortTimersBy: SortTimersBy) =
         flowSettings.putInt(SORT_TIMERS_BY, sortTimersBy.ordinal)
 
-    override suspend fun setCollectAnalytics(collectAnalytics: Boolean) =
+    override suspend fun setCollectAnalytics(collectAnalytics: Boolean) {
+        assert(platformCapabilities.hasAnalytics) {
+            "Analytics is not available on this platform"
+        }
         flowSettings.putBoolean(COLLECT_ANALYTICS, collectAnalytics)
+    }
 
     override val themeSettingsManager: ThemeSettingsManager = ThemeSettingsManagerImpl(flowSettings)
     override val backgroundSettingsManager: BackgroundSettingsManager =

@@ -16,7 +16,7 @@ internal class CrashlyticsManager(
 
     init {
         coroutineScope.launch {
-            timerXSettings.collectAnalytics.collect {
+            timerXSettings.analytics.collect {
                 assert(crashlyticsIosCallback != null) {
                     "FirebaseCrashlyticsCallback not set"
                 }
