@@ -26,10 +26,21 @@ interface AboutComponent : BackHandlerOwner {
 internal class DefaultAboutComponent(
     componentContext: ComponentContext,
     private val back: () -> Unit,
+    private val aboutMainComponentFactory: (ComponentContext, () -> Unit) -> AboutMainComponent
 ) : ComponentContext by componentContext,
     AboutComponent {
 
-    private val koin = KoinPlatform.getKoin()
+    constructor(componentContext: ComponentContext, back: () -> Unit) : this(
+        componentContext = componentContext,
+        back = back,
+        aboutMainComponentFactory = { childContext, onBack ->
+            DefaultAboutMainComponent(
+                childContext,
+                onBack,
+                KoinPlatform.getKoin()::get
+            )
+        }
+    )
 
     private val nav = StackNavigation<AboutConfig>()
 
@@ -48,11 +59,7 @@ internal class DefaultAboutComponent(
     ): AboutComponent.Child =
         when (config) {
             is AboutConfig.Main -> AboutComponent.Child.Main(
-                DefaultAboutMainComponent(
-                    componentContext = componentContext,
-                    onBack = ::onBackClicked,
-                    factory = koin::get
-                )
+                aboutMainComponentFactory(componentContext, ::onBackClicked)
             )
         }
 
