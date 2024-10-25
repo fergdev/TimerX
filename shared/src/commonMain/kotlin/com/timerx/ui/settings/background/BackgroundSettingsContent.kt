@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.timerx.settings.BackgroundAlpha
 import com.timerx.settings.Pattern
-import com.timerx.settings.backgroundAlphaRange
 import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
@@ -109,7 +108,7 @@ private fun IntentReceiver<UpdateAlpha>.AlphaCard(backgroundAlpha: BackgroundAlp
         Text(text = stringResource(Res.string.alpha))
         Slider(
             value = backgroundAlpha.value,
-            valueRange = backgroundAlphaRange,
+            valueRange = BackgroundAlpha.range,
             onValueChange = { intent(UpdateAlpha(BackgroundAlpha(it))) }
         )
     }

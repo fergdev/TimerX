@@ -7,9 +7,9 @@ import com.timerx.permissions.PermissionState
 import com.timerx.permissions.PermissionState.Granted
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.TimerXSettings
-import com.timerx.settings.VibrationState
-import com.timerx.settings.VibrationState.CanVibrate
-import com.timerx.settings.VibrationState.CannotVibrate
+import com.timerx.settings.VibrationSetting
+import com.timerx.settings.VibrationSetting.CanVibrate
+import com.timerx.settings.VibrationSetting.CannotVibrate
 import com.timerx.settings.alertSettingsOf
 import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
@@ -37,7 +37,7 @@ private val voices = listOf(voiceInformation1, voiceInformation2, voiceInformati
 
 private fun alertSettingsStateOf(
     volume: Volume = Volume.default,
-    vibration: VibrationState = CannotVibrate,
+    vibration: VibrationSetting = CannotVibrate,
     isNotificationsEnabled: Boolean = false,
     selectedVoice: VoiceInformation = VoiceInformation.DeviceDefault,
     availableVoices: ImmutableSet<VoiceInformation> = voices.toPersistentSet()
@@ -120,7 +120,7 @@ class AlertSettingsContainerTest : FreeSpec({
             every { timerXSettings.alertSettingsManager } returns mock {
                 every { alertSettings } returns flowOf(
                     alertSettingsOf(
-                        vibrationState = CanVibrate(true)
+                        vibrationSetting = CanVibrate(true)
                     )
                 )
             }

@@ -1,7 +1,7 @@
 package com.timerx.vibration
 
 import com.timerx.settings.TimerXSettings
-import com.timerx.settings.VibrationState
+import com.timerx.settings.VibrationSetting
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +27,7 @@ abstract class VibrationManager(
                 timerXSettings.alertSettingsManager.alertSettings
             ) { timerEvent, alertSettings ->
                 _isVibrationEnabled =
-                    (alertSettings.vibrationState as? VibrationState.CanVibrate)?.enabled ?: false
+                    (alertSettings.vibrationSetting as? VibrationSetting.CanVibrate)?.enabled ?: false
                 if (_isVibrationEnabled.not()) return@combine
 
                 when (timerEvent) {

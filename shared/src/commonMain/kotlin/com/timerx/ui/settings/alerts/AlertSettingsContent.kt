@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.timerx.settings.VibrationState
+import com.timerx.settings.VibrationSetting
 import com.timerx.sound.VoiceInformation
 import com.timerx.sound.Volume
 import com.timerx.ui.common.TCard
@@ -76,7 +76,7 @@ internal fun AlertsSettingsContent(alertSettingsComponent: AlertSettingsComponen
             ) {
                 with(subscribe(DefaultLifecycle).value) {
                     VolumeCard(volume)
-                    vibration.letType<VibrationState.CanVibrate, _> {
+                    vibration.letType<VibrationSetting.CanVibrate, _> {
                         VibrationCard(enabled)
                     }
                     NotificationsCard(isNotificationsEnabled)

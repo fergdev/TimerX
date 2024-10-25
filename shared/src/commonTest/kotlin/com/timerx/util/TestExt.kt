@@ -1,5 +1,6 @@
 package com.timerx.util
 
+import app.cash.turbine.ReceiveTurbine
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.concurrency.CoroutineDispatcherFactory
 import io.kotest.core.spec.Spec
@@ -25,3 +26,9 @@ fun Spec.asUnconfined() {
 fun FreeSpecContainerScope.idle() = testCoroutineScheduler.advanceUntilIdle()
 
 fun FreeSpecTerminalScope.idle() = testCoroutineScheduler.advanceUntilIdle()
+
+suspend fun <T> ReceiveTurbine<T>.awaitAndExpectNoMore(): T {
+    val item = awaitItem()
+    expectNoEvents()
+    return item
+}

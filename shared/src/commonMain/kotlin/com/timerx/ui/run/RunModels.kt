@@ -1,7 +1,7 @@
 package com.timerx.ui.run
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.settings.VibrationState
+import com.timerx.settings.VibrationSetting
 import com.timerx.sound.Volume
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
@@ -14,14 +14,14 @@ internal sealed interface RunScreenState : MVIState {
 
         val backgroundColor: Color
         val volume: Volume
-        val vibrationState: VibrationState
+        val vibrationSetting: VibrationSetting
         val timerName: String
         val keepScreenOn: Boolean
 
         sealed interface NotFinished : Loaded {
             override val backgroundColor: Color
             override val volume: Volume
-            override val vibrationState: VibrationState
+            override val vibrationSetting: VibrationSetting
             override val timerName: String
             val time: Long
             val intervalName: String
@@ -31,7 +31,7 @@ internal sealed interface RunScreenState : MVIState {
             data class Playing(
                 override val backgroundColor: Color,
                 override val volume: Volume,
-                override val vibrationState: VibrationState,
+                override val vibrationSetting: VibrationSetting,
                 override val timerName: String,
                 override val time: Long,
                 override val intervalName: String,
@@ -43,7 +43,7 @@ internal sealed interface RunScreenState : MVIState {
             data class Paused(
                 override val backgroundColor: Color,
                 override val volume: Volume,
-                override val vibrationState: VibrationState,
+                override val vibrationSetting: VibrationSetting,
                 override val timerName: String,
                 override val time: Long,
                 override val intervalName: String,
@@ -56,7 +56,7 @@ internal sealed interface RunScreenState : MVIState {
         data class Finished(
             override val backgroundColor: Color,
             override val volume: Volume,
-            override val vibrationState: VibrationState,
+            override val vibrationSetting: VibrationSetting,
             override val timerName: String,
             override val keepScreenOn: Boolean,
         ) : Loaded

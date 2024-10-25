@@ -3,11 +3,12 @@ package com.timerx.settings
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.hoc081098.flowext.combine
-import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.ui.common.blue
+import com.timerx.util.assert
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -29,12 +30,13 @@ interface ThemeSettingsManager {
     suspend fun setDarkTheme(settingsDarkTheme: SettingsDarkTheme)
     suspend fun setIsDynamicTheme(isDynamic: Boolean)
     suspend fun setIsHighFidelity(isHighFidelity: Boolean)
-    suspend fun setContrast(contrast: Double)
+    suspend fun setContrast(themeContrast: ThemeContrast)
 }
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class ThemeSettingsManagerImpl(
-    private val flowSettings: FlowSettings
+    private val flowSettings: FlowSettings,
+    private val platformCapabilities: PlatformCapabilities
 ) : ThemeSettingsManager {
 
     private val isDynamicTheme = flowSettings.getBooleanOrNullFlow(DYNAMIC_THEME).mapIfNull(false)
@@ -54,8 +56,10 @@ internal class ThemeSettingsManagerImpl(
     }
     private val isHighFidelity =
         flowSettings.getBooleanOrNullFlow(IS_HIGH_FIDELITY).mapIfNull(false)
+
     private val contrast = flowSettings.getDoubleOrNullFlow(THEME_CONTRAST).map {
-        it ?: Contrast.Default.value
+        if (it == null) ThemeContrast.default
+        else ThemeContrast(it)
     }
 
     override val themeSettings = combine(
@@ -89,6 +93,9 @@ internal class ThemeSettingsManagerImpl(
     }
 
     override suspend fun setIsDynamicTheme(isDynamic: Boolean) {
+        assert(platformCapabilities.canSystemDynamicTheme) {
+            "Attempting to set dynamic theme when platform does not support it"
+        }
         flowSettings.putBoolean(DYNAMIC_THEME, isDynamic)
     }
 
@@ -96,8 +103,8 @@ internal class ThemeSettingsManagerImpl(
         flowSettings.putBoolean(IS_HIGH_FIDELITY, isHighFidelity)
     }
 
-    override suspend fun setContrast(contrast: Double) {
-        flowSettings.putDouble(THEME_CONTRAST, contrast)
+    override suspend fun setContrast(themeContrast: ThemeContrast) {
+        flowSettings.putDouble(THEME_CONTRAST, themeContrast.value)
     }
 }
 
@@ -110,9 +117,9 @@ enum class SettingsDarkTheme {
 data class ThemeSettings(
     val isSystemDynamic: Boolean = false,
     val settingsDarkTheme: SettingsDarkTheme = SettingsDarkTheme.User,
-    val isAmoled: Boolean = true,
+    val isAmoled: Boolean = false,
     val seedColor: Color = blue,
     val paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
     val isHighFidelity: Boolean = false,
-    val contrast: Double = Contrast.Default.value
+    val contrast: ThemeContrast = ThemeContrast.default
 )

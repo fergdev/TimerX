@@ -141,6 +141,7 @@ kotlin {
                 implementation(libs.kotest)
                 implementation(libs.flowmvi.test)
                 implementation(libs.turbine)
+                implementation(libs.multiplatform.settings.test)
             }
         }
 

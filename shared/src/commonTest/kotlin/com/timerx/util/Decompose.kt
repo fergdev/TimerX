@@ -10,7 +10,6 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import kotlin.test.assertIs
 
-
 internal fun <T : Any> createComponent(factory: (ComponentContext) -> T): T {
     onDecomposeError = {}
     val lifecycle = LifecycleRegistry()

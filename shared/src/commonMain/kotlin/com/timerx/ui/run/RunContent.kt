@@ -46,7 +46,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.timerx.domain.timeFormatted
-import com.timerx.settings.VibrationState
+import com.timerx.settings.VibrationSetting
 import com.timerx.sound.Volume
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
@@ -199,7 +199,7 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
                 TopControls(
                     displayColor = contrastDisplayColor,
                     volume = state.volume,
-                    vibrationState = state.vibrationState,
+                    vibrationSetting = state.vibrationSetting,
                 ) {
                     controlsVisible = true
                     touchCounter++
@@ -284,7 +284,7 @@ private fun IntentReceiver<RunScreenIntent>.TimerInformation(
 private fun IntentReceiver<RunScreenIntent>.TopControls(
     displayColor: Color,
     volume: Volume,
-    vibrationState: VibrationState,
+    vibrationSetting: VibrationSetting,
     onIncrementTouchCounter: () -> Unit,
 ) {
     Row {
@@ -314,7 +314,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
                 inactiveTrackColor = displayColor.copy(alpha = 0.3F)
             )
         )
-        vibrationState.letType<VibrationState.CanVibrate, _> {
+        vibrationSetting.letType<VibrationSetting.CanVibrate, _> {
             IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 onIncrementTouchCounter()

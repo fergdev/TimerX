@@ -5,10 +5,10 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.domain.SortTimersBy
-import com.timerx.platform.platformCapabilities
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.util.assert
 import com.timerx.util.mapIfNull
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -37,8 +37,12 @@ private const val KEEP_SCREEN_ON = "keepScreenOn"
 private const val COLLECT_ANALYTICS = "collectAnalytics"
 
 @OptIn(ExperimentalSettingsApi::class)
-internal class TimerXSettingsImpl : TimerXSettings {
-    private val flowSettings = Settings().makeObservable().toFlowSettings(Dispatchers.Main)
+internal class TimerXSettingsImpl(
+    settings: Settings,
+    private val platformCapabilities: PlatformCapabilities,
+    dispatcher: CoroutineDispatcher
+) : TimerXSettings {
+    private val flowSettings = settings.makeObservable().toFlowSettings(dispatcher)
 
     override val alertSettingsManager = AlertSettingsManagerImpl(
         flowSettings = flowSettings,
@@ -55,7 +59,7 @@ internal class TimerXSettingsImpl : TimerXSettings {
     override val analytics: Flow<AnalyticsSettings> =
         flowSettings.getBooleanOrNullFlow(COLLECT_ANALYTICS).map {
             if (!platformCapabilities.hasAnalytics) AnalyticsSettings.NotAvailable
-            if (it == null) AnalyticsSettings.Available(false)
+            else if (it == null) AnalyticsSettings.Available(true)
             else AnalyticsSettings.Available(it)
         }
 
@@ -72,7 +76,10 @@ internal class TimerXSettingsImpl : TimerXSettings {
         flowSettings.putBoolean(COLLECT_ANALYTICS, collectAnalytics)
     }
 
-    override val themeSettingsManager: ThemeSettingsManager = ThemeSettingsManagerImpl(flowSettings)
+    override val themeSettingsManager: ThemeSettingsManager = ThemeSettingsManagerImpl(
+        flowSettings,
+        platformCapabilities
+    )
     override val backgroundSettingsManager: BackgroundSettingsManager =
         BackgroundSettingsManagerImpl(flowSettings)
 }

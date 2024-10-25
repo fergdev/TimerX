@@ -79,7 +79,7 @@ internal fun observeTimerPlugin(
                         TimerState.Running -> {
                             Playing(
                                 volume = settings.volume,
-                                vibrationState = settings.vibrationState,
+                                vibrationSetting = settings.vibrationSetting,
                                 timerName = timerEvent.runState.timerName,
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 index = index,
@@ -93,7 +93,7 @@ internal fun observeTimerPlugin(
                         TimerState.Paused -> {
                             Paused(
                                 volume = settings.volume,
-                                vibrationState = settings.vibrationState,
+                                vibrationSetting = settings.vibrationSetting,
                                 timerName = timerEvent.runState.timerName,
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 index = index,
@@ -107,7 +107,7 @@ internal fun observeTimerPlugin(
                         TimerState.Finished -> {
                             Finished(
                                 volume = settings.volume,
-                                vibrationState = settings.vibrationState,
+                                vibrationSetting = settings.vibrationSetting,
                                 timerName = timerEvent.runState.timerName,
                                 backgroundColor = timerEvent.runState.backgroundColor,
                                 keepScreenOn = it.third,

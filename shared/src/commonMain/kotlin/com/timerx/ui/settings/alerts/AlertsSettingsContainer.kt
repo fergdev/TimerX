@@ -35,7 +35,7 @@ class AlertsSettingsContainer(
                         val voices = soundManager.voices()
                         AlertsSettingsState(
                             volume = it.volume,
-                            vibration = it.vibrationState,
+                            vibration = it.vibrationSetting,
                             isNotificationsEnabled = isNotificationsEnabled(),
                             selectedVoice = voices.selected(it.ttsVoiceId),
                             availableVoices = voices.sortedBy { it.name }.toPersistentSet()

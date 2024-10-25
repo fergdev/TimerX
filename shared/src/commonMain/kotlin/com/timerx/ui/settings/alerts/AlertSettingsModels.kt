@@ -1,6 +1,6 @@
 package com.timerx.ui.settings.alerts
 
-import com.timerx.settings.VibrationState
+import com.timerx.settings.VibrationSetting
 import com.timerx.sound.VoiceInformation
 import com.timerx.sound.Volume
 import kotlinx.collections.immutable.ImmutableSet
@@ -10,7 +10,7 @@ import pro.respawn.flowmvi.api.MVIState
 
 data class AlertsSettingsState(
     val volume: Volume = Volume.default,
-    val vibration: VibrationState = VibrationState.CannotVibrate,
+    val vibration: VibrationSetting = VibrationSetting.CannotVibrate,
     val isNotificationsEnabled: Boolean = false,
     val selectedVoice: VoiceInformation = VoiceInformation.DeviceDefault,
     val availableVoices: ImmutableSet<VoiceInformation> = persistentSetOf()

@@ -26,7 +26,11 @@ private val shapes = Shapes(
 
 @Composable
 fun TimerXTheme(content: @Composable () -> Unit) {
-    val settings = koinInject<TimerXSettings>().themeSettingsManager.themeSettings.collectAsState(ThemeSettings())
+    val settings = koinInject<TimerXSettings>()
+        .themeSettingsManager
+        .themeSettings
+        .collectAsState(ThemeSettings())
+
     val isDark = isDarkTheme(settings.value.settingsDarkTheme)
     val dynamic = systemDynamicColorScheme(isDark)
     // Required to regenerate colorscheme when the dynamic color has changed
@@ -38,15 +42,17 @@ fun TimerXTheme(content: @Composable () -> Unit) {
         } else {
             { it }
         }
-    val state = rememberDynamicMaterialThemeState(
-        seedColor = settings.value.seedColor,
-        isDark = isDark,
-        isAmoled = settings.value.isAmoled,
-        style = settings.value.paletteStyle,
-        extendedFidelity = settings.value.isHighFidelity,
-        contrastLevel = settings.value.contrast,
-        modifyColorScheme = modifyColorScheme
-    )
+    val state = with(settings.value) {
+        rememberDynamicMaterialThemeState(
+            seedColor = seedColor,
+            isDark = isDark,
+            isAmoled = isAmoled,
+            style = paletteStyle,
+            extendedFidelity = isHighFidelity,
+            contrastLevel = contrast.value,
+            modifyColorScheme = modifyColorScheme
+        )
+    }
     DynamicMaterialTheme(
         state = state,
         animate = true,

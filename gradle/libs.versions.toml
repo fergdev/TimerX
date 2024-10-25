@@ -100,6 +100,7 @@ multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", vers
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
 multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
 multiplatform-settings-observable = { module = "com.russhwolf:multiplatform-settings-make-observable", version.ref = "multiplatformSettings" }
+multiplatform-settings-test = { module = "com.russhwolf:multiplatform-settings-test", version.ref = "multiplatformSettings" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }

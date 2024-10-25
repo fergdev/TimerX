@@ -19,7 +19,7 @@ private const val TTS_VOICE_NAME = "${ALERT_SETTINGS}ttsVoiceName"
 
 data class AlertSettings(
     val volume: Volume,
-    val vibrationState: VibrationState,
+    val vibrationSetting: VibrationSetting,
     val ignoreNotificationsPermissions: Boolean,
     val ttsVoiceId: String?,
 )
@@ -32,23 +32,23 @@ interface AlertSettingsManager {
     suspend fun setTTSVoice(voiceName: String)
 }
 
-sealed interface VibrationState {
-    data class CanVibrate(val enabled: Boolean = false) : VibrationState
-    data object CannotVibrate : VibrationState
+sealed interface VibrationSetting {
+    data class CanVibrate(val enabled: Boolean = false) : VibrationSetting
+    data object CannotVibrate : VibrationSetting
 }
 
 @OptIn(ExperimentalSettingsApi::class)
-class AlertSettingsManagerImpl(
+internal class AlertSettingsManagerImpl(
     private val flowSettings: FlowSettings,
     private val platformCapabilities: PlatformCapabilities
 ) : AlertSettingsManager {
     private val volume = flowSettings.getFloatOrNullFlow(VOLUME)
         .map { if (it == null) Volume.default else Volume(it) }
-    private val vibrationState =
+    private val vibrationSetting =
         flowSettings.getBooleanOrNullFlow(VIBRATION_ENABLED)
             .map {
-                if (!platformCapabilities.canVibrate) VibrationState.CannotVibrate
-                VibrationState.CanVibrate(it != null && it)
+                if (!platformCapabilities.canVibrate) VibrationSetting.CannotVibrate
+                else VibrationSetting.CanVibrate(it != null && it)
             }
     private val ignoreNotificationsPermissions =
         flowSettings.getBooleanOrNullFlow(SET_IGNORE_NOTIFICATIONS_PERMISSION).mapIfNull(false)
@@ -56,11 +56,11 @@ class AlertSettingsManagerImpl(
     private val ttsVoiceId: Flow<String?> = flowSettings.getStringOrNullFlow(TTS_VOICE_NAME)
 
     override val alertSettings: Flow<AlertSettings> = combine(
-        volume, vibrationState, ignoreNotificationsPermissions, ttsVoiceId
+        volume, vibrationSetting, ignoreNotificationsPermissions, ttsVoiceId
     ) { volume, vibrationState, ignoreNotificationPermissions, ttsVoiceName ->
         AlertSettings(
             volume = volume,
-            vibrationState = vibrationState,
+            vibrationSetting = vibrationState,
             ignoreNotificationsPermissions = ignoreNotificationPermissions,
             ttsVoiceId = ttsVoiceName
         )

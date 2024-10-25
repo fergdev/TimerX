@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
 import com.timerx.settings.SettingsDarkTheme
+import com.timerx.settings.ThemeContrast
 import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
@@ -166,7 +167,7 @@ private fun IntentReceiver<UpdateIsHighFidelity>.HighFidelityRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: Double) {
+private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: ThemeContrast) {
     TCard {
         Text(text = stringResource(Res.string.contrast_level))
         FlowRow(
@@ -176,9 +177,9 @@ private fun IntentReceiver<UpdateContrast>.ContrastRow(contrast: Double) {
             val haptic = LocalHapticFeedback.current
             Slider(
                 modifier = Modifier.fillMaxWidth(),
-                value = contrast.toFloat(),
-                valueRange = -1f..1f,
-                onValueChange = { intent(UpdateContrast(it.toDouble())) },
+                value = contrast.value.toFloat(),
+                valueRange = ThemeContrast.range,
+                onValueChange = { intent(UpdateContrast(ThemeContrast(it.toDouble()))) },
                 onValueChangeFinished = {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
