@@ -44,7 +44,7 @@ internal fun MainSettingsContent(component: MainSettingsComponent) =
     with(component) {
         TScaffold(
             title = stringResource(Res.string.settings),
-            onBack = component::onBackClicked
+            onBack = component.onBackClicked
         ) { padding ->
             Column(
                 modifier = Modifier

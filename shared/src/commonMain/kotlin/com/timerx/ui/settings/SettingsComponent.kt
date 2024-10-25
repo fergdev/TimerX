@@ -66,11 +66,11 @@ internal class DefaultSettingsComponent(
         when (config) {
             is SettingsConfig.Main -> Main(
                 DefaultMainSettingsComponent(
-                    backClicked = { onBackClicked() },
-                    alertClicked = { nav.push(SettingsConfig.Alerts) },
-                    themeClicked = { nav.push(SettingsConfig.Theme) },
-                    backgroundClicked = { nav.push(SettingsConfig.Background) },
-                    aboutClicked = { nav.push(SettingsConfig.About) },
+                    onBackClicked =  ::onBackClicked,
+                    onAlertsClicked = { nav.push(SettingsConfig.Alerts) },
+                    onThemeClicked = { nav.push(SettingsConfig.Theme) },
+                    onBackgroundClicked = { nav.push(SettingsConfig.Background) },
+                    onAboutClicked = { nav.push(SettingsConfig.About) },
                     context = componentContext,
                     factory = koin::get
                 )

@@ -3,6 +3,7 @@
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule
 import com.mikepenz.aboutlibraries.plugin.StrictMode
+import dev.mokkery.gradle.mokkery
 import org.intellij.lang.annotations.Language
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -138,12 +139,15 @@ kotlin {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.coroutines.test)
                 implementation(libs.kotest)
+                implementation(libs.flowmvi.test)
+                implementation(libs.turbine)
             }
         }
 
         val desktopTest by getting {
             dependencies {
                 implementation(libs.kotest.junit)
+                implementation(mokkery("coroutines"))
             }
         }
 

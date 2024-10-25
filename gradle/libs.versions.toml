@@ -36,11 +36,12 @@ kotlinxSerializationJson = "1.7.3"
 ksp = "2.0.21-1.0.25"
 kstore = "0.9.0"
 materialKolor = "2.0.0"
-mockery = "2.4.0"
+mokkery = "2.4.0"
 multiplatformSettings = "1.2.0"
 playServicesAds = "23.4.0"
 reorderable = "2.4.0"
 sqlite = "2.5.0-SNAPSHOT"
+turbine = "1.1.0"
 versionCatalogUpdatePlugin = "0.8.4"
 
 [libraries]
@@ -66,6 +67,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 flowext = { module = "io.github.hoc081098:FlowExt", version.ref = "flowext" }
 flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowMvi" }
+flowmvi-test = { module = "pro.respawn.flowmvi:test", version.ref = "flowMvi" }
 flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowMvi" }
 flowmvi-essenty = { module = "pro.respawn.flowmvi:essenty", version.ref = "flowMvi" }
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
@@ -94,6 +96,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
 kstore-storage = { module = "io.github.xxfast:kstore-storage", version.ref = "kstore" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+mokkery-coroutines = { module = "dev.mokkery:mokkery-coroutines", version.ref = "mokkery" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
 multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
@@ -101,6 +104,7 @@ multiplatform-settings-observable = { module = "com.russhwolf:multiplatform-sett
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 aboutLibs = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibs" }
@@ -119,7 +123,7 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotest = { id = "io.kotest.multiplatform", version = "5.0.2" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-mokkery = { id = "dev.mokkery", version.ref = "mockery" }
+mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 # Add this back in when the plugin is supported
 #room = { id = "androidx.room", version.ref = "androidx-room" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }

@@ -51,7 +51,7 @@ import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsContent
 import com.timerx.ui.settings.about.changelog.ChangeLogContent
-import com.timerx.ui.settings.about.main.AboutIntent.UpdateCollectAnalytics
+import com.timerx.ui.settings.about.main.AboutMainIntent.UpdateCollectAnalytics
 import com.timerx.ui.theme.Size
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
@@ -141,7 +141,7 @@ internal fun AboutMainContent(component: AboutMainComponent) {
                     title = stringResource(Res.string.contact_support),
                     color = rainbow[3],
                     icon = Icons.Filled.Email,
-                    onClick = { intent(AboutIntent.ContactSupport) }
+                    onClick = { intent(AboutMainIntent.ContactSupport) }
                 )
 
                 if (state.hasAnalytics) {

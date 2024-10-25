@@ -2,6 +2,7 @@ package com.timerx.ui.settings.main
 
 import com.timerx.BuildFlags
 import com.timerx.settings.TimerXSettings
+import com.timerx.ui.settings.main.MainSettingsIntent.KeepScreenOn
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.plugins.reduce
@@ -18,7 +19,7 @@ class MainSettingsContainer(
         }
         reduce {
             when (it) {
-                is MainSettingsIntent.KeepScreenOn -> settings.setKeepScreenOn(it.keepScreenOn)
+                is KeepScreenOn -> settings.setKeepScreenOn(it.keepScreenOn)
             }
         }
     }

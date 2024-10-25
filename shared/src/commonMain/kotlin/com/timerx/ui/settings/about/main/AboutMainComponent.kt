@@ -10,10 +10,11 @@ import com.arkivanov.decompose.value.Value
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
 import com.timerx.ui.settings.about.changelog.ChangeLogComponent
 import kotlinx.serialization.Serializable
+import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.api.Store
 import pro.respawn.flowmvi.essenty.dsl.retainedStore
 
-typealias AboutStore = Store<AboutState, AboutIntent, Nothing>
+typealias AboutStore = Store<AboutMainState, AboutMainIntent, Nothing>
 
 interface AboutMainComponent : AboutStore {
 
@@ -34,7 +35,7 @@ interface AboutMainComponent : AboutStore {
 class DefaultAboutMainComponent(
     componentContext: ComponentContext,
     val onBack: () -> Unit,
-    factory: () -> AboutMainContainer
+    factory: () -> Container<AboutMainState, AboutMainIntent, Nothing>
 ) : ComponentContext by componentContext,
     AboutStore by componentContext.retainedStore(factory = factory),
     AboutMainComponent {
