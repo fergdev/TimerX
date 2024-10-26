@@ -376,3 +376,15 @@ aboutLibraries {
     // Enable pretty printing for the generated JSON file
     prettyPrint = true
 }
+
+kover {
+    reports {
+        // filters for all report types of all build variants
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                packages("timerx.shared.generated.resources")
+            }
+        }
+    }
+}

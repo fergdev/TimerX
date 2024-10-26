@@ -22,4 +22,7 @@ class BackgroundAlphaTest : FreeSpec({
             }
         }
     }
+    "range"{
+        BackgroundAlpha.range shouldBe 0.0f..0.99f
+    }
 })

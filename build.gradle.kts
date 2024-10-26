@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.aboutLibs) apply false
     alias(libs.plugins.kotest)
+    alias(libs.plugins.kover)
 }
 
 versionCatalogUpdate {

@@ -24,4 +24,7 @@ class ThemeContrastTest : FreeSpec({
             }
         }
     }
+    "range"{
+        ThemeContrast.range shouldBe -1.0f..1.0f
+    }
 })
