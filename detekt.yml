@@ -557,9 +557,6 @@ potential-bugs:
     active: true
   LateinitUsage:
     active: true
-    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**',  '**.kts', '**/kotestTest/**' ]
-    ignoreAnnotated: [ ]
-    ignoreOnClassesPattern: ''
   MapGetWithNotNullAssertionOperator:
     active: true
   NullableToStringCall:

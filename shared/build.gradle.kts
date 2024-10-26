@@ -21,6 +21,7 @@ plugins {
 //    alias(libs.plugins.room)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.aboutLibs)
+    alias(libs.plugins.kover)
 }
 
 @Language("Kotlin")

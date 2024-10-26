@@ -33,6 +33,7 @@ kotlinx-immutable = "0.3.8"
 kotlinx-serialization = "1.7.3"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJson = "1.7.3"
+kover = "0.9.0-RC"
 ksp = "2.0.21-1.0.25"
 kstore = "0.9.0"
 materialKolor = "2.0.0"
@@ -122,6 +123,7 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotest = { id = "io.kotest.multiplatform", version = "5.0.2" }
+kover = {id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 # Add this back in when the plugin is supported

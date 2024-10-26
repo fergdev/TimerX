@@ -7,6 +7,7 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.platform.platformCapabilitiesOf
+import com.timerx.settings.VibrationSetting.CanVibrate
 import com.timerx.sound.Volume
 import com.timerx.util.awaitAndExpectNoMore
 import io.kotest.assertions.throwables.shouldThrow
@@ -27,7 +28,7 @@ fun alertSettingsOf(
 )
 
 @OptIn(ExperimentalSettingsApi::class)
-class AlertSettingsImplTest : FreeSpec({
+class AlertSettingsManagerImplTest : FreeSpec({
     val settings = MapSettings()
     val alertSettingsFactory: (PlatformCapabilities) -> AlertSettingsManagerImpl =
         { platformCapabilities ->
@@ -53,19 +54,38 @@ class AlertSettingsImplTest : FreeSpec({
     }
 
     "vibration" - {
+        "default can vibrate" {
+            val alertSettings = alertSettingsFactory(platformCapabilitiesOf(canVibrate = true))
+            alertSettings.alertSettings.test {
+                awaitAndExpectNoMore() shouldBe alertSettingsOf(
+                    vibrationSetting = CanVibrate(true)
+                )
+            }
+        }
         "throws when can't vibrate" {
             val alertSettings = defaultSettingsFactory()
             shouldThrow<IllegalStateException> {
                 alertSettings.setVibrationEnabled(true)
             }.apply { message shouldBe "Cannot enable vibration when platform does not support it" }
         }
-        "updates when can vibrate" {
+        "updates to true when can vibrate" {
             val alertSettings = alertSettingsFactory(platformCapabilitiesOf(canVibrate = true))
             alertSettings.setVibrationEnabled(true)
             alertSettings.alertSettings.test {
                 awaitAndExpectNoMore() shouldBe alertSettingsOf(
-                    vibrationSetting = VibrationSetting.CanVibrate(
+                    vibrationSetting = CanVibrate(
                         true
+                    )
+                )
+            }
+        }
+        "updates to false when can vibrate" {
+            val alertSettings = alertSettingsFactory(platformCapabilitiesOf(canVibrate = true))
+            alertSettings.setVibrationEnabled(false)
+            alertSettings.alertSettings.test {
+                awaitAndExpectNoMore() shouldBe alertSettingsOf(
+                    vibrationSetting = CanVibrate(
+                        false
                     )
                 )
             }

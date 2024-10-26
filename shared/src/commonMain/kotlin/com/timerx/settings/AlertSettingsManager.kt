@@ -48,7 +48,7 @@ internal class AlertSettingsManagerImpl(
         flowSettings.getBooleanOrNullFlow(VIBRATION_ENABLED)
             .map {
                 if (!platformCapabilities.canVibrate) VibrationSetting.CannotVibrate
-                else VibrationSetting.CanVibrate(it != null && it)
+                else VibrationSetting.CanVibrate(it == null || it)
             }
     private val ignoreNotificationsPermissions =
         flowSettings.getBooleanOrNullFlow(SET_IGNORE_NOTIFICATIONS_PERMISSION).mapIfNull(false)
