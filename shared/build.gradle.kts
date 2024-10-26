@@ -384,6 +384,7 @@ kover {
             excludes {
                 androidGeneratedClasses()
                 packages("timerx.shared.generated.resources")
+                classes("*\$special\$\$inlined\$map*")
             }
         }
     }
