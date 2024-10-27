@@ -45,7 +45,7 @@ class TimerSetsBuilder {
     fun build(): List<TimerSet> = sets
 }
 
-fun TimerBuilder.sets(block: TimerSetsBuilder.() -> Unit) {
+fun TimerBuilder.timerSets(block: TimerSetsBuilder.() -> Unit) {
     sets = TimerSetsBuilder().apply(block).build()
 }
 
