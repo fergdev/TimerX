@@ -2,6 +2,9 @@ package com.timerx.timermanager
 
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
+import com.timerx.timermanager.TimerState.Finished
+import com.timerx.timermanager.TimerState.Paused
+import com.timerx.timermanager.TimerState.Running
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,15 +12,26 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
-class TimerManager(private val timerRepository: ITimerRepository) {
+interface TimerManager {
+    val eventState: StateFlow<TimerEvent>
+    fun startTimer(timer: Timer)
+    fun playPause()
+    fun nextInterval()
+    fun previousInterval()
+    fun destroy()
+    fun restartCurrentTimer()
+    fun isRunning(): Boolean
+}
+
+internal class TimerManagerImpl(private val timerRepository: ITimerRepository) : TimerManager {
     private var timerStateMachine: TimerStateMachineImpl? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    private val _eventState = MutableStateFlow<TimerEvent>(TimerEvent.Idle)
-    val eventState: StateFlow<TimerEvent> = _eventState
+    private val _eventState = MutableStateFlow<TimerEvent>(TimerEvent.Destroy())
+    override val eventState: StateFlow<TimerEvent> = _eventState
     private var currentTimer: Timer? = null
 
-    fun startTimer(timer: Timer) {
+    override fun startTimer(timer: Timer) {
         currentTimer = timer
         initTimerStateMachine(timer)
     }
@@ -27,24 +41,22 @@ class TimerManager(private val timerRepository: ITimerRepository) {
         this.timerStateMachine = timerStateMachine
         coroutineScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
-                _eventState.value = timerEvent
+                _eventState.emit(timerEvent)
                 when (timerEvent) {
                     is TimerEvent.Finished -> updateTimerFinishedStats(timer)
                     is TimerEvent.Started -> updateTimerStartStats(timer)
-                    is TimerEvent.Destroy -> {
-                        _eventState.value = TimerEvent.Idle
-                    }
-
                     else -> {}
                 }
             }
         }
     }
 
-    fun restartCurrentTimer() {
-        val timer =
-            currentTimer ?: throw IllegalStateException("Attempting to restart with null timer")
-        initTimerStateMachine(timer)
+    override fun restartCurrentTimer() {
+        val currentTimer = currentTimer
+        requireNotNull(currentTimer) {
+            "Attempting to restart with null timer"
+        }
+        initTimerStateMachine(currentTimer)
     }
 
     private fun updateTimerFinishedStats(timer: Timer) {
@@ -69,26 +81,31 @@ class TimerManager(private val timerRepository: ITimerRepository) {
         }
     }
 
-    fun playPause() {
-        if (timerStateMachine?.eventState?.value?.runState?.timerState == TimerState.Running) {
-            timerStateMachine?.pause()
-        } else if (timerStateMachine?.eventState?.value?.runState?.timerState == TimerState.Paused) {
-            timerStateMachine?.resume()
+    override fun playPause() {
+        val timerStateMachine = timerStateMachine
+        requireNotNull(timerStateMachine) {
+            "Attempting to play/pause with null timer"
+        }
+        val timerState = timerStateMachine.eventState.value.runState.timerState
+        when (timerState) {
+            Running -> timerStateMachine.pause()
+            Paused -> timerStateMachine.resume()
+            Finished -> error("Cannot play/pause finished timer")
         }
     }
 
-    fun nextInterval() {
+    override fun nextInterval() {
         timerStateMachine?.nextInterval()
     }
 
-    fun previousInterval() {
+    override fun previousInterval() {
         timerStateMachine?.previousInterval()
     }
 
-    fun destroy() {
+    override fun destroy() {
         timerStateMachine?.destroy()
         timerStateMachine = null
     }
 
-    fun isRunning() = timerStateMachine != null
+    override fun isRunning() = timerStateMachine != null
 }

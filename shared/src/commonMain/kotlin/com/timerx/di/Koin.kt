@@ -5,9 +5,11 @@ import com.timerx.platform.platformCapabilities
 import com.timerx.settings.TimerXSettings
 import com.timerx.settings.TimerXSettingsImpl
 import com.timerx.timermanager.TimerManager
+import com.timerx.timermanager.TimerManagerImpl
 import com.timerx.ui.di.containerModule
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -21,7 +23,9 @@ val sharedModule = module {
             dispatcher = Dispatchers.Main
         )
     }
-    singleOf(::TimerManager)
+    singleOf(::TimerManagerImpl) {
+        bind<TimerManager>()
+    }
 }
 
 expect val platformModule: Module

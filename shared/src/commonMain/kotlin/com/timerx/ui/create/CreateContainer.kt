@@ -184,10 +184,10 @@ private fun reduceIntent(
                         if (index != -1) {
                             set.copy(
                                 intervals = (
-                                    set.intervals + set.intervals[index].copy(
-                                        id = defaultGenerator.getNextId()
-                                    )
-                                    ).toPersistentList()
+                                        set.intervals + set.intervals[index].copy(
+                                            id = defaultGenerator.getNextId()
+                                        )
+                                        ).toPersistentList()
                             )
                         } else {
                             set
@@ -335,8 +335,12 @@ private fun reduceIntent(
                     }
                     return@withState
                 }
+                val newSets = sets.normaliseSets()
+                if (newSets.isEmpty()) {
+                    action(CreateAction.EmptyTimerAction)
+                    return@withState
+                }
                 launch {
-                    val newSets = sets.normaliseSets()
                     val timerEditing = timerDatabase.getTimer(timerId).first()
                     if (timerEditing != null) {
                         timerDatabase.updateTimer(
@@ -413,7 +417,7 @@ private fun CreateFinalCountDown.toFinalCountDown() =
         vibration = vibration
     )
 
-private fun PersistentList<CreateTimerSet>.normaliseSets() =
+private fun List<CreateTimerSet>.normaliseSets() =
     this.filter { set -> set.intervals.isNotEmpty() }
         .map { set ->
             TimerSet(

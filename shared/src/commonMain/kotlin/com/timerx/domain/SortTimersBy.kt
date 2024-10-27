@@ -4,32 +4,32 @@ import com.timerx.ui.common.CustomIcons
 
 enum class SortTimersBy {
     SORT_ORDER {
-        override fun sort(timers: List<Timer>) = timers.sortedBy { it.sortOrder }
+        override fun sort(timers: List<ShallowTimer>) = timers.sortedBy { it.sortOrder }
     },
     RUN_DATE_ASC {
-        override fun sort(timers: List<Timer>) =
+        override fun sort(timers: List<ShallowTimer>) =
             timers.sortedBy { it.lastRun?.toEpochMilliseconds() ?: 0 }
     },
     RUN_DATE_DESC {
-        override fun sort(timers: List<Timer>) =
+        override fun sort(timers: List<ShallowTimer>) =
             timers.sortedByDescending { it.lastRun?.toEpochMilliseconds() ?: 0 }
     },
     NAME_ASC {
-        override fun sort(timers: List<Timer>) = timers.sortedBy { it.name }
+        override fun sort(timers: List<ShallowTimer>) = timers.sortedBy { it.name }
     },
     NAME_DESC {
-        override fun sort(timers: List<Timer>) = timers.sortedByDescending { it.name }
+        override fun sort(timers: List<ShallowTimer>) = timers.sortedByDescending { it.name }
     },
     LENGTH_DESC {
-        override fun sort(timers: List<Timer>) =
+        override fun sort(timers: List<ShallowTimer>) =
             timers.sortedByDescending { it.duration }
     },
     LENGTH_ASC {
-        override fun sort(timers: List<Timer>) =
+        override fun sort(timers: List<ShallowTimer>) =
             timers.sortedBy { it.duration }
     };
 
-    abstract fun sort(timers: List<Timer>): List<Timer>
+    abstract fun sort(timers: List<ShallowTimer>): List<ShallowTimer>
 }
 
 internal fun SortTimersBy.imageVector() =

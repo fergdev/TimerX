@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
 class ColorSerializerTest : FreeSpec({
     "descriptor" {
         ColorSerializer.descriptor shouldBe
-                PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
+            PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
     }
     "serialize" {
         Json.encodeToString(ColorSerializer, Color.Blue) shouldBe "-16776961"

@@ -19,7 +19,7 @@ import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
-const val DEMO_TTS_TEXT = "Work. Rest. Finished."
+const val DEMO_TTS_TEXT = "Work. Rest"
 
 class AlertsSettingsContainer(
     private val settings: TimerXSettings,

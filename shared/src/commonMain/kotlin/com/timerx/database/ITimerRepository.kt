@@ -1,11 +1,12 @@
 package com.timerx.database
 
+import com.timerx.domain.ShallowTimer
 import com.timerx.domain.Timer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
 interface ITimerRepository {
-    fun getShallowTimers(): Flow<List<Timer>>
+    fun getShallowTimers(): Flow<List<ShallowTimer>>
     suspend fun insertTimer(timer: Timer): Long
     suspend fun updateTimerStats(
         timerId: Long,

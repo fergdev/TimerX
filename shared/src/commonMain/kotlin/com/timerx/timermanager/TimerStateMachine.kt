@@ -14,6 +14,7 @@ import com.timerx.timermanager.TimerState.Running
 import com.timerx.vibration.Vibration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,10 +22,6 @@ import kotlinx.coroutines.launch
 
 sealed interface TimerEvent {
     val runState: RunState
-
-    data object Idle : TimerEvent {
-        override val runState = RunState(timerState = Running)
-    }
 
     data class Started(
         override val runState: RunState,
@@ -59,7 +56,7 @@ sealed interface TimerEvent {
         val vibration: Vibration? = null
     ) : TimerEvent
 
-    data class Destroy(override val runState: RunState) : TimerEvent
+    data class Destroy(override val runState: RunState = RunState()) : TimerEvent
 }
 
 enum class TimerState {
@@ -123,9 +120,6 @@ class TimerStateMachineImpl(
         get() = _eventState
 
     init {
-        require(timer.sets.isNotEmpty()) { "Timer must have at least one set" }
-        require(timer.sets.first().intervals.isNotEmpty()) { "Timer set must have at least one interval" }
-
         runState = RunState(
             timerName = timer.name,
             intervalName = timer.sets[0].intervals[0].name
@@ -310,6 +304,7 @@ class TimerStateMachineImpl(
                 _eventState.value = Ticker(runState, beep, vibration)
                 if (nextElapsed == runState.intervalDuration) {
                     if (runState.manualNext) {
+                        cancel()
                         break
                     } else {
                         nextInterval()

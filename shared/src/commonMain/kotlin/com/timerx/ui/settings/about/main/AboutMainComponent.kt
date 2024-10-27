@@ -6,19 +6,27 @@ import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.update
+import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
+import com.timerx.contact.ContactProvider
+import com.timerx.settings.AnalyticsSettings
+import com.timerx.settings.TimerXSettings
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
 import com.timerx.ui.settings.about.changelog.ChangeLogComponent
+import com.timerx.ui.settings.about.main.AboutMainState.AnalyticsNotSupported
+import com.timerx.ui.settings.about.main.AboutMainState.AnalyticsSupported
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import pro.respawn.flowmvi.api.Container
-import pro.respawn.flowmvi.api.Store
-import pro.respawn.flowmvi.essenty.dsl.retainedStore
 
-typealias AboutStore = Store<AboutMainState, AboutMainIntent, Nothing>
+interface AboutMainComponent {
 
-interface AboutMainComponent : AboutStore {
+    val state: Value<AboutMainState>
 
     val aboutLibsSlot: Value<ChildSlot<*, AboutLibsComponent>>
+
+    val changeLogSlot: Value<ChildSlot<*, ChangeLogComponent>>
 
     fun onBackClicked()
 
@@ -29,16 +37,45 @@ interface AboutMainComponent : AboutStore {
     fun onChangeLog()
 
     fun onDismissChangeLog()
-    val changeLogSlot: Value<ChildSlot<*, ChangeLogComponent>>
 }
 
 class DefaultAboutMainComponent(
     componentContext: ComponentContext,
     val onBack: () -> Unit,
-    factory: () -> Container<AboutMainState, AboutMainIntent, Nothing>
+    private val timerXSettings: TimerXSettings,
+    private val contactProvider: ContactProvider,
 ) : ComponentContext by componentContext,
-    AboutStore by componentContext.retainedStore(factory = factory),
     AboutMainComponent {
+
+    private val _state = MutableValue<AboutMainState>(
+        AnalyticsNotSupported(contactSupport = contactProvider::contact)
+    )
+
+    override val state = _state
+
+    init {
+        coroutineScope().launch {
+            timerXSettings.analytics.collect { analyticsSettings ->
+                _state.update {
+                    when (analyticsSettings) {
+                        is AnalyticsSettings.Available -> AnalyticsSupported(
+                            contactSupport = contactProvider::contact,
+                            collectAnalyticsEnable = analyticsSettings.enabled,
+                            updateCollectAnalytics = {
+                                launch {
+                                    timerXSettings.setCollectAnalytics(it)
+                                }
+                            }
+                        )
+
+                        is AnalyticsSettings.NotAvailable -> AnalyticsNotSupported(
+                            contactSupport = contactProvider::contact
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     private val aboutLibsNavigation = SlotNavigation<AboutLibsConfig>()
     override val aboutLibsSlot: Value<ChildSlot<*, AboutLibsComponent>> =

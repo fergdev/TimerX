@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -53,7 +54,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
-import com.timerx.domain.length
+import androidx.compose.ui.window.Dialog
 import com.timerx.domain.timeFormatted
 import com.timerx.sound.Beep
 import com.timerx.ui.common.AnimatedNumber
@@ -83,9 +84,11 @@ import pro.respawn.flowmvi.compose.dsl.subscribe
 import sh.calvin.reorderable.ReorderableColumn
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.add
+import timerx.shared.generated.resources.cannot_create_empty_timer
 import timerx.shared.generated.resources.create
 import timerx.shared.generated.resources.edit
 import timerx.shared.generated.resources.finish_color
+import timerx.shared.generated.resources.ok
 import timerx.shared.generated.resources.save
 import timerx.shared.generated.resources.timer_name
 import timerx.shared.generated.resources.timer_name_required
@@ -94,10 +97,14 @@ import timerx.shared.generated.resources.timer_name_required
 @Composable
 internal fun CreateContent(createComponent: CreateComponent) {
     with(createComponent) {
+        var emptyTimerDialogVisible by remember { mutableStateOf(false) }
         val state by subscribe(DefaultLifecycle) {
             when (it) {
                 is CreateAction.TimerUpdated ->
                     createComponent.onTimerUpdated(it.timerId)
+
+                is CreateAction.EmptyTimerAction ->
+                    emptyTimerDialogVisible = true
             }
         }
         val appBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -135,6 +142,17 @@ internal fun CreateContent(createComponent: CreateComponent) {
                 }
             }
         )
+
+        if (emptyTimerDialogVisible) {
+            Dialog(onDismissRequest = { emptyTimerDialogVisible = false }) {
+                TCard(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = stringResource(Res.string.cannot_create_empty_timer))
+                    Button(onClick = { emptyTimerDialogVisible = false }) {
+                        Text(text = stringResource(Res.string.ok))
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -9,7 +9,7 @@ import com.timerx.KEY_RUN_TIMER_ID
 import com.timerx.MainActivity
 import com.timerx.R
 import com.timerx.database.ITimerRepository
-import com.timerx.domain.Timer
+import com.timerx.domain.ShallowTimer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +31,7 @@ class ShortcutManager(
         }
     }
 
-    private fun refreshDynamicShortcuts(roomTimers: List<Timer>) {
+    private fun refreshDynamicShortcuts(roomTimers: List<ShallowTimer>) {
         ShortcutManagerCompat.removeAllDynamicShortcuts(context)
         roomTimers.take(dynamicShortcutLimit).forEach { timer ->
             val shortcut = ShortcutInfoCompat.Builder(context, timer.shortcutId())
@@ -54,7 +54,7 @@ class ShortcutManager(
         }
     }
 
-    private fun handlePinnedShortcuts(roomTimers: List<Timer>) {
+    private fun handlePinnedShortcuts(roomTimers: List<ShallowTimer>) {
         val pinnedShortcuts = ShortcutManagerCompat.getShortcuts(
             context,
             ShortcutManagerCompat.FLAG_MATCH_PINNED
@@ -74,5 +74,5 @@ class ShortcutManager(
         )
     }
 
-    private fun Timer.shortcutId() = "${this.id}"
+    private fun ShallowTimer.shortcutId() = "${this.id}"
 }

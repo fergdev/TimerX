@@ -16,6 +16,23 @@ import kotlinx.serialization.encoding.Encoder
 internal const val NO_SORT_ORDER = -1L
 
 @Serializable
+data class ShallowTimer(
+    val id: Long = 0L,
+    val sortOrder: Long = NO_SORT_ORDER,
+    val name: String,
+    val duration: Long = 0L,
+    val startedCount: Long = 0,
+    val completedCount: Long = 0,
+    val createdAt: Instant,
+    val lastRun: Instant? = null
+) {
+    init {
+        require(startedCount >= 0) { "Started count cannot be negative" }
+        require(completedCount >= 0) { "Completed count cannot be negative" }
+    }
+}
+
+@Serializable
 data class Timer(
     val id: Long = 0L,
     val sortOrder: Long = NO_SORT_ORDER,
@@ -30,7 +47,13 @@ data class Timer(
     val completedCount: Long = 0,
     val createdAt: Instant,
     val lastRun: Instant? = null
-)
+) {
+    init {
+        require(sets.isNotEmpty()) { "Timer must have at least one set" }
+        require(startedCount >= 0) { "Started count cannot be negative" }
+        require(completedCount >= 0) { "Completed count cannot be negative" }
+    }
+}
 
 @Serializable
 data class TimerSet(

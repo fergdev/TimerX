@@ -72,7 +72,7 @@ data class VoiceInformation(
 
 data class IntervalSound(
     val beep: Beep,
-    val text: String?,
+    val text: String? = null
 )
 
 const val BEEP_DELAY = 500L

@@ -40,15 +40,6 @@ class TimerBuilder {
 
 fun timer(block: TimerBuilder.() -> Unit) = TimerBuilder().apply(block).build()
 
-class TimerSetsBuilder {
-    var sets: List<TimerSet> = listOf()
-    fun build(): List<TimerSet> = sets
-}
-
-fun TimerBuilder.timerSets(block: TimerSetsBuilder.() -> Unit) {
-    sets = TimerSetsBuilder().apply(block).build()
-}
-
 class TimerSetBuilder {
     var id: Long = 0L
     var repetitions: Int = 1
@@ -56,7 +47,7 @@ class TimerSetBuilder {
     fun build() = TimerSet(id, repetitions, intervals.toPersistentList())
 }
 
-fun TimerSetsBuilder.timerSet(block: TimerSetBuilder.() -> Unit) {
+fun TimerBuilder.timerSet(block: TimerSetBuilder.() -> Unit) {
     sets += TimerSetBuilder().apply(block).build()
 }
 
@@ -90,5 +81,3 @@ class TimerIntervalBuilder {
 fun TimerSetBuilder.interval(block: TimerIntervalBuilder.() -> Unit) {
     intervals += TimerIntervalBuilder().apply(block).build()
 }
-
-

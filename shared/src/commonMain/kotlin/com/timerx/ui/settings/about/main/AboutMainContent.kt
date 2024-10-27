@@ -41,7 +41,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.timerx.settings.AnalyticsSettings
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TMenuItem
@@ -52,12 +51,9 @@ import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rainbow
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsContent
 import com.timerx.ui.settings.about.changelog.ChangeLogContent
-import com.timerx.ui.settings.about.main.AboutMainIntent.UpdateCollectAnalytics
 import com.timerx.ui.theme.Size
 import com.timerx.util.letType
 import org.jetbrains.compose.resources.stringResource
-import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
-import pro.respawn.flowmvi.compose.dsl.subscribe
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.about_libs
 import timerx.shared.generated.resources.about_libs_subtitle
@@ -71,118 +67,116 @@ import timerx.shared.generated.resources.privacy_policy_message
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AboutMainContent(component: AboutMainComponent) {
-    with(component) {
-        val state by subscribe(DefaultLifecycle)
-        TScaffold(
-            title = buildAnnotatedString {
-                append(stringResource(Res.string.app_name).doubleBranded())
-                append(" ")
-                append("v".branded())
-                append(state.versionName)
-            },
-            onBack = component::onBackClicked
-        ) { padding ->
+    val state = component.state.subscribeAsState().value
+    TScaffold(
+        title = buildAnnotatedString {
+            append(stringResource(Res.string.app_name).doubleBranded())
+            append(" ")
+            append("v".branded())
+            append(state.versionName)
+        },
+        onBack = component::onBackClicked
+    ) { padding ->
 
-            Column(
-                modifier = Modifier
-                    .widthIn(max = Size.maxWidth)
-                    .align(Alignment.TopCenter)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(
-                        top = padding.calculateTopPadding().plus(16.dp),
-                        bottom = padding.calculateBottomPadding().plus(16.dp),
-                        start = 16.dp,
-                        end = 16.dp
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val infiniteTransition = rememberInfiniteTransition(label = "InfiniteTransition")
-                val scale by infiniteTransition.animateFloat(
-                    initialValue = 1f,
-                    targetValue = 0.8f,
-                    animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse),
-                    label = "FloatAnimation"
-                )
-                Image(
-                    modifier = Modifier.fillMaxWidth(0.5f).scale(scale),
-                    contentScale = ContentScale.FillWidth,
-                    imageVector = CustomIcons.avTimer,
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
-                )
+        Column(
+            modifier = Modifier
+                .widthIn(max = Size.maxWidth)
+                .align(Alignment.TopCenter)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    top = padding.calculateTopPadding().plus(16.dp),
+                    bottom = padding.calculateBottomPadding().plus(16.dp),
+                    start = 16.dp,
+                    end = 16.dp
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val infiniteTransition = rememberInfiniteTransition(label = "InfiniteTransition")
+            val scale by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 0.8f,
+                animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse),
+                label = "FloatAnimation"
+            )
+            Image(
+                modifier = Modifier.fillMaxWidth(0.5f).scale(scale),
+                contentScale = ContentScale.FillWidth,
+                imageVector = CustomIcons.avTimer,
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
+            )
 
-                TCard { Text(text = DeveloperMessage()) }
+            TCard { Text(text = DeveloperMessage()) }
 
-                val uriHandler = LocalUriHandler.current
+            val uriHandler = LocalUriHandler.current
+            TMenuItem(
+                title = stringResource(Res.string.privacy_policy),
+                color = rainbow[0],
+                icon = Icons.Filled.Lock,
+                subtitle = stringResource(Res.string.privacy_policy_message),
+                onClick = { uriHandler.openUri(state.privacyPolicyUri) }
+            )
+
+            TMenuItem(
+                title = stringResource(Res.string.about_libs),
+                color = rainbow[1],
+                icon = Icons.Filled.Info,
+                subtitle = stringResource(Res.string.about_libs_subtitle),
+                onClick = { component.onLibsClicked() }
+            )
+
+            TMenuItem(
+                title = "Change Log",
+                color = rainbow[2],
+                icon = Icons.Filled.DateRange,
+                onClick = { component.onChangeLog() }
+            )
+
+            TMenuItem(
+                title = stringResource(Res.string.contact_support),
+                color = rainbow[3],
+                icon = Icons.Filled.Email,
+                onClick = { component.state.value.contactSupport() }
+            )
+
+            state.letType<AboutMainState.AnalyticsSupported, _> {
+                val updateAnalytics = {
+                    updateCollectAnalytics(!collectAnalyticsEnable)
+                }
                 TMenuItem(
-                    title = stringResource(Res.string.privacy_policy),
-                    color = rainbow[0],
-                    icon = Icons.Filled.Lock,
-                    subtitle = stringResource(Res.string.privacy_policy_message),
-                    onClick = { uriHandler.openUri(state.privacyPolicyUri) }
-                )
-
-                TMenuItem(
-                    title = stringResource(Res.string.about_libs),
-                    color = rainbow[1],
-                    icon = Icons.Filled.Info,
-                    subtitle = stringResource(Res.string.about_libs_subtitle),
-                    onClick = { component.onLibsClicked() }
-                )
-
-                TMenuItem(
-                    title = "Change Log",
-                    color = rainbow[2],
-                    icon = Icons.Filled.DateRange,
-                    onClick = { component.onChangeLog() }
-                )
-
-                TMenuItem(
-                    title = stringResource(Res.string.contact_support),
-                    color = rainbow[3],
-                    icon = Icons.Filled.Email,
-                    onClick = { intent(AboutMainIntent.ContactSupport) }
-                )
-
-                state.analyticsSettings.letType<AnalyticsSettings.Available, _> {
-                    val updateAnalytics = {
-                        intent(UpdateCollectAnalytics(enabled.not()))
+                    title = stringResource(Res.string.collect_analytics),
+                    color = rainbow[4],
+                    icon = Icons.Filled.Share,
+                    subtitle = stringResource(Res.string.collect_analytics_message),
+                    onClick = updateAnalytics,
+                    trailing = {
+                        Switch(
+                            checked = collectAnalyticsEnable,
+                            onCheckedChange = { updateAnalytics() }
+                        )
                     }
-                    TMenuItem(
-                        title = stringResource(Res.string.collect_analytics),
-                        color = rainbow[4],
-                        icon = Icons.Filled.Share,
-                        subtitle = stringResource(Res.string.collect_analytics_message),
-                        onClick = updateAnalytics,
-                        trailing = {
-                            Switch(
-                                checked = enabled,
-                                onCheckedChange = { updateAnalytics() }
-                            )
-                        }
-                    )
-                }
-                Spacer(
-                    Modifier.height(
-                        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-                    )
                 )
             }
+            Spacer(
+                Modifier.height(
+                    WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                )
+            )
+        }
 
-            val aboutLibsSlot by component.aboutLibsSlot.subscribeAsState()
-            aboutLibsSlot.child?.instance?.also {
-                ModalBottomSheet(onDismissRequest = ::onDismissLibs) {
-                    AboutLibsContent()
-                }
+        val aboutLibsSlot by component.aboutLibsSlot.subscribeAsState()
+        aboutLibsSlot.child?.instance?.also {
+            ModalBottomSheet(onDismissRequest = component::onDismissLibs) {
+                AboutLibsContent()
             }
+        }
 
-            val changeLogSlot by component.changeLogSlot.subscribeAsState()
-            changeLogSlot.child?.instance?.also {
-                ModalBottomSheet(onDismissRequest = ::onDismissChangeLog) {
-                    ChangeLogContent()
-                }
+        val changeLogSlot by component.changeLogSlot.subscribeAsState()
+        changeLogSlot.child?.instance?.also {
+            ModalBottomSheet(onDismissRequest = component::onDismissChangeLog) {
+                ChangeLogContent()
             }
         }
     }

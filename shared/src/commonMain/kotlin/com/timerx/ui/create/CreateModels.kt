@@ -93,6 +93,7 @@ sealed interface CreateScreenIntent : MVIIntent {
 
 interface CreateAction : MVIAction {
     data class TimerUpdated(val timerId: Long) : CreateAction
+    data object EmptyTimerAction : CreateAction
 }
 
 data class CreateTimerSet(

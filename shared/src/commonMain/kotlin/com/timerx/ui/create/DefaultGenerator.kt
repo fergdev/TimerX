@@ -11,9 +11,6 @@ import kotlinx.collections.immutable.persistentListOf
 internal class DefaultGenerator {
     private var defaultIdGenerator = 0L
 
-    private val workString by lazy { "work" }
-    private val restString by lazy { "rest" }
-
     fun getNextId(): Long = defaultIdGenerator++
     fun setMaxId(maxId: Long) {
         defaultIdGenerator = maxId
@@ -24,12 +21,12 @@ internal class DefaultGenerator {
             id = defaultIdGenerator++,
             repetitions = 5,
             intervals = persistentListOf(
-                defaultInterval(workString, green),
-                defaultInterval(restString, blue),
+                defaultInterval("Work", green),
+                defaultInterval("Rest", blue),
             )
         )
 
-    fun defaultInterval(name: String = workString, color: Color = green) =
+    fun defaultInterval(name: String = "Work", color: Color = green) =
         CreateTimerInterval(
             id = defaultIdGenerator++,
             name = name,
@@ -51,7 +48,7 @@ internal class DefaultGenerator {
             repetitions = 1,
             intervals = persistentListOf(
                 CreateTimerInterval(
-                    name = "prepare",
+                    name = "Prepare",
                     duration = 10,
                     color = yellow,
                     skipOnLastSet = false,

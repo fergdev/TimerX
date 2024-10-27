@@ -18,13 +18,13 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.timerx.domain.FinalCountDown
 import com.timerx.domain.NO_SORT_ORDER
+import com.timerx.domain.ShallowTimer
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
 import com.timerx.sound.Beep
 import com.timerx.vibration.Vibration
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -324,14 +324,10 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
 
     override fun getShallowTimers() = timerDao.getTimers().map {
         it.map { roomTimer ->
-            Timer(
+            ShallowTimer(
                 id = roomTimer.id,
                 sortOrder = roomTimer.sortOrder,
                 name = roomTimer.name,
-                sets = persistentListOf(),
-                finishColor = Color(color = roomTimer.finishColor),
-                finishBeep = Beep.entries[roomTimer.finishBeepId],
-                finishVibration = Vibration.entries[roomTimer.finishVibration],
                 duration = roomTimer.duration,
                 startedCount = roomTimer.startedCount,
                 completedCount = roomTimer.completedCount,

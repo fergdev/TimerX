@@ -13,6 +13,7 @@
     <string name="background">Background</string>
     <string name="background_subtitle">Set the background to make the app beautiful</string>
     <string name="beep">Beep</string>
+    <string name="cannot_create_empty_timer">Cannot create empty timer</string>
     <string name="change_log">Change log</string>
     <string name="close">Close</string>
     <string name="collect_analytics">Allow Tx to collect analytics</string>
@@ -58,6 +59,7 @@
     <string name="no_timer_message">This timer doesn't exist anymore.</string>
     <string name="no_timers">No timers</string>
     <string name="notifications">Notifications</string>
+    <string name="ok">Ok</string>
     <string name="palette_style">Palette style</string>
     <string name="pattern">Pattern</string>
     <string name="pause">Pause</string>

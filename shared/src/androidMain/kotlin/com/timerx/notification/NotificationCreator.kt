@@ -77,8 +77,8 @@ fun createNotification(
 
     return NotificationCompat.Builder(context, NotificationService.CHANNEL_ID).apply {
         setAutoCancel(false)
-        setCategory(NotificationCompat.CATEGORY_TRANSPORT)
-        setColor(Color.Red.toArgb())
+        setCategory(NotificationCompat.CATEGORY_WORKOUT)
+        setColor(backgroundColor)
         setColorized(true)
         setContentIntent(appPendingIntent)
 

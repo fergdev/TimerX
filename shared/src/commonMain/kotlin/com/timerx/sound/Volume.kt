@@ -1,6 +1,5 @@
 package com.timerx.sound
 
-
 data class Volume(val value: Float) {
     init { require(value in range) { "Invalid volume: $value" } }
     companion object {

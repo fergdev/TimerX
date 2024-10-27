@@ -43,5 +43,5 @@ class BackgroundManager(
         this is TimerEvent.Started || this is TimerEvent.Resumed
 
     private fun TimerEvent.shouldDestroyTimer() =
-        this is TimerEvent.Idle || this is TimerEvent.Paused || this is TimerEvent.Finished
+        this is TimerEvent.Paused || this is TimerEvent.Finished
 }

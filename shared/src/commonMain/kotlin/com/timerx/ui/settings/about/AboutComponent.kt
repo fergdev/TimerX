@@ -35,9 +35,10 @@ internal class DefaultAboutComponent(
         back = back,
         aboutMainComponentFactory = { childContext, onBack ->
             DefaultAboutMainComponent(
-                childContext,
-                onBack,
-                KoinPlatform.getKoin()::get
+                componentContext = childContext,
+                onBack = onBack,
+                timerXSettings = KoinPlatform.getKoin().get(),
+                contactProvider = KoinPlatform.getKoin().get(),
             )
         }
     )
