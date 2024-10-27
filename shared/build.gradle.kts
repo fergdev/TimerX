@@ -143,13 +143,8 @@ kotlin {
                 implementation(libs.flowmvi.test)
                 implementation(libs.turbine)
                 implementation(libs.multiplatform.settings.test)
-            }
-        }
-
-        val desktopTest by getting {
-            dependencies {
-                implementation(libs.kotest.junit)
-                implementation(mokkery("coroutines"))
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.uiTest)
             }
         }
 
@@ -223,6 +218,14 @@ kotlin {
                 implementation(libs.freetts)
             }
         }
+
+        val desktopTest by getting {
+            dependencies {
+                implementation(libs.kotest.junit)
+                implementation(mokkery("coroutines"))
+            }
+        }
+
         val wasmJsMain by getting {
             dependsOn(nonMobileMain)
             dependsOn(nonAndroidMain)
@@ -383,6 +386,7 @@ kover {
         filters {
             excludes {
                 androidGeneratedClasses()
+                annotatedBy("com.timerx.util.KoverIgnore")
                 packages("timerx.shared.generated.resources")
                 classes("*\$special\$\$inlined\$map*")
             }

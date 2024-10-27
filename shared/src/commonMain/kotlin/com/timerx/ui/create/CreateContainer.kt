@@ -68,7 +68,7 @@ class CreateContainer(
                         defaultGenerator.setMaxId(timer.sets.getMaxId())
                         CreateScreenState(
                             timerNameState = TimerNameState(timer.name),
-                            sets = timer.sets.toPersistentList(),
+                            sets = timer.sets.toCreateTimerSet(),
                             isEditing = true,
                             canVibrate = platformCapabilities.canVibrate,
                             finishColor = timer.finishColor,
@@ -373,20 +373,72 @@ private fun reduceIntent(
     }
 }
 
-private fun PersistentList<TimerSet>.normaliseSets() =
+private fun List<TimerSet>.toCreateTimerSet() =
+    this.map { timerSet ->
+        CreateTimerSet(
+            id = timerSet.id,
+            repetitions = timerSet.repetitions,
+            intervals = timerSet.intervals.map { interval ->
+                interval.toCreateTimerInterval()
+            }.toPersistentList()
+        )
+    }.toPersistentList()
+
+private fun TimerInterval.toCreateTimerInterval() =
+    CreateTimerInterval(
+        id = id,
+        name = name,
+        duration = duration,
+        color = color,
+        skipOnLastSet = skipOnLastSet,
+        countUp = countUp,
+        manualNext = manualNext,
+        textToSpeech = textToSpeech,
+        beep = beep,
+        vibration = vibration,
+        finalCountDown = finalCountDown.toCreateFinalCountDown(),
+    )
+
+private fun FinalCountDown.toCreateFinalCountDown() =
+    CreateFinalCountDown(
+        duration = duration,
+        beep = beep,
+        vibration = vibration
+    )
+
+private fun CreateFinalCountDown.toFinalCountDown() =
+    FinalCountDown(
+        duration = duration,
+        beep = beep,
+        vibration = vibration
+    )
+
+private fun PersistentList<CreateTimerSet>.normaliseSets() =
     this.filter { set -> set.intervals.isNotEmpty() }
         .map { set ->
-            set.copy(
+            TimerSet(
                 id = 0,
+                repetitions = set.repetitions,
                 intervals = set.intervals.map { interval ->
-                    interval.copy(id = 0)
-                }.toPersistentList()
+                    TimerInterval(
+                        id = 0,
+                        name = interval.name,
+                        duration = interval.duration,
+                        color = interval.color,
+                        skipOnLastSet = interval.skipOnLastSet,
+                        countUp = interval.countUp,
+                        manualNext = interval.manualNext,
+                        textToSpeech = interval.textToSpeech,
+                        beep = interval.beep,
+                        vibration = interval.vibration,
+                        finalCountDown = interval.finalCountDown.toFinalCountDown(),
+                    )
+                }
             )
         }
-        .toPersistentList()
 
-private fun PersistentList<TimerSet>.updateInterval(
-    interval: TimerInterval,
+private fun PersistentList<CreateTimerSet>.updateInterval(
+    interval: CreateTimerInterval,
     name: String? = null,
     duration: Long? = null,
     color: Color? = null,
@@ -396,7 +448,7 @@ private fun PersistentList<TimerSet>.updateInterval(
     textToSpeech: Boolean? = null,
     beep: Beep? = null,
     vibration: Vibration? = null,
-    finalCountDown: FinalCountDown? = null
+    finalCountDown: CreateFinalCountDown? = null
 ) = this.map { set ->
     val index = set.intervals.indexOf(interval)
     if (index != -1) {

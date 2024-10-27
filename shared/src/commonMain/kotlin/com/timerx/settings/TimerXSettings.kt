@@ -71,7 +71,7 @@ internal class TimerXSettingsImpl(
 
     override suspend fun setCollectAnalytics(collectAnalytics: Boolean) {
         assert(platformCapabilities.hasAnalytics) {
-            "Analytics is not available on this platform"
+            "Analytics are not available on this platform"
         }
         flowSettings.putBoolean(COLLECT_ANALYTICS, collectAnalytics)
     }

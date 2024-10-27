@@ -7,11 +7,13 @@ import com.timerx.domain.SortTimersBy.SORT_ORDER
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.platform.platformCapabilitiesOf
 import com.timerx.util.awaitAndExpectNoMore
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.Dispatchers
 
-class TimerXSettingsImpTest : FreeSpec({
+class TimerXSettingsImplTest : FreeSpec({
     val settings = MapSettings()
     val timerXSettingsFactory: (PlatformCapabilities) -> TimerXSettingsImpl =
         { platformCapabilities ->
@@ -47,10 +49,18 @@ class TimerXSettingsImpTest : FreeSpec({
         }
     }
     "analytics" - {
-        "with platform analytics unavailable" {
-            defaultSettingsFactory()
-                .analytics
-                .test { awaitAndExpectNoMore() shouldBe AnalyticsSettings.NotAvailable }
+        "with platform analytics unavailable" - {
+            "default" {
+                defaultSettingsFactory()
+                    .analytics
+                    .test { awaitAndExpectNoMore() shouldBe AnalyticsSettings.NotAvailable }
+            }
+            "throws when set" {
+                val timerXSettings = defaultSettingsFactory()
+                shouldThrow<IllegalStateException> {
+                    timerXSettings.setCollectAnalytics(false)
+                }.apply { message shouldBe "Analytics are not available on this platform" }
+            }
         }
         "with platform analytics available" - {
             "default" {
@@ -66,5 +76,8 @@ class TimerXSettingsImpTest : FreeSpec({
                     .test { awaitAndExpectNoMore() shouldBe AnalyticsSettings.Available(false) }
             }
         }
+    }
+    "background settings manager" {
+        defaultSettingsFactory().backgroundSettingsManager shouldNotBe null
     }
 })

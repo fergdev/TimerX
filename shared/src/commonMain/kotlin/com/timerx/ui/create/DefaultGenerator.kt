@@ -1,9 +1,6 @@
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.domain.FinalCountDown
-import com.timerx.domain.TimerInterval
-import com.timerx.domain.TimerSet
 import com.timerx.sound.Beep
 import com.timerx.ui.common.blue
 import com.timerx.ui.common.green
@@ -23,7 +20,7 @@ internal class DefaultGenerator {
     }
 
     fun defaultTimerSet() =
-        TimerSet(
+        CreateTimerSet(
             id = defaultIdGenerator++,
             repetitions = 5,
             intervals = persistentListOf(
@@ -33,7 +30,7 @@ internal class DefaultGenerator {
         )
 
     fun defaultInterval(name: String = workString, color: Color = green) =
-        TimerInterval(
+        CreateTimerInterval(
             id = defaultIdGenerator++,
             name = name,
             duration = 30,
@@ -41,7 +38,7 @@ internal class DefaultGenerator {
             vibration = Vibration.Medium,
             textToSpeech = true,
             beep = Beep.Alert,
-            finalCountDown = FinalCountDown(
+            finalCountDown = CreateFinalCountDown(
                 duration = 3,
                 beep = Beep.Alert,
                 vibration = Vibration.Medium
@@ -49,11 +46,11 @@ internal class DefaultGenerator {
         )
 
     fun prepareSet() =
-        TimerSet(
+        CreateTimerSet(
             id = defaultIdGenerator++,
             repetitions = 1,
             intervals = persistentListOf(
-                TimerInterval(
+                CreateTimerInterval(
                     name = "prepare",
                     duration = 10,
                     color = yellow,
@@ -63,7 +60,7 @@ internal class DefaultGenerator {
                     textToSpeech = true,
                     beep = Beep.Alert,
                     vibration = Vibration.Medium,
-                    finalCountDown = FinalCountDown(
+                    finalCountDown = CreateFinalCountDown(
                         duration = 3,
                         beep = Beep.Alert,
                         vibration = Vibration.Medium

@@ -1,9 +1,6 @@
 package com.timerx.ui.create
 
 import androidx.compose.ui.graphics.Color
-import com.timerx.domain.FinalCountDown
-import com.timerx.domain.TimerInterval
-import com.timerx.domain.TimerSet
 import com.timerx.sound.Beep
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.PersistentList
@@ -24,7 +21,7 @@ data class CreateScreenState(
     val finishVibration: Vibration = Vibration.Heavy,
     val isEditing: Boolean = false,
     val canVibrate: Boolean = false,
-    val sets: PersistentList<TimerSet> = persistentListOf()
+    val sets: PersistentList<CreateTimerSet> = persistentListOf()
 ) : MVIState
 
 sealed interface CreateScreenIntent : MVIIntent {
@@ -37,49 +34,101 @@ sealed interface CreateScreenIntent : MVIIntent {
 
     data object AddSet : CreateScreenIntent
     data class SwapSet(val from: Int, val to: Int) : CreateScreenIntent
-    data class DuplicateSet(val set: TimerSet) : CreateScreenIntent
-    data class DeleteSet(val set: TimerSet) : CreateScreenIntent
+    data class DuplicateSet(val set: CreateTimerSet) : CreateScreenIntent
+    data class DeleteSet(val set: CreateTimerSet) : CreateScreenIntent
 
-    data class NewInterval(val set: TimerSet) : CreateScreenIntent
-    data class MoveInterval(val set: TimerSet, val from: Int, val to: Int) : CreateScreenIntent
-    data class UpdateSetRepetitions(val set: TimerSet, val repetitions: Int) : CreateScreenIntent
-
-    data class DeleteInterval(val interval: TimerInterval) : CreateScreenIntent
-    data class DuplicateInterval(val interval: TimerInterval) : CreateScreenIntent
-
-    data class UpdateIntervalDuration(val interval: TimerInterval, val duration: Long) :
+    data class NewInterval(val set: CreateTimerSet) : CreateScreenIntent
+    data class MoveInterval(val set: CreateTimerSet, val from: Int, val to: Int) :
         CreateScreenIntent
 
-    data class UpdateIntervalName(val interval: TimerInterval, val name: String) :
+    data class UpdateSetRepetitions(val set: CreateTimerSet, val repetitions: Int) :
         CreateScreenIntent
 
-    data class UpdateIntervalColor(val interval: TimerInterval, val color: Color) :
+    data class DeleteInterval(val interval: CreateTimerInterval) : CreateScreenIntent
+    data class DuplicateInterval(val interval: CreateTimerInterval) : CreateScreenIntent
+
+    data class UpdateIntervalDuration(val interval: CreateTimerInterval, val duration: Long) :
+        CreateScreenIntent
+
+    data class UpdateIntervalName(val interval: CreateTimerInterval, val name: String) :
+        CreateScreenIntent
+
+    data class UpdateIntervalColor(val interval: CreateTimerInterval, val color: Color) :
         CreateScreenIntent
 
     data class UpdateIntervalSkipOnLastSet(
-        val interval: TimerInterval,
+        val interval: CreateTimerInterval,
         val skipOnLastSet: Boolean
     ) : CreateScreenIntent
 
-    data class UpdateIntervalCountUp(val interval: TimerInterval, val countUp: Boolean) :
+    data class UpdateIntervalCountUp(val interval: CreateTimerInterval, val countUp: Boolean) :
         CreateScreenIntent
 
-    data class UpdateIntervalManualNext(val interval: TimerInterval, val manualNext: Boolean) :
+    data class UpdateIntervalManualNext(
+        val interval: CreateTimerInterval,
+        val manualNext: Boolean
+    ) :
         CreateScreenIntent
 
-    data class UpdateIntervalBeep(val interval: TimerInterval, val beep: Beep) : CreateScreenIntent
+    data class UpdateIntervalBeep(val interval: CreateTimerInterval, val beep: Beep) :
+        CreateScreenIntent
+
     data class UpdateIntervalFinalCountDown(
-        val interval: TimerInterval,
-        val finalCountDown: FinalCountDown
+        val interval: CreateTimerInterval,
+        val finalCountDown: CreateFinalCountDown
     ) : CreateScreenIntent
 
-    data class UpdateIntervalVibration(val interval: TimerInterval, val vibration: Vibration) :
+    data class UpdateIntervalVibration(
+        val interval: CreateTimerInterval,
+        val vibration: Vibration
+    ) :
         CreateScreenIntent
 
-    data class UpdateIntervalTextToSpeech(val interval: TimerInterval, val textToSpeech: Boolean) :
+    data class UpdateIntervalTextToSpeech(
+        val interval: CreateTimerInterval,
+        val textToSpeech: Boolean
+    ) :
         CreateScreenIntent
 }
 
 interface CreateAction : MVIAction {
     data class TimerUpdated(val timerId: Long) : CreateAction
 }
+
+data class CreateTimerSet(
+    val id: Long = 0L,
+    val repetitions: Int = 1,
+    val intervals: PersistentList<CreateTimerInterval>
+)
+
+data class CreateTimerInterval(
+    val id: Long = 0L,
+    val name: String,
+    val duration: Long,
+    val color: Color = Color.Blue,
+    val skipOnLastSet: Boolean = false,
+    val countUp: Boolean = false,
+    val manualNext: Boolean = false,
+    val textToSpeech: Boolean = true,
+    val beep: Beep = Beep.Alert,
+    val vibration: Vibration = Vibration.Medium,
+    val finalCountDown: CreateFinalCountDown = CreateFinalCountDown()
+)
+
+data class CreateFinalCountDown(
+    val duration: Long = 3,
+    val beep: Beep = Beep.Alert,
+    val vibration: Vibration = Vibration.Light
+)
+
+fun List<CreateTimerSet>.length() =
+    fold(0L) { acc, timerSet ->
+        acc + timerSet.length()
+    }
+
+fun CreateTimerSet.length() =
+    intervals.fold(0L) { acc, interval ->
+        acc + interval.length()
+    } * repetitions
+
+fun CreateTimerInterval.length() = duration

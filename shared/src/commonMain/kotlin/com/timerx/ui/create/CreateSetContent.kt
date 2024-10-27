@@ -22,8 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.LongPress
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.timerx.domain.TimerSet
-import com.timerx.domain.length
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.AnimatedNumber
 import com.timerx.ui.common.CustomIcons
@@ -51,7 +49,7 @@ import timerx.shared.generated.resources.sets
 
 @Composable
 internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
-    timerSet: TimerSet,
+    timerSet: CreateTimerSet,
     canVibrate: Boolean,
     reorderableScope: ReorderableScope
 ) {
@@ -145,7 +143,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateSetContent(
 
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.SetTopControls(
-    timerSet: TimerSet,
+    timerSet: CreateTimerSet,
     reorderableScope: ReorderableScope,
 ) {
     Box(

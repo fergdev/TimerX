@@ -14,14 +14,13 @@ import org.junit.jupiter.api.extension.RegisterExtension
 
 class BeepPickerKtTest {
 
-    @Suppress("JUnitMalformedDeclaration")
     @JvmField
     @RegisterExtension
     @OptIn(ExperimentalTestApi::class)
     val extension = createComposeExtension()
 
     @Test
-    fun `show picker - displays all alerts`() = extension.use {
+    fun showPickerDisplaysAllAlerts() = extension.use {
         setContent {
             BeepPicker { }
         }
@@ -31,7 +30,7 @@ class BeepPickerKtTest {
     }
 
     @Test
-    fun `on selected - invokes callback`() = extension.use {
+    fun onSelectedInvokesCallback() = extension.use {
         var invoked = false
         setContent {
             BeepPicker { invoked = true }

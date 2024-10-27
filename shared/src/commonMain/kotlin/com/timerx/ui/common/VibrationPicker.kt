@@ -8,6 +8,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.timerx.vibration.Vibration
 
@@ -17,12 +18,13 @@ fun VibrationSelector(
     modifier: Modifier = Modifier,
     onSelect: (Vibration) -> Unit
 ) {
-    val scrollState = rememberScrollState()
-    Row(modifier = modifier.then(Modifier.horizontalScroll(scrollState))) {
+    Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
         Vibration.entries.forEach {
             FilterChip(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .testTag(it.name),
                 selected = it == selected,
-                modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = { onSelect(it) },
                 label = { Text(text = it.displayName) }
             )

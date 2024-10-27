@@ -44,7 +44,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.timerx.domain.TimerInterval
 import com.timerx.domain.timeFormatted
 import com.timerx.ui.common.BeepSelector
 import com.timerx.ui.common.ColorPickerModalBottomSheet
@@ -86,7 +85,7 @@ private const val COLOR_ANIMATION_DURATION = 400
 
 @Composable
 internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
-    interval: TimerInterval,
+    interval: CreateTimerInterval,
     canSkipOnLastSet: Boolean,
     canVibrate: Boolean,
     scope: ReorderableScope,
@@ -172,7 +171,7 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
 private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
     canVibrate: Boolean,
     canSkipOnLastSet: Boolean,
-    interval: TimerInterval,
+    interval: CreateTimerInterval,
     contrastColor: Color,
     hideReveal: () -> Job,
 ) {
@@ -246,7 +245,7 @@ private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(
 private fun IntentReceiver<CreateScreenIntent>.IntervalSettings(
     canVibrate: Boolean,
     canSkipOnLastSet: Boolean,
-    interval: TimerInterval,
+    interval: CreateTimerInterval,
 ) {
     Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         IntervalBehaviourControls(canSkipOnLastSet, interval)
@@ -258,7 +257,7 @@ private fun IntentReceiver<CreateScreenIntent>.IntervalSettings(
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.IntervalBehaviourControls(
     canSkipOnLastSet: Boolean,
-    interval: TimerInterval
+    interval: CreateTimerInterval
 ) {
     OutlinedCard {
         Column(modifier = Modifier.padding(8.dp)) {
@@ -300,7 +299,7 @@ private fun IntentReceiver<CreateScreenIntent>.IntervalBehaviourControls(
 
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.IntervalFinalCountDown(
-    interval: TimerInterval,
+    interval: CreateTimerInterval,
     canVibrate: Boolean
 ) {
     with(interval.finalCountDown) {
@@ -350,7 +349,7 @@ private fun IntentReceiver<CreateScreenIntent>.IntervalFinalCountDown(
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.IntervalAlertControls(
     canVibrate: Boolean,
-    interval: TimerInterval
+    interval: CreateTimerInterval
 ) {
     OutlinedCard {
         Column(

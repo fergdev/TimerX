@@ -2,9 +2,10 @@ package com.timerx.timermanager
 
 import androidx.compose.ui.graphics.Color
 import app.cash.turbine.test
-import com.timerx.domain.Timer
-import com.timerx.domain.TimerInterval
-import com.timerx.domain.TimerSet
+import com.timerx.domain.interval
+import com.timerx.domain.sets
+import com.timerx.domain.timer
+import com.timerx.domain.timerSet
 import com.timerx.sound.Beep
 import com.timerx.sound.IntervalSound
 import com.timerx.timermanager.TimerState.Finished
@@ -15,19 +16,13 @@ import com.timerx.vibration.Vibration
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.datetime.Instant
 
 class TimerStateMachineImplTest : FreeSpec({
     asUnconfined()
     "empty timer" - {
         shouldThrow<IllegalStateException> {
             TimerStateMachineImpl(
-                Timer(
-                    name = "test",
-                    createdAt = Instant.DISTANT_PAST,
-                    sets = persistentListOf()
-                ),
+                timer = timer {},
                 coroutineScope = testScope
             )
         }.apply {
@@ -37,15 +32,7 @@ class TimerStateMachineImplTest : FreeSpec({
     "single empty set" - {
         shouldThrow<IllegalStateException> {
             TimerStateMachineImpl(
-                Timer(
-                    name = "test",
-                    createdAt = Instant.DISTANT_PAST,
-                    sets = persistentListOf(
-                        TimerSet(
-                            0, repetitions = 1, intervals = persistentListOf()
-                        )
-                    )
-                ),
+                timer { sets { timerSet {} } },
                 coroutineScope = testScope
             )
         }.apply {
@@ -55,20 +42,16 @@ class TimerStateMachineImplTest : FreeSpec({
     }
     "single interval one second" - {
         TimerStateMachineImpl(
-            Timer(
-                name = "test",
-                createdAt = Instant.DISTANT_PAST,
-                sets = persistentListOf(
-                    TimerSet(
-                        0, repetitions = 1, intervals = persistentListOf(
-                            TimerInterval(
-                                name = "work",
-                                duration = 1L
-                            )
-                        )
-                    )
-                )
-            ),
+            timer {
+                sets {
+                    timerSet {
+                        interval {
+                            name = "work"
+                            duration = 1L
+                        }
+                    }
+                }
+            },
             coroutineScope = testScope
         ).eventState.test {
             awaitItem() shouldBe TimerEvent.Started(
@@ -89,7 +72,7 @@ class TimerStateMachineImplTest : FreeSpec({
                     setRepetitionCount = 1,
                     intervalCount = 1,
                     intervalName = "work",
-                    intervalDuration = 1,
+                    intervalDuration = 1L,
                     backgroundColor = Color.Red,
                     timerState = Finished,
                     elapsed = 1
@@ -101,20 +84,16 @@ class TimerStateMachineImplTest : FreeSpec({
     }
     "single interval 10 seconds" - {
         TimerStateMachineImpl(
-            Timer(
-                name = "test",
-                createdAt = Instant.DISTANT_PAST,
-                sets = persistentListOf(
-                    TimerSet(
-                        0, repetitions = 1, intervals = persistentListOf(
-                            TimerInterval(
-                                name = "work",
-                                duration = 10L
-                            )
-                        )
-                    )
-                )
-            ),
+            timer {
+                sets {
+                    timerSet {
+                        interval {
+                            name = "work"
+                            duration = 10L
+                        }
+                    }
+                }
+            },
             coroutineScope = testScope
         ).eventState.test {
             val runState = RunState(
