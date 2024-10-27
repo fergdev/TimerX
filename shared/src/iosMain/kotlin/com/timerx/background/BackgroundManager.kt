@@ -8,13 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import platform.Foundation.NSTimer
-import kotlin.experimental.ExperimentalNativeApi
 
 class BackgroundManager(
     private val timerManager: TimerManager,
     private val iosSoundManager: IosSoundManager
 ) {
-
     private var timer: NSTimer? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -33,9 +31,8 @@ class BackgroundManager(
         }
     }
 
-    @OptIn(ExperimentalNativeApi::class)
     private fun createTimer() {
-        assert(timer == null)
+        require(timer == null)
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0, true) {
             Logger.v { "Keep Alive ${it?.fireDate?.description()}" }
             iosSoundManager.playEmptySound()

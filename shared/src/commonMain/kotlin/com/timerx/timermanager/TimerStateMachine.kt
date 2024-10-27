@@ -8,7 +8,9 @@ import com.timerx.sound.IntervalSound
 import com.timerx.timermanager.TimerEvent.PreviousInterval
 import com.timerx.timermanager.TimerEvent.Started
 import com.timerx.timermanager.TimerEvent.Ticker
-import com.timerx.util.assert
+import com.timerx.timermanager.TimerState.Finished
+import com.timerx.timermanager.TimerState.Paused
+import com.timerx.timermanager.TimerState.Running
 import com.timerx.vibration.Vibration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -21,7 +23,7 @@ sealed interface TimerEvent {
     val runState: RunState
 
     data object Idle : TimerEvent {
-        override val runState = RunState(timerState = TimerState.Running)
+        override val runState = RunState(timerState = Running)
     }
 
     data class Started(
@@ -68,7 +70,7 @@ enum class TimerState {
 
 data class RunState(
     val timerName: String = "",
-    val timerState: TimerState = TimerState.Running,
+    val timerState: TimerState = Running,
 
     val setIndex: Int = 0,
     val setCount: Int = 0,
@@ -121,8 +123,8 @@ class TimerStateMachineImpl(
         get() = _eventState
 
     init {
-        assert(timer.sets.isNotEmpty()) { "Timer must have at least one set" }
-        assert(timer.sets.first().intervals.isNotEmpty()) { "Timer set must have at least one interval" }
+        require(timer.sets.isNotEmpty()) { "Timer must have at least one set" }
+        require(timer.sets.first().intervals.isNotEmpty()) { "Timer set must have at least one interval" }
 
         runState = RunState(
             timerName = timer.name,
@@ -142,24 +144,25 @@ class TimerStateMachineImpl(
     }
 
     override fun resume() {
-        if (runState.timerState == TimerState.Finished) {
-            return
+        require(runState.timerState == Paused) {
+            "Cannot resume while timer is ${runState.timerState}"
         }
-        runState = runState.copy(timerState = TimerState.Running)
+        runState = runState.copy(timerState = Running)
         _eventState.value = TimerEvent.Resumed(runState)
         startTicker()
     }
 
     override fun pause() {
+        require(runState.timerState == Running) {
+            "Cannot pause while timer is ${runState.timerState}"
+        }
         tickerJob?.cancel()
-        runState = runState.copy(timerState = TimerState.Paused)
+        runState = runState.copy(timerState = Paused)
         _eventState.value = TimerEvent.Paused(runState)
     }
 
     override fun nextInterval() {
-        if (runState.timerState == TimerState.Finished) {
-            return
-        }
+        require(runState.timerState != Finished) { "Cannot skip while timer is ${runState.timerState}" }
         var setIndex = runState.setIndex
         var repetitionIndex = runState.repetitionIndex
         var intervalIndex = runState.intervalIndex
@@ -195,7 +198,7 @@ class TimerStateMachineImpl(
         if (setIndex == timer.sets.size) {
             finishTimer()
         } else {
-            if (runState.timerState == TimerState.Running) {
+            if (runState.timerState == Running) {
                 restartTicker()
             }
             updateRunState(
@@ -213,11 +216,9 @@ class TimerStateMachineImpl(
     }
 
     override fun previousInterval() {
-        if (runState.timerState == TimerState.Finished) {
-            return
-        }
+        require(runState.timerState != Finished) { "Cannot skip back while timer is ${runState.timerState}" }
 
-        if (runState.timerState == TimerState.Running) {
+        if (runState.timerState == Running) {
             restartTicker()
         }
 
@@ -362,7 +363,7 @@ class TimerStateMachineImpl(
 
     private fun finishTimer() {
         runState = runState.copy(
-            timerState = TimerState.Finished,
+            timerState = Finished,
             backgroundColor = timer.finishColor
         )
         tickerJob?.cancel()

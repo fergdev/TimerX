@@ -38,7 +38,7 @@ class ThemeSettingsManagerImplTest : FreeSpec({
     }
     "isDynamicTheme" - {
         "throws when not supported" {
-            shouldThrow<IllegalStateException> {
+            shouldThrow<IllegalArgumentException> {
                 defaultThemeSettingsManagerFactory().setIsDynamicTheme(true)
             }.apply {
                 message shouldBe "Attempting to set dynamic theme when platform does not support it"

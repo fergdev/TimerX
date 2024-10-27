@@ -57,7 +57,7 @@ class TimerXSettingsImplTest : FreeSpec({
             }
             "throws when set" {
                 val timerXSettings = defaultSettingsFactory()
-                shouldThrow<IllegalStateException> {
+                shouldThrow<IllegalArgumentException> {
                     timerXSettings.setCollectAnalytics(false)
                 }.apply { message shouldBe "Analytics are not available on this platform" }
             }

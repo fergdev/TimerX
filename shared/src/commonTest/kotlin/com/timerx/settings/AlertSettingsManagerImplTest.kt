@@ -64,7 +64,7 @@ class AlertSettingsManagerImplTest : FreeSpec({
         }
         "throws when can't vibrate" {
             val alertSettings = defaultSettingsFactory()
-            shouldThrow<IllegalStateException> {
+            shouldThrow<IllegalArgumentException> {
                 alertSettings.setVibrationEnabled(true)
             }.apply { message shouldBe "Cannot enable vibration when platform does not support it" }
         }

@@ -3,7 +3,6 @@ package com.timerx.domain
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.timerx.sound.Beep
-import com.timerx.util.assert
 import com.timerx.vibration.Vibration
 import kotlinx.datetime.Instant
 import kotlinx.serialization.KSerializer
@@ -40,7 +39,7 @@ data class TimerSet(
     val intervals: List<TimerInterval>
 ) {
     init {
-        assert(intervals.isNotEmpty()) {
+        require(intervals.isNotEmpty()) {
             "Timer set must have at least one interval"
         }
     }

@@ -4,7 +4,6 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.sound.Volume
-import com.timerx.util.assert
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -71,7 +70,7 @@ internal class AlertSettingsManagerImpl(
     }
 
     override suspend fun setVibrationEnabled(enabled: Boolean) {
-        assert(platformCapabilities.canVibrate) {
+        require(platformCapabilities.canVibrate) {
             "Cannot enable vibration when platform does not support it"
         }
         flowSettings.putBoolean(VIBRATION_ENABLED, enabled)

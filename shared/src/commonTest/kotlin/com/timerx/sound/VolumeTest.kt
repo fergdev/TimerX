@@ -13,11 +13,11 @@ class VolumeTest : FreeSpec({
     }
     "out of range" - {
         "below" {
-            shouldThrow<IllegalStateException> { Volume(-0.1f) }
+            shouldThrow<IllegalArgumentException> { Volume(-0.1f) }
                 .message shouldBe "Invalid volume: -0.1"
         }
         "above" {
-            shouldThrow<IllegalStateException> { Volume(-1.1f) }
+            shouldThrow<IllegalArgumentException> { Volume(-1.1f) }
                 .message shouldBe "Invalid volume: -1.1"
         }
     }

@@ -1,10 +1,8 @@
 package com.timerx.settings
 
-import com.timerx.util.assert
-
 data class BackgroundAlpha(val value: Float) {
     init {
-        assert(value in range) {
+        require(value in range) {
             "Alpha $value must be between $range"
         }
     }

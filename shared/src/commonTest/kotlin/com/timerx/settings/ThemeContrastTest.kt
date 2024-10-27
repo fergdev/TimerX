@@ -14,12 +14,12 @@ class ThemeContrastTest : FreeSpec({
     }
     "out of range" - {
         "below" - {
-            shouldThrowWithMessage<IllegalStateException>("ThemeContrast -1.01 must be between -1.0 and 1.0") {
+            shouldThrowWithMessage<IllegalArgumentException>("ThemeContrast -1.01 must be between -1.0 and 1.0") {
                 ThemeContrast(-1.01)
             }
         }
         "above" - {
-            shouldThrowWithMessage<IllegalStateException>("ThemeContrast 1.01 must be between -1.0 and 1.0") {
+            shouldThrowWithMessage<IllegalArgumentException>("ThemeContrast 1.01 must be between -1.0 and 1.0") {
                 ThemeContrast(1.01)
             }
         }

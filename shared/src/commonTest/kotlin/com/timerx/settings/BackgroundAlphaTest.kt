@@ -12,12 +12,12 @@ class BackgroundAlphaTest : FreeSpec({
     }
     "out of range" - {
         "below" - {
-            shouldThrowWithMessage<IllegalStateException>("Alpha -0.01 must be between 0.0..0.99") {
+            shouldThrowWithMessage<IllegalArgumentException>("Alpha -0.01 must be between 0.0..0.99") {
                 BackgroundAlpha(-0.01F)
             }
         }
         "above" - {
-            shouldThrowWithMessage<IllegalStateException>("Alpha 1.0 must be between 0.0..0.99") {
+            shouldThrowWithMessage<IllegalArgumentException>("Alpha 1.0 must be between 0.0..0.99") {
                 BackgroundAlpha(1F)
             }
         }

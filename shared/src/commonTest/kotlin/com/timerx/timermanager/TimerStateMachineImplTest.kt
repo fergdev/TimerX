@@ -21,7 +21,7 @@ import io.kotest.matchers.shouldBe
 class TimerStateMachineImplTest : FreeSpec({
     asUnconfined()
     "empty timer" - {
-        shouldThrow<IllegalStateException> {
+        shouldThrow<IllegalArgumentException> {
             TimerStateMachineImpl(
                 timer = timer {},
                 coroutineScope = testScope
@@ -31,7 +31,7 @@ class TimerStateMachineImplTest : FreeSpec({
         }
     }
     "single empty set" - {
-        shouldThrow<IllegalStateException> {
+        shouldThrow<IllegalArgumentException> {
             TimerStateMachineImpl(
                 timer { timerSets { timerSet {} } },
                 coroutineScope = testScope
@@ -136,100 +136,237 @@ class TimerStateMachineImplTest : FreeSpec({
             )
         }
     }
-    "pause stops ticker" - {
-        val timerStateMachineImpl = TimerStateMachineImpl(
-            timer {
-                timerSets {
-                    timerSet {
-                        interval {
-                            name = "work"
-                            duration = 10L
+    "pause" - {
+        "stops ticker" - {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
                         }
                     }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                val runState = RunState(
+                    timerName = "test",
+                    setRepetitionCount = 1,
+                    intervalCount = 1,
+                    intervalName = "work",
+                    intervalDuration = 10L,
+                    backgroundColor = Color.Blue,
+                    timerState = Running,
+                )
+                awaitItem() shouldBe TimerEvent.Started(
+                    runState = runState,
+                    intervalSound = IntervalSound(Beep.Alert, "work"),
+                    vibration = Vibration.Medium
+                )
+                testCoroutineScheduler.advanceTimeBy(1000)
+                awaitItem() shouldBe TimerEvent.Ticker(
+                    runState = runState.copy(elapsed = 1L),
+                )
+                timerStateMachineImpl.pause()
+                expectNoEvents()
+            }
+        }
+        "while paused throws error" - {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                skipItems(5)
+                timerStateMachineImpl.pause()
+                shouldThrow<IllegalArgumentException> {
+                    timerStateMachineImpl.pause()
+                }.apply { message shouldBe "Cannot pause while timer is Paused" }
+            }
+        }
+        "while finished throws error" {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                skipItems(11)
+                shouldThrow<IllegalArgumentException> {
+                    timerStateMachineImpl.pause()
+                }.apply {
+                    message shouldBe "Cannot pause while timer is Finished"
                 }
-            },
-            coroutineScope = testScope
-        )
-        timerStateMachineImpl.eventState.test {
-            val runState = RunState(
-                timerName = "test",
-                setRepetitionCount = 1,
-                intervalCount = 1,
-                intervalName = "work",
-                intervalDuration = 10L,
-                backgroundColor = Color.Blue,
-                timerState = Running,
-            )
-            awaitItem() shouldBe TimerEvent.Started(
-                runState = runState,
-                intervalSound = IntervalSound(Beep.Alert, "work"),
-                vibration = Vibration.Medium
-            )
-            testCoroutineScheduler.advanceTimeBy(1000)
-            awaitItem() shouldBe TimerEvent.Ticker(
-                runState = runState.copy(elapsed = 1L),
-            )
-            timerStateMachineImpl.pause()
-            expectNoEvents()
+            }
         }
     }
-    "pause and resume restarts timer" - {
-        val timerStateMachineImpl = TimerStateMachineImpl(
-            timer {
-                timerSets {
-                    timerSet {
-                        interval {
-                            name = "work"
-                            duration = 10L
+    "resume" - {
+        "throws when running" - {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
                         }
                     }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                skipItems(6)
+                shouldThrow<IllegalArgumentException> {
+                    timerStateMachineImpl.resume()
+                }.apply { message shouldBe "Cannot resume while timer is Running" }
+            }
+        }
+        "throws when finished" - {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                skipItems(11)
+                shouldThrow<IllegalArgumentException> {
+                    timerStateMachineImpl.resume()
+                }.apply { message shouldBe "Cannot resume while timer is Finished" }
+            }
+        }
+        "resume restarts timer" - {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                val runState = RunState(
+                    timerName = "test",
+                    setRepetitionCount = 1,
+                    intervalCount = 1,
+                    intervalName = "work",
+                    intervalDuration = 10L,
+                    backgroundColor = Color.Blue,
+                    timerState = Running,
+                )
+                awaitItem() shouldBe TimerEvent.Started(
+                    runState = runState,
+                    intervalSound = IntervalSound(Beep.Alert, "work"),
+                    vibration = Vibration.Medium
+                )
+                for (elapsed in 1L..6L) {
+                    awaitItem() shouldBe TimerEvent.Ticker(
+                        runState = runState.copy(elapsed = elapsed),
+                    )
                 }
-            },
-            coroutineScope = testScope
-        )
-        timerStateMachineImpl.eventState.test {
-            val runState = RunState(
-                timerName = "test",
-                setRepetitionCount = 1,
-                intervalCount = 1,
-                intervalName = "work",
-                intervalDuration = 10L,
-                backgroundColor = Color.Blue,
-                timerState = Running,
-            )
-            awaitItem() shouldBe TimerEvent.Started(
-                runState = runState,
-                intervalSound = IntervalSound(Beep.Alert, "work"),
-                vibration = Vibration.Medium
-            )
-            for (elapsed in 1L..6L) {
-                awaitItem() shouldBe TimerEvent.Ticker(
-                    runState = runState.copy(elapsed = elapsed),
+                timerStateMachineImpl.pause()
+                timerStateMachineImpl.resume()
+                awaitItem() shouldBe TimerEvent.Resumed(
+                    runState = runState.copy(elapsed = 6L),
                 )
-            }
-            timerStateMachineImpl.pause()
-            timerStateMachineImpl.resume()
-            awaitItem() shouldBe TimerEvent.Resumed(
-                runState = runState.copy(elapsed = 6L),
-            )
-            for (i in 7L..9L) {
-                awaitItem() shouldBe TimerEvent.Ticker(
+                for (i in 7L..9L) {
+                    awaitItem() shouldBe TimerEvent.Ticker(
+                        runState = runState.copy(
+                            elapsed = i
+                        ),
+                        beep = Beep.Alert,
+                        vibration = Vibration.Light
+                    )
+                }
+                awaitItem() shouldBe TimerEvent.Finished(
                     runState = runState.copy(
-                        elapsed = i
+                        backgroundColor = Color.Red,
+                        timerState = Finished,
+                        elapsed = 10L
                     ),
-                    beep = Beep.Alert,
-                    vibration = Vibration.Light
+                    intervalSound = IntervalSound(Beep.Alert, "Finished"),
+                    vibration = Vibration.Heavy
                 )
             }
-            awaitItem() shouldBe TimerEvent.Finished(
-                runState = runState.copy(
-                    backgroundColor = Color.Red,
-                    timerState = Finished,
-                    elapsed = 10L
-                ),
-                intervalSound = IntervalSound(Beep.Alert, "Finished"),
-                vibration = Vibration.Heavy
+        }
+    }
+    "next interval" - {
+        "throws when finished" {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
+                        }
+                    }
+                },
+                coroutineScope = testScope
             )
+            timerStateMachineImpl.eventState.test {
+                skipItems(11)
+                shouldThrow<IllegalArgumentException> {
+                    timerStateMachineImpl.nextInterval()
+                }.apply { message shouldBe "Cannot skip while timer is Finished" }
+            }
+        }
+    }
+    "previous interval" - {
+        "throws when finished" {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSets {
+                        timerSet {
+                            interval {
+                                name = "work"
+                                duration = 10L
+                            }
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                skipItems(11)
+                shouldThrow<IllegalArgumentException> {
+                    timerStateMachineImpl.previousInterval()
+                }.apply { message shouldBe "Cannot skip back while timer is Finished" }
+            }
         }
     }
 })

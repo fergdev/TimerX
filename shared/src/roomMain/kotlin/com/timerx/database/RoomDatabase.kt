@@ -23,7 +23,6 @@ import com.timerx.domain.TimerInterval
 import com.timerx.domain.TimerSet
 import com.timerx.domain.length
 import com.timerx.sound.Beep
-import com.timerx.util.assertNotNull
 import com.timerx.vibration.Vibration
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -379,7 +378,7 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
 
     override suspend fun duplicate(timerId: Long): Long {
         val toCopy = getTimer(timerId).first()
-        assertNotNull(toCopy) { "Attempting to copy null timer $timerId" }
+        requireNotNull(toCopy) { "Attempting to copy null timer $timerId" }
         val toInsert = toCopy.copy(
             id = 0,
             name = toCopy.name + " (copy)",

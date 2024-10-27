@@ -8,7 +8,6 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.ui.common.blue
-import com.timerx.util.assert
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -93,7 +92,7 @@ internal class ThemeSettingsManagerImpl(
     }
 
     override suspend fun setIsDynamicTheme(isDynamic: Boolean) {
-        assert(platformCapabilities.canSystemDynamicTheme) {
+        require(platformCapabilities.canSystemDynamicTheme) {
             "Attempting to set dynamic theme when platform does not support it"
         }
         flowSettings.putBoolean(DYNAMIC_THEME, isDynamic)

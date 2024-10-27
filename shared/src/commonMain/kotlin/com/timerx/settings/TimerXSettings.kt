@@ -6,7 +6,6 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.domain.SortTimersBy
 import com.timerx.platform.PlatformCapabilities
-import com.timerx.util.assert
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -70,7 +69,7 @@ internal class TimerXSettingsImpl(
         flowSettings.putInt(SORT_TIMERS_BY, sortTimersBy.ordinal)
 
     override suspend fun setCollectAnalytics(collectAnalytics: Boolean) {
-        assert(platformCapabilities.hasAnalytics) {
+        require(platformCapabilities.hasAnalytics) {
             "Analytics are not available on this platform"
         }
         flowSettings.putBoolean(COLLECT_ANALYTICS, collectAnalytics)
