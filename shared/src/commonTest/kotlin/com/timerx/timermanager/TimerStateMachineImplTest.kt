@@ -123,7 +123,7 @@ class TimerStateMachineImplTest : FreeSpec({
                     }
                     interval {
                         name = "rest"
-                        duration = 10L
+                        duration = 20L
                         color = Color.Green
                         countUp = true
                         textToSpeech = false
@@ -171,7 +171,7 @@ class TimerStateMachineImplTest : FreeSpec({
                 intervalIndex = 1,
                 intervalCount = 2,
                 intervalName = "rest",
-                intervalDuration = 10L,
+                intervalDuration = 20L,
                 backgroundColor = Color.Green,
                 displayCountAsUp = true,
                 timerState = Running,
@@ -181,13 +181,13 @@ class TimerStateMachineImplTest : FreeSpec({
                 intervalSound = IntervalSound(Beep.Whistle),
                 vibration = Vibration.Soft
             )
-            for (elapsed in 1L..8L) {
+            for (elapsed in 1L..18L) {
                 awaitItem() shouldBe TimerEvent.Ticker(
                     runState = restRunState.copy(elapsed = elapsed),
                 )
             }
             awaitItem() shouldBe TimerEvent.Ticker(
-                runState = restRunState.copy(elapsed = 9L),
+                runState = restRunState.copy(elapsed = 19L),
                 beep = Beep.Alert2,
                 vibration = Vibration.Light
             )
@@ -195,7 +195,7 @@ class TimerStateMachineImplTest : FreeSpec({
                 runState = restRunState.copy(
                     backgroundColor = Color.Red,
                     timerState = Finished,
-                    elapsed = 10L
+                    elapsed = 20L
                 ),
                 intervalSound = IntervalSound(Beep.Alert, "Finished"),
                 vibration = Vibration.Heavy
@@ -517,10 +517,6 @@ class TimerStateMachineImplTest : FreeSpec({
                             name = "work"
                             duration = 10L
                         }
-                        interval {
-                            name = "rest"
-                            duration = 10L
-                        }
                     }
                 },
                 coroutineScope = testScope
@@ -533,7 +529,7 @@ class TimerStateMachineImplTest : FreeSpec({
                         timerName = "test",
                         setRepetitionCount = 1,
                         intervalIndex = 0,
-                        intervalCount = 2,
+                        intervalCount = 1,
                         intervalName = "work",
                         intervalDuration = 10L,
                         backgroundColor = Color.Blue,
@@ -641,6 +637,190 @@ class TimerStateMachineImplTest : FreeSpec({
                 timerStateMachineImpl.pause()
                 awaitItem()
                 timerStateMachineImpl.previousInterval()
+                expectNoEvents()
+            }
+        }
+        "goes to previous interval after one repetition of set" {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSet {
+                        repetitions = 2
+                        interval {
+                            name = "work"
+                            duration = 10L
+                        }
+                        interval {
+                            name = "rest"
+                            duration = 10L
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                awaitItem()
+                timerStateMachineImpl.nextInterval()
+                timerStateMachineImpl.nextInterval()
+                awaitItem()
+                timerStateMachineImpl.previousInterval()
+                awaitItem()
+                timerStateMachineImpl.previousInterval()
+                awaitItem() shouldBe TimerEvent.PreviousInterval(
+                    runState = RunState(
+                        timerName = "test",
+                        setRepetitionCount = 2,
+                        intervalIndex = 0,
+                        intervalCount = 2,
+                        intervalName = "work",
+                        intervalDuration = 10L,
+                        backgroundColor = Color.Blue,
+                        timerState = Running,
+                    ),
+                    intervalSound = IntervalSound(beep = Beep.Alert, "work"),
+                    vibration = Vibration.Medium
+                )
+                expectNoEvents()
+            }
+        }
+        "goes to previous set" {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSet {
+                        interval {
+                            name = "work"
+                            duration = 10L
+                        }
+                    }
+                    timerSet {
+                        interval {
+                            name = "rest"
+                            duration = 10L
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                awaitItem()
+                timerStateMachineImpl.nextInterval()
+                awaitItem()
+                timerStateMachineImpl.previousInterval()
+                awaitItem() shouldBe TimerEvent.PreviousInterval(
+                    runState = RunState(
+                        timerName = "test",
+                        setRepetitionCount = 1,
+                        intervalIndex = 0,
+                        intervalCount = 1,
+                        intervalName = "work",
+                        intervalDuration = 10L,
+                        backgroundColor = Color.Blue,
+                        timerState = Running,
+                    ),
+                    intervalSound = IntervalSound(beep = Beep.Alert, "work"),
+                    vibration = Vibration.Medium
+                )
+                expectNoEvents()
+            }
+        }
+        "goes all the way back to start of timer" {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSet {
+                        repetitions = 2
+                        interval {
+                            name = "work"
+                            duration = 10L
+                        }
+                        interval {
+                            name = "rest"
+                            duration = 10L
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                awaitItem()
+                timerStateMachineImpl.nextInterval()
+                timerStateMachineImpl.nextInterval()
+                awaitItem()
+                timerStateMachineImpl.previousInterval()
+                awaitItem()
+                timerStateMachineImpl.previousInterval()
+                awaitItem() shouldBe TimerEvent.PreviousInterval(
+                    runState = RunState(
+                        timerName = "test",
+                        setRepetitionCount = 2,
+                        intervalIndex = 0,
+                        intervalCount = 2,
+                        intervalName = "work",
+                        intervalDuration = 10L,
+                        backgroundColor = Color.Blue,
+                        timerState = Running,
+                    ),
+                    intervalSound = IntervalSound(beep = Beep.Alert, "work"),
+                    vibration = Vibration.Medium
+                )
+                expectNoEvents()
+            }
+        }
+        "handles skip on last set" {
+            val timerStateMachineImpl = TimerStateMachineImpl(
+                timer {
+                    timerSet {
+                        repetitions = 3
+                        interval {
+                            name = "work"
+                            duration = 10L
+                            skipOnLastSet = true
+                        }
+                        interval {
+                            name = "rest"
+                            duration = 10L
+                        }
+                    }
+                },
+                coroutineScope = testScope
+            )
+            timerStateMachineImpl.eventState.test {
+                timerStateMachineImpl.nextInterval()
+                timerStateMachineImpl.nextInterval()
+                timerStateMachineImpl.nextInterval()
+                timerStateMachineImpl.nextInterval()
+                awaitItem()
+                timerStateMachineImpl.previousInterval()
+                awaitItem() shouldBe TimerEvent.PreviousInterval(
+                    runState = RunState(
+                        timerName = "test",
+                        repetitionIndex = 1,
+                        setRepetitionCount = 3,
+                        intervalIndex = 1,
+                        intervalCount = 2,
+                        intervalName = "rest",
+                        intervalDuration = 10L,
+                        backgroundColor = Color.Blue,
+                        timerState = Running,
+                    ),
+                    intervalSound = IntervalSound(beep = Beep.Alert, "rest"),
+                    vibration = Vibration.Medium
+                )
+                timerStateMachineImpl.previousInterval()
+                timerStateMachineImpl.previousInterval()
+                awaitItem() shouldBe TimerEvent.PreviousInterval(
+                    runState = RunState(
+                        timerName = "test",
+                        repetitionIndex = 0,
+                        setRepetitionCount = 3,
+                        intervalIndex = 1,
+                        intervalCount = 2,
+                        intervalName = "rest",
+                        intervalDuration = 10L,
+                        backgroundColor = Color.Blue,
+                        timerState = Running,
+                    ),
+                    intervalSound = IntervalSound(beep = Beep.Alert, "rest"),
+                    vibration = Vibration.Medium
+                )
                 expectNoEvents()
             }
         }
