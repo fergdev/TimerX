@@ -211,12 +211,14 @@ class TimerManagerImplTest : FreeSpec({
                 timerRepository,
                 testScope
             )
-            timerManager.startTimer(timer {
-                timerSet {
-                    interval {}
-                    interval {}
+            timerManager.startTimer(
+                timer {
+                    timerSet {
+                        interval {}
+                        interval {}
+                    }
                 }
-            })
+            )
             timerManager.eventState.test {
                 awaitItem()
                 timerManager.nextInterval()
@@ -252,12 +254,14 @@ class TimerManagerImplTest : FreeSpec({
                 timerRepository,
                 testScope
             )
-            timerManager.startTimer(timer {
-                timerSet {
-                    interval {}
-                    interval {}
+            timerManager.startTimer(
+                timer {
+                    timerSet {
+                        interval {}
+                        interval {}
+                    }
                 }
-            })
+            )
             timerManager.eventState.test {
                 awaitItem()
                 timerManager.nextInterval()
@@ -295,12 +299,14 @@ class TimerManagerImplTest : FreeSpec({
                 timerRepository,
                 testScope
             )
-            timerManager.startTimer(timer {
-                timerSet {
-                    interval {}
-                    interval {}
+            timerManager.startTimer(
+                timer {
+                    timerSet {
+                        interval {}
+                        interval {}
+                    }
                 }
-            })
+            )
             timerManager.eventState.test {
                 awaitItem()
                 timerManager.destroy()
