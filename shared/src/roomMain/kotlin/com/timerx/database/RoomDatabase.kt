@@ -96,10 +96,34 @@ interface RoomTimerDao {
     @Query("UPDATE RoomTimer SET sort_order = :sortOrder WHERE id = :timerId")
     suspend fun updateSortOrder(timerId: Long, sortOrder: Long)
 
+    @Transaction
+    suspend fun incrementStartedCount(timerId: Long) {
+        val timer = getTimer(timerId).first()
+        requireNotNull(timer) {
+            "Attempting to increment start count for null timer `$timerId`"
+        }
+        setStartedCount(timerId, timer.startedCount + 1)
+    }
+
+    @Query("UPDATE RoomTimer SET started_count = :startedCount WHERE id = :timerId")
+    suspend fun setStartedCount(timerId: Long, startedCount: Long)
+
+    @Transaction
+    suspend fun incrementCompletedCount(timerId: Long) {
+        val timer = getTimer(timerId).first()
+        requireNotNull(timer) {
+            "Attempting to increment completed count for null timer `$timerId`"
+        }
+        setCompletedCount(timerId, timer.completedCount + 1)
+    }
+
+    @Query("UPDATE RoomTimer SET completed_count = :completedCount WHERE id = :timerId")
+    suspend fun setCompletedCount(timerId: Long, completedCount: Long)
+
     @Query(
         "UPDATE RoomTimer " +
-            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-            "WHERE id = :timerId"
+                "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
+                "WHERE id = :timerId"
     )
     suspend fun updateTimerStats(
         timerId: Long,
@@ -343,19 +367,12 @@ class TimerRepository(private val appDatabase: AppDatabase) : ITimerRepository {
             roomSetsAndIntervals(timer)
         )
 
-    override suspend fun updateTimerStats(
-        timerId: Long,
-        startedCount: Long,
-        completedCount: Long,
-        lastRun: Instant
-    ) {
-        appDatabase.timerDao()
-            .updateTimerStats(
-                timerId,
-                startedCount,
-                completedCount,
-                lastRun
-            )
+    override suspend fun incrementStartedCount(timerId: Long) {
+        appDatabase.timerDao().incrementStartedCount(timerId)
+    }
+
+    override suspend fun incrementCompletedCount(timerId: Long) {
+        appDatabase.timerDao().incrementCompletedCount(timerId)
     }
 
     override suspend fun updateTimer(timer: Timer) {

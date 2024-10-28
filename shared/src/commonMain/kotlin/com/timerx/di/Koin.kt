@@ -7,10 +7,9 @@ import com.timerx.settings.TimerXSettingsImpl
 import com.timerx.timermanager.TimerManager
 import com.timerx.timermanager.TimerManagerImpl
 import com.timerx.ui.di.containerModule
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val sharedModule = module {
@@ -23,8 +22,11 @@ val sharedModule = module {
             dispatcher = Dispatchers.Main
         )
     }
-    singleOf(::TimerManagerImpl) {
-        bind<TimerManager>()
+    single<TimerManager> {
+        TimerManagerImpl(
+            get(),
+            CoroutineScope(Dispatchers.Main)
+        )
     }
 }
 

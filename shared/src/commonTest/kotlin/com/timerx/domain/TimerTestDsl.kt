@@ -54,7 +54,7 @@ fun TimerBuilder.timerSet(block: TimerSetBuilder.() -> Unit) {
 class TimerIntervalBuilder {
     var id: Long = 0L
     var name: String = "test"
-    var duration: Long = 0L
+    var duration: Long = 1L
     var color: Color = Color.Blue
     var skipOnLastSet: Boolean = false
     var countUp: Boolean = false

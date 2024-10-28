@@ -3,18 +3,14 @@ package com.timerx.database
 import com.timerx.domain.ShallowTimer
 import com.timerx.domain.Timer
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
 
+@Suppress("ComplexInterface")
 interface ITimerRepository {
     fun getShallowTimers(): Flow<List<ShallowTimer>>
     suspend fun insertTimer(timer: Timer): Long
-    suspend fun updateTimerStats(
-        timerId: Long,
-        startedCount: Long,
-        completedCount: Long,
-        lastRun: Instant
-    )
 
+    suspend fun incrementStartedCount(timerId: Long)
+    suspend fun incrementCompletedCount(timerId: Long)
     suspend fun updateTimer(timer: Timer)
     suspend fun deleteTimer(timerId: Long)
     suspend fun duplicate(timerId: Long): Long

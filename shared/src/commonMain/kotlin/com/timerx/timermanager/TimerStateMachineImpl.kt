@@ -69,7 +69,7 @@ class TimerStateMachineImpl(
         val currentSet = timer.sets[setIndex]
 
         // Check for end of current repetition
-        if (++intervalIndex == currentSet.intervals.size) {
+        if (++intervalIndex >= currentSet.intervals.size) {
             intervalIndex = 0
             repetitionIndex++
         }
@@ -89,12 +89,12 @@ class TimerStateMachineImpl(
             }
         }
 
-        if (repetitionIndex == currentSet.repetitions) {
+        if (repetitionIndex >= currentSet.repetitions) {
             repetitionIndex = 0
             setIndex++
         }
 
-        if (setIndex == timer.sets.size) {
+        if (setIndex >= timer.sets.size) {
             finishTimer()
         } else {
             if (runState.timerState == TimerState.Running) {
@@ -207,7 +207,7 @@ class TimerStateMachineImpl(
                         null
                     }
                 _eventState.value = TimerEvent.Ticker(runState, beep, vibration)
-                if (nextElapsed == runState.intervalDuration) {
+                if (nextElapsed >= runState.intervalDuration) {
                     if (runState.manualNext) {
                         cancel()
                         break

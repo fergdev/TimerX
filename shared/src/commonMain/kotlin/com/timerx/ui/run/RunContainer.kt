@@ -31,10 +31,11 @@ internal class RunContainer(
         init {
             launch {
                 val timer = timerRepository.getTimer(timerId).first()
+                // This could be from a pinned shortcut so nullability is not asserted here
                 if (timer == null) {
                     updateState { RunScreenState.NoTimer }
                 } else {
-                    if (timerManager.isRunning().not()) {
+                    if (!timerManager.isRunning()) {
                         timerManager.startTimer(timer)
                     }
                 }
@@ -44,7 +45,7 @@ internal class RunContainer(
 
         install(
             observeTimerPlugin(timerManager, timerXSettings),
-            reducePlugin(timerManager, timerXSettings)
+            reducePlugin(timerManager, timerXSettings, timerRepository, timerId)
         )
     }
 }
@@ -126,6 +127,8 @@ internal fun observeTimerPlugin(
 internal fun reducePlugin(
     timerManager: TimerManager,
     timerXSettings: TimerXSettings,
+    timerRepository: ITimerRepository,
+    timerId: Long
 ) =
     reducePlugin<RunScreenState, RunScreenIntent, Nothing> {
         when (it) {
@@ -134,9 +137,17 @@ internal fun reducePlugin(
             RunScreenIntent.OnManualNext -> timerManager.nextInterval()
             RunScreenIntent.Pause -> timerManager.playPause()
             RunScreenIntent.Play -> timerManager.playPause()
-            RunScreenIntent.RestartTimer -> timerManager.restartCurrentTimer()
+            RunScreenIntent.RestartTimer -> {
+                val timer = timerRepository.getTimer(timerId).first()
+                requireNotNull(timer) {
+                    "Attempting to restart with null timer $timerId"
+                }
+                timerManager.startTimer(timer)
+            }
+
             is RunScreenIntent.UpdateVibrationEnabled ->
                 timerXSettings.alertSettingsManager.setVibrationEnabled(it.enabled)
+
             is RunScreenIntent.UpdateVolume -> timerXSettings.alertSettingsManager.setVolume(it.volume)
         }
     }

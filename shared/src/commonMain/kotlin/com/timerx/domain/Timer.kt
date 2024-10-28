@@ -20,15 +20,16 @@ data class ShallowTimer(
     val id: Long = 0L,
     val sortOrder: Long = NO_SORT_ORDER,
     val name: String,
-    val duration: Long = 0L,
+    val duration: Long = 1L,
     val startedCount: Long = 0,
     val completedCount: Long = 0,
-    val createdAt: Instant,
+    val createdAt: Instant = Instant.DISTANT_PAST,
     val lastRun: Instant? = null
 ) {
     init {
-        require(startedCount >= 0) { "Started count cannot be negative" }
-        require(completedCount >= 0) { "Completed count cannot be negative" }
+        require(startedCount >= 0) { "startedCount=$startedCount cannot be negative" }
+        require(completedCount >= 0) { "completedCount=$completedCount cannot be negative" }
+        require(duration > 0) { "duration=$duration must be greater than 0" }
     }
 }
 
@@ -50,8 +51,8 @@ data class Timer(
 ) {
     init {
         require(sets.isNotEmpty()) { "Timer must have at least one set" }
-        require(startedCount >= 0) { "Started count cannot be negative" }
-        require(completedCount >= 0) { "Completed count cannot be negative" }
+        require(startedCount >= 0) { "Started count cannot be negative startedCount=$startedCount" }
+        require(completedCount >= 0) { "Completed count cannot be negative completedCount=$completedCount" }
     }
 }
 
@@ -82,14 +83,26 @@ data class TimerInterval(
     val beep: Beep = Beep.Alert,
     val vibration: Vibration = Vibration.Medium,
     val finalCountDown: FinalCountDown = FinalCountDown()
-)
+) {
+    init {
+        require(duration > 0) {
+            "Duration must be greater than zero duration=$duration"
+        }
+    }
+}
 
 @Serializable
 data class FinalCountDown(
     val duration: Long = 3,
     val beep: Beep = Beep.Alert,
     val vibration: Vibration = Vibration.Light
-)
+) {
+    init {
+        require(duration >= 0) {
+            "Final count down duration cannot be negative $duration"
+        }
+    }
+}
 
 object ColorSerializer : KSerializer<Color> {
     override val descriptor: SerialDescriptor =

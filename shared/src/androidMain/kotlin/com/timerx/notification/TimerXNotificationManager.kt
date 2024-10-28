@@ -33,7 +33,7 @@ class NotificationManager(
                         )
                     }
 
-                    is TimerEvent.Destroy -> {
+                    is TimerEvent.Finished -> {
                         context.stopService(Intent(context, NotificationService::class.java))
                         androidNotificationManager?.cancelAll()
                     }
