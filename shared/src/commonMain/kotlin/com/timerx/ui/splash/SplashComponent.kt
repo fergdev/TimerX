@@ -1,13 +1,10 @@
 package com.timerx.ui.splash
 
 interface SplashComponent {
-    fun finishSplash()
+    val finishSplash: () -> Unit
 }
 
+@Suppress("UseDataClass")
 internal class DefaultSplashComponent(
-    private val onFinished: () -> Unit
-) : SplashComponent {
-    override fun finishSplash() {
-        onFinished()
-    }
-}
+    override val finishSplash: () -> Unit
+) : SplashComponent

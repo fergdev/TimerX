@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.contrastSystemBarColor
 import kotlinx.coroutines.delay
@@ -40,7 +41,7 @@ internal fun SplashContent(component: SplashComponent) {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            modifier = Modifier.fillMaxSize().scale(scale.value),
+            modifier = Modifier.fillMaxSize().scale(scale.value).testTag("splash_image"),
             imageVector = CustomIcons.avTimer,
             contentDescription = null,
             colorFilter = ColorFilter.tint(

@@ -118,7 +118,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
 
             Config.Splash -> RootComponent.Child.SplashChild(
                 DefaultSplashComponent(
-                    onFinished = { nav.replaceAll(Config.Main) }
+                    finishSplash = { nav.replaceAll(Config.Main) }
                 )
             )
         }
