@@ -27,6 +27,10 @@ kotlin {
     }
 }
 
+dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+}
+
 android {
     namespace = Config.namespaceAndroid
     compileSdk = Config.compileSdk
@@ -71,6 +75,7 @@ android {
     compileOptions {
         sourceCompatibility = Config.javaVersion
         targetCompatibility = Config.javaVersion
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlin {
         jvmToolchain(17)

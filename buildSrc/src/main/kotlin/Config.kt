@@ -12,10 +12,10 @@ object Config {
     const val appName = "TimerX"
     const val namespace = "com.timerx"
     const val namespaceAndroid = "$namespace.android"
-    const val versionCode = 2
+    const val versionCode = 3
     const val majorRelease = 1
     const val minorRelease = 0
-    const val patch = 1
+    const val patch = 2
     const val majorVersionName = "$majorRelease.$minorRelease.$patch"
     const val versionName = "$majorRelease.$minorRelease.$patch"
 
@@ -35,7 +35,7 @@ object Config {
     val javaVersion = JavaVersion.VERSION_17
     const val compileSdk = 35
     const val targetSdk = compileSdk
-    const val minSdk = 29
+    const val minSdk = 23
     const val appId = "todo-some-uuid"
     const val supportEmail = "ferg.dev@outlook.com"
     const val privacyPolicyUrl =

@@ -5,6 +5,7 @@ package com.timerx.notification
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
@@ -25,12 +26,15 @@ class NotificationManager(
             timerManager.eventState.collect { timerEvent ->
                 when (timerEvent) {
                     is TimerEvent.Started -> {
-                        context.startForegroundService(
-                            Intent(
-                                context,
-                                NotificationService::class.java
+                        // fill out the other side of this if
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(
+                                Intent(
+                                    context,
+                                    NotificationService::class.java
+                                )
                             )
-                        )
+                        }
                     }
 
                     is TimerEvent.Finished -> {
