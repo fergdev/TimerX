@@ -1,7 +1,7 @@
 package com.timerx.database
 
+import com.timerx.domain.ShallowTimer
 import com.timerx.domain.Timer
-import com.timerx.util.assertNotNull
 import com.timerx.util.mapIfNull
 import io.github.xxfast.kstore.KStore
 import io.github.xxfast.kstore.extensions.plus
@@ -9,38 +9,56 @@ import io.github.xxfast.kstore.storage.storeOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.datetime.Instant
 
 class KStoreDatabase : ITimerRepository {
     private val store: KStore<List<Timer>> = storeOf("timerX.db", default = emptyList())
-
     private var nextTimerId = 0L
 
-    override fun getShallowTimers(): Flow<List<Timer>> =
-        store.updates.mapIfNull(emptyList()).onEach {
-            nextTimerId = it.maxOfOrNull { timer ->
-                timer.id
-            }?.plus(1L) ?: 0L
-        }
+    override fun getShallowTimers(): Flow<List<ShallowTimer>> =
+        store.updates.mapIfNull(emptyList())
+            .map { timers ->
+                timers.map { timer ->
+                    ShallowTimer(
+                        id = timer.id,
+                        sortOrder = timer.sortOrder,
+                        name = timer.name,
+                        duration = timer.duration,
+                        startedCount = timer.startedCount,
+                        completedCount = timer.completedCount,
+                        createdAt = timer.createdAt,
+                        lastRun = timer.lastRun
+                    )
+                }
+            }
+            .onEach {
+                nextTimerId = it.maxOfOrNull { timer ->
+                    timer.id
+                }?.plus(1L) ?: 0L
+            }
 
     override suspend fun insertTimer(timer: Timer): Long {
         store.plus(timer.prepareForInsert())
         return nextTimerId
     }
 
-    override suspend fun updateTimerStats(
-        timerId: Long,
-        startedCount: Long,
-        completedCount: Long,
-        lastRun: Instant
-    ) {
+    override suspend fun incrementStartedCount(timerId: Long) {
         store.update { timers ->
             val index = timers?.indexOfFirst { it.id == timerId } ?: return@update null
-            val updatedTimer = timers[index].copy(
-                startedCount = startedCount,
-                completedCount = completedCount,
-                lastRun = lastRun
-            )
+            val updatedTimer = with(timers[index]) {
+                copy(startedCount = startedCount + 1)
+            }
+            val toMutableList = timers.toMutableList()
+            toMutableList[index] = updatedTimer
+            return@update toMutableList
+        }
+    }
+
+    override suspend fun incrementCompletedCount(timerId: Long) {
+        store.update { timers ->
+            val index = timers?.indexOfFirst { it.id == timerId } ?: return@update null
+            val updatedTimer = with(timers[index]) {
+                copy(startedCount = completedCount + 1)
+            }
             val toMutableList = timers.toMutableList()
             toMutableList[index] = updatedTimer
             return@update toMutableList
@@ -67,7 +85,7 @@ class KStoreDatabase : ITimerRepository {
             val toDuplicate = timerList?.first { timer ->
                 timer.id == timerId
             }
-            assertNotNull(toDuplicate) { "Timer to duplicate not found $timerId" }
+            requireNotNull(toDuplicate) { "Timer to duplicate not found $timerId" }
             timerList.plus(
                 toDuplicate.copy(
                     id = id,

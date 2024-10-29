@@ -132,7 +132,6 @@ internal fun MainContent(mainComponent: MainComponent) {
                     )
                 }
             },
-            fadeContent = false
         ) { padding ->
             when (state) {
                 is MainState.Loading -> DefaultLoading()

@@ -1,17 +1,17 @@
 package com.timerx.contact
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.ComponentActivity
 import com.timerx.BuildFlags
 
 private const val MAILTO = "mailto"
 private const val SEND_EMAIL = "Send Email"
 
 class ContactProviderAndroid(
-    private val context: ComponentActivity
+    private val context: Context
 ) : ContactProvider {
-    override fun contact() {
+    override fun contactSupport() {
         val emailAddress = arrayOf(BuildFlags.supportEmail)
         val intent = Intent(
             Intent.ACTION_SENDTO,
@@ -19,6 +19,8 @@ class ContactProviderAndroid(
         )
         intent.putExtra(Intent.EXTRA_EMAIL, emailAddress)
         intent.putExtra(Intent.EXTRA_SUBJECT, SUPPORT_SUBJECT)
-        context.startActivity(Intent.createChooser(intent, SEND_EMAIL))
+        val chooserIntent = Intent.createChooser(intent, SEND_EMAIL)
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(chooserIntent)
     }
 }

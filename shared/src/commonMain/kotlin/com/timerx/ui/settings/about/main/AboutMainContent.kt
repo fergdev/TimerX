@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
@@ -58,11 +59,20 @@ import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.about_libs
 import timerx.shared.generated.resources.about_libs_subtitle
 import timerx.shared.generated.resources.app_name
+import timerx.shared.generated.resources.change_log
 import timerx.shared.generated.resources.collect_analytics
 import timerx.shared.generated.resources.collect_analytics_message
 import timerx.shared.generated.resources.contact_support
 import timerx.shared.generated.resources.privacy_policy
 import timerx.shared.generated.resources.privacy_policy_message
+
+internal const val PRIVACY_POLICY_TEST_TAG = "privacy_policy"
+internal const val CONTACT_SUPPORT_TEST_TAG = "contact_support"
+internal const val COLLECT_ANALYTICS_TEST_TAG = "collect_analytics"
+internal const val ABOUT_LIBS_TEST_TAG = "about_libs"
+internal const val CHANGE_LOG_TEST_TAG = "change_log"
+internal const val ABOUT_LIBS_SHEET_TEST_TAG = "about_libs_sheet"
+internal const val CHANGE_LOG_SHEET_TEST_TAG = "change_log_sheet"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +87,6 @@ internal fun AboutMainContent(component: AboutMainComponent) {
         },
         onBack = component::onBackClicked
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .widthIn(max = Size.maxWidth)
@@ -112,6 +121,7 @@ internal fun AboutMainContent(component: AboutMainComponent) {
 
             val uriHandler = LocalUriHandler.current
             TMenuItem(
+                modifier = Modifier.testTag(PRIVACY_POLICY_TEST_TAG),
                 title = stringResource(Res.string.privacy_policy),
                 color = rainbow[0],
                 icon = Icons.Filled.Lock,
@@ -120,25 +130,28 @@ internal fun AboutMainContent(component: AboutMainComponent) {
             )
 
             TMenuItem(
+                modifier = Modifier.testTag(ABOUT_LIBS_TEST_TAG),
                 title = stringResource(Res.string.about_libs),
                 color = rainbow[1],
                 icon = Icons.Filled.Info,
                 subtitle = stringResource(Res.string.about_libs_subtitle),
-                onClick = { component.onLibsClicked() }
+                onClick = { component.onAboutLibsClicked() }
             )
 
             TMenuItem(
-                title = "Change Log",
+                modifier = Modifier.testTag(CHANGE_LOG_TEST_TAG),
+                title = stringResource(Res.string.change_log),
                 color = rainbow[2],
                 icon = Icons.Filled.DateRange,
                 onClick = { component.onChangeLog() }
             )
 
             TMenuItem(
+                modifier = Modifier.testTag(CONTACT_SUPPORT_TEST_TAG),
                 title = stringResource(Res.string.contact_support),
                 color = rainbow[3],
                 icon = Icons.Filled.Email,
-                onClick = { component.state.value.contactSupport() }
+                onClick = { component.contactSupport() }
             )
 
             state.letType<AboutMainState.AnalyticsSupported, _> {
@@ -146,6 +159,7 @@ internal fun AboutMainContent(component: AboutMainComponent) {
                     updateCollectAnalytics(!collectAnalyticsEnable)
                 }
                 TMenuItem(
+                    modifier = Modifier.testTag(COLLECT_ANALYTICS_TEST_TAG),
                     title = stringResource(Res.string.collect_analytics),
                     color = rainbow[4],
                     icon = Icons.Filled.Share,
@@ -168,14 +182,20 @@ internal fun AboutMainContent(component: AboutMainComponent) {
 
         val aboutLibsSlot by component.aboutLibsSlot.subscribeAsState()
         aboutLibsSlot.child?.instance?.also {
-            ModalBottomSheet(onDismissRequest = component::onDismissLibs) {
+            ModalBottomSheet(
+                modifier = Modifier.testTag(ABOUT_LIBS_SHEET_TEST_TAG),
+                onDismissRequest = component::onDismissLibs
+            ) {
                 AboutLibsContent()
             }
         }
 
         val changeLogSlot by component.changeLogSlot.subscribeAsState()
         changeLogSlot.child?.instance?.also {
-            ModalBottomSheet(onDismissRequest = component::onDismissChangeLog) {
+            ModalBottomSheet(
+                modifier = Modifier.testTag(CHANGE_LOG_SHEET_TEST_TAG),
+                onDismissRequest = component::onDismissChangeLog
+            ) {
                 ChangeLogContent()
             }
         }

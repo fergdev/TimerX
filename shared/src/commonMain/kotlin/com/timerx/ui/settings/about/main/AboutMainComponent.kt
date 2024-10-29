@@ -11,7 +11,8 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.timerx.contact.ContactProvider
-import com.timerx.settings.AnalyticsSettings
+import com.timerx.settings.AnalyticsSettings.Available
+import com.timerx.settings.AnalyticsSettings.NotAvailable
 import com.timerx.settings.TimerXSettings
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
 import com.timerx.ui.settings.about.changelog.ChangeLogComponent
@@ -28,9 +29,11 @@ interface AboutMainComponent {
 
     val changeLogSlot: Value<ChildSlot<*, ChangeLogComponent>>
 
+    fun contactSupport()
+
     fun onBackClicked()
 
-    fun onLibsClicked()
+    fun onAboutLibsClicked()
 
     fun onDismissLibs()
 
@@ -48,7 +51,7 @@ class DefaultAboutMainComponent(
     AboutMainComponent {
 
     private val _state = MutableValue<AboutMainState>(
-        AnalyticsNotSupported(contactSupport = contactProvider::contact)
+        AnalyticsNotSupported()
     )
 
     override val state = _state
@@ -58,8 +61,7 @@ class DefaultAboutMainComponent(
             timerXSettings.analytics.collect { analyticsSettings ->
                 _state.update {
                     when (analyticsSettings) {
-                        is AnalyticsSettings.Available -> AnalyticsSupported(
-                            contactSupport = contactProvider::contact,
+                        is Available -> AnalyticsSupported(
                             collectAnalyticsEnable = analyticsSettings.enabled,
                             updateCollectAnalytics = {
                                 launch {
@@ -68,9 +70,7 @@ class DefaultAboutMainComponent(
                             }
                         )
 
-                        is AnalyticsSettings.NotAvailable -> AnalyticsNotSupported(
-                            contactSupport = contactProvider::contact
-                        )
+                        is NotAvailable -> AnalyticsNotSupported()
                     }
                 }
             }
@@ -95,11 +95,15 @@ class DefaultAboutMainComponent(
             handleBackButton = true,
         ) { _, _ -> ChangeLogComponent }
 
+    override fun contactSupport() {
+        contactProvider.contactSupport()
+    }
+
     override fun onBackClicked() {
         onBack()
     }
 
-    override fun onLibsClicked() {
+    override fun onAboutLibsClicked() {
         aboutLibsNavigation.activate(AboutLibsConfig)
     }
 

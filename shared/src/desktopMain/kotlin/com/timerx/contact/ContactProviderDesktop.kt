@@ -8,7 +8,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class ContactProviderDesktop : ContactProvider {
-    override fun contact() {
+    override fun contactSupport() {
         val desktop = Desktop.getDesktop()
         if (Desktop.isDesktopSupported() && desktop.isSupported(Desktop.Action.MAIL)) {
             val mailto =

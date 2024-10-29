@@ -24,7 +24,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.timerx.ui.common.RScaffoldDefaults.ContentFadeDistance
 import androidx.compose.material3.FabPosition.Companion as Material3FabPosition
 
 object RScaffoldDefaults {
@@ -40,8 +39,6 @@ object RScaffoldDefaults {
 
     // we define background color on the app-level to not increase overdraw
     val containerColor = Color.Transparent
-
-    val ContentFadeDistance = 4.dp
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +53,6 @@ fun TScaffold(
     contentColor: Color = RScaffoldDefaults.contentColor,
     fabPosition: FabPosition = RScaffoldDefaults.FabPosition,
     contentWindowInsets: WindowInsets? = RScaffoldDefaults.partialWindowInsets,
-    fadeContent: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     fab: @Composable () -> Unit = {},
@@ -78,7 +74,6 @@ fun TScaffold(
     containerColor = containerColor,
     contentColor = contentColor,
     fab = fab,
-    fadeContent = fadeContent,
     contentWindowInsets = contentWindowInsets,
     fabPosition = fabPosition,
     content = content,
@@ -96,7 +91,6 @@ fun TScaffold(
     contentColor: Color = RScaffoldDefaults.contentColor,
     fabPosition: FabPosition = RScaffoldDefaults.FabPosition,
     contentWindowInsets: WindowInsets? = RScaffoldDefaults.partialWindowInsets,
-    fadeContent: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     fab: @Composable () -> Unit = {},
@@ -118,7 +112,6 @@ fun TScaffold(
     containerColor = containerColor,
     contentColor = contentColor,
     fab = fab,
-    fadeContent = fadeContent,
     contentWindowInsets = contentWindowInsets,
     fabPosition = fabPosition,
     content = content,
@@ -133,7 +126,6 @@ fun TScaffold(
     fabPosition: FabPosition = RScaffoldDefaults.FabPosition,
     contentWindowInsets: WindowInsets? = RScaffoldDefaults.partialWindowInsets,
     nestedScrollConnection: NestedScrollConnection? = null,
-    fadeContent: Boolean = true,
     bottomBar: @Composable () -> Unit = {},
     fab: @Composable () -> Unit = {},
     topBar: @Composable () -> Unit,
@@ -151,11 +143,7 @@ fun TScaffold(
         bottomBar = bottomBar,
         contentWindowInsets = contentWindowInsets ?: WindowInsets(0.dp),
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .thenIf(fadeContent) { fadingEdge(FadingEdge.Top, ContentFadeDistance) },
-        ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             content(padding)
         }
     }

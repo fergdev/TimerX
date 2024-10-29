@@ -145,6 +145,7 @@ kotlin {
                 implementation(libs.multiplatform.settings.test)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.uiTest)
+                implementation(libs.koin.test)
             }
         }
 
@@ -222,6 +223,7 @@ kotlin {
         val desktopTest by getting {
             dependencies {
                 implementation(libs.kotest.junit)
+                implementation(libs.koin.test)
                 implementation(mokkery("coroutines"))
             }
         }
@@ -389,6 +391,7 @@ kover {
                 annotatedBy("com.timerx.util.KoverIgnore")
                 packages("timerx.shared.generated.resources")
                 classes("*\$special\$\$inlined\$map*")
+                classes("*\$\$inlined\$singleOf*")
             }
         }
     }

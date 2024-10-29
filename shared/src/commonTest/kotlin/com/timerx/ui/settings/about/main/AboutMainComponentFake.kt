@@ -15,10 +15,13 @@ class AboutMainComponentFake :
     override val changeLogSlot: Value<ChildSlot<*, ChangeLogComponent>>
         get() = error("Should not be called")
 
+    override fun contactSupport() {
+    }
+
     override fun onBackClicked() {
     }
 
-    override fun onLibsClicked() {
+    override fun onAboutLibsClicked() {
     }
 
     override fun onDismissLibs() {

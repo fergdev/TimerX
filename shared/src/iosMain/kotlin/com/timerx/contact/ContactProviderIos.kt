@@ -6,7 +6,7 @@ import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 
 class ContactProviderIos : ContactProvider {
-    override fun contact() {
+    override fun contactSupport() {
         val mailtoString = "mailto:${BuildFlags.supportEmail}?subject=${SUPPORT_SUBJECT}"
         val mailtoUrl = NSURL(string = mailtoString)
         UIApplication.sharedApplication.openURL(url = mailtoUrl, options = emptyMap<Any?, Any?>()) {

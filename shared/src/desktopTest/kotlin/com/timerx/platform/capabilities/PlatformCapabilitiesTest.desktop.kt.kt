@@ -4,7 +4,7 @@ import com.timerx.platform.platformCapabilities
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 
-class DesktopPlatformCapabilitiesTest : FreeSpec({
+class PlatformCapabilitiesTest : FreeSpec({
     "default values" {
         with(platformCapabilities) {
             canSystemDynamicTheme shouldBe false
