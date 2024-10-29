@@ -1,8 +1,8 @@
 package com.timerx.ui.settings.about
 
-import com.timerx.ui.settings.about.main.AboutMainComponentFake
 import com.timerx.testutil.assertActiveInstance
 import com.timerx.testutil.createComponent
+import com.timerx.ui.settings.about.main.AboutMainComponentFake
 import io.kotest.core.spec.style.FreeSpec
 
 class AboutComponentTest : FreeSpec({

@@ -21,6 +21,5 @@ class StandardTest : FreeSpec({
                 true shouldBe false
             }
         }
-
     }
 })

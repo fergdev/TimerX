@@ -46,6 +46,6 @@ class InstantUtilTest : FreeSpec({
         }
     }
     "to ago appends ago" {
-            now.toAgo(clock) shouldBe "0 seconds ago"
+        now.toAgo(clock) shouldBe "0 seconds ago"
     }
 })

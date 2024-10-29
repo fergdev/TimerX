@@ -3,9 +3,9 @@ package com.timerx.ui.settings.main
 import app.cash.turbine.test
 import com.timerx.BuildFlags
 import com.timerx.settings.TimerXSettings
-import com.timerx.ui.settings.main.MainSettingsIntent.KeepScreenOn
 import com.timerx.testutil.asUnconfined
 import com.timerx.testutil.idle
+import com.timerx.ui.settings.main.MainSettingsIntent.KeepScreenOn
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.everySuspend

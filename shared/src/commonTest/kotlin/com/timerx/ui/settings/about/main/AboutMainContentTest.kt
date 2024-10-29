@@ -14,10 +14,10 @@ import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.MutableValue
 import com.timerx.BuildFlags
-import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
-import com.timerx.ui.settings.about.changelog.ChangeLogComponent
 import com.timerx.testutil.NotAndroidCondition
 import com.timerx.testutil.asUnconfined
+import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
+import com.timerx.ui.settings.about.changelog.ChangeLogComponent
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any

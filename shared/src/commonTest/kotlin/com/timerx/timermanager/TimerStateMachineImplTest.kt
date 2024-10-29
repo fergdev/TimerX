@@ -8,11 +8,11 @@ import com.timerx.domain.timer
 import com.timerx.domain.timerSet
 import com.timerx.sound.Beep
 import com.timerx.sound.IntervalSound
+import com.timerx.testutil.asUnconfined
 import com.timerx.timermanager.TimerEvent.Destroy
 import com.timerx.timermanager.TimerState.Finished
 import com.timerx.timermanager.TimerState.Paused
 import com.timerx.timermanager.TimerState.Running
-import com.timerx.testutil.asUnconfined
 import com.timerx.vibration.Vibration
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
