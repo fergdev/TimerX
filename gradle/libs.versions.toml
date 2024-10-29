@@ -1,6 +1,6 @@
 [versions]
 aboutLibs = "11.2.3"
-agp = "8.8.0-alpha07"
+agp = "8.8.0-alpha08"
 android-test-extensions = "1.6.0"
 androidJunit5Plugin = "1.11.2.0"
 androidx-activityCompose = "1.10.0-alpha02"
@@ -42,8 +42,8 @@ multiplatformSettings = "1.2.0"
 playServicesAds = "23.4.0"
 reorderable = "2.4.0"
 sqlite = "2.5.0-SNAPSHOT"
-turbine = "1.1.0"
-versionCatalogUpdatePlugin = "0.8.4"
+turbine = "1.2.0"
+versionCatalogUpdatePlugin = "0.8.5"
 
 [libraries]
 aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
@@ -68,9 +68,9 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 flowext = { module = "io.github.hoc081098:FlowExt", version.ref = "flowext" }
 flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowMvi" }
-flowmvi-test = { module = "pro.respawn.flowmvi:test", version.ref = "flowMvi" }
 flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowMvi" }
 flowmvi-essenty = { module = "pro.respawn.flowmvi:essenty", version.ref = "flowMvi" }
+flowmvi-test = { module = "pro.respawn.flowmvi:test", version.ref = "flowMvi" }
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
@@ -120,11 +120,11 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 gradleDoctor = { id = "com.osacky.doctor", version.ref = "gradleDoctorPlugin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
+kotest = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotest = { id = "io.kotest.multiplatform", version = "5.0.2" }
-kover = {id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 # Add this back in when the plugin is supported
