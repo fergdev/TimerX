@@ -123,7 +123,7 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-comp
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotest = { id = "io.kotest.multiplatform", version = "5.0.2" }
+kotest = { id = "io.kotest.multiplatform", version = "6.0.0-LOCAL" }
 kover = {id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
