@@ -42,7 +42,7 @@ multiplatformSettings = "1.2.0"
 playServicesAds = "23.4.0"
 reorderable = "2.4.0"
 sqlite = "2.5.0-SNAPSHOT"
-turbine = "1.1.0"
+turbine = "1.2.0"
 versionCatalogUpdatePlugin = "0.8.4"
 
 [libraries]
