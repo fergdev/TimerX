@@ -392,6 +392,7 @@ kover {
                 packages("timerx.shared.generated.resources")
                 classes("*\$special\$\$inlined\$map*")
                 classes("*\$\$inlined\$singleOf*")
+                classes("*\$\$inlined\$factoryOf\$default\$*")
             }
         }
     }

@@ -16,8 +16,8 @@ import com.arkivanov.decompose.value.MutableValue
 import com.timerx.BuildFlags
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
 import com.timerx.ui.settings.about.changelog.ChangeLogComponent
-import com.timerx.util.NotAndroidCondition
-import com.timerx.util.asUnconfined
+import com.timerx.testutil.NotAndroidCondition
+import com.timerx.testutil.asUnconfined
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any

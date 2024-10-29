@@ -4,8 +4,8 @@ import app.cash.turbine.test
 import com.timerx.BuildFlags
 import com.timerx.settings.TimerXSettings
 import com.timerx.ui.settings.main.MainSettingsIntent.KeepScreenOn
-import com.timerx.util.asUnconfined
-import com.timerx.util.idle
+import com.timerx.testutil.asUnconfined
+import com.timerx.testutil.idle
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.everySuspend

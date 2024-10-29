@@ -8,7 +8,7 @@ import com.timerx.domain.timer
 import com.timerx.domain.timerSet
 import com.timerx.sound.Beep
 import com.timerx.sound.IntervalSound
-import com.timerx.util.asUnconfined
+import com.timerx.testutil.asUnconfined
 import com.timerx.vibration.Vibration
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend

@@ -9,7 +9,7 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.platform.platformCapabilitiesOf
-import com.timerx.util.awaitAndExpectNoMore
+import com.timerx.testutil.awaitAndExpectNoMore
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

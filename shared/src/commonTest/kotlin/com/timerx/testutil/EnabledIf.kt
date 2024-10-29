@@ -1,6 +1,8 @@
-package com.timerx.util
+package com.timerx.testutil
 
 import com.timerx.BuildFlags
+import com.timerx.util.Platform
+import com.timerx.util.platform
 import io.kotest.core.annotation.EnabledCondition
 import io.kotest.core.spec.Spec
 import io.kotest.core.test.TestCase

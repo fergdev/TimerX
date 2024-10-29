@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.common.branded
-import com.timerx.util.withForEach
+import com.timerx.ui.common.withForEach
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

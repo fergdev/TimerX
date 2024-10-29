@@ -8,6 +8,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import com.timerx.util.isValid
 
 @Composable
 fun String.branded(color: Color = MaterialTheme.colorScheme.primary) = buildAnnotatedString {
@@ -40,14 +41,22 @@ fun AnnotatedString.Builder.appendNewline(repeat: Int = 1) {
     }
 }
 
-fun String?.isValid(): Boolean {
-    kotlin.contracts.contract {
-        returns(true) implies (this@isValid != null)
+@Composable
+fun <T> Collection<T>.withForEach(block: @Composable T.() -> Unit) {
+    forEach {
+        with(it) {
+            block()
+        }
     }
-    return !isNullOrBlank() && !equals("null", true)
 }
 
-fun String?.takeIfValid(): String? = if (isValid()) this else null
+@Composable
+fun <T> T?.composeLet(block: @Composable (T) -> Unit): (@Composable () -> Unit)? =
+    this?.let {
+        @Composable {
+            block(this)
+        }
+    }
 
 inline fun Modifier.thenIf(
     condition: Boolean,

@@ -14,8 +14,8 @@ import com.timerx.settings.alertSettingsOf
 import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
 import com.timerx.sound.Volume
-import com.timerx.util.asUnconfined
-import com.timerx.util.idle
+import com.timerx.testutil.asUnconfined
+import com.timerx.testutil.idle
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.everySuspend

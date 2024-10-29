@@ -1,4 +1,4 @@
-package com.timerx.util
+package com.timerx.testutil
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext

@@ -6,7 +6,7 @@ import com.timerx.domain.SortTimersBy.NAME_ASC
 import com.timerx.domain.SortTimersBy.SORT_ORDER
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.platform.platformCapabilitiesOf
-import com.timerx.util.awaitAndExpectNoMore
+import com.timerx.testutil.awaitAndExpectNoMore
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

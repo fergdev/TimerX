@@ -4,7 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
-import com.timerx.util.NotAndroidCondition
+import com.timerx.testutil.NotAndroidCondition
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock

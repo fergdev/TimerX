@@ -3,11 +3,10 @@ package com.timerx.util
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-fun Instant.toAgo() = "${toTimeDistance()} ago"
+fun Instant.toAgo(clock: Clock = Clock.System) = "${toTimeDistance(clock)} ago"
 
-fun Instant.toTimeDistance(): String {
-    val now = Clock.System.now()
-    val duration = now.minus(this)
+fun Instant.toTimeDistance(clock: Clock = Clock.System): String {
+    val duration = clock.now().minus(this)
     val inWholeDays = duration.inWholeDays
     if (inWholeDays != 0L) {
         return if (inWholeDays == 1L) "1 day"
@@ -24,7 +23,5 @@ fun Instant.toTimeDistance(): String {
         return if (inWholeMinutes == 1L) "1 minute"
         else "$inWholeMinutes minutes"
     }
-    val inWholeSeconds = duration.inWholeSeconds
-    if (inWholeSeconds != 0L) return "$inWholeSeconds seconds"
-    return "1 second"
+    return "${duration.inWholeSeconds} seconds"
 }

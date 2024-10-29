@@ -1,4 +1,4 @@
-package com.timerx.util
+package com.timerx.testutil
 
 import app.cash.turbine.ReceiveTurbine
 import io.kotest.common.ExperimentalKotest

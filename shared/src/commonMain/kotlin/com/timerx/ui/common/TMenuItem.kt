@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.theme.Opacity
-import com.timerx.util.composeLet
+import com.timerx.util.takeIfValid
 
 @Suppress("ComposableParametersOrdering") // as intended
 @Composable

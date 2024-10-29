@@ -10,7 +10,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
-import com.timerx.util.NotAndroidCondition
+import com.timerx.testutil.NotAndroidCondition
 import com.timerx.vibration.Vibration
 import io.kotest.core.annotation.EnabledIf
 import io.kotest.core.spec.style.FreeSpec

@@ -1,4 +1,4 @@
-package com.timerx.util
+package com.timerx.testutil
 
 // class ProjectConfig : AbstractProjectConfig() {
 //    override var coroutineTestScope = true

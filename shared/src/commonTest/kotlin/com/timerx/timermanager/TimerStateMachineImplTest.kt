@@ -12,7 +12,7 @@ import com.timerx.timermanager.TimerEvent.Destroy
 import com.timerx.timermanager.TimerState.Finished
 import com.timerx.timermanager.TimerState.Paused
 import com.timerx.timermanager.TimerState.Running
-import com.timerx.util.asUnconfined
+import com.timerx.testutil.asUnconfined
 import com.timerx.vibration.Vibration
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
