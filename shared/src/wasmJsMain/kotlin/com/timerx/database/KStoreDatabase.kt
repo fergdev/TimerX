@@ -9,6 +9,7 @@ import io.github.xxfast.kstore.storage.storeOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.datetime.Clock
 
 class KStoreDatabase : ITimerRepository {
     private val store: KStore<List<Timer>> = storeOf("timerX.db", default = emptyList())
@@ -45,7 +46,10 @@ class KStoreDatabase : ITimerRepository {
         store.update { timers ->
             val index = timers?.indexOfFirst { it.id == timerId } ?: return@update null
             val updatedTimer = with(timers[index]) {
-                copy(startedCount = startedCount + 1)
+                copy(
+                    startedCount = startedCount + 1,
+                    lastRun = Clock.System.now()
+                )
             }
             val toMutableList = timers.toMutableList()
             toMutableList[index] = updatedTimer

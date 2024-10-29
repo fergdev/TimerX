@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 @Suppress("TooManyFunctions", "ComplexInterface")
@@ -102,11 +103,11 @@ interface RoomTimerDao {
         requireNotNull(timer) {
             "Attempting to increment start count for null timer `$timerId`"
         }
-        setStartedCount(timerId, timer.startedCount + 1)
+        setStartedCount(timerId, timer.startedCount + 1, Clock.System.now())
     }
 
-    @Query("UPDATE RoomTimer SET started_count = :startedCount WHERE id = :timerId")
-    suspend fun setStartedCount(timerId: Long, startedCount: Long)
+    @Query("UPDATE RoomTimer SET started_count = :startedCount, last_run = :lastRun WHERE id = :timerId")
+    suspend fun setStartedCount(timerId: Long, startedCount: Long, lastRun: Instant)
 
     @Transaction
     suspend fun incrementCompletedCount(timerId: Long) {
@@ -119,18 +120,6 @@ interface RoomTimerDao {
 
     @Query("UPDATE RoomTimer SET completed_count = :completedCount WHERE id = :timerId")
     suspend fun setCompletedCount(timerId: Long, completedCount: Long)
-
-    @Query(
-        "UPDATE RoomTimer " +
-            "SET started_count = :startedCount, completed_count = :completedCount, last_run = :lastRun " +
-            "WHERE id = :timerId"
-    )
-    suspend fun updateTimerStats(
-        timerId: Long,
-        startedCount: Long,
-        completedCount: Long,
-        lastRun: Instant
-    )
 
     @Query(value = "DELETE FROM RoomTimer WHERE id IS (:id)")
     suspend fun deleteTimer(id: Long)
