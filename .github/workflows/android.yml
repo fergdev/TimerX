@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build:
     # Reverted this to get builds going, iOS currently won't build due to
@@ -52,9 +57,11 @@ jobs:
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
+      if: github.ref == 'refs/heads/main'
       with:
         path: 'shared/build/dist/wasmJs/productionExecutable'
 
     - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
       id: deployment
       uses: actions/deploy-pages@v4
