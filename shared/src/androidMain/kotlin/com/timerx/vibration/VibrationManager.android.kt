@@ -3,6 +3,7 @@
 package com.timerx.vibration
 
 import android.content.Context
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import com.timerx.settings.TimerXSettings
@@ -45,14 +46,16 @@ class AndroidVibrator(
             None -> return
         }
 
-        repeat(vibration.repeat) {
-            vibrator?.vibrate(
-                VibrationEffect.createOneShot(
-                    millis,
-                    VibrationEffect.DEFAULT_AMPLITUDE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            repeat(vibration.repeat) {
+                vibrator?.vibrate(
+                    VibrationEffect.createOneShot(
+                        millis,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
                 )
-            )
-            delay(VIBRATION_DELAY)
+                delay(VIBRATION_DELAY)
+            }
         }
     }
 }

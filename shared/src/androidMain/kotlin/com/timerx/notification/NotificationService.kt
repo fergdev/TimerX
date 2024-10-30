@@ -6,10 +6,13 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
+import androidx.annotation.RequiresApi
 import com.timerx.timermanager.TimerManager
 import org.koin.mp.KoinPlatform
 
+@RequiresApi(Build.VERSION_CODES.Q)
 class NotificationService : Service() {
     private val notificationManager by lazy {
         getSystemService(NotificationManager::class.java)

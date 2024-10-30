@@ -11,6 +11,7 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -33,6 +34,7 @@ const val NOTIFICATION_STOP = "stop"
 const val NOTIFICATION_STOP_ID = 4
 const val NOTIFICATION_KEY = "notification_key"
 
+@RequiresApi(Build.VERSION_CODES.Q)
 fun createNotification(
     context: Context,
     timerEvent: TimerEvent,

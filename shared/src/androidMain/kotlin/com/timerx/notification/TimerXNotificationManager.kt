@@ -43,10 +43,12 @@ class NotificationManager(
                     }
 
                     else -> {
-                        androidNotificationManager?.notify(
-                            NotificationService.NOTIFICATION_ID,
-                            createNotification(context, timerEvent)
-                        )
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            androidNotificationManager?.notify(
+                                NotificationService.NOTIFICATION_ID,
+                                createNotification(context, timerEvent)
+                            )
+                        }
                     }
                 }
             }

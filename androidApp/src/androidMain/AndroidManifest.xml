@@ -30,7 +30,8 @@
             android:name="com.timerx.notification.NotificationService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
+            android:foregroundServiceType="mediaPlayback"
+            tools:targetApi="q" />
 
         <receiver android:name="com.timerx.notification.NotificationBroadcastReceiver" />
 
