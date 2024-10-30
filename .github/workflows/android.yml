@@ -49,3 +49,12 @@ jobs:
       with:
         name: Android debug build
         path: androidApp/build/outputs/apk/debug/androidApp-debug.apk
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'shared/build/dist/wasmJs/productionExecutable'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
