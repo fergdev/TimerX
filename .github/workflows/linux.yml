@@ -22,10 +22,7 @@ jobs:
           cache: 'gradle'
 
       - name: Validate gradle wrapper
-        uses: gradle/wrapper-validation-action@v3
-
-      - name: Create windows exe
-        run: ./gradlew build
+        uses: gradle/actions/wrapper-validation@v3
 
       - name: Set blank secrets
         run: |
@@ -33,3 +30,6 @@ jobs:
           echo "storePassword=123" >> keystore.properties
           echo "keyPassword=123" >> keystore.properties
           echo "keyAlias=123" >> keystore.properties
+
+      - name: Create windows exe
+        run: ./gradlew build
