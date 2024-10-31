@@ -1,7 +1,7 @@
 package com.timerx.ui.settings.theme
 
 import com.timerx.platform.platformCapabilities
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ThemeSettingsManager
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateDarkTheme
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsAmoled
@@ -15,12 +15,12 @@ import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
 class ThemeSettingsContainer(
-    private val timerXSettings: TimerXSettings,
+    private val themeSettingsManager: ThemeSettingsManager
 ) : Container<ThemeSettingsState, ThemeSettingsIntent, Nothing> {
 
     override val store = store(ThemeSettingsState.Loading) {
         whileSubscribed {
-            timerXSettings.themeSettingsManager.themeSettings.collect {
+            themeSettingsManager.themeSettings.collect {
                 updateState {
                     ThemeSettingsState.LoadedState(
                         seedColor = it.seedColor,
@@ -38,13 +38,13 @@ class ThemeSettingsContainer(
 
         reduce {
             when (it) {
-                is UpdateDarkTheme -> timerXSettings.themeSettingsManager.setDarkTheme(it.settingsDarkTheme)
-                is UpdateIsSystemDynamic -> timerXSettings.themeSettingsManager.setIsDynamicTheme(it.isSystemDynamic)
-                is UpdateIsAmoled -> timerXSettings.themeSettingsManager.setIsAmoled(it.isAmoled)
-                is UpdateIsHighFidelity -> timerXSettings.themeSettingsManager.setIsHighFidelity(it.isHighFidelity)
-                is UpdateContrast -> timerXSettings.themeSettingsManager.setContrast(it.contrast)
-                is UpdatePaletteStyle -> timerXSettings.themeSettingsManager.setPaletteStyle(it.paletteStyle)
-                is UpdateSeedColor -> timerXSettings.themeSettingsManager.setSeedColor(it.seedColor)
+                is UpdateDarkTheme -> themeSettingsManager.setDarkTheme(it.settingsDarkTheme)
+                is UpdateIsSystemDynamic -> themeSettingsManager.setIsDynamicTheme(it.isSystemDynamic)
+                is UpdateIsAmoled -> themeSettingsManager.setIsAmoled(it.isAmoled)
+                is UpdateIsHighFidelity -> themeSettingsManager.setIsHighFidelity(it.isHighFidelity)
+                is UpdateContrast -> themeSettingsManager.setContrast(it.contrast)
+                is UpdatePaletteStyle -> themeSettingsManager.setPaletteStyle(it.paletteStyle)
+                is UpdateSeedColor -> themeSettingsManager.setSeedColor(it.seedColor)
             }
         }
     }

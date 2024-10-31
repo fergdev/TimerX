@@ -3,7 +3,7 @@ package com.timerx.ui.settings.alerts
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.AlertSettingsManager
 import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
@@ -22,7 +22,7 @@ import pro.respawn.flowmvi.plugins.whileSubscribed
 const val DEMO_TTS_TEXT = "Work. Rest"
 
 class AlertsSettingsContainer(
-    private val settings: TimerXSettings,
+    private val alertSettingsManager: AlertSettingsManager,
     private val permissionsHandler: IPermissionsHandler,
     private val soundManager: SoundManager,
 ) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
@@ -30,7 +30,7 @@ class AlertsSettingsContainer(
     override val store =
         store(AlertsSettingsState()) {
             whileSubscribed {
-                settings.alertSettingsManager.alertSettings.collect {
+                alertSettingsManager.alertSettings.collect {
                     updateState<AlertsSettingsState, _> {
                         val voices = soundManager.voices()
                         AlertsSettingsState(
@@ -47,10 +47,10 @@ class AlertsSettingsContainer(
             reduce { settingsIntent ->
                 when (settingsIntent) {
                     is UpdateVolume ->
-                        settings.alertSettingsManager.setVolume(settingsIntent.volume)
+                        alertSettingsManager.setVolume(settingsIntent.volume)
 
                     is UpdateVibration ->
-                        settings.alertSettingsManager.setVibrationEnabled(settingsIntent.enabled)
+                        alertSettingsManager.setVibrationEnabled(settingsIntent.enabled)
 
                     is EnableNotifications -> {
                         permissionsHandler.requestPermission(Permission.Notification)
@@ -61,7 +61,7 @@ class AlertsSettingsContainer(
                         permissionsHandler.openAppSettings()
 
                     is SetTTSVoice -> {
-                        settings.alertSettingsManager.setTTSVoice(settingsIntent.voiceInformation.id)
+                        alertSettingsManager.setTTSVoice(settingsIntent.voiceInformation.id)
                         // Work around for collectors not receiving data before put returns
                         // https://github.com/xxfast/KStore/issues/129
                         delay(100)

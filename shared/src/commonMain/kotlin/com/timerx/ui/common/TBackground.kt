@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import com.timerx.settings.BackgroundSettings
+import com.timerx.settings.BackgroundSettingsManager
 import com.timerx.settings.Pattern
-import com.timerx.settings.TimerXSettings
 import com.timerx.ui.theme.Animation
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -32,8 +32,7 @@ import timerx.shared.generated.resources.triangles
 
 @Composable
 fun TBackground(modifier: Modifier = Modifier) {
-    val backgroundSettings by koinInject<TimerXSettings>()
-        .backgroundSettingsManager
+    val backgroundSettings by koinInject<BackgroundSettingsManager>()
         .backgroundSettings
         .collectAsState(BackgroundSettings())
 
