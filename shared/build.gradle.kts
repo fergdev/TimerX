@@ -296,7 +296,7 @@ compose {
                 linux {
                     debMaintainer = Config.supportEmail
                     appCategory = "Development"
-                    iconFile = iconDir.resolve("icon_512.png")
+                    iconFile = iconDir.resolve("icon-512.png")
                 }
             }
         }
