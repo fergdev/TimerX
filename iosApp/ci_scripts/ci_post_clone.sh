@@ -52,5 +52,16 @@ install_jdk_if_needed() {
     echo " - Set JAVA_HOME in Xcode Cloud to ${jdk_dir}/Home"
     return 0
 }
+add_keystore_properties() {
+    KEYSTORE_PROPERTIES_PATH="$CI_PRIMARY_REPOSITORY_PATH/keystore.properties"
+    echo "Key store properties path $KEYSTORE_PROPERTIES_PATH"
+    {
+      echo "storeFile=123"
+      echo "storePassword=123"
+      echo "keyPassword=123"
+      echo "keyAlias=123"
+    } >> "$KEYSTORE_PROPERTIES_PATH"
+}
 recover_cache_files
 install_jdk_if_needed
+add_keystore_properties
