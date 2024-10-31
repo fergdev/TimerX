@@ -1,5 +1,6 @@
 package com.timerx.di
 
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
 import com.timerx.ui.main.MainContainer
@@ -18,7 +19,8 @@ class SharedModuleTest : FreeSpec({
     "shared module verify" {
         sharedModule.verify(
             injections = injectedParameters(
-                definition<MainContainer>(SharedFlow::class)
+                definition<MainContainer>(SharedFlow::class),
+                definition<PlatformCapabilities>(Boolean::class)
             )
         )
     }

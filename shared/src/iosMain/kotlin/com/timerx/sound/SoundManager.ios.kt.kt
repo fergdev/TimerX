@@ -3,7 +3,7 @@
 package com.timerx.sound
 
 import co.touchlab.kermit.Logger
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import com.timerx.util.NSErrorException
 import com.timerx.util.throwNSErrors
@@ -28,8 +28,8 @@ import platform.AVFoundation.volume
 import platform.Foundation.NSBundle
 
 @OptIn(ExperimentalForeignApi::class)
-class IosSoundManager(timerXSettings: TimerXSettings, timerManager: TimerManager) :
-    AbstractSoundManager(timerXSettings, timerManager) {
+class IosSoundManager(alertSettingsManager: AlertSettingsManager, timerManager: TimerManager) :
+    AbstractSoundManager(alertSettingsManager, timerManager) {
     override val isTTSSupported: Boolean
         get() = true
 
@@ -61,7 +61,7 @@ class IosSoundManager(timerXSettings: TimerXSettings, timerManager: TimerManager
         }
 
         coroutineScope.launch {
-            timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
+            alertSettingsManager.alertSettings.collect { alertSettings ->
                 avPlayer.volume = alertSettings.volume.value
                 voice = mappedVoices().firstOrNull {
                     it.identifier == alertSettings.ttsVoiceId
