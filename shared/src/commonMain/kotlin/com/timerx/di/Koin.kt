@@ -7,9 +7,9 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
 import com.timerx.platform.platformCapabilities
 import com.timerx.settings.AlertSettingsManager
+import com.timerx.settings.AlertSettingsManagerImpl
 import com.timerx.settings.BackgroundSettingsManager
 import com.timerx.settings.BackgroundSettingsManagerImpl
-import com.timerx.settings.AlertSettingsManagerImpl
 import com.timerx.settings.ThemeSettingsManager
 import com.timerx.settings.ThemeSettingsManagerImpl
 import com.timerx.settings.TimerXSettings

@@ -32,7 +32,7 @@ private const val COLLECT_ANALYTICS = "collectAnalytics"
 @OptIn(ExperimentalSettingsApi::class)
 internal class TimerXSettingsImpl(
     private val platformCapabilities: PlatformCapabilities,
-    private val flowSettings:FlowSettings
+    private val flowSettings: FlowSettings
 ) : TimerXSettings {
 
     override val sortTimersBy = flowSettings.getIntOrNullFlow(SORT_TIMERS_BY).map {
