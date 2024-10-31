@@ -57,8 +57,8 @@ jobs:
       uses: mi-kas/kover-report@v1
       with:
         path: |
-          ${{ github.workspace }}./shared/build/reports/kover/report.xml
-          ${{ github.workspace }}./build/reports/kover/report.xml
+          ${{ github.workspace }}/shared/build/reports/kover/report.xml
+          ${{ github.workspace }}/build/reports/kover/report.xml
 
         title: Code Coverage
         update-comment: true

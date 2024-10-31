@@ -53,7 +53,6 @@ object Config {
         "org.jetbrains.compose.resources.ExperimentalResourceApi"
     )
     val compilerArgs = listOf(
-        "-Xbackend-threads=0", // parallel IR compilation
         "-Xexpect-actual-classes",
         "-Xconsistent-data-class-copy-visibility"
     )
