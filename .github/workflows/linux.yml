@@ -1,0 +1,26 @@
+name: linux
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-linux-deb:
+    runs-on: ubuntu-latest
+    environment: publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          check-latest: true
+          java-version: 22
+          cache: 'gradle'
+
+      - name: Validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v3
+
+      - name: Create windows exe
+        run: ./gradlew build

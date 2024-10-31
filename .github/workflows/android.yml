@@ -96,7 +96,7 @@ jobs:
     - name: Archive DMG Release
       uses: actions/upload-artifact@v4
       with:
-        name: DMG-Debug
+        name: DMG-Release
         path: ./shared/build/compose/binaries/main-release/dmg/com.timerx-**.dmg
 
     - name: Upload pages artifact
