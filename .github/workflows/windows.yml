@@ -17,7 +17,7 @@ jobs:
         with:
           distribution: 'zulu'
           check-latest: true
-          java-version: 22
+          java-version: 17
           cache: 'gradle'
 
       - name: Validate gradle wrapper
@@ -31,4 +31,4 @@ jobs:
           echo "keyAlias=123" >> keystore.properties
 
       - name: Create windows exe
-        run: ./gradlew build
+        run: ./gradlew packageExe packageReleaseExe
