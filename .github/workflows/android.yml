@@ -13,10 +13,7 @@ permissions:
 
 jobs:
   build:
-    # Reverted this to get builds going, iOS currently won't build due to
-    # missing SQLDelight dependencies on iOS target.
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: set up JDK 17
@@ -44,13 +41,19 @@ jobs:
         echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
 
     - name: Check
-      run: ./gradlew check --warning-mode all
+      run: ./gradlew check koverXmlReport --warning-mode all
 
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Archive android shared lint
+      uses: actions/upload-artifact@v4
+      with:
+        name: Android shared lint
+        path: shared/build/reports/lint-results-debug.html
 
-    - name: Generate kover coverage report
-      run: ./gradlew koverXmlReport
+    - name: Archive Android-App lint
+      uses: actions/upload-artifact@v4
+      with:
+        name: Android app lint
+        path: androidApp/build/reports/lint-results-debug.html
 
     - name: Add coverage report to PR
       id: kover
@@ -66,13 +69,22 @@ jobs:
         min-coverage-changed-files: 80
         coverage-counter-type: LINE
 
-    - name: Archive Android APK
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: Archive Android Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: Android debug build
         path: androidApp/build/outputs/apk/debug/androidApp-debug.apk
 
-    - name: Upload artifact
+    - name: Archive Android Release AAB
+      uses: actions/upload-artifact@v4
+      with:
+        name: Android release build
+        path: androidApp/build/outputs/apk/release/androidApp-release.aab
+
+    - name: Upload pages artifact
       uses: actions/upload-pages-artifact@v3
       if: github.ref == 'refs/heads/main'
       with:

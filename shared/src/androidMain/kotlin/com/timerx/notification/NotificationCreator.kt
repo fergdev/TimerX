@@ -100,6 +100,7 @@ fun createNotification(
     }.build()
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 private fun getSmallView(
     context: Context,
     timerEvent: TimerEvent,
@@ -138,6 +139,7 @@ private fun getSmallView(
     return customLayout
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 private fun getLargeView(
     context: Context,
     timerEvent: TimerEvent,

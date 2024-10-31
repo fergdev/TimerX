@@ -18,11 +18,14 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.never_run
 import kotlin.random.Random
 
 internal class MainContainer(
@@ -52,7 +55,7 @@ internal class MainContainer(
                                 startedCount = roomTimer.startedCount,
                                 completedCount = roomTimer.completedCount,
                                 sortOrder = roomTimer.sortOrder,
-                                lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never run"
+                                lastRunFormatted = roomTimer.lastRun?.toAgo() ?: getString(Res.string.never_run)
                             )
                         }
                         val listItems = stateMainTimers.chunked(2)
