@@ -25,3 +25,10 @@ jobs:
 
       - name: Create windows exe
         run: ./gradlew build
+
+      - name: Set blank secrets
+        run: |
+          echo "storeFile=123" >> keystore.properties
+          echo "storePassword=123" >> keystore.properties
+          echo "keyPassword=123" >> keystore.properties
+          echo "keyAlias=123" >> keystore.properties
