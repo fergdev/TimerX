@@ -1,6 +1,7 @@
 @file:Suppress("UnusedPrivateProperty")
 
 import java.io.FileInputStream
+import java.io.IOException
 import java.util.Properties
 
 plugins {
@@ -46,11 +47,16 @@ android {
         create("release") {
             val keystorePropertiesFile = rootProject.file(Config.KeyStore.propertiesFile)
             val keystoreProperties = Properties()
-            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-            storePassword = keystoreProperties.getProperty(Config.KeyStore.storePasswordKey)
-            storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
-            keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
-            keyAlias = keystoreProperties.getProperty(Config.KeyStore.aliasKey)
+            @Suppress("SwallowedException")
+            try {
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+                storePassword = keystoreProperties.getProperty(Config.KeyStore.storePasswordKey)
+                storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
+                keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
+                keyAlias = keystoreProperties.getProperty(Config.KeyStore.aliasKey)
+            } catch (e : IOException){
+                // do nothing
+            }
         }
     }
     buildTypes {
