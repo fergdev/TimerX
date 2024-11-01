@@ -32,8 +32,28 @@ jobs:
 
       - name: Build
         run: |
-          ./gradlew packageExe packageMsi --warning-mode all
+          ./gradlew packageExe packageReleaseExe packageMsi packageReleaseMsi --warning-mode all
 
-      - name: After
-        run:
-          cat shared/build\compose\logs\packageExe\*
+      - name: Archive Exe Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: Exe-Release
+          path: shared/build/compose/binaries/main-release/exe/com.timerx**.exe
+
+      - name: Archive Exe Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: Exe-Debug
+          path: shared/build/compose/binaries/main/exe/com.timerx**.exe
+
+      - name: Archive MSI Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: MSI-Release
+          path: shared/build/compose/binaries/main-release/msi/com.timerx**.msi
+
+      - name: Archive MSI Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: MSI-Debug
+          path: shared/build/compose/binaries/main/msi/com.timerx**.msi
