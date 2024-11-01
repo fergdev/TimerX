@@ -269,7 +269,12 @@ compose {
         application {
             mainClass = "${Config.namespace}.MainKt"
             nativeDistributions {
-                targetFormats(TargetFormat.Dmg, TargetFormat.Deb, TargetFormat.Msi)
+                targetFormats(
+                    TargetFormat.Dmg,
+                    TargetFormat.Deb,
+                    TargetFormat.Msi,
+                    TargetFormat.Exe
+                )
                 packageName = Config.namespace
                 packageVersion = Config.majorVersionName
                 description = Config.appDescription

@@ -32,7 +32,7 @@ jobs:
 
       - name: Build
         run: |
-          ./gradlew packageExe --warning-mode all
+          ./gradlew packageExe packageMsi --warning-mode all
 
       - name: After
         run:
