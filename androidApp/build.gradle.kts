@@ -54,7 +54,7 @@ android {
                 storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
                 keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
                 keyAlias = keystoreProperties.getProperty(Config.KeyStore.aliasKey)
-            } catch (e : IOException){
+            } catch (e: IOException) {
                 // do nothing
             }
         }
