@@ -33,4 +33,4 @@ jobs:
       - name: Build
         run: |
           ./gradlew packageExe
-          cat build\compose\logs\packageExe\jpackage*
+          cat shared/build\compose\logs\packageExe\jpackage*
