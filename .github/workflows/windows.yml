@@ -31,6 +31,6 @@ jobs:
           echo "keyAlias=123" >> keystore.properties
 
       - name: Build
-        run: ./gradlew build
-#      - name: Create windows exe
-#        run: ./gradlew packageExe packageReleaseExe
+        run: |
+          ./gradlew packageExe
+          cat build\compose\logs\packageExe\jpackage*
