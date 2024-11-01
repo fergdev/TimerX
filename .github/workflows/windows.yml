@@ -32,5 +32,8 @@ jobs:
 
       - name: Build
         run: |
-          ./gradlew packageExe
+          ./gradlew packageExe --warning-mode all
+
+      - name: After
+        run:
           cat shared/build\compose\logs\packageExe\*
