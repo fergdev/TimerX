@@ -275,6 +275,7 @@ compose {
                 description = Config.appDescription
                 vendor = Config.vendorName
                 licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
+                includeAllModules = true
                 val iconDir = rootProject.rootDir.resolve("playstore")
 
                 macOS {
