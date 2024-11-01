@@ -270,8 +270,10 @@ compose {
             mainClass = "${Config.namespace}.MainKt"
             nativeDistributions {
                 targetFormats(
-                    TargetFormat.Dmg,
                     TargetFormat.Deb,
+                    TargetFormat.Rpm,
+                    TargetFormat.Dmg,
+                    TargetFormat.Pkg,
                     TargetFormat.Msi,
                     TargetFormat.Exe
                 )

@@ -12,10 +12,6 @@ plugins {
     alias(libs.plugins.crashlytics)
 }
 
-val keystorePropertiesFile = rootProject.file(Config.KeyStore.propertiesFile)
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-
 kotlin {
     androidTarget()
     sourceSets {
@@ -48,6 +44,9 @@ android {
     }
     signingConfigs {
         create("release") {
+            val keystorePropertiesFile = rootProject.file(Config.KeyStore.propertiesFile)
+            val keystoreProperties = Properties()
+            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
             storePassword = keystoreProperties.getProperty(Config.KeyStore.storePasswordKey)
             storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
             keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
