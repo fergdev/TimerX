@@ -75,9 +75,6 @@ jobs:
           min-coverage-changed-files: 80
           coverage-counter-type: LINE
 
-      - name: Build with Gradle
-        run: ./gradlew build packageDmg packageReleaseDmg
-
       - name: Archive Android Debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -89,18 +86,6 @@ jobs:
         with:
           name: Android release build
           path: androidApp/build/outputs/apk/release/androidApp-release.aab
-
-      - name: Archive DMG Debug
-        uses: actions/upload-artifact@v4
-        with:
-          name: DMG-Debug
-          path: ./shared/build/compose/binaries/main/dmg/com.timerx-**.dmg
-
-      - name: Archive DMG Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: DMG-Release
-          path: ./shared/build/compose/binaries/main-release/dmg/com.timerx-**.dmg
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
