@@ -30,5 +30,7 @@ jobs:
           echo "keyPassword=123" >> keystore.properties
           echo "keyAlias=123" >> keystore.properties
 
-      - name: Create windows exe
-        run: ./gradlew packageExe packageReleaseExe
+      - name: Build
+        run: ./gradlew build
+#      - name: Create windows exe
+#        run: ./gradlew packageExe packageReleaseExe
