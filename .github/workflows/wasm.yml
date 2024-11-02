@@ -1,5 +1,13 @@
 name: wasm
 
+permissions:
+  actions: read
+  checks: write
+  contents: read
+  id-token: write
+  pages: write
+  pull-requests: write
+
 on:
   push:
     branches: [ "main" ]
@@ -7,7 +15,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-linux-deb:
+  build:
     runs-on: ubuntu-latest
     environment: publishing
     steps:
