@@ -8,7 +8,6 @@ import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import com.timerx.timermanager.TimerState
-import com.timerx.ui.run.RunAction.Exit
 import com.timerx.ui.run.RunScreenIntent.NextInterval
 import com.timerx.ui.run.RunScreenIntent.OnManualNext
 import com.timerx.ui.run.RunScreenIntent.Pause
@@ -54,7 +53,6 @@ internal class RunContainer(
         }
 
         install(
-            observeDestroyPlugin(timerManager),
             observeTimerPlugin(timerManager, alertSettingsManager, timerXSettings),
             reducePlugin(
                 timerManager,
@@ -65,19 +63,6 @@ internal class RunContainer(
         )
     }
 }
-
-internal fun observeDestroyPlugin(timerManager: TimerManager) =
-    plugin<RunScreenState, RunScreenIntent, RunAction> {
-        onSubscribe {
-            launch {
-                timerManager.eventState.collect {
-                    if (it is TimerEvent.Destroy) {
-                        action(Exit)
-                    }
-                }
-            }
-        }
-    }
 
 internal fun observeTimerPlugin(
     timerManager: TimerManager,

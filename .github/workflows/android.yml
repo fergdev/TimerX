@@ -44,7 +44,7 @@ jobs:
           echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
 
       - name: Check
-        run: ./gradlew build bundle check koverXmlReport --warning-mode all
+        run: ./gradlew bundle check koverXmlReport --warning-mode all
 
       - name: Archive android shared lint
         uses: actions/upload-artifact@v4
