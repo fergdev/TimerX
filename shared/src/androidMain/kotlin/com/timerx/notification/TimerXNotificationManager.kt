@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.core.content.ContextCompat
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +18,7 @@ class NotificationManager(
     private val timerManager: TimerManager
 ) {
     private val androidNotificationManager by lazy {
-        context.getSystemService(NotificationManager::class.java)
+        ContextCompat.getSystemService(context, NotificationManager::class.java)
     }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 

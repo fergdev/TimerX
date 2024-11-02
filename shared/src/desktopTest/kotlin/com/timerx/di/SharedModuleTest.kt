@@ -1,11 +1,13 @@
 package com.timerx.di
 
+import com.timerx.coroutines.TDispatchers
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
 import com.timerx.ui.main.MainContainer
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharedFlow
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.context.stopKoin
@@ -20,7 +22,8 @@ class SharedModuleTest : FreeSpec({
         sharedModule.verify(
             injections = injectedParameters(
                 definition<MainContainer>(SharedFlow::class),
-                definition<PlatformCapabilities>(Boolean::class)
+                definition<PlatformCapabilities>(Boolean::class),
+                definition<TDispatchers>(CoroutineDispatcher::class),
             )
         )
     }

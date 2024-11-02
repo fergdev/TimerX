@@ -243,7 +243,7 @@ private fun reduceIntent(
         is UpdateFinishColor -> updateState { copy(finishColor = it.color) }
 
         is UpdateFinishVibration -> {
-            updateState { copy(finishVibration = finishVibration) }
+            updateState { copy(finishVibration = it.vibration) }
             vibrationManger.vibrate(it.vibration)
         }
 

@@ -1,6 +1,8 @@
 @file:Suppress("Filename")
+
 package com.timerx.vibration
 
+import com.timerx.coroutines.TDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import com.timerx.vibration.Vibration.Heavy
@@ -30,7 +32,8 @@ import platform.UIKit.UIImpactFeedbackStyle.UIImpactFeedbackStyleSoft
 class IosVibrationManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-) : VibrationManager(alertSettingsManager, timerManager) {
+    tDispatchers: TDispatchers
+) : VibrationManager(alertSettingsManager, timerManager, tDispatchers) {
 
     override suspend fun vibrate(vibration: Vibration) {
         if (!isVibrationEnabled) return

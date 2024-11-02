@@ -17,10 +17,10 @@ private const val SET_IGNORE_NOTIFICATIONS_PERMISSION =
 private const val TTS_VOICE_NAME = "${ALERT_SETTINGS}ttsVoiceName"
 
 data class AlertSettings(
-    val volume: Volume,
-    val vibrationSetting: VibrationSetting,
-    val ignoreNotificationsPermissions: Boolean,
-    val ttsVoiceId: String?,
+    val volume: Volume = Volume.default,
+    val vibrationSetting: VibrationSetting = VibrationSetting.CannotVibrate,
+    val ignoreNotificationsPermissions: Boolean = false,
+    val ttsVoiceId: String? = null,
 )
 
 interface AlertSettingsManager {
