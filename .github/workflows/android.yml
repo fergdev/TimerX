@@ -50,12 +50,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Android Debug AAB
-          path: androidApp/build/outputs/apk/debug/androidApp-debug.aab
+          path: androidApp/build/outputs/bundle/debug/androidApp-debug.aab
           if-no-files-found: error
 
       - name: Archive Android Release AAB
         uses: actions/upload-artifact@v4
         with:
           name: Android release build
-          path: androidApp/build/outputs/apk/release/androidApp-release.aab
+          path: androidApp/build/outputs/bundle/release/androidApp-release.aab
+
           if-no-files-found: error
