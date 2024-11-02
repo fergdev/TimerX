@@ -1,4 +1,4 @@
-name: linux
+name: wasm
 
 on:
   push:

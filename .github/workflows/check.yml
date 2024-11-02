@@ -1,4 +1,4 @@
-name: Android CI
+name: Check
 
 on:
   push:
@@ -44,18 +44,32 @@ jobs:
           echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
 
       - name: Check
-        run: ./gradlew bundle
+        run: ./gradlew check koverXmlReport --warning-mode all
 
-      - name: Archive Android Debug AAB
+      - name: Archive android shared lint
         uses: actions/upload-artifact@v4
         with:
-          name: Android Debug AAB
-          path: androidApp/build/outputs/apk/debug/androidApp-debug.aab
+          name: Android shared lint
+          path: shared/build/reports/lint-results-debug.html
           if-no-files-found: error
 
-      - name: Archive Android Release AAB
+      - name: Archive Android-App lint
         uses: actions/upload-artifact@v4
         with:
-          name: Android release build
-          path: androidApp/build/outputs/apk/release/androidApp-release.aab
+          name: Android app lint
+          path: androidApp/build/reports/lint-results-debug.html
           if-no-files-found: error
+
+      - name: Add coverage report to PR
+        id: kover
+        uses: mi-kas/kover-report@v1
+        with:
+          path: |
+            ${{ github.workspace }}/shared/build/reports/kover/report.xml
+            ${{ github.workspace }}/build/reports/kover/report.xml
+
+          title: Code Coverage
+          update-comment: true
+          min-coverage-overall: 10
+          min-coverage-changed-files: 80
+          coverage-counter-type: LINE
