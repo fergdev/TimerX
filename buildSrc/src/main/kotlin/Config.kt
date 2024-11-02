@@ -36,7 +36,7 @@ object Config {
     const val compileSdk = 35
     const val targetSdk = compileSdk
     const val minSdk = 23
-    const val appId = "todo-some-uuid"
+    const val appId = "4a07189f-4143-4a90-9f53-1eedd74ddbeb"
     const val supportEmail = "ferg.dev@outlook.com"
     const val privacyPolicyUrl =
         "https://doc-hosting.flycricket.io/timerx-privacy-policy/2fa3244e-cdef-4ec8-b776-6c03e94e8fab/privacy"

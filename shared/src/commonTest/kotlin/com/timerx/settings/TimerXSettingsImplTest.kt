@@ -1,7 +1,10 @@
 package com.timerx.settings
 
 import app.cash.turbine.test
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.MapSettings
+import com.russhwolf.settings.coroutines.toFlowSettings
+import com.russhwolf.settings.observable.makeObservable
 import com.timerx.domain.SortTimersBy.NAME_ASC
 import com.timerx.domain.SortTimersBy.SORT_ORDER
 import com.timerx.platform.PlatformCapabilities
@@ -10,17 +13,15 @@ import com.timerx.testutil.awaitAndExpectNoMore
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import kotlinx.coroutines.Dispatchers
 
+@OptIn(ExperimentalSettingsApi::class)
 class TimerXSettingsImplTest : FreeSpec({
-    val settings = MapSettings()
+    val settings = MapSettings().makeObservable().toFlowSettings()
     val timerXSettingsFactory: (PlatformCapabilities) -> TimerXSettingsImpl =
         { platformCapabilities ->
             TimerXSettingsImpl(
-                settings = settings,
+                flowSettings = settings,
                 platformCapabilities = platformCapabilities,
-                dispatcher = Dispatchers.Unconfined
             )
         }
     val defaultSettingsFactory = { timerXSettingsFactory(platformCapabilitiesOf()) }
@@ -76,8 +77,5 @@ class TimerXSettingsImplTest : FreeSpec({
                     .test { awaitAndExpectNoMore() shouldBe AnalyticsSettings.Available(false) }
             }
         }
-    }
-    "background settings manager" {
-        defaultSettingsFactory().backgroundSettingsManager shouldNotBe null
     }
 })

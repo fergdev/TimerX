@@ -8,16 +8,16 @@ import android.speech.tts.TextToSpeech
 import androidx.core.os.bundleOf
 import co.touchlab.kermit.Logger
 import com.timerx.R
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AndroidSoundManager(
     private val context: Context,
-    timerXSettings: TimerXSettings,
+    alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-) : AbstractSoundManager(timerXSettings, timerManager) {
+) : AbstractSoundManager(alertSettingsManager, timerManager) {
     private var mediaPlayer: MediaPlayer? = null
     private val textToSpeech: TextToSpeech
     private var ttsSupported = false
@@ -30,14 +30,14 @@ class AndroidSoundManager(
             if (status != TextToSpeech.SUCCESS) {
                 Logger.e { "There was an error getting text to speech" }
             } else {
-                observeVoiceChange(timerXSettings)
+                observeVoiceChange(alertSettingsManager)
             }
         }
     }
 
-    private fun observeVoiceChange(timerXSettings: TimerXSettings) {
+    private fun observeVoiceChange(alertSettingsManager: AlertSettingsManager) {
         coroutineScope.launch {
-            timerXSettings.alertSettingsManager.alertSettings.collect { alertSettings ->
+            alertSettingsManager.alertSettings.collect { alertSettings ->
                 val voice = textToSpeech.voices.firstOrNull { voice ->
                     voice.name == alertSettings.ttsVoiceId
                 } ?: return@collect
