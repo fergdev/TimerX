@@ -3,10 +3,11 @@ package com.timerx.ui.run
 import androidx.compose.ui.graphics.Color
 import com.timerx.settings.VibrationSetting
 import com.timerx.sound.Volume
+import pro.respawn.flowmvi.api.MVIAction
 import pro.respawn.flowmvi.api.MVIIntent
 import pro.respawn.flowmvi.api.MVIState
 
-internal sealed interface RunScreenState : MVIState {
+sealed interface RunScreenState : MVIState {
 
     data object Loading : RunScreenState
     data object NoTimer : RunScreenState
@@ -63,7 +64,7 @@ internal sealed interface RunScreenState : MVIState {
     }
 }
 
-internal sealed interface RunScreenIntent : MVIIntent {
+sealed interface RunScreenIntent : MVIIntent {
     data object Play : RunScreenIntent
     data object Pause : RunScreenIntent
     data object NextInterval : RunScreenIntent
@@ -72,4 +73,8 @@ internal sealed interface RunScreenIntent : MVIIntent {
     data object RestartTimer : RunScreenIntent
     data class UpdateVolume(val volume: Volume) : RunScreenIntent
     data class UpdateVibrationEnabled(val enabled: Boolean) : RunScreenIntent
+}
+
+sealed interface RunAction : MVIAction {
+    data object Exit : RunAction
 }

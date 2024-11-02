@@ -37,21 +37,25 @@ jobs:
         with:
           name: DMG-Debug
           path: ./shared/build/compose/binaries/main/dmg/com.timerx-**.dmg
+          if-no-files-found: error
 
       - name: Archive DMG Release
         uses: actions/upload-artifact@v4
         with:
           name: DMG-Release
           path: ./shared/build/compose/binaries/main-release/dmg/com.timerx-**.dmg
+          if-no-files-found: error
 
       - name: Archive DMG Debug
         uses: actions/upload-artifact@v4
         with:
           name: PKG-Debug
           path: ./shared/build/compose/binaries/main/pkg/com.timerx-**.pkg
+          if-no-files-found: error
 
       - name: Archive DMG Release
         uses: actions/upload-artifact@v4
         with:
           name: PKG-Release
           path: ./shared/build/compose/binaries/main-release/pkg/com.timerx-**.pkg
+          if-no-files-found: error

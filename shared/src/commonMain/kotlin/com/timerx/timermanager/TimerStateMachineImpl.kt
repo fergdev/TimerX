@@ -3,12 +3,14 @@ package com.timerx.timermanager
 import com.timerx.domain.Timer
 import com.timerx.domain.TimerInterval
 import com.timerx.sound.IntervalSound
+import com.timerx.timermanager.TimerState.Finished
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TimerStateMachineImpl(
@@ -47,7 +49,7 @@ class TimerStateMachineImpl(
             "Cannot resume while timer is ${runState.timerState}"
         }
         runState = runState.copy(timerState = TimerState.Running)
-        _eventState.value = TimerEvent.Resumed(runState)
+        _eventState.update { TimerEvent.Resumed(runState) }
         startTicker()
     }
 
@@ -57,11 +59,11 @@ class TimerStateMachineImpl(
         }
         tickerJob?.cancel()
         runState = runState.copy(timerState = TimerState.Paused)
-        _eventState.value = TimerEvent.Paused(runState)
+        _eventState.update { TimerEvent.Paused(runState) }
     }
 
     override fun nextInterval() {
-        require(runState.timerState != TimerState.Finished) { "Cannot skip while timer is ${runState.timerState}" }
+        require(runState.timerState != Finished) { "Cannot skip while timer is ${runState.timerState}" }
         var setIndex = runState.setIndex
         var repetitionIndex = runState.repetitionIndex
         var intervalIndex = runState.intervalIndex
@@ -106,16 +108,18 @@ class TimerStateMachineImpl(
                 intervalIndex,
             )
             val currentInterval = getCurrentInterval()
-            _eventState.value = TimerEvent.NextInterval(
-                runState,
-                currentInterval.intervalSound(),
-                currentInterval.vibration
-            )
+            _eventState.update {
+                TimerEvent.NextInterval(
+                    runState,
+                    currentInterval.intervalSound(),
+                    currentInterval.vibration
+                )
+            }
         }
     }
 
     override fun previousInterval() {
-        require(runState.timerState != TimerState.Finished) { "Cannot skip back while timer is ${runState.timerState}" }
+        require(runState.timerState != Finished) { "Cannot skip back while timer is ${runState.timerState}" }
 
         if (runState.timerState == TimerState.Running) {
             restartTicker()
@@ -124,12 +128,13 @@ class TimerStateMachineImpl(
         if (runState.elapsed != 0L) {
             runState = runState.copy(elapsed = 0)
             val currentInterval = getCurrentInterval()
-            _eventState.value =
+            _eventState.update {
                 TimerEvent.PreviousInterval(
                     runState = runState,
                     intervalSound = currentInterval.intervalSound(),
                     vibration = currentInterval.vibration
                 )
+            }
             return
         }
 
@@ -172,16 +177,19 @@ class TimerStateMachineImpl(
             intervalIndex = intervalIndex,
         )
         with(getCurrentInterval()) {
-            _eventState.value = TimerEvent.PreviousInterval(
-                runState = runState,
-                intervalSound = intervalSound(),
-                vibration = vibration
-            )
+            _eventState.update {
+                TimerEvent.PreviousInterval(
+                    runState = runState,
+                    intervalSound = intervalSound(),
+                    vibration = vibration
+                )
+            }
         }
     }
 
     override fun destroy() {
-        _eventState.value = TimerEvent.Destroy(_eventState.value.runState)
+        finishTimer()
+        _eventState.update { TimerEvent.Destroy(runState) }
         tickerJob?.cancel()
     }
 
@@ -263,16 +271,17 @@ class TimerStateMachineImpl(
 
     private fun finishTimer() {
         runState = runState.copy(
-            timerState = TimerState.Finished,
+            timerState = Finished,
             backgroundColor = timer.finishColor
         )
         tickerJob?.cancel()
-        _eventState.value =
+        _eventState.update {
             TimerEvent.Finished(
-                runState,
-                IntervalSound(timer.finishBeep, "Finished"),
-                timer.finishVibration
+                runState = runState,
+                intervalSound = IntervalSound(timer.finishBeep, "Finished"),
+                vibration = timer.finishVibration
             )
+        }
     }
 
     private fun TimerInterval.intervalSound() = IntervalSound(

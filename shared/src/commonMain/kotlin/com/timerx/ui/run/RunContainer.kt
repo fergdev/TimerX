@@ -34,7 +34,7 @@ internal class RunContainer(
     private val timerManager: TimerManager,
     timerRepository: ITimerRepository,
     timerXAnalytics: TimerXAnalytics,
-) : Container<RunScreenState, RunScreenIntent, Nothing> {
+) : Container<RunScreenState, RunScreenIntent, RunAction> {
 
     override val store = store(RunScreenState.Loading) {
         init {
@@ -68,7 +68,7 @@ internal fun observeTimerPlugin(
     timerManager: TimerManager,
     alertSettingsManager: AlertSettingsManager,
     timerXSettings: TimerXSettings
-) = plugin<RunScreenState, RunScreenIntent, Nothing> {
+) = plugin<RunScreenState, RunScreenIntent, RunAction> {
     onSubscribe {
         launch {
             combine(
@@ -145,7 +145,7 @@ internal fun reducePlugin(
     timerRepository: ITimerRepository,
     timerId: Long
 ) =
-    reducePlugin<RunScreenState, RunScreenIntent, Nothing> {
+    reducePlugin<RunScreenState, RunScreenIntent, RunAction> {
         when (it) {
             NextInterval -> timerManager.nextInterval()
             PreviousInterval -> timerManager.previousInterval()

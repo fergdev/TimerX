@@ -27,7 +27,8 @@ abstract class VibrationManager(
                 alertSettingsManager.alertSettings
             ) { timerEvent, alertSettings ->
                 _isVibrationEnabled =
-                    (alertSettings.vibrationSetting as? VibrationSetting.CanVibrate)?.enabled ?: false
+                    (alertSettings.vibrationSetting as? VibrationSetting.CanVibrate)?.enabled
+                        ?: false
                 if (_isVibrationEnabled.not()) return@combine
 
                 when (timerEvent) {
@@ -36,7 +37,9 @@ abstract class VibrationManager(
                     is TimerEvent.NextInterval -> vibrate(timerEvent.vibration)
                     is TimerEvent.PreviousInterval -> vibrate(timerEvent.vibration)
                     is TimerEvent.Started -> vibrate(timerEvent.vibration)
-                    else -> {}
+                    is TimerEvent.Destroy -> {}
+                    is TimerEvent.Paused -> {}
+                    is TimerEvent.Resumed -> {}
                 }
             }
         }

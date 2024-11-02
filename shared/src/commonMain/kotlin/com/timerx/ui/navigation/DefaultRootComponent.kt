@@ -97,11 +97,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
                             updatedTimerFlow.tryEmit(it)
                         },
                         factory = {
-                            koin.get(parameters = {
-                                parametersOf(
-                                    config.timerId ?: -1L,
-                                )
-                            })
+                            koin.get(parameters = { parametersOf(config.timerId ?: -1L) })
                         },
                     )
                 )
@@ -110,8 +106,8 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
             is Config.Run ->
                 RootComponent.Child.RunChild(
                     DefaultRunComponent(
-                        componentContext,
-                        config.timerId,
+                        componentContext = componentContext,
+                        factory = { koin.get(parameters = { parametersOf(config.timerId) }) },
                         onBack = { nav.pop() }
                     )
                 )
