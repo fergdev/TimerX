@@ -1,20 +1,14 @@
 package com.timerx.settings
 
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.coroutines.toFlowSettings
-import com.russhwolf.settings.observable.makeObservable
+import com.russhwolf.settings.coroutines.FlowSettings
 import com.timerx.domain.SortTimersBy
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.util.mapIfNull
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface TimerXSettings {
-    val alertSettingsManager: AlertSettingsManager
-    val themeSettingsManager: ThemeSettingsManager
-    val backgroundSettingsManager: BackgroundSettingsManager
     val sortTimersBy: Flow<SortTimersBy>
     val keepScreenOn: Flow<Boolean>
     val analytics: Flow<AnalyticsSettings>
@@ -37,16 +31,9 @@ private const val COLLECT_ANALYTICS = "collectAnalytics"
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class TimerXSettingsImpl(
-    settings: Settings,
     private val platformCapabilities: PlatformCapabilities,
-    dispatcher: CoroutineDispatcher
+    private val flowSettings: FlowSettings
 ) : TimerXSettings {
-    private val flowSettings = settings.makeObservable().toFlowSettings(dispatcher)
-
-    override val alertSettingsManager = AlertSettingsManagerImpl(
-        flowSettings = flowSettings,
-        platformCapabilities = platformCapabilities
-    )
 
     override val sortTimersBy = flowSettings.getIntOrNullFlow(SORT_TIMERS_BY).map {
         if (it == null) SortTimersBy.SORT_ORDER
@@ -74,11 +61,4 @@ internal class TimerXSettingsImpl(
         }
         flowSettings.putBoolean(COLLECT_ANALYTICS, collectAnalytics)
     }
-
-    override val themeSettingsManager: ThemeSettingsManager = ThemeSettingsManagerImpl(
-        flowSettings,
-        platformCapabilities
-    )
-    override val backgroundSettingsManager: BackgroundSettingsManager =
-        BackgroundSettingsManagerImpl(flowSettings)
 }

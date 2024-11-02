@@ -4,9 +4,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.hoc081098.flowext.combine
 import com.materialkolor.PaletteStyle
+import com.materialkolor.PaletteStyle.TonalSpot
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.timerx.platform.PlatformCapabilities
+import com.timerx.settings.SettingsDarkTheme.User
+import com.timerx.settings.ThemeContrast.Companion.default
 import com.timerx.ui.common.blue
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +43,7 @@ internal class ThemeSettingsManagerImpl(
 
     private val isDynamicTheme = flowSettings.getBooleanOrNullFlow(DYNAMIC_THEME).mapIfNull(false)
     private val isSettingsDarkTheme = flowSettings.getIntOrNullFlow(DARK_THEME).map {
-        if (it == null) SettingsDarkTheme.User
+        if (it == null) User
         else SettingsDarkTheme.entries[it]
     }
     private val isAmoled = flowSettings.getBooleanOrNullFlow(IS_AMOLED).mapIfNull(false)
@@ -50,14 +53,14 @@ internal class ThemeSettingsManagerImpl(
             else Color(it)
         }
     private val style = flowSettings.getIntOrNullFlow(PALETTE_STYLE).map {
-        if (it == null) PaletteStyle.TonalSpot
+        if (it == null) TonalSpot
         else PaletteStyle.entries[it]
     }
     private val isHighFidelity =
         flowSettings.getBooleanOrNullFlow(IS_HIGH_FIDELITY).mapIfNull(false)
 
     private val contrast = flowSettings.getDoubleOrNullFlow(THEME_CONTRAST).map {
-        if (it == null) ThemeContrast.default
+        if (it == null) default
         else ThemeContrast(it)
     }
 
@@ -115,10 +118,10 @@ enum class SettingsDarkTheme {
 
 data class ThemeSettings(
     val isSystemDynamic: Boolean = false,
-    val settingsDarkTheme: SettingsDarkTheme = SettingsDarkTheme.User,
+    val settingsDarkTheme: SettingsDarkTheme = User,
     val isAmoled: Boolean = false,
     val seedColor: Color = blue,
-    val paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
+    val paletteStyle: PaletteStyle = TonalSpot,
     val isHighFidelity: Boolean = false,
-    val contrast: ThemeContrast = ThemeContrast.default
+    val contrast: ThemeContrast = default
 )

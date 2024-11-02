@@ -269,12 +269,20 @@ compose {
         application {
             mainClass = "${Config.namespace}.MainKt"
             nativeDistributions {
-                targetFormats(TargetFormat.Dmg, TargetFormat.Deb, TargetFormat.Exe)
+                targetFormats(
+                    TargetFormat.Deb,
+                    TargetFormat.Rpm,
+                    TargetFormat.Dmg,
+                    TargetFormat.Pkg,
+                    TargetFormat.Msi,
+                    TargetFormat.Exe
+                )
                 packageName = Config.namespace
                 packageVersion = Config.majorVersionName
                 description = Config.appDescription
                 vendor = Config.vendorName
                 licenseFile = rootProject.rootDir.resolve(Config.licenseFile)
+                includeAllModules = true
                 val iconDir = rootProject.rootDir.resolve("playstore")
 
                 macOS {
@@ -296,7 +304,7 @@ compose {
                 linux {
                     debMaintainer = Config.supportEmail
                     appCategory = "Development"
-                    iconFile = iconDir.resolve("icon_512.png")
+                    iconFile = iconDir.resolve("icon-512.png")
                 }
             }
         }

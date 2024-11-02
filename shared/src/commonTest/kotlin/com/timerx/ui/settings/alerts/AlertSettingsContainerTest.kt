@@ -6,7 +6,6 @@ import com.timerx.permissions.Permission.Notification
 import com.timerx.permissions.PermissionState
 import com.timerx.permissions.PermissionState.Granted
 import com.timerx.settings.AlertSettingsManager
-import com.timerx.settings.TimerXSettings
 import com.timerx.settings.VibrationSetting
 import com.timerx.settings.VibrationSetting.CanVibrate
 import com.timerx.settings.VibrationSetting.CannotVibrate
@@ -51,13 +50,12 @@ private fun alertSettingsStateOf(
 
 class AlertSettingsContainerTest : FreeSpec({
     asUnconfined()
-    val timerXSettings = mock<TimerXSettings>()
     val alertSettingsManager = mock<AlertSettingsManager>()
     val permissionsHandler = mock<IPermissionsHandler>()
     val soundManager = mock<SoundManager>()
     val container = {
         AlertsSettingsContainer(
-            settings = timerXSettings,
+            alertSettingsManager = alertSettingsManager,
             permissionsHandler = permissionsHandler,
             soundManager = soundManager,
         )
@@ -67,20 +65,17 @@ class AlertSettingsContainerTest : FreeSpec({
         everySuspend {
             permissionsHandler.getPermissionState(Notification)
         } returns PermissionState.Denied
-
         every { soundManager.voices() } returns voices
-
-        every { timerXSettings.alertSettingsManager } returns alertSettingsManager
         every { alertSettingsManager.alertSettings } returns flowOf(alertSettingsOf())
     }
 
     afterEach {
-        resetAnswers(timerXSettings, permissionsHandler, soundManager)
+        resetAnswers(alertSettingsManager, permissionsHandler, soundManager)
     }
 
     "initial state" {
         AlertsSettingsContainer(
-            timerXSettings,
+            alertSettingsManager,
             permissionsHandler,
             soundManager,
         ).store.subscribeAndTest {
@@ -100,13 +95,9 @@ class AlertSettingsContainerTest : FreeSpec({
             }
         }
         "set volume" {
-            every { timerXSettings.alertSettingsManager } returns mock {
-                every { alertSettings } returns flowOf(
-                    alertSettingsOf(
-                        volume = Volume(0.1f)
-                    )
-                )
-            }
+            every { alertSettingsManager.alertSettings } returns flowOf(
+                alertSettingsOf(volume = Volume(0.1f))
+            )
 
             container().store.subscribeAndTest {
                 states.test {
@@ -117,13 +108,11 @@ class AlertSettingsContainerTest : FreeSpec({
             }
         }
         "sets vibration" {
-            every { timerXSettings.alertSettingsManager } returns mock {
-                every { alertSettings } returns flowOf(
-                    alertSettingsOf(
-                        vibrationSetting = CanVibrate(true)
-                    )
+            every { alertSettingsManager.alertSettings } returns flowOf(
+                alertSettingsOf(
+                    vibrationSetting = CanVibrate(true)
                 )
-            }
+            )
 
             container().store.subscribeAndTest {
                 states.test {
@@ -134,14 +123,12 @@ class AlertSettingsContainerTest : FreeSpec({
             }
         }
         "sets selected voice" {
-            every { timerXSettings.alertSettingsManager } returns mock {
-                every { alertSettings } returns flowOf(
-                    alertSettingsOf(ttsVoiceId = voiceInformation1.id)
-                )
-            }
+            every { alertSettingsManager.alertSettings } returns flowOf(
+                alertSettingsOf(ttsVoiceId = voiceInformation1.id)
+            )
 
             AlertsSettingsContainer(
-                settings = timerXSettings,
+                alertSettingsManager = alertSettingsManager,
                 permissionsHandler = permissionsHandler,
                 soundManager = soundManager,
             ).store.subscribeAndTest {

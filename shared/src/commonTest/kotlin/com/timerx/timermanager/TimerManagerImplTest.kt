@@ -9,6 +9,7 @@ import com.timerx.domain.timerSet
 import com.timerx.sound.Beep
 import com.timerx.sound.IntervalSound
 import com.timerx.testutil.asUnconfined
+import com.timerx.timermanager.TimerState.Finished
 import com.timerx.vibration.Vibration
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
@@ -312,13 +313,14 @@ class TimerManagerImplTest : FreeSpec({
                 timerManager.destroy()
                 awaitItem() shouldBe TimerEvent.Destroy(
                     runState = RunState(
+                        timerState = Finished,
                         timerName = "test",
                         setRepetitionCount = 1,
                         intervalIndex = 0,
                         intervalCount = 2,
                         intervalName = "test",
                         intervalDuration = 1L,
-                        backgroundColor = Color.Blue
+                        backgroundColor = Color.Red
                     )
                 )
             }

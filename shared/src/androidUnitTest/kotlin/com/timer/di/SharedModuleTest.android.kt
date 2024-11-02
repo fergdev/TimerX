@@ -2,6 +2,7 @@ package com.timer.di
 
 import android.content.Context
 import com.timerx.di.sharedModule
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.ui.main.MainContainer
 import io.kotest.core.spec.style.FreeSpec
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,6 +18,7 @@ class SharedModuleTest : FreeSpec({
             extraTypes = listOf(Context::class),
             injections = injectedParameters(
                 definition<MainContainer>(SharedFlow::class),
+                definition<PlatformCapabilities>(Boolean::class),
             )
         )
     }

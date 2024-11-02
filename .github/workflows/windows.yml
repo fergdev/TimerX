@@ -1,0 +1,56 @@
+name: windows
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          check-latest: true
+          java-version: 17
+          cache: 'gradle'
+
+      - name: Validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Build
+        run: |
+          ./gradlew packageExe packageReleaseExe packageMsi packageReleaseMsi --warning-mode all
+
+      - name: Archive Exe Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: Exe-Release
+          path: shared/build/compose/binaries/main-release/exe/com.timerx**.exe
+          if-no-files-found: error
+
+      - name: Archive Exe Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: Exe-Debug
+          path: shared/build/compose/binaries/main/exe/com.timerx**.exe
+          if-no-files-found: error
+
+      - name: Archive MSI Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: MSI-Release
+          path: shared/build/compose/binaries/main-release/msi/com.timerx**.msi
+          if-no-files-found: error
+
+      - name: Archive MSI Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: MSI-Debug
+          path: shared/build/compose/binaries/main/msi/com.timerx**.msi
+          if-no-files-found: error

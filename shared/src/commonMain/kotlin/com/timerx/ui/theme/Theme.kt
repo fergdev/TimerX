@@ -13,7 +13,7 @@ import com.materialkolor.DynamicMaterialThemeState
 import com.materialkolor.rememberDynamicMaterialThemeState
 import com.timerx.settings.SettingsDarkTheme
 import com.timerx.settings.ThemeSettings
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.ThemeSettingsManager
 import org.koin.compose.koinInject
 
 private val shapes = Shapes(
@@ -26,8 +26,7 @@ private val shapes = Shapes(
 
 @Composable
 fun TimerXTheme(content: @Composable () -> Unit) {
-    val settings = koinInject<TimerXSettings>()
-        .themeSettingsManager
+    val settings = koinInject<ThemeSettingsManager>()
         .themeSettings
         .collectAsState(ThemeSettings())
 

@@ -1,6 +1,6 @@
 package com.timerx.vibration
 
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.VibrationSetting
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 const val VIBRATION_DELAY: Long = 500L
 
 abstract class VibrationManager(
-    private val timerXSettings: TimerXSettings,
+    private val alertSettingsManager: AlertSettingsManager,
     private val timerManager: TimerManager
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -24,10 +24,11 @@ abstract class VibrationManager(
         coroutineScope.launch {
             combine(
                 timerManager.eventState,
-                timerXSettings.alertSettingsManager.alertSettings
+                alertSettingsManager.alertSettings
             ) { timerEvent, alertSettings ->
                 _isVibrationEnabled =
-                    (alertSettings.vibrationSetting as? VibrationSetting.CanVibrate)?.enabled ?: false
+                    (alertSettings.vibrationSetting as? VibrationSetting.CanVibrate)?.enabled
+                        ?: false
                 if (_isVibrationEnabled.not()) return@combine
 
                 when (timerEvent) {
@@ -36,7 +37,9 @@ abstract class VibrationManager(
                     is TimerEvent.NextInterval -> vibrate(timerEvent.vibration)
                     is TimerEvent.PreviousInterval -> vibrate(timerEvent.vibration)
                     is TimerEvent.Started -> vibrate(timerEvent.vibration)
-                    else -> {}
+                    is TimerEvent.Destroy -> {}
+                    is TimerEvent.Paused -> {}
+                    is TimerEvent.Resumed -> {}
                 }
             }
         }

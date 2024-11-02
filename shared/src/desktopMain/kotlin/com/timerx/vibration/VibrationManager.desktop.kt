@@ -2,13 +2,13 @@
 
 package com.timerx.vibration
 
-import com.timerx.settings.TimerXSettings
+import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 
 class NoopVibrationManager(
-    timerXSettings: TimerXSettings,
+    alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager
-) : VibrationManager(timerXSettings, timerManager) {
+) : VibrationManager(alertSettingsManager, timerManager) {
     override suspend fun vibrate(vibration: Vibration) {
         // Noop
     }

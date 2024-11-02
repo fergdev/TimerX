@@ -41,10 +41,7 @@ internal class TimerManagerImpl(
                         cancel()
                     }
 
-                    is TimerEvent.Started -> {
-                        timerRepository.incrementStartedCount(timer.id)
-                    }
-
+                    is TimerEvent.Started -> timerRepository.incrementStartedCount(timer.id)
                     else -> {}
                 }
             }

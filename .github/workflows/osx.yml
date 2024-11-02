@@ -1,0 +1,61 @@
+name: OSX
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  actions: read
+  checks: write
+  contents: read
+  id-token: write
+  pages: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: gradle
+
+      - name: Validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Build with Gradle
+        run: ./gradlew packageDmg packageReleaseDmg packagePkg packageReleasePkg
+
+      - name: Archive DMG Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: DMG-Debug
+          path: ./shared/build/compose/binaries/main/dmg/com.timerx-**.dmg
+          if-no-files-found: error
+
+      - name: Archive DMG Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: DMG-Release
+          path: ./shared/build/compose/binaries/main-release/dmg/com.timerx-**.dmg
+          if-no-files-found: error
+
+      - name: Archive DMG Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: PKG-Debug
+          path: ./shared/build/compose/binaries/main/pkg/com.timerx-**.pkg
+          if-no-files-found: error
+
+      - name: Archive DMG Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: PKG-Release
+          path: ./shared/build/compose/binaries/main-release/pkg/com.timerx-**.pkg
+          if-no-files-found: error

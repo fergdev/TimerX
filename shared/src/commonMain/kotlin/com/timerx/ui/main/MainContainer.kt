@@ -1,26 +1,37 @@
 package com.timerx.ui.main
 
-import co.touchlab.kermit.Logger
 import com.timerx.database.ITimerRepository
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
+import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.TimerXSettings
+import com.timerx.ui.main.MainIntent.DeleteTimer
+import com.timerx.ui.main.MainIntent.DuplicateTimer
+import com.timerx.ui.main.MainIntent.HidePermissionsDialog
+import com.timerx.ui.main.MainIntent.IgnoreNotificationsPermission
+import com.timerx.ui.main.MainIntent.RequestNotificationsPermission
+import com.timerx.ui.main.MainIntent.SwapTimers
+import com.timerx.ui.main.MainIntent.UpdateSortTimersBy
 import com.timerx.util.toAgo
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.dsl.updateState
 import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
+import timerx.shared.generated.resources.Res
+import timerx.shared.generated.resources.never_run
 import kotlin.random.Random
 
 internal class MainContainer(
     private val timerRepository: ITimerRepository,
     private val permissionsHandler: IPermissionsHandler,
+    private val alertSettingsManager: AlertSettingsManager,
     private val timerXSettings: TimerXSettings,
     private val timerCreateFlow: SharedFlow<Long>
 ) : Container<MainState, MainIntent, MainAction> {
@@ -30,7 +41,7 @@ internal class MainContainer(
             launch {
                 combine(
                     timerRepository.getShallowTimers(),
-                    timerXSettings.alertSettingsManager.alertSettings,
+                    alertSettingsManager.alertSettings,
                     timerXSettings.sortTimersBy
                 ) { timers, settings, sortTimersBy ->
                     if (timers.isEmpty()) {
@@ -44,7 +55,7 @@ internal class MainContainer(
                                 startedCount = roomTimer.startedCount,
                                 completedCount = roomTimer.completedCount,
                                 sortOrder = roomTimer.sortOrder,
-                                lastRunFormatted = roomTimer.lastRun?.toAgo() ?: "Never run"
+                                lastRunFormatted = roomTimer.lastRun?.toAgo() ?: getString(Res.string.never_run)
                             )
                         }
                         val listItems = stateMainTimers.chunked(2)
@@ -75,32 +86,31 @@ internal class MainContainer(
         }
         reduce {
             when (it) {
-                is MainIntent.DeleteTimer ->
+                is DeleteTimer ->
                     timerRepository.deleteTimer(it.mainTimer.id)
 
-                is MainIntent.DuplicateTimer -> {
+                is DuplicateTimer -> {
                     val newTimerId = timerRepository.duplicate(it.mainTimer.id)
-                    Logger.d { "New timer id: $newTimerId" }
                     action(MainAction.TimerUpdated(newTimerId))
                 }
 
-                MainIntent.HidePermissionsDialog -> {
+                HidePermissionsDialog -> {
                     updateState<MainState.Content, _> {
                         copy(showNotificationsPermissionRequest = false)
                     }
                 }
 
-                MainIntent.IgnoreNotificationsPermission ->
-                    timerXSettings.alertSettingsManager.setIgnoreNotificationPermissions()
+                IgnoreNotificationsPermission ->
+                    alertSettingsManager.setIgnoreNotificationPermissions()
 
-                MainIntent.RequestNotificationsPermission -> {
+                RequestNotificationsPermission -> {
                     updateState<MainState.Content, _> {
                         copy(showNotificationsPermissionRequest = false)
                     }
                     permissionsHandler.requestPermission(Permission.Notification)
                 }
 
-                is MainIntent.SwapTimers ->
+                is SwapTimers ->
                     timerRepository.swapTimers(
                         it.from.id,
                         it.from.sortOrder,
@@ -108,7 +118,7 @@ internal class MainContainer(
                         it.to.sortOrder
                     )
 
-                is MainIntent.UpdateSortTimersBy ->
+                is UpdateSortTimersBy ->
                     timerXSettings.setSortTimersBy(it.sortTimersBy)
             }
         }

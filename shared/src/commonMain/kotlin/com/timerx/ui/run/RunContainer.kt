@@ -3,10 +3,18 @@ package com.timerx.ui.run
 import com.timerx.analytics.TimerXAnalytics
 import com.timerx.database.ITimerRepository
 import com.timerx.settings.AlertSettings
+import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import com.timerx.timermanager.TimerState
+import com.timerx.ui.run.RunScreenIntent.NextInterval
+import com.timerx.ui.run.RunScreenIntent.OnManualNext
+import com.timerx.ui.run.RunScreenIntent.Pause
+import com.timerx.ui.run.RunScreenIntent.Play
+import com.timerx.ui.run.RunScreenIntent.PreviousInterval
+import com.timerx.ui.run.RunScreenIntent.RestartTimer
+import com.timerx.ui.run.RunScreenIntent.UpdateVibrationEnabled
 import com.timerx.ui.run.RunScreenState.Loaded.Finished
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing
@@ -21,11 +29,12 @@ import pro.respawn.flowmvi.plugins.reducePlugin
 
 internal class RunContainer(
     private val timerId: Long,
+    private val alertSettingsManager: AlertSettingsManager,
     private val timerXSettings: TimerXSettings,
     private val timerManager: TimerManager,
     timerRepository: ITimerRepository,
     timerXAnalytics: TimerXAnalytics,
-) : Container<RunScreenState, RunScreenIntent, Nothing> {
+) : Container<RunScreenState, RunScreenIntent, RunAction> {
 
     override val store = store(RunScreenState.Loading) {
         init {
@@ -44,21 +53,27 @@ internal class RunContainer(
         }
 
         install(
-            observeTimerPlugin(timerManager, timerXSettings),
-            reducePlugin(timerManager, timerXSettings, timerRepository, timerId)
+            observeTimerPlugin(timerManager, alertSettingsManager, timerXSettings),
+            reducePlugin(
+                timerManager,
+                alertSettingsManager,
+                timerRepository,
+                timerId
+            )
         )
     }
 }
 
 internal fun observeTimerPlugin(
     timerManager: TimerManager,
-    timerXSettings: TimerXSettings,
-) = plugin<RunScreenState, RunScreenIntent, Nothing> {
+    alertSettingsManager: AlertSettingsManager,
+    timerXSettings: TimerXSettings
+) = plugin<RunScreenState, RunScreenIntent, RunAction> {
     onSubscribe {
         launch {
             combine(
                 timerManager.eventState,
-                timerXSettings.alertSettingsManager.alertSettings,
+                alertSettingsManager.alertSettings,
                 timerXSettings.keepScreenOn
             ) { timerEvent: TimerEvent, alertSettings: AlertSettings, keepScreenOn ->
                 Triple(timerEvent, alertSettings, keepScreenOn)
@@ -126,28 +141,26 @@ internal fun observeTimerPlugin(
 
 internal fun reducePlugin(
     timerManager: TimerManager,
-    timerXSettings: TimerXSettings,
+    alertSettingsManager: AlertSettingsManager,
     timerRepository: ITimerRepository,
     timerId: Long
 ) =
-    reducePlugin<RunScreenState, RunScreenIntent, Nothing> {
+    reducePlugin<RunScreenState, RunScreenIntent, RunAction> {
         when (it) {
-            RunScreenIntent.NextInterval -> timerManager.nextInterval()
-            RunScreenIntent.PreviousInterval -> timerManager.previousInterval()
-            RunScreenIntent.OnManualNext -> timerManager.nextInterval()
-            RunScreenIntent.Pause -> timerManager.playPause()
-            RunScreenIntent.Play -> timerManager.playPause()
-            RunScreenIntent.RestartTimer -> {
+            NextInterval -> timerManager.nextInterval()
+            PreviousInterval -> timerManager.previousInterval()
+            OnManualNext -> timerManager.nextInterval()
+            Pause -> timerManager.playPause()
+            Play -> timerManager.playPause()
+            RestartTimer -> {
                 val timer = timerRepository.getTimer(timerId).first()
-                requireNotNull(timer) {
-                    "Attempting to restart with null timer $timerId"
-                }
+                requireNotNull(timer) { "Attempting to restart with null timer $timerId" }
                 timerManager.startTimer(timer)
             }
 
-            is RunScreenIntent.UpdateVibrationEnabled ->
-                timerXSettings.alertSettingsManager.setVibrationEnabled(it.enabled)
+            is UpdateVibrationEnabled ->
+                alertSettingsManager.setVibrationEnabled(it.enabled)
 
-            is RunScreenIntent.UpdateVolume -> timerXSettings.alertSettingsManager.setVolume(it.volume)
+            is RunScreenIntent.UpdateVolume -> alertSettingsManager.setVolume(it.volume)
         }
     }

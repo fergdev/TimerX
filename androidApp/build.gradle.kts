@@ -1,6 +1,7 @@
 @file:Suppress("UnusedPrivateProperty")
 
 import java.io.FileInputStream
+import java.io.IOException
 import java.util.Properties
 
 plugins {
@@ -11,10 +12,6 @@ plugins {
     alias(libs.plugins.googleServices)
     alias(libs.plugins.crashlytics)
 }
-
-val keystorePropertiesFile = rootProject.file(Config.KeyStore.propertiesFile)
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 kotlin {
     androidTarget()
@@ -48,10 +45,18 @@ android {
     }
     signingConfigs {
         create("release") {
-            storePassword = keystoreProperties.getProperty(Config.KeyStore.storePasswordKey)
-            storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
-            keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
-            keyAlias = keystoreProperties.getProperty(Config.KeyStore.aliasKey)
+            val keystorePropertiesFile = rootProject.file(Config.KeyStore.propertiesFile)
+            val keystoreProperties = Properties()
+            @Suppress("SwallowedException")
+            try {
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+                storePassword = keystoreProperties.getProperty(Config.KeyStore.storePasswordKey)
+                storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
+                keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
+                keyAlias = keystoreProperties.getProperty(Config.KeyStore.aliasKey)
+            } catch (e: IOException) {
+                // do nothing
+            }
         }
     }
     buildTypes {
