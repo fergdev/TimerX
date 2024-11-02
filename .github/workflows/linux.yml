@@ -32,21 +32,25 @@ jobs:
         with:
           name: Deb-Debug
           path: shared/build/compose/binaries/main/deb/com.timerx**.deb
+          if-no-files-found: error
 
       - name: Archive Deb Release
         uses: actions/upload-artifact@v4
         with:
           name: Deb-Release
           path: shared/build/compose/binaries/main-release/deb/com.timerx**.deb
+          if-no-files-found: error
 
       - name: Archive Rpm Debug
         uses: actions/upload-artifact@v4
         with:
           name: Rpm-Debug
           path: shared/build/compose/binaries/main/rpm/com.timerx**.rpm
+          if-no-files-found: error
 
       - name: Archive Rpm Release
         uses: actions/upload-artifact@v4
         with:
           name: Rpm-Release
           path: shared/build/compose/binaries/main-release/rpm/com.timerx**.rpm
+          if-no-files-found: error

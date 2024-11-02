@@ -988,12 +988,13 @@ class TimerStateMachineImplTest : FreeSpec({
             awaitItem()
             awaitItem() shouldBe Destroy(
                 RunState(
+                    timerState = Finished,
                     timerName = "test",
                     setRepetitionCount = 1,
                     intervalCount = 1,
                     intervalName = "work",
                     intervalDuration = 10L,
-                    backgroundColor = Color.Blue,
+                    backgroundColor = Color.Red,
                 )
             )
         }

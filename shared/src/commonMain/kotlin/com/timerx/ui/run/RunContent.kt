@@ -58,13 +58,13 @@ import com.timerx.ui.run.RunScreenState.Loaded
 import com.timerx.ui.run.RunScreenState.Loaded.Finished
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Playing
+import com.timerx.ui.run.RunScreenState.Loading
+import com.timerx.ui.run.RunScreenState.NoTimer
 import com.timerx.ui.shader.vignetteShader
 import com.timerx.ui.theme.Animation
 import com.timerx.util.letType
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
-import org.koin.core.parameter.parametersOf
 import pro.respawn.flowmvi.api.IntentReceiver
 import pro.respawn.flowmvi.compose.dsl.DefaultLifecycle
 import pro.respawn.flowmvi.compose.dsl.subscribe
@@ -85,17 +85,16 @@ private val CORNER_ICON_SIZE = 48.dp
 
 @Composable
 fun RunContent(runComponent: RunComponent) {
-    with(koinInject<RunContainer> { parametersOf(runComponent.timerId) }.store) {
-        LaunchedEffect(Unit) { start(this).join() }
-
-        val state by subscribe(DefaultLifecycle)
-
+    with(runComponent) {
+        val state by subscribe(DefaultLifecycle) {
+//            when (it) {
+//                RunAction.Exit -> runComponent.onBack()
+//            }
+        }
         when (state) {
-            RunScreenState.Loading -> DefaultLoading()
-            RunScreenState.NoTimer -> NoTimerContent(runComponent)
-            is Loaded -> {
-                LoadedContent(state as Loaded, runComponent)
-            }
+            Loading -> DefaultLoading()
+            NoTimer -> NoTimerContent(runComponent)
+            is Loaded -> LoadedContent(state as Loaded, runComponent)
         }
     }
 }
@@ -113,7 +112,7 @@ private fun NoTimerContent(runComponent: RunComponent) {
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { runComponent.onBackClicked() }) {
+        Button(onClick = { runComponent.onBack() }) {
             Text(text = stringResource(Res.string.back))
         }
     }
@@ -143,7 +142,7 @@ private fun IntentReceiver<RunScreenIntent>.LoadedContent(
     RunView(
         backgroundColor = animatedColor,
         state = state,
-        onNavigateUp = runComponent::onBackClicked
+        onNavigateUp = runComponent.onBack
     )
 }
 
