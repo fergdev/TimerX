@@ -74,14 +74,7 @@ jobs:
           min-coverage-changed-files: 80
           coverage-counter-type: LINE
 
-      - name: Archive Android Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android debug apk
-          path: androidApp/build/outputs/apk/debug/androidApp-debug.apk
-          if-no-files-found: error
-
-      - name: Archive Android Release AAB
+      - name: Archive Android Debug AAB
         uses: actions/upload-artifact@v4
         with:
           name: Android debug aab
@@ -94,14 +87,3 @@ jobs:
           name: Android release build
           path: androidApp/build/outputs/apk/release/androidApp-release.aab
           if-no-files-found: error
-
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v3
-        if: github.ref == 'refs/heads/main'
-        with:
-          path: 'shared/build/dist/wasmJs/productionExecutable'
-
-      - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
-        id: deployment
-        uses: actions/deploy-pages@v4
