@@ -44,19 +44,21 @@ jobs:
           echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
 
       - name: Check
-        run: ./gradlew build check koverXmlReport --warning-mode all
+        run: ./gradlew build bundle check koverXmlReport --warning-mode all
 
       - name: Archive android shared lint
         uses: actions/upload-artifact@v4
         with:
           name: Android shared lint
           path: shared/build/reports/lint-results-debug.html
+          if-no-files-found: error
 
       - name: Archive Android-App lint
         uses: actions/upload-artifact@v4
         with:
           name: Android app lint
           path: androidApp/build/reports/lint-results-debug.html
+          if-no-files-found: error
 
       - name: Add coverage report to PR
         id: kover
@@ -75,14 +77,23 @@ jobs:
       - name: Archive Android Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: Android debug build
+          name: Android debug apk
           path: androidApp/build/outputs/apk/debug/androidApp-debug.apk
+          if-no-files-found: error
+
+      - name: Archive Android Release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android debug aab
+          path: androidApp/build/outputs/apk/debug/androidApp-debug.aab
+          if-no-files-found: error
 
       - name: Archive Android Release AAB
         uses: actions/upload-artifact@v4
         with:
           name: Android release build
           path: androidApp/build/outputs/apk/release/androidApp-release.aab
+          if-no-files-found: error
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -8,6 +8,7 @@ import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import com.timerx.timermanager.TimerState
+import com.timerx.ui.run.RunAction.Exit
 import com.timerx.ui.run.RunScreenIntent.NextInterval
 import com.timerx.ui.run.RunScreenIntent.OnManualNext
 import com.timerx.ui.run.RunScreenIntent.Pause
@@ -34,7 +35,7 @@ internal class RunContainer(
     private val timerManager: TimerManager,
     timerRepository: ITimerRepository,
     timerXAnalytics: TimerXAnalytics,
-) : Container<RunScreenState, RunScreenIntent, Nothing> {
+) : Container<RunScreenState, RunScreenIntent, RunAction> {
 
     override val store = store(RunScreenState.Loading) {
         init {
@@ -53,6 +54,7 @@ internal class RunContainer(
         }
 
         install(
+            observeDestroyPlugin(timerManager),
             observeTimerPlugin(timerManager, alertSettingsManager, timerXSettings),
             reducePlugin(
                 timerManager,
@@ -64,11 +66,24 @@ internal class RunContainer(
     }
 }
 
+internal fun observeDestroyPlugin(timerManager: TimerManager) =
+    plugin<RunScreenState, RunScreenIntent, RunAction> {
+        onSubscribe {
+            launch {
+                timerManager.eventState.collect {
+                    if (it is TimerEvent.Destroy) {
+                        action(Exit)
+                    }
+                }
+            }
+        }
+    }
+
 internal fun observeTimerPlugin(
     timerManager: TimerManager,
     alertSettingsManager: AlertSettingsManager,
     timerXSettings: TimerXSettings
-) = plugin<RunScreenState, RunScreenIntent, Nothing> {
+) = plugin<RunScreenState, RunScreenIntent, RunAction> {
     onSubscribe {
         launch {
             combine(
@@ -145,7 +160,7 @@ internal fun reducePlugin(
     timerRepository: ITimerRepository,
     timerId: Long
 ) =
-    reducePlugin<RunScreenState, RunScreenIntent, Nothing> {
+    reducePlugin<RunScreenState, RunScreenIntent, RunAction> {
         when (it) {
             NextInterval -> timerManager.nextInterval()
             PreviousInterval -> timerManager.previousInterval()
