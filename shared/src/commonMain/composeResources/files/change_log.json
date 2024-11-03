@@ -1,5 +1,25 @@
 [
   {
+    "version": "1.0.3",
+    "date": "2024-03-11",
+    "info": "Bug Fixes Update",
+    "data": [
+      {
+        "title": "Updates",
+        "items": [
+          "Lowered the Min SDK for Android users to 21 (Lollipop)"
+        ]
+      },
+      {
+        "title": "Bug fixes",
+        "items": [
+          "Fixed management of the notifications on Android.",
+          "Fixed the vibration patterns on Android."
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.0.0",
     "date": "2024-20-10",
     "info": "Welcome to TimerX 1.0",
