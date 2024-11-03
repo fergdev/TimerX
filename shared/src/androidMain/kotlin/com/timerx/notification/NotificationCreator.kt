@@ -261,6 +261,7 @@ private fun appPendingIntent(context: Context): PendingIntent {
     return appPendingIntent
 }
 
+@RequiresApi(Build.VERSION_CODES.M)
 private fun getTintedIcon(context: Context, drawableId: Int, color: Int): Icon {
     val drawable: Drawable = ContextCompat.getDrawable(context, drawableId)!!
     val bitmap = Bitmap.createBitmap(

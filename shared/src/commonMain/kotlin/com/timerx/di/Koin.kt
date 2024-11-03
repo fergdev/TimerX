@@ -5,6 +5,7 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.platform.platformCapabilities
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.AlertSettingsManagerImpl
@@ -29,8 +30,17 @@ val sharedModule = module {
     includes(platformModule)
     includes(containerModule)
     single { platformCapabilities }
+    single {
+        TxDispatchers(
+            default = Dispatchers.Default,
+            main = Dispatchers.Main,
+            io = Dispatchers.Unconfined
+        )
+    }
     single<FlowSettings> {
-        Settings().makeObservable().toFlowSettings(dispatcher = Dispatchers.Main)
+        Settings()
+            .makeObservable()
+            .toFlowSettings(dispatcher = Dispatchers.Main)
     }
     singleOf(::AlertSettingsManagerImpl) { bind<AlertSettingsManager>() }
     singleOf(::TimerXSettingsImpl) { bind<TimerXSettings>() }

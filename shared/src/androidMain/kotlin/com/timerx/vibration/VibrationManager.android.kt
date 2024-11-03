@@ -6,6 +6,8 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.core.content.ContextCompat
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import com.timerx.vibration.Vibration.Heavy
@@ -29,11 +31,12 @@ import kotlinx.coroutines.delay
 class AndroidVibrator(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-    context: Context
-) : VibrationManager(alertSettingsManager, timerManager) {
+    context: Context,
+    txDispatchers: TxDispatchers
+) : VibrationManager(alertSettingsManager, timerManager, txDispatchers) {
 
     @Suppress("Deprecated")
-    private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+    private val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)
 
     override suspend fun vibrate(vibration: Vibration) {
         if (!isVibrationEnabled) return

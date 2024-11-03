@@ -3,6 +3,7 @@ package com.timerx.settings
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.timerx.platform.PlatformCapabilities
+import com.timerx.settings.VibrationSetting.CannotVibrate
 import com.timerx.sound.Volume
 import com.timerx.util.mapIfNull
 import kotlinx.coroutines.flow.Flow
@@ -17,10 +18,10 @@ private const val SET_IGNORE_NOTIFICATIONS_PERMISSION =
 private const val TTS_VOICE_NAME = "${ALERT_SETTINGS}ttsVoiceName"
 
 data class AlertSettings(
-    val volume: Volume,
-    val vibrationSetting: VibrationSetting,
-    val ignoreNotificationsPermissions: Boolean,
-    val ttsVoiceId: String?,
+    val volume: Volume = Volume.default,
+    val vibrationSetting: VibrationSetting = CannotVibrate,
+    val ignoreNotificationsPermissions: Boolean = false,
+    val ttsVoiceId: String? = null,
 )
 
 interface AlertSettingsManager {
@@ -46,7 +47,7 @@ internal class AlertSettingsManagerImpl(
     private val vibrationSetting =
         flowSettings.getBooleanOrNullFlow(VIBRATION_ENABLED)
             .map {
-                if (!platformCapabilities.canVibrate) VibrationSetting.CannotVibrate
+                if (!platformCapabilities.canVibrate) CannotVibrate
                 else VibrationSetting.CanVibrate(it == null || it)
             }
     private val ignoreNotificationsPermissions =

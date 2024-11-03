@@ -3,9 +3,14 @@ package com.timerx.analytics
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.TimerXSettings
 
-class TimerXAnalyticsImpl(timerXSettings: TimerXSettings, context: Context) : TimerXAnalytics(timerXSettings) {
+class TimerXAnalyticsImpl(
+    timerXSettings: TimerXSettings,
+    context: Context,
+    txDispatchers: TxDispatchers
+) : TimerXAnalytics(timerXSettings, txDispatchers) {
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
     override fun doLogEvent(eventName: String, params: Map<String, Any>) {
@@ -20,7 +25,7 @@ class TimerXAnalyticsImpl(timerXSettings: TimerXSettings, context: Context) : Ti
     }
 }
 
-private fun Bundle.load(params: Map<String, Any>): Bundle {
+internal fun Bundle.load(params: Map<String, Any>): Bundle {
     params.forEach { (t, u) ->
         when (u) {
             is String -> this.putString(t, u)

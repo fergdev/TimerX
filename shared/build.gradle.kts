@@ -392,7 +392,11 @@ aboutLibraries {
 
 kover {
     reports {
-        // filters for all report types of all build variants
+        verify {
+            rule {
+                bound { minValue = 21 }
+            }
+        }
         filters {
             excludes {
                 androidGeneratedClasses()

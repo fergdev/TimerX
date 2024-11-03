@@ -1,10 +1,10 @@
 package com.timerx.sound
 
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -20,11 +20,11 @@ interface SoundManager {
 abstract class AbstractSoundManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
+    txDispatchers: TxDispatchers
 ) : SoundManager {
     abstract val isTTSSupported: Boolean
-
     internal var volume: Volume = Volume.default
-    internal val coroutineScope = CoroutineScope(Dispatchers.Default)
+    internal val coroutineScope = CoroutineScope(txDispatchers.default)
 
     init {
         coroutineScope.launch {
@@ -39,9 +39,9 @@ abstract class AbstractSoundManager(
                     is TimerEvent.NextInterval -> makeIntervalSound(timerEvent.intervalSound)
                     is TimerEvent.PreviousInterval -> makeIntervalSound(timerEvent.intervalSound)
                     is TimerEvent.Started -> makeIntervalSound(timerEvent.intervalSound)
-                    else -> {
-                        /* noop */
-                    }
+                    is TimerEvent.Destroy -> {}
+                    is TimerEvent.Paused -> {}
+                    is TimerEvent.Resumed -> {}
                 }
             }
         }

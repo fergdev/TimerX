@@ -35,7 +35,7 @@ object Config {
     val javaVersion = JavaVersion.VERSION_17
     const val compileSdk = 35
     const val targetSdk = compileSdk
-    const val minSdk = 23
+    const val minSdk = 21
     const val appId = "4a07189f-4143-4a90-9f53-1eedd74ddbeb"
     const val supportEmail = "ferg.dev@outlook.com"
     const val privacyPolicyUrl =

@@ -1,35 +1,36 @@
 package com.timerx.vibration
 
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.VibrationSetting
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 const val VIBRATION_DELAY: Long = 500L
 
 abstract class VibrationManager(
     private val alertSettingsManager: AlertSettingsManager,
-    private val timerManager: TimerManager
+    private val timerManager: TimerManager,
+    txDispatchers: TxDispatchers
 ) {
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private val coroutineScope = CoroutineScope(txDispatchers.main)
     private var _isVibrationEnabled: Boolean = false
     internal val isVibrationEnabled: Boolean
         get() = _isVibrationEnabled
 
     init {
         coroutineScope.launch {
-            combine(
-                timerManager.eventState,
-                alertSettingsManager.alertSettings
-            ) { timerEvent, alertSettings ->
+            alertSettingsManager.alertSettings.collect {
                 _isVibrationEnabled =
-                    (alertSettings.vibrationSetting as? VibrationSetting.CanVibrate)?.enabled
+                    (it.vibrationSetting as? VibrationSetting.CanVibrate)?.enabled
                         ?: false
-                if (_isVibrationEnabled.not()) return@combine
+            }
+        }
+        coroutineScope.launch {
+            timerManager.eventState.collect { timerEvent ->
+                if (_isVibrationEnabled.not()) return@collect
 
                 when (timerEvent) {
                     is TimerEvent.Ticker -> timerEvent.vibration?.let { vibrate(it) }

@@ -1,6 +1,7 @@
 package com.timer.di
 
 import android.content.Context
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.di.platformModule
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.TimerXSettings
@@ -17,7 +18,8 @@ class PlatformModuleTest : FreeSpec({
                 Context::class,
                 TimerXSettings::class,
                 AlertSettingsManager::class,
-                TimerManager::class
+                TimerManager::class,
+                TxDispatchers::class
             )
         )
     }
