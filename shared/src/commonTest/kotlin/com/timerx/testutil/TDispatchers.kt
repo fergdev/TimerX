@@ -1,17 +1,17 @@
 package com.timerx.testutil
 
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import io.kotest.core.test.testCoroutineScheduler
 import kotlinx.coroutines.test.StandardTestDispatcher
 
-fun TDispatchers.idleAll() {
+fun TxDispatchers.idleAll() {
     main.testCoroutineScheduler.advanceUntilIdle()
     io.testCoroutineScheduler.advanceUntilIdle()
     default.testCoroutineScheduler.advanceUntilIdle()
 }
 
 fun testDispatchers() =
-    TDispatchers(
+    TxDispatchers(
         main = StandardTestDispatcher(),
         io = StandardTestDispatcher(),
         default = StandardTestDispatcher(),

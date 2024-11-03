@@ -25,7 +25,7 @@ private data class PermissionCallback(
 )
 
 class PermissionsHandler : IPermissionsHandler {
-    val activity: ComponentActivity by lazy { KoinPlatform.getKoin().get() }
+    private val activity: ComponentActivity by lazy { KoinPlatform.getKoin().get() }
     private val mutex: Mutex = Mutex()
     private val key = UUID.randomUUID().toString()
     private var permissionCallback: PermissionCallback? = null

@@ -8,7 +8,7 @@ import android.speech.tts.TextToSpeech
 import androidx.core.os.bundleOf
 import co.touchlab.kermit.Logger
 import com.timerx.R
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import kotlinx.coroutines.delay
@@ -18,8 +18,8 @@ class AndroidSoundManager(
     private val context: Context,
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-    tDispatchers: TDispatchers
-) : AbstractSoundManager(alertSettingsManager, timerManager, tDispatchers) {
+    txDispatchers: TxDispatchers
+) : AbstractSoundManager(alertSettingsManager, timerManager, txDispatchers) {
     private var mediaPlayer: MediaPlayer? = null
     private val textToSpeech: TextToSpeech
     private var ttsSupported = false

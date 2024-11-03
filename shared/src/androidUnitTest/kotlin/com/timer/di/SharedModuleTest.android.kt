@@ -1,7 +1,7 @@
 package com.timer.di
 
 import android.content.Context
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.di.sharedModule
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.ui.main.MainContainer
@@ -21,7 +21,7 @@ class SharedModuleTest : FreeSpec({
             injections = injectedParameters(
                 definition<MainContainer>(SharedFlow::class),
                 definition<PlatformCapabilities>(Boolean::class),
-                definition<TDispatchers>(CoroutineDispatcher::class),
+                definition<TxDispatchers>(CoroutineDispatcher::class),
             )
         )
     }

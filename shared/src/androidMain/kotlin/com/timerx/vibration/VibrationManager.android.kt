@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import com.timerx.vibration.Vibration.Heavy
@@ -32,8 +32,8 @@ class AndroidVibrator(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
     context: Context,
-    tDispatchers: TDispatchers
-) : VibrationManager(alertSettingsManager, timerManager, tDispatchers) {
+    txDispatchers: TxDispatchers
+) : VibrationManager(alertSettingsManager, timerManager, txDispatchers) {
 
     @Suppress("Deprecated")
     private val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)

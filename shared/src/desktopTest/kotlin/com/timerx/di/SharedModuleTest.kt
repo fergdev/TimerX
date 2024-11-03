@@ -1,6 +1,6 @@
 package com.timerx.di
 
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerManager
@@ -23,7 +23,7 @@ class SharedModuleTest : FreeSpec({
             injections = injectedParameters(
                 definition<MainContainer>(SharedFlow::class),
                 definition<PlatformCapabilities>(Boolean::class),
-                definition<TDispatchers>(CoroutineDispatcher::class),
+                definition<TxDispatchers>(CoroutineDispatcher::class),
             )
         )
     }

@@ -1,6 +1,6 @@
 package com.timerx.sound
 
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.sound.Beep.Alert
@@ -28,9 +28,9 @@ import kotlinx.coroutines.flow.flowOf
 private class TestSoundManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-    tDispatchers: TDispatchers,
+    txDispatchers: TxDispatchers,
     override val isTTSSupported: Boolean = true
-) : AbstractSoundManager(alertSettingsManager, timerManager, tDispatchers) {
+) : AbstractSoundManager(alertSettingsManager, timerManager, txDispatchers) {
 
     val beeps = mutableListOf<Beep>()
     val textToSpeech = mutableListOf<String>()

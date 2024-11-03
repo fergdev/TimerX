@@ -18,7 +18,7 @@ interface TimerXSettings {
 }
 
 sealed interface AnalyticsSettings {
-    data class Available(val enabled: Boolean) : AnalyticsSettings
+    data class Available(val enabled: Boolean = true) : AnalyticsSettings
     data object NotAvailable : AnalyticsSettings
 }
 

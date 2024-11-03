@@ -3,7 +3,7 @@
 package com.timerx.sound
 
 import co.touchlab.kermit.Logger
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import com.timerx.util.NSErrorException
@@ -32,8 +32,8 @@ import platform.Foundation.NSBundle
 class IosSoundManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-    tDispatchers: TDispatchers
-) : AbstractSoundManager(alertSettingsManager, timerManager, tDispatchers) {
+    txDispatchers: TxDispatchers
+) : AbstractSoundManager(alertSettingsManager, timerManager, txDispatchers) {
     override val isTTSSupported: Boolean
         get() = true
 

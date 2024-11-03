@@ -1,6 +1,6 @@
 package com.timerx.vibration
 
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.VibrationSetting
 import com.timerx.timermanager.TimerEvent
@@ -13,9 +13,9 @@ const val VIBRATION_DELAY: Long = 500L
 abstract class VibrationManager(
     private val alertSettingsManager: AlertSettingsManager,
     private val timerManager: TimerManager,
-    tDispatchers: TDispatchers
+    txDispatchers: TxDispatchers
 ) {
-    private val coroutineScope = CoroutineScope(tDispatchers.main)
+    private val coroutineScope = CoroutineScope(txDispatchers.main)
     private var _isVibrationEnabled: Boolean = false
     internal val isVibrationEnabled: Boolean
         get() = _isVibrationEnabled

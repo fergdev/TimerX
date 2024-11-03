@@ -1,8 +1,10 @@
 package com.timerx.analytics
 
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.TimerXSettings
 
-class TimerXAnalyticsImpl(timerXSettings: TimerXSettings) : TimerXAnalytics(timerXSettings) {
+class TimerXAnalyticsImpl(timerXSettings: TimerXSettings, txDispatchers: TxDispatchers) :
+    TimerXAnalytics(timerXSettings, txDispatchers) {
 
     override fun doLogEvent(eventName: String, params: Map<String, Any>) {
         firebaseIosCallback?.logEvent(eventName, params.toLogString())

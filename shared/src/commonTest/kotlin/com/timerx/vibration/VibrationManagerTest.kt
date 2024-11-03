@@ -1,6 +1,6 @@
 package com.timerx.vibration
 
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.VibrationSetting.CanVibrate
@@ -30,9 +30,9 @@ import kotlinx.coroutines.flow.flowOf
 private class TestVibrationManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-    tDispatchers: TDispatchers
+    txDispatchers: TxDispatchers
 ) :
-    VibrationManager(alertSettingsManager, timerManager, tDispatchers) {
+    VibrationManager(alertSettingsManager, timerManager, txDispatchers) {
     val vibrationList = mutableListOf<Vibration>()
     override suspend fun vibrate(vibration: Vibration) {
         vibrationList.add(vibration)

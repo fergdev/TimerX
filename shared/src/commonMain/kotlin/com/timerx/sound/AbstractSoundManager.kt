@@ -1,6 +1,6 @@
 package com.timerx.sound
 
-import com.timerx.coroutines.TDispatchers
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
@@ -20,11 +20,11 @@ interface SoundManager {
 abstract class AbstractSoundManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
-    tDispatchers: TDispatchers
+    txDispatchers: TxDispatchers
 ) : SoundManager {
     abstract val isTTSSupported: Boolean
     internal var volume: Volume = Volume.default
-    internal val coroutineScope = CoroutineScope(tDispatchers.default)
+    internal val coroutineScope = CoroutineScope(txDispatchers.default)
 
     init {
         coroutineScope.launch {
