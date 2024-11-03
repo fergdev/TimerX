@@ -17,15 +17,19 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.3</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
 	<key>CaDisable</key>
 	<string></string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
+	<key>LSMinimumSystemVersion</key>
+	<string>12.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>SKAdNetworkItems</key>
@@ -244,10 +248,6 @@
 	</array>
 	<key>UIStatusBarStyle</key>
 	<string></string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>LSMinimumSystemVersion</key>
-	<string>12.0</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
