@@ -7,6 +7,7 @@ import com.timerx.database.KStoreDatabase
 import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
+import com.timerx.sound.SoundManager
 import com.timerx.sound.WasmSoundManager
 import com.timerx.vibration.VibrationManager
 import com.timerx.vibration.WasmVibrationManager
@@ -22,7 +23,10 @@ actual val platformModule = module {
         createdAtStart()
         bind<VibrationManager>()
     }
-    singleOf(::WasmSoundManager) { createdAtStart() }
+    singleOf(::WasmSoundManager) {
+        createdAtStart()
+        bind<SoundManager>()
+    }
     singleOf(::NotificationManager) { createdAtStart() }
     singleOf(::ContactProviderWasm) { bind<ContactProvider>() }
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
