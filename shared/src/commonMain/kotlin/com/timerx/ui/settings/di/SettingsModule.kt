@@ -7,7 +7,7 @@ import com.timerx.ui.settings.theme.ThemeSettingsContainer
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
-val settingsModule = module {
+val settingsContainerModule = module {
     factoryOf(::AlertsSettingsContainer)
     factoryOf(::ThemeSettingsContainer)
     factoryOf(::BackgroundSettingsContainer)

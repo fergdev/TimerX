@@ -10,7 +10,7 @@ class NoopVibrationManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
     txDispatchers: TxDispatchers
-) : VibrationManager(alertSettingsManager, timerManager, txDispatchers) {
+) : AbstractVibrationManager(alertSettingsManager, timerManager, txDispatchers) {
     override suspend fun vibrate(vibration: Vibration) {
         // Noop
     }

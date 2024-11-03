@@ -31,7 +31,5 @@ actual val platformModule = module {
     singleOf(::PermissionsHandler) { bind<IPermissionsHandler>() }
     singleOf(::NotificationManager) { createdAtStart() }
     singleOf(::CrashlyticsManager) { createdAtStart() }
-    singleOf(::ContactProviderAndroid) {
-        bind<ContactProvider>()
-    }
+    singleOf(::ContactProviderAndroid) { bind<ContactProvider>() }
 }
