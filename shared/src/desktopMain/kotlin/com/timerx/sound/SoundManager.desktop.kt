@@ -4,6 +4,7 @@ package com.timerx.sound
 
 import com.sun.speech.freetts.Voice
 import com.sun.speech.freetts.VoiceManager
+import com.timerx.coroutines.TDispatchers
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.timermanager.TimerManager
 import korlibs.audio.sound.readSound
@@ -14,8 +15,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timerx.shared.generated.resources.Res
 
-class DesktopSoundManager(alertSettingsManager: AlertSettingsManager, timerManager: TimerManager) :
-    AbstractSoundManager(alertSettingsManager, timerManager) {
+class DesktopSoundManager(
+    alertSettingsManager: AlertSettingsManager,
+    timerManager: TimerManager,
+    tDispatchers: TDispatchers
+) : AbstractSoundManager(alertSettingsManager, timerManager, tDispatchers) {
     private val voiceManager = VoiceManager.getInstance()
     private var voice: Voice
     override val isTTSSupported: Boolean

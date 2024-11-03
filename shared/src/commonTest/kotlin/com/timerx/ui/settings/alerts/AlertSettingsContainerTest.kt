@@ -13,6 +13,9 @@ import com.timerx.settings.alertSettingsOf
 import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
 import com.timerx.sound.Volume
+import com.timerx.sound.testVoices
+import com.timerx.sound.voiceInformation1
+import com.timerx.sound.voiceInformation2
 import com.timerx.testutil.asUnconfined
 import com.timerx.testutil.idle
 import dev.mokkery.answering.returns
@@ -29,17 +32,12 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.flowOf
 import pro.respawn.flowmvi.test.subscribeAndTest
 
-private val voiceInformation1 = VoiceInformation("testId1", "testName1")
-private val voiceInformation2 = VoiceInformation("testId2", "testName2")
-private val voiceInformation3 = VoiceInformation("testId3", "testName3")
-private val voices = listOf(voiceInformation1, voiceInformation2, voiceInformation3)
-
 private fun alertSettingsStateOf(
     volume: Volume = Volume.default,
     vibration: VibrationSetting = CannotVibrate,
     isNotificationsEnabled: Boolean = false,
     selectedVoice: VoiceInformation = VoiceInformation.DeviceDefault,
-    availableVoices: ImmutableSet<VoiceInformation> = voices.toPersistentSet()
+    availableVoices: ImmutableSet<VoiceInformation> = testVoices.toPersistentSet()
 ) = AlertsSettingsState(
     volume = volume,
     vibration = vibration,
@@ -65,7 +63,7 @@ class AlertSettingsContainerTest : FreeSpec({
         everySuspend {
             permissionsHandler.getPermissionState(Notification)
         } returns PermissionState.Denied
-        every { soundManager.voices() } returns voices
+        every { soundManager.voices() } returns testVoices
         every { alertSettingsManager.alertSettings } returns flowOf(alertSettingsOf())
     }
 
