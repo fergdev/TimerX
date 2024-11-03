@@ -32,7 +32,7 @@ private class TestVibrationManager(
     timerManager: TimerManager,
     txDispatchers: TxDispatchers
 ) :
-    VibrationManager(alertSettingsManager, timerManager, txDispatchers) {
+    AbstractVibrationManager(alertSettingsManager, timerManager, txDispatchers) {
     val vibrationList = mutableListOf<Vibration>()
     override suspend fun vibrate(vibration: Vibration) {
         vibrationList.add(vibration)

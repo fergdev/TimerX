@@ -8,6 +8,7 @@ import com.timerx.notification.NotificationManager
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.PermissionsHandler
 import com.timerx.sound.WasmSoundManager
+import com.timerx.vibration.VibrationManager
 import com.timerx.vibration.WasmVibrationManager
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
@@ -17,7 +18,10 @@ import org.koin.dsl.module
 actual val platformModule = module {
     includes(nonMobileModule)
     single<ITimerRepository> { KStoreDatabase() }
-    singleOf(::WasmVibrationManager) { createdAtStart() }
+    singleOf(::WasmVibrationManager) {
+        createdAtStart()
+        bind<VibrationManager>()
+    }
     singleOf(::WasmSoundManager) { createdAtStart() }
     singleOf(::NotificationManager) { createdAtStart() }
     singleOf(::ContactProviderWasm) { bind<ContactProvider>() }

@@ -33,7 +33,7 @@ class IosVibrationManager(
     alertSettingsManager: AlertSettingsManager,
     timerManager: TimerManager,
     txDispatchers: TxDispatchers
-) : VibrationManager(alertSettingsManager, timerManager, txDispatchers) {
+) : AbstractVibrationManager(alertSettingsManager, timerManager, txDispatchers) {
 
     override suspend fun vibrate(vibration: Vibration) {
         if (!isVibrationEnabled) return

@@ -33,7 +33,8 @@ class VibrationSelectorTest : FreeSpec({
                 if (it.shouldBeDisplayed()) {
                     vibrationNode.assertIsDisplayed()
                 } else {
-                    vibrationNode.assertIsNotDisplayed()
+                    vibrationNode
+                        .assertIsNotDisplayed()
                         .assertExists()
                 }
                 if (it == Vibration.None) {
@@ -75,8 +76,5 @@ class VibrationSelectorTest : FreeSpec({
     }
 })
 
-private val shouldBeDisplayed = Vibration.entries.takeWhile {
-    it != Vibration.Heavy
-}
-
+private val shouldBeDisplayed = Vibration.entries.takeWhile { it != Vibration.RigidX3 }
 private fun Vibration.shouldBeDisplayed() = this in shouldBeDisplayed
