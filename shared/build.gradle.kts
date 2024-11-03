@@ -140,6 +140,7 @@ kotlin {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.coroutines.test)
                 implementation(libs.kotest)
+                implementation(libs.kotest.assertions.core)
                 implementation(libs.flowmvi.test)
                 implementation(libs.turbine)
                 implementation(libs.multiplatform.settings.test)

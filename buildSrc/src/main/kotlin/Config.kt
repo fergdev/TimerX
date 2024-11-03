@@ -12,7 +12,7 @@ object Config {
     const val appName = "TimerX"
     const val namespace = "com.timerx"
     const val namespaceAndroid = "$namespace.android"
-    const val versionCode = 3
+    const val versionCode = 4
     const val majorRelease = 1
     const val minorRelease = 0
     const val patch = 3
