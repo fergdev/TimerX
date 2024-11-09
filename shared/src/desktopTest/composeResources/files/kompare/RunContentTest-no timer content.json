@@ -1,0 +1,50 @@
+{
+  "id": 4,
+  "bounds": {
+    "left": 0.0,
+    "top": 0.0,
+    "right": 1024.0,
+    "bottom": 768.0
+  },
+  "properties": {
+    "AccessibilityKey: IsTraversalGroup": "true"
+  },
+  "children": [
+    {
+      "id": 6,
+      "bounds": {
+        "left": 340.0,
+        "top": 338.0,
+        "right": 685.0,
+        "bottom": 366.0
+      },
+      "properties": {
+        "AccessibilityKey: Text": "[This timer doesn't exist anymore.]",
+        "AccessibilityKey: SetTextSubstitution": "AccessibilityAction(label=null, action=(androidx.compose.ui.text.AnnotatedString) -> kotlin.Boolean)",
+        "AccessibilityKey: ShowTextSubstitution": "AccessibilityAction(label=null, action=(kotlin.Boolean) -> kotlin.Boolean)",
+        "AccessibilityKey: ClearTextSubstitution": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+        "AccessibilityKey: GetTextLayoutResult": "AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)"
+      }
+    },
+    {
+      "id": 8,
+      "bounds": {
+        "left": 471.0,
+        "top": 386.0,
+        "right": 553.0,
+        "bottom": 426.0
+      },
+      "properties": {
+        "AccessibilityKey: OnClick": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+        "AccessibilityKey: Focused": "false",
+        "AccessibilityKey: RequestFocus": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+        "AccessibilityKey: Role": "Button",
+        "AccessibilityKey: Text": "[Back]",
+        "AccessibilityKey: SetTextSubstitution": "AccessibilityAction(label=null, action=(androidx.compose.ui.text.AnnotatedString) -> kotlin.Boolean)",
+        "AccessibilityKey: ShowTextSubstitution": "AccessibilityAction(label=null, action=(kotlin.Boolean) -> kotlin.Boolean)",
+        "AccessibilityKey: ClearTextSubstitution": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+        "AccessibilityKey: GetTextLayoutResult": "AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)"
+      }
+    }
+  ]
+}

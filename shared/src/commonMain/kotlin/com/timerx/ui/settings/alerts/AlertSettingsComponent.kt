@@ -1,7 +1,6 @@
 package com.timerx.ui.settings.alerts
 
 import com.arkivanov.decompose.ComponentContext
-import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.api.Store
 import pro.respawn.flowmvi.essenty.dsl.retainedStore
 
@@ -13,7 +12,7 @@ interface AlertSettingsComponent : AlertStore {
 
 class DefaultAlertSettingsComponent(
     override val onBackClicked: () -> Unit,
-    factory: () -> Container<AlertsSettingsState, AlertsSettingsIntent, Nothing>,
+    factory: () -> AlertsSettingsContainer,
     context: ComponentContext
 ) : ComponentContext by context,
     AlertStore by context.retainedStore(factory = factory),

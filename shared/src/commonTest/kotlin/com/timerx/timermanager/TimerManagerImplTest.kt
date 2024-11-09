@@ -23,8 +23,7 @@ import io.kotest.core.test.TestScope
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.shouldBe
 
-context(TestScope)
-private fun factoryContext(timerRepository: ITimerRepository): TimerManagerImpl {
+private fun TestScope.factoryContext(timerRepository: ITimerRepository): TimerManagerImpl {
     val txDispatchers = testDispatchers(testScheduler = testCoroutineScheduler)
     return TimerManagerImpl(
         timerRepository = timerRepository,

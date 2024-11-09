@@ -1,7 +1,6 @@
 package com.timerx.ui.run
 
 import com.arkivanov.decompose.ComponentContext
-import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.api.Store
 import pro.respawn.flowmvi.essenty.dsl.retainedStore
 
@@ -14,7 +13,7 @@ interface RunComponent : RunStore {
 @Suppress("UnusedPrivateProperty")
 internal class DefaultRunComponent(
     componentContext: ComponentContext,
-    factory: () -> Container<RunScreenState, RunScreenIntent, Nothing>,
+    factory: () -> RunContainer,
     override val onBack: () -> Unit
 ) : ComponentContext by componentContext,
     RunStore by componentContext.retainedStore(factory = factory),

@@ -79,7 +79,6 @@ fun kompare() {
     } catch (assertionFailedError: Throwable) {
         println("expected $expected")
         println("actual ${Json.encodeToString(actualKTree)}")
-
         throw assertionFailedError
     }
 }
