@@ -193,14 +193,16 @@ private fun IntentReceiver<RunScreenIntent>.RunView(
                 .safeDrawingPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AnimatedVisibility(controlsVisible) {
-                TopControls(
-                    displayColor = contrastDisplayColor,
-                    volume = state.volume,
-                    vibrationSetting = state.vibrationSetting,
-                ) {
-                    controlsVisible = true
-                    touchCounter++
+            if (state !is Finished) {
+                AnimatedVisibility(controlsVisible) {
+                    TopControls(
+                        displayColor = contrastDisplayColor,
+                        volume = state.volume,
+                        vibrationSetting = state.vibrationSetting,
+                    ) {
+                        controlsVisible = true
+                        touchCounter++
+                    }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))

@@ -115,10 +115,13 @@ object TimerXWidgetStateDefinition : GlanceStateDefinition<TimerWidgetInfo> {
         File(context.applicationContext.filesDir, "datastore/$FILE_NAME")
 
     object TimerInfoSerializer : Serializer<TimerWidgetInfo> {
+        private val json = Json {
+            ignoreUnknownKeys = true
+        }
         override val defaultValue = TimerWidgetInfo.Unavailable("No timers")
 
         override suspend fun readFrom(input: InputStream): TimerWidgetInfo = try {
-            Json.decodeFromString(
+            json.decodeFromString(
                 TimerWidgetInfo.serializer(),
                 input.readBytes().decodeToString()
             )
