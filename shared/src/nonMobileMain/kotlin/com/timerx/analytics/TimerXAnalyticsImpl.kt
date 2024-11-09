@@ -7,8 +7,16 @@ import com.timerx.util.KoverIgnore
 
 @KoverIgnore("Analytics not implemented on this platform")
 class TimerXAnalyticsImpl(timerXSettings: TimerXSettings, txDispatchers: TxDispatchers) :
-    TimerXAnalytics(timerXSettings, txDispatchers) {
+    AbstractTimerXAnalytics(timerXSettings, txDispatchers) {
     override fun doLogEvent(eventName: String, params: Map<String, Any>) {
-        Logger.d { "Analytics not implemented" }
+        Logger.v { "Logging eventName='$eventName' params='$params'" }
+    }
+
+    override fun doLogScreen(screenName: String) {
+        Logger.v { "Logging screen='$screenName'" }
+    }
+
+    override fun doLogException(throwable: Throwable) {
+        Logger.v { "Logging exception '$throwable'" }
     }
 }

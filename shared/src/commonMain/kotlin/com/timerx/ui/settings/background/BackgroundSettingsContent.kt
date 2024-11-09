@@ -27,6 +27,7 @@ import com.timerx.settings.Pattern
 import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
+import com.timerx.ui.logging.LogScreen
 import com.timerx.ui.settings.background.BackgroundSettingsIntent.UpdateAlpha
 import com.timerx.ui.settings.background.BackgroundSettingsIntent.UpdatePattern
 import com.timerx.ui.settings.background.BackgroundSettingsState.LoadedState
@@ -41,11 +42,14 @@ import timerx.shared.generated.resources.alpha
 import timerx.shared.generated.resources.pattern
 import timerx.shared.generated.resources.theme
 
+private const val LOG_SCREEN_TAG = "Settings:Background"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackgroundSettingsContent(
     component: BackgroundSettingsComponent
 ) = with(component) {
+    LogScreen(LOG_SCREEN_TAG)
     TScaffold(
         title = stringResource(Res.string.theme),
         onBack = ::onBackClicked

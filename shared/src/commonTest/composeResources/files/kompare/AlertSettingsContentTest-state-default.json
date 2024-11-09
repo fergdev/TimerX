@@ -1,0 +1,160 @@
+{
+  "id": 1,
+  "bounds": {
+    "left": 0.0,
+    "top": 0.0,
+    "right": 1024.0,
+    "bottom": 768.0
+  },
+  "properties": {
+    "AccessibilityKey: IsTraversalGroup": "true"
+  },
+  "children": [
+    {
+      "id": 2,
+      "bounds": {
+        "left": 0.0,
+        "top": 0.0,
+        "right": 1024.0,
+        "bottom": 768.0
+      },
+      "properties": {
+        "AccessibilityKey: IsTraversalGroup": "true"
+      },
+      "children": [
+        {
+          "id": 24,
+          "bounds": {
+            "left": 220.0,
+            "top": 80.0,
+            "right": 269.0,
+            "bottom": 96.0
+          },
+          "properties": {
+            "AccessibilityKey: Text": "[Volume]",
+            "AccessibilityKey: SetTextSubstitution": "AccessibilityAction(label=null, action=(androidx.compose.ui.text.AnnotatedString) -> kotlin.Boolean)",
+            "AccessibilityKey: ShowTextSubstitution": "AccessibilityAction(label=null, action=(kotlin.Boolean) -> kotlin.Boolean)",
+            "AccessibilityKey: ClearTextSubstitution": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: GetTextLayoutResult": "AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)"
+          }
+        },
+        {
+          "id": 25,
+          "bounds": {
+            "left": 210.0,
+            "top": 98.0,
+            "right": 814.0,
+            "bottom": 142.0
+          },
+          "properties": {
+            "AccessibilityKey: Focused": "false",
+            "AccessibilityKey: RequestFocus": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: ProgressBarRangeInfo": "ProgressBarRangeInfo(current=1.0, range=0.0..1.0, steps=0)",
+            "AccessibilityKey: SetProgress": "AccessibilityAction(label=null, action=(kotlin.Float) -> kotlin.Boolean)",
+            "AccessibilityKey: TestTag": "VolumeSlider"
+          }
+        },
+        {
+          "id": 33,
+          "bounds": {
+            "left": 220.0,
+            "top": 208.0,
+            "right": 304.0,
+            "bottom": 224.0
+          },
+          "properties": {
+            "AccessibilityKey: Text": "[Notifications]",
+            "AccessibilityKey: SetTextSubstitution": "AccessibilityAction(label=null, action=(androidx.compose.ui.text.AnnotatedString) -> kotlin.Boolean)",
+            "AccessibilityKey: ShowTextSubstitution": "AccessibilityAction(label=null, action=(kotlin.Boolean) -> kotlin.Boolean)",
+            "AccessibilityKey: ClearTextSubstitution": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: GetTextLayoutResult": "AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)"
+          }
+        },
+        {
+          "id": 35,
+          "bounds": {
+            "left": 709.0,
+            "top": 196.0,
+            "right": 804.0,
+            "bottom": 236.0
+          },
+          "properties": {
+            "AccessibilityKey: OnClick": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: Focused": "false",
+            "AccessibilityKey: RequestFocus": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: Role": "Button",
+            "AccessibilityKey: Text": "[Enable]",
+            "AccessibilityKey: SetTextSubstitution": "AccessibilityAction(label=null, action=(androidx.compose.ui.text.AnnotatedString) -> kotlin.Boolean)",
+            "AccessibilityKey: ShowTextSubstitution": "AccessibilityAction(label=null, action=(kotlin.Boolean) -> kotlin.Boolean)",
+            "AccessibilityKey: ClearTextSubstitution": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: GetTextLayoutResult": "AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)"
+          }
+        },
+        {
+          "id": 38,
+          "bounds": {
+            "left": 212.0,
+            "top": 280.0,
+            "right": 812.0,
+            "bottom": 312.0
+          },
+          "properties": {
+            "AccessibilityKey: OnClick": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: Focused": "false",
+            "AccessibilityKey: RequestFocus": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: Text": "[Voice, DeviceDefault]",
+            "AccessibilityKey: SetTextSubstitution": "AccessibilityAction(label=null, action=(androidx.compose.ui.text.AnnotatedString) -> kotlin.Boolean)",
+            "AccessibilityKey: ShowTextSubstitution": "AccessibilityAction(label=null, action=(kotlin.Boolean) -> kotlin.Boolean)",
+            "AccessibilityKey: ClearTextSubstitution": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+            "AccessibilityKey: GetTextLayoutResult": "AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)"
+          }
+        },
+        {
+          "id": 5,
+          "bounds": {
+            "left": 0.0,
+            "top": 0.0,
+            "right": 1024.0,
+            "bottom": 64.0
+          },
+          "properties": {
+            "AccessibilityKey: IsTraversalGroup": "true"
+          },
+          "children": [
+            {
+              "id": 9,
+              "bounds": {
+                "left": 4.0,
+                "top": 8.0,
+                "right": 52.0,
+                "bottom": 56.0
+              },
+              "properties": {
+                "AccessibilityKey: OnClick": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+                "AccessibilityKey: Focused": "false",
+                "AccessibilityKey: RequestFocus": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+                "AccessibilityKey: ContentDescription": "[Back]"
+              }
+            },
+            {
+              "id": 13,
+              "bounds": {
+                "left": 469.0,
+                "top": 14.0,
+                "right": 554.0,
+                "bottom": 50.0
+              },
+              "properties": {
+                "AccessibilityKey: Text": "[Alerts]",
+                "AccessibilityKey: SetTextSubstitution": "AccessibilityAction(label=null, action=(androidx.compose.ui.text.AnnotatedString) -> kotlin.Boolean)",
+                "AccessibilityKey: ShowTextSubstitution": "AccessibilityAction(label=null, action=(kotlin.Boolean) -> kotlin.Boolean)",
+                "AccessibilityKey: ClearTextSubstitution": "AccessibilityAction(label=null, action=() -> kotlin.Boolean)",
+                "AccessibilityKey: GetTextLayoutResult": "AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

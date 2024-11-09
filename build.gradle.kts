@@ -16,6 +16,7 @@ plugins {
     alias(libs.plugins.aboutLibs) apply false
     alias(libs.plugins.kotest)
     alias(libs.plugins.kover)
+    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 }
 
 versionCatalogUpdate {

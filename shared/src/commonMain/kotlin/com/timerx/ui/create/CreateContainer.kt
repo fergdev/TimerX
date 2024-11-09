@@ -34,6 +34,8 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalTextToSpeech
 import com.timerx.ui.create.CreateScreenIntent.UpdateIntervalVibration
 import com.timerx.ui.create.CreateScreenIntent.UpdateSetRepetitions
 import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
+import com.timerx.ui.di.ConfigurationFactory
+import com.timerx.ui.di.configure
 import com.timerx.vibration.Vibration
 import com.timerx.vibration.VibrationManager
 import kotlinx.collections.immutable.PersistentList
@@ -50,16 +52,14 @@ import kotlin.math.max
 
 class CreateContainer(
     timerId: Long,
+    configurationFactory: ConfigurationFactory,
     private val timerDatabase: ITimerRepository,
     private val soundManager: SoundManager,
     private val vibrationManger: VibrationManager,
 ) : Container<CreateScreenState, CreateScreenIntent, CreateAction> {
     private val defaultGenerator = DefaultGenerator()
-    override val store = store(
-        CreateScreenState(
-            canVibrate = platformCapabilities.canVibrate,
-        )
-    ) {
+    override val store = store(CreateScreenState(canVibrate = platformCapabilities.canVibrate)) {
+        configure(configurationFactory, "Create")
         init {
             launch {
                 val timer = timerDatabase.getTimer(timerId).first()

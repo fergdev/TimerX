@@ -45,6 +45,9 @@ reorderable = "2.4.0"
 sqlite = "2.5.0-SNAPSHOT"
 turbine = "1.2.0"
 versionCatalogUpdatePlugin = "0.8.5"
+jetbrainsKotlinJvm = "1.9.24"
+uiTestAndroid = "1.7.5"
+uiDesktop = "1.7.0"
 
 [libraries]
 aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
@@ -110,6 +113,8 @@ play-services-ads = { module = "com.google.android.gms:play-services-ads", versi
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
+androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
 
 [plugins]
 aboutLibs = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibs" }
@@ -133,3 +138,4 @@ mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 # Add this back in when the plugin is supported
 #room = { id = "androidx.room", version.ref = "androidx-room" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }

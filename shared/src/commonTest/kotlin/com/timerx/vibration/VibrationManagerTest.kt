@@ -6,7 +6,7 @@ import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.VibrationSetting.CanVibrate
 import com.timerx.sound.Beep.Alert
 import com.timerx.sound.IntervalSound
-import com.timerx.testutil.idleAll
+import com.timerx.testutil.idle
 import com.timerx.testutil.testDispatchers
 import com.timerx.timermanager.RunState
 import com.timerx.timermanager.TimerEvent
@@ -110,7 +110,7 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(
                 TimerEvent.Ticker(
                     runState = RunState(),
@@ -118,7 +118,7 @@ class VibrationManagerTest : FreeSpec({
                     vibration = Vibration.Soft
                 )
             )
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe listOf(Vibration.Soft)
         }
 
@@ -127,13 +127,13 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(
                 TimerEvent.Ticker(
                     runState = RunState(),
                 )
             )
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe emptyList()
         }
 
@@ -142,7 +142,7 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(
                 TimerEvent.Finished(
                     runState = RunState(),
@@ -150,7 +150,7 @@ class VibrationManagerTest : FreeSpec({
                     vibration = Vibration.SoftX2
                 )
             )
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe listOf(Vibration.SoftX2)
         }
         "previous interval invokes vibrate" {
@@ -158,7 +158,7 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(
                 PreviousInterval(
                     runState = RunState(),
@@ -166,7 +166,7 @@ class VibrationManagerTest : FreeSpec({
                     vibration = Vibration.SoftX3
                 )
             )
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe listOf(Vibration.SoftX3)
         }
         "started invokes vibrate" {
@@ -174,7 +174,7 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(
                 TimerEvent.Started(
                     runState = RunState(),
@@ -182,7 +182,7 @@ class VibrationManagerTest : FreeSpec({
                     vibration = Medium
                 )
             )
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe listOf(Medium)
         }
         "destroy does not invoke vibrate" {
@@ -190,13 +190,13 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(
                 Destroy(
                     runState = RunState(),
                 )
             )
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe listOf()
         }
         "paused does not invoke vibrate" {
@@ -204,9 +204,9 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(Paused(runState = RunState()))
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe listOf()
         }
         "resumed does not invoke vibrate" {
@@ -214,9 +214,9 @@ class VibrationManagerTest : FreeSpec({
                 AlertSettings(vibrationSetting = CanVibrate(true))
             )
             val vibrationManager = vibrationManagerFactory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             timerEventFlow.emit(Resumed(runState = RunState()))
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             vibrationManager.vibrationList shouldBe listOf()
         }
     }

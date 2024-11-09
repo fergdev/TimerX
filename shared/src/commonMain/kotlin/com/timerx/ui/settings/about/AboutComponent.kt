@@ -39,6 +39,7 @@ internal class DefaultAboutComponent(
                 onBack = onBack,
                 timerXSettings = KoinPlatform.getKoin().get(),
                 contactProvider = KoinPlatform.getKoin().get(),
+                txDispatchers = KoinPlatform.getKoin().get()
             )
         }
     )

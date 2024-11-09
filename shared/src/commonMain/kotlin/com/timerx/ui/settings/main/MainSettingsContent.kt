@@ -21,6 +21,7 @@ import com.timerx.ui.common.CustomIcons
 import com.timerx.ui.common.TMenuItem
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.rainbow
+import com.timerx.ui.logging.LogScreen
 import com.timerx.ui.settings.main.MainSettingsIntent.KeepScreenOn
 import com.timerx.ui.theme.Size
 import org.jetbrains.compose.resources.stringResource
@@ -38,10 +39,13 @@ import timerx.shared.generated.resources.keep_screen_on
 import timerx.shared.generated.resources.keep_screen_on_subtitle
 import timerx.shared.generated.resources.settings
 
+private const val LOG_SCREEN_TAG = "Settings:Main"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainSettingsContent(component: MainSettingsComponent) =
     with(component) {
+        LogScreen(LOG_SCREEN_TAG)
         TScaffold(
             title = stringResource(Res.string.settings),
             onBack = component.onBackClicked

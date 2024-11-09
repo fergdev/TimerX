@@ -3,6 +3,7 @@ package com.timerx.ui.settings.main
 import app.cash.turbine.test
 import com.timerx.BuildFlags
 import com.timerx.settings.TimerXSettings
+import com.timerx.testutil.TestConfigurationFactory
 import com.timerx.testutil.asUnconfined
 import com.timerx.testutil.idle
 import com.timerx.ui.settings.main.MainSettingsIntent.KeepScreenOn
@@ -29,16 +30,21 @@ class MainSettingsContainerTest : FreeSpec({
         everySuspend { setKeepScreenOn(any()) } returns Unit
     }
 
+    val factory = {
+        MainSettingsContainer(TestConfigurationFactory, timerXSettings)
+    }
+
     "keep screen on" - {
         "default" - {
-            MainSettingsContainer(timerXSettings).store.subscribeAndTest {
+            factory().store.subscribeAndTest {
                 states.test {
                     awaitItem() shouldBe mainSettingsState(isKeepScreenOn = false)
+                    expectNoEvents()
                 }
             }
         }
         "true" {
-            MainSettingsContainer(timerXSettings).store.subscribeAndTest {
+            factory().store.subscribeAndTest {
                 states.test {
                     awaitItem()
                     awaitItem() shouldBe mainSettingsState(isKeepScreenOn = true)
@@ -46,14 +52,14 @@ class MainSettingsContainerTest : FreeSpec({
             }
         }
         "false" {
-            MainSettingsContainer(timerXSettings).store.subscribeAndTest {
+            factory().store.subscribeAndTest {
                 states.test {
                     awaitItem() shouldBe mainSettingsState(isKeepScreenOn = false)
                 }
             }
         }
         "action invokes settings" {
-            MainSettingsContainer(timerXSettings).store.subscribeAndTest {
+            factory().store.subscribeAndTest {
                 intent(KeepScreenOn(true))
                 idle()
                 verifySuspend { timerXSettings.setKeepScreenOn(true) }

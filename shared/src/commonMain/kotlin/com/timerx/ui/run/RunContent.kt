@@ -54,6 +54,7 @@ import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.KeepScreenOn
 import com.timerx.ui.common.contrastColor
 import com.timerx.ui.common.contrastSystemBarColor
+import com.timerx.ui.logging.LogScreen
 import com.timerx.ui.run.RunScreenState.Loaded
 import com.timerx.ui.run.RunScreenState.Loaded.Finished
 import com.timerx.ui.run.RunScreenState.Loaded.NotFinished.Paused
@@ -62,6 +63,7 @@ import com.timerx.ui.run.RunScreenState.Loading
 import com.timerx.ui.run.RunScreenState.NoTimer
 import com.timerx.ui.shader.vignetteShader
 import com.timerx.ui.theme.Animation
+import com.timerx.ui.theme.Size
 import com.timerx.util.letType
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
@@ -81,16 +83,13 @@ import timerx.shared.generated.resources.skip_next
 import timerx.shared.generated.resources.skip_previous
 
 private const val CONTROLS_HIDE_DELAY = 3000L
-private val CORNER_ICON_SIZE = 48.dp
+private const val LOG_SCREEN_TAG = "Run"
 
 @Composable
 fun RunContent(runComponent: RunComponent) {
     with(runComponent) {
-        val state by subscribe(DefaultLifecycle) {
-//            when (it) {
-//                RunAction.Exit -> runComponent.onBack()
-//            }
-        }
+        LogScreen(LOG_SCREEN_TAG)
+        val state by subscribe(DefaultLifecycle)
         when (state) {
             Loading -> DefaultLoading()
             NoTimer -> NoTimerContent(runComponent)
@@ -294,7 +293,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
             intent(RunScreenIntent.PreviousInterval)
         }) {
             Icon(
-                modifier = Modifier.size(CORNER_ICON_SIZE),
+                modifier = Modifier.size(Size.icon),
                 imageVector = CustomIcons.skipPrevious,
                 contentDescription = stringResource(Res.string.skip_previous),
                 tint = displayColor
@@ -320,7 +319,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
                 intent(RunScreenIntent.UpdateVibrationEnabled(enabled.not()))
             }) {
                 Icon(
-                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    modifier = Modifier.size(Size.icon),
                     imageVector = CustomIcons.vibration,
                     contentDescription = stringResource(Res.string.next),
                     tint = if (enabled) displayColor else displayColor.copy(alpha = 0.5f)
@@ -333,7 +332,7 @@ private fun IntentReceiver<RunScreenIntent>.TopControls(
             intent(RunScreenIntent.NextInterval)
         }) {
             Icon(
-                modifier = Modifier.size(CORNER_ICON_SIZE),
+                modifier = Modifier.size(Size.icon),
                 imageVector = CustomIcons.skipNext,
                 contentDescription = stringResource(Res.string.skip_next),
                 tint = displayColor
@@ -358,7 +357,7 @@ private fun IntentReceiver<RunScreenIntent>.BottomControls(
                     onNavigateUp()
                 }) {
                     Icon(
-                        modifier = Modifier.size(CORNER_ICON_SIZE),
+                        modifier = Modifier.size(Size.icon),
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(Res.string.close),
                         tint = displayColor
@@ -367,7 +366,7 @@ private fun IntentReceiver<RunScreenIntent>.BottomControls(
             }
 
             is Playing -> {
-                Box(modifier = Modifier.size(CORNER_ICON_SIZE))
+                Box(modifier = Modifier.size(Size.icon))
             }
         }
         Text(
@@ -395,7 +394,7 @@ private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
                 intent(RunScreenIntent.Pause)
             }) {
                 Icon(
-                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    modifier = Modifier.size(Size.icon),
                     imageVector = CustomIcons.pause,
                     contentDescription = stringResource(Res.string.pause),
                     tint = displayColor
@@ -410,7 +409,7 @@ private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
                 onIncrement()
             }) {
                 Icon(
-                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    modifier = Modifier.size(Size.icon),
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = stringResource(Res.string.play),
                     tint = displayColor
@@ -424,7 +423,7 @@ private fun IntentReceiver<RunScreenIntent>.TogglePlayButton(
                 onIncrement()
             }) {
                 Icon(
-                    modifier = Modifier.size(CORNER_ICON_SIZE),
+                    modifier = Modifier.size(Size.icon),
                     imageVector = Icons.Default.Refresh,
                     contentDescription = stringResource(Res.string.restart),
                     tint = displayColor

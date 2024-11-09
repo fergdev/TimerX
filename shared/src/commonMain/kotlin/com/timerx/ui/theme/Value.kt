@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
 
 object CornerRadius {
-    val extraSmall = 12.dp
-    const val small = 50
+    val extraSmall = 8.dp
+    val small = 12.dp
     val medium = 16.dp
     val large = 24.dp
     val extraLarge = 28.dp

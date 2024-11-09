@@ -29,6 +29,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.timerx.ui.common.branded
 import com.timerx.ui.common.withForEach
+import com.timerx.ui.logging.LogScreen
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -40,8 +41,11 @@ import timerx.shared.generated.resources.change_log
 
 private const val FILES_CHANGE_LOG_JSON = "files/change_log.json"
 
+private const val LOG_SCREEN_TAG = "Settings:About:ChangeLog"
+
 @Composable
 internal fun ChangeLogContent() {
+    LogScreen(LOG_SCREEN_TAG)
     val logs = rememberChangeLog { Res.readBytes(FILES_CHANGE_LOG_JSON).decodeToString() }
     val changeLog = logs.value ?: persistentListOf()
     LazyColumn(

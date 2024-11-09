@@ -90,5 +90,6 @@
     <string name="user">User</string>
     <string name="vibration">Vibration</string>
     <string name="volume">Volume</string>
+    <string name="voice">Voice</string>
     <string name="work">Work</string>
 </resources>

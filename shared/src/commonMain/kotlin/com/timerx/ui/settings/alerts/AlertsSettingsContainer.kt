@@ -3,9 +3,12 @@ package com.timerx.ui.settings.alerts
 import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
+import com.timerx.platform.PlatformCapabilities
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.sound.SoundManager
 import com.timerx.sound.VoiceInformation
+import com.timerx.ui.di.ConfigurationFactory
+import com.timerx.ui.di.configure
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.OpenAppSettings
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.SetTTSVoice
@@ -22,13 +25,16 @@ import pro.respawn.flowmvi.plugins.whileSubscribed
 const val DEMO_TTS_TEXT = "Work. Rest"
 
 class AlertsSettingsContainer(
+    configurationFactory: ConfigurationFactory,
     private val alertSettingsManager: AlertSettingsManager,
     private val permissionsHandler: IPermissionsHandler,
     private val soundManager: SoundManager,
+    private val platformCapabilities: PlatformCapabilities
 ) : Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
 
     override val store =
         store(AlertsSettingsState()) {
+            configure(configurationFactory, "Settings:Alert")
             whileSubscribed {
                 alertSettingsManager.alertSettings.collect {
                     updateState<AlertsSettingsState, _> {
@@ -36,7 +42,8 @@ class AlertsSettingsContainer(
                         AlertsSettingsState(
                             volume = it.volume,
                             vibration = it.vibrationSetting,
-                            isNotificationsEnabled = isNotificationsEnabled(),
+                            areNotificationsEnabled = isNotificationsEnabled(),
+                            canOpenOsSettings = platformCapabilities.canOpenOsSettings,
                             selectedVoice = voices.selected(it.ttsVoiceId),
                             availableVoices = voices.sortedBy { it.name }.toPersistentSet()
                         )
@@ -54,7 +61,7 @@ class AlertsSettingsContainer(
 
                     is EnableNotifications -> {
                         permissionsHandler.requestPermission(Permission.Notification)
-                        updateState { copy(isNotificationsEnabled = isNotificationsEnabled()) }
+                        updateState { copy(areNotificationsEnabled = isNotificationsEnabled()) }
                     }
 
                     is OpenAppSettings ->

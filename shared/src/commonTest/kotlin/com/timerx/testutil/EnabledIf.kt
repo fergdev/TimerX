@@ -14,3 +14,7 @@ class NotAndroidCondition : EnabledCondition {
     override fun enabled(kclass: KClass<out Spec>): Boolean =
         BuildFlags.platform != Platform.Android
 }
+
+class DisabledCondition : EnabledCondition {
+    override fun enabled(kclass: KClass<out Spec>): Boolean = false
+}

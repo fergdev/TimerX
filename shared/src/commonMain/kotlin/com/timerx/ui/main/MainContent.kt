@@ -76,6 +76,7 @@ import com.timerx.ui.common.contrastSystemBarColor
 import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rememberRevealState
 import com.timerx.ui.common.resetFast
+import com.timerx.ui.logging.LogScreen
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pro.respawn.flowmvi.api.IntentReceiver
@@ -95,10 +96,13 @@ import timerx.shared.generated.resources.no_timers
 import timerx.shared.generated.resources.settings
 import timerx.shared.generated.resources.sort_order
 
+private const val LOG_SCREEN_TAG = "Main"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainContent(mainComponent: MainComponent) {
     with(mainComponent) {
+        LogScreen(LOG_SCREEN_TAG)
         var timerUpdatedId: Long? = null
         val state by subscribe(DefaultLifecycle) {
             when (it) {
@@ -124,7 +128,7 @@ internal fun MainContent(mainComponent: MainComponent) {
                         bottom = WindowInsets.navigationBars.asPaddingValues()
                             .calculateBottomPadding()
                     ),
-                    onClick = mainComponent::onCreateClicked
+                    onClick = { mainComponent.onCreate(null) }
                 ) {
                     TIcon(
                         imageVector = Icons.Default.Add,
@@ -220,12 +224,8 @@ private fun IntentReceiver<MainIntent>.Content(
                     is MainTimer -> {
                         TimerCard(
                             mainTimer = timer,
-                            onNavigateRunScreen = {
-                                mainComponent.onRunClicked(timer.id)
-                            },
-                            onNavigateEditScreen = {
-                                mainComponent.onCreateClicked(timer.id)
-                            },
+                            onNavigateRunScreen = mainComponent.onRun,
+                            onNavigateEditScreen = mainComponent.onCreate,
                             highlight = timer.id == timerUpdatedId
                         )
                     }
@@ -259,7 +259,7 @@ private fun IntentReceiver<MainIntent>.TopAppBarActions(
             contentDescription = stringResource(Res.string.sort_order)
         )
     }
-    IconButton(onClick = { mainComponent.onSettingsClicked() }) {
+    IconButton(onClick = mainComponent.onSettings) {
         Icon(
             imageVector = Icons.Filled.Settings,
             contentDescription = stringResource(Res.string.settings)

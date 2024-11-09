@@ -5,4 +5,5 @@ actual val platformCapabilities: PlatformCapabilities = PlatformCapabilities(
     canVibrate = false,
     hasAnalytics = false,
     hasOwnSplashScreen = false,
+    canOpenOsSettings = false,
 )
