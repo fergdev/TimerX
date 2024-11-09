@@ -70,7 +70,7 @@ class DefaultRootComponent @OptIn(ExperimentalDecomposeApi::class) constructor(
                 RootComponent.Child.MainChild(
                     DefaultMainComponent(
                         componentContext = componentContext,
-                        onRunTimer = { nav.push(Config.Run(it)) },
+                        onRun = { nav.push(Config.Run(it)) },
                         onSettings = { nav.push(Config.Settings) },
                         onCreate = { nav.push(Config.Create(it)) },
                         factory = { koin.get(parameters = { parametersOf(updatedTimerFlow) }) },

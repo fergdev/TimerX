@@ -3,6 +3,8 @@ package com.timerx.analytics
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.TimerXSettings
 
@@ -10,8 +12,9 @@ class TimerXAnalyticsImpl(
     timerXSettings: TimerXSettings,
     context: Context,
     txDispatchers: TxDispatchers
-) : TimerXAnalytics(timerXSettings, txDispatchers) {
+) : AbstractTimerXAnalytics(timerXSettings, txDispatchers) {
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+    private val crashlytics = FirebaseCrashlytics.getInstance()
 
     override fun doLogEvent(eventName: String, params: Map<String, Any>) {
         val bundle: Bundle? = params.let {
@@ -22,6 +25,16 @@ class TimerXAnalyticsImpl(
             }
         }
         firebaseAnalytics.logEvent(eventName, bundle)
+    }
+
+    override fun doLogScreen(screenName: String) {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+        }
+    }
+
+    override fun doLogException(throwable: Throwable) {
+        crashlytics.recordException(throwable)
     }
 }
 

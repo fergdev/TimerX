@@ -53,6 +53,7 @@ import com.timerx.ui.common.DefaultLoading
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.rainbow
+import com.timerx.ui.logging.LogScreen
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateDarkTheme
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsAmoled
@@ -86,9 +87,10 @@ import timerx.shared.generated.resources.user
 @Composable
 internal fun ThemeSettingsContent(themeSettingsComponent: ThemeSettingsComponent) =
     with(themeSettingsComponent) {
+        LogScreen("Settings:Theme")
         TScaffold(
             title = stringResource(Res.string.theme),
-            onBack = themeSettingsComponent::onBackClicked
+            onBack = themeSettingsComponent.backClicked
         ) { padding ->
             val state by subscribe(DefaultLifecycle)
             when (state) {

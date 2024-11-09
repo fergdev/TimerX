@@ -13,59 +13,65 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Badge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import co.touchlab.kermit.Logger
 import com.mikepenz.aboutlibraries.entity.Library
-import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.rememberLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.util.author
 import com.timerx.ui.common.TCard
+import com.timerx.ui.logging.LocalTimerXAnalytics
+import com.timerx.ui.logging.LogScreen
 import kotlinx.collections.immutable.persistentListOf
 import timerx.shared.generated.resources.Res
 
-private const val FILES_ABOUT_LIBRARIES_JSON = "files/aboutlibraries.json"
+internal const val FILES_ABOUT_LIBRARIES_JSON = "files/aboutlibraries.json"
+
+internal interface LibsLoader {
+    suspend fun load(): String
+}
+
+internal object FileLibsLoader : LibsLoader {
+    override suspend fun load() =
+        Res.readBytes(FILES_ABOUT_LIBRARIES_JSON).decodeToString()
+}
+
+private const val SCREEN_NAME_LOGGING = "Settings:About:AboutLibs"
 
 @Composable
-fun AboutLibsContent() {
-    val libs = rememberLibraries { Res.readBytes(FILES_ABOUT_LIBRARIES_JSON).decodeToString() }
+internal fun AboutLibsContent(libsLoader: LibsLoader = FileLibsLoader) {
+    LogScreen(SCREEN_NAME_LOGGING)
+    val libs = rememberLibraries { libsLoader.load() }
     val libraries = libs.value?.libraries ?: persistentListOf()
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LibraryDefaults
         items(items = libraries) { Library(library = it) }
     }
 }
 
-@Suppress("SwallowedException")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun Library(
-    library: Library,
-    typography: Typography = MaterialTheme.typography,
-) {
+private fun Library(library: Library) {
+    val timerXAnalytics = LocalTimerXAnalytics.current
     val uriHandler = LocalUriHandler.current
     TCard(
         modifier = Modifier
+            .testTag(library.uniqueId)
             .padding(top = 8.dp, bottom = 8.dp)
             .widthIn(max = 600.dp)
             .clickable {
-                val license = library.licenses.firstOrNull()
-                if (!license?.url.isNullOrBlank()) {
-                    license?.url?.also {
-                        try {
-                            uriHandler.openUri(it)
-                        } catch (t: IllegalArgumentException) {
-                            Logger.e { "Failed to open url: $it" }
-                        }
+                library.licenses.firstOrNull()?.url?.also {
+                    try {
+                        uriHandler.openUri(it)
+                    } catch (t: IllegalArgumentException) {
+                        timerXAnalytics.logException(t)
                     }
                 }
             }
@@ -78,15 +84,15 @@ internal fun Library(
             Text(
                 text = library.name,
                 modifier = Modifier.weight(1f),
-                style = typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             val version = library.artifactVersion
             if (version != null) {
                 Text(
-                    version,
-                    style = typography.bodyMedium,
+                    text = version,
+                    style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )
             }
@@ -95,7 +101,7 @@ internal fun Library(
         if (author.isNotBlank()) {
             Text(
                 text = author,
-                style = typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         if (library.licenses.isNotEmpty()) {

@@ -7,7 +7,8 @@ actual val platformCapabilities =
         canSystemDynamicTheme = supportsDynamicColors,
         canVibrate = true,
         hasAnalytics = true,
-        hasOwnSplashScreen = true
+        hasOwnSplashScreen = true,
+        canOpenOsSettings = true
     )
 
 internal val supportsDynamicColors get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

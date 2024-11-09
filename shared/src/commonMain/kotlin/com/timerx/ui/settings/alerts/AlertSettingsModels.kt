@@ -11,7 +11,8 @@ import pro.respawn.flowmvi.api.MVIState
 data class AlertsSettingsState(
     val volume: Volume = Volume.default,
     val vibration: VibrationSetting = VibrationSetting.CannotVibrate,
-    val isNotificationsEnabled: Boolean = false,
+    val areNotificationsEnabled: Boolean = false,
+    val canOpenOsSettings: Boolean = false,
     val selectedVoice: VoiceInformation = VoiceInformation.DeviceDefault,
     val availableVoices: ImmutableSet<VoiceInformation> = persistentSetOf()
 ) : MVIState

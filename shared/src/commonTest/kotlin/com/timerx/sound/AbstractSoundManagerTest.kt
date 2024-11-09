@@ -4,7 +4,7 @@ import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AlertSettings
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.sound.Beep.Alert
-import com.timerx.testutil.idleAll
+import com.timerx.testutil.idle
 import com.timerx.testutil.testDispatchers
 import com.timerx.timermanager.RunState
 import com.timerx.timermanager.TimerEvent
@@ -71,7 +71,7 @@ class AbstractSoundManagerTest : FreeSpec({
 
         "collects volume" {
             val soundManager = factory()
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             soundManager.volume shouldBe Volume(0.8f)
         }
     }
@@ -80,13 +80,13 @@ class AbstractSoundManagerTest : FreeSpec({
             "plays beep" {
                 val soundManager = factory()
                 timerEventFlow.emit(TimerEvent.Ticker(RunState(), beep = Alert))
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe listOf(Alert)
             }
             "does not play beep" {
                 val soundManager = factory()
                 timerEventFlow.emit(TimerEvent.Ticker(RunState()))
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe emptyList()
             }
         }
@@ -100,7 +100,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe listOf(Alert)
                 soundManager.textToSpeech shouldBe emptyList()
             }
@@ -113,7 +113,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe emptyList()
                 soundManager.textToSpeech shouldBe listOf("Finished")
             }
@@ -128,7 +128,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe listOf(Alert)
                 soundManager.textToSpeech shouldBe emptyList()
             }
@@ -141,7 +141,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe emptyList()
                 soundManager.textToSpeech shouldBe listOf("next")
             }
@@ -156,7 +156,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe listOf(Alert)
                 soundManager.textToSpeech shouldBe emptyList()
             }
@@ -169,7 +169,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe emptyList()
                 soundManager.textToSpeech shouldBe listOf("previous")
             }
@@ -184,7 +184,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe listOf(Alert)
                 soundManager.textToSpeech shouldBe emptyList()
             }
@@ -197,7 +197,7 @@ class AbstractSoundManagerTest : FreeSpec({
                         vibration = Vibration.Soft
                     )
                 )
-                tDispatchers.idleAll()
+                tDispatchers.idle()
                 soundManager.beeps shouldBe emptyList()
                 soundManager.textToSpeech shouldBe listOf("started")
             }
@@ -205,21 +205,21 @@ class AbstractSoundManagerTest : FreeSpec({
         "destroy does nothing" {
             val soundManager = factory()
             timerEventFlow.emit(Destroy(runState = RunState()))
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             soundManager.beeps shouldBe emptyList()
             soundManager.textToSpeech shouldBe emptyList()
         }
         "paused does nothing" {
             val soundManager = factory()
             timerEventFlow.emit(Paused(runState = RunState()))
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             soundManager.beeps shouldBe emptyList()
             soundManager.textToSpeech shouldBe emptyList()
         }
         "resumed does nothing" {
             val soundManager = factory()
             timerEventFlow.emit(Resumed(runState = RunState()))
-            tDispatchers.idleAll()
+            tDispatchers.idle()
             soundManager.beeps shouldBe emptyList()
             soundManager.textToSpeech shouldBe emptyList()
         }

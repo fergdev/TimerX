@@ -50,6 +50,18 @@ class FirebaseLoggingCallback: FirebaseIosCallback {
         let dict = splitStringToDictionary(params, ",", ":")
         Analytics.logEvent(eventId, parameters: dict)
     }
+    
+    func logScreen(screenName:String){
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: [AnalyticsParameterScreenName: screenName])
+    }
+    
+    func logError(error:String){
+        let error = NSError(domain: "com.timerx", code: 0, userInfo: [
+            NSLocalizedDescriptionKey: error,
+        ])
+
+        Crashlytics.crashlytics().record(error: error)
+    }
      
     func splitStringToDictionary(_ input: String, _ pairDelimiter: Character, _ keyValueDelimiter: Character) -> [String: String] {
         var result = [String: String]()

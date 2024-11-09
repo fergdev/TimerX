@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.timerx.settings.VibrationSetting
 import com.timerx.sound.VoiceInformation
@@ -35,6 +36,7 @@ import com.timerx.sound.Volume
 import com.timerx.ui.common.TCard
 import com.timerx.ui.common.TScaffold
 import com.timerx.ui.common.thenIf
+import com.timerx.ui.logging.LogScreen
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.EnableNotifications
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.OpenAppSettings
 import com.timerx.ui.settings.alerts.AlertsSettingsIntent.SetTTSVoice
@@ -53,23 +55,31 @@ import timerx.shared.generated.resources.enable
 import timerx.shared.generated.resources.enabled
 import timerx.shared.generated.resources.notifications
 import timerx.shared.generated.resources.vibration
+import timerx.shared.generated.resources.voice
 import timerx.shared.generated.resources.volume
+
+private const val LOG_SCREEN_TAG = "Settings:Alert"
+
+internal const val TEST_TAG_VOLUME_SLIDER = "VolumeSlider"
+internal const val TEST_TAG_VIBRATION_SWITCH = "VibrationSwitch"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AlertsSettingsContent(alertSettingsComponent: AlertSettingsComponent) =
     with(alertSettingsComponent) {
+        LogScreen(LOG_SCREEN_TAG)
         TScaffold(
             title = stringResource(Res.string.alerts),
             onBack = onBackClicked
         ) { scaffoldPadding ->
             Column(
-                modifier = Modifier.padding(
-                    top = scaffoldPadding.calculateTopPadding().plus(8.dp),
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 8.dp
-                )
+                modifier = Modifier
+                    .padding(
+                        top = scaffoldPadding.calculateTopPadding().plus(8.dp),
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 8.dp
+                    )
                     .widthIn(max = 600.dp)
                     .align(Alignment.TopCenter),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -79,7 +89,7 @@ internal fun AlertsSettingsContent(alertSettingsComponent: AlertSettingsComponen
                     vibration.letType<VibrationSetting.CanVibrate, _> {
                         VibrationCard(enabled)
                     }
-                    NotificationsCard(isNotificationsEnabled)
+                    NotificationsCard(areNotificationsEnabled, canOpenOsSettings)
                     VoiceCard(selectedVoice, availableVoices)
                 }
             }
@@ -88,22 +98,20 @@ internal fun AlertsSettingsContent(alertSettingsComponent: AlertSettingsComponen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
+private fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
     selectedVoice: VoiceInformation,
     availableVoices: ImmutableSet<VoiceInformation>
 ) {
     var voiceSelectorVisible by remember { mutableStateOf(false) }
     TCard(onClick = { voiceSelectorVisible = true }) {
         Row {
-            Text(text = "Voice")
+            Text(text = stringResource(Res.string.voice))
             Spacer(modifier = Modifier.weight(1f))
             Text(text = selectedVoice.name)
         }
     }
     if (voiceSelectorVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { voiceSelectorVisible = false }
-        ) {
+        ModalBottomSheet(onDismissRequest = { voiceSelectorVisible = false }) {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 availableVoices.forEach {
                     Box(
@@ -126,7 +134,10 @@ fun IntentReceiver<AlertsSettingsIntent>.VoiceCard(
 }
 
 @Composable
-private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(isNotificationsEnabled: Boolean) {
+private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(
+    isNotificationsEnabled: Boolean,
+    canOpenOsSettings: Boolean
+) {
     TCard {
         Row(
             modifier = Modifier.padding(vertical = 16.dp),
@@ -143,8 +154,10 @@ private fun IntentReceiver<AlertsSettingsIntent>.NotificationsCard(isNotificatio
             }
         }
 
-        Button(onClick = { intent(OpenAppSettings) }) {
-            Text(text = stringResource(Res.string.app_os_settings))
+        if (canOpenOsSettings) {
+            Button(onClick = { intent(OpenAppSettings) }) {
+                Text(text = stringResource(Res.string.app_os_settings))
+            }
         }
     }
 }
@@ -163,7 +176,8 @@ private fun IntentReceiver<UpdateVibration>.VibrationCard(isVibrationEnabled: Bo
             Text(text = stringResource(Res.string.vibration))
             Spacer(modifier = Modifier.weight(1f))
             Switch(
-                isVibrationEnabled,
+                modifier = Modifier.testTag(TEST_TAG_VIBRATION_SWITCH),
+                checked = isVibrationEnabled,
                 onCheckedChange = {
                     updateVibration()
                 }
@@ -177,6 +191,7 @@ private fun IntentReceiver<UpdateVolume>.VolumeCard(volume: Volume) {
     TCard {
         Text(text = stringResource(Res.string.volume))
         Slider(
+            modifier = Modifier.testTag(TEST_TAG_VOLUME_SLIDER),
             value = volume.value,
             onValueChange = { intent(UpdateVolume(Volume(it))) }
         )

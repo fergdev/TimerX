@@ -8,6 +8,8 @@ import com.timerx.settings.TimerXSettings
 import com.timerx.timermanager.TimerEvent
 import com.timerx.timermanager.TimerManager
 import com.timerx.timermanager.TimerState
+import com.timerx.ui.di.ConfigurationFactory
+import com.timerx.ui.di.configure
 import com.timerx.ui.run.RunScreenIntent.NextInterval
 import com.timerx.ui.run.RunScreenIntent.OnManualNext
 import com.timerx.ui.run.RunScreenIntent.Pause
@@ -29,6 +31,7 @@ import pro.respawn.flowmvi.plugins.reducePlugin
 
 internal class RunContainer(
     private val timerId: Long,
+    configurationFactory: ConfigurationFactory,
     private val alertSettingsManager: AlertSettingsManager,
     private val timerXSettings: TimerXSettings,
     private val timerManager: TimerManager,
@@ -37,6 +40,7 @@ internal class RunContainer(
 ) : Container<RunScreenState, RunScreenIntent, RunAction> {
 
     override val store = store(RunScreenState.Loading) {
+        configure(configurationFactory, "Run")
         init {
             launch {
                 val timer = timerRepository.getTimer(timerId).first()

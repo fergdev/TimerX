@@ -50,6 +50,7 @@ import com.timerx.ui.common.appendNewline
 import com.timerx.ui.common.branded
 import com.timerx.ui.common.doubleBranded
 import com.timerx.ui.common.rainbow
+import com.timerx.ui.logging.LogScreen
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsContent
 import com.timerx.ui.settings.about.changelog.ChangeLogContent
 import com.timerx.ui.theme.Size
@@ -74,9 +75,12 @@ internal const val CHANGE_LOG_TEST_TAG = "change_log"
 internal const val ABOUT_LIBS_SHEET_TEST_TAG = "about_libs_sheet"
 internal const val CHANGE_LOG_SHEET_TEST_TAG = "change_log_sheet"
 
+private const val LOG_SCREEN_TAG = "Settings:About:Main"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AboutMainContent(component: AboutMainComponent) {
+    LogScreen(LOG_SCREEN_TAG)
     val state = component.state.subscribeAsState().value
     TScaffold(
         title = buildAnnotatedString {
@@ -85,7 +89,7 @@ internal fun AboutMainContent(component: AboutMainComponent) {
             append("v".branded())
             append(state.versionName)
         },
-        onBack = component::onBackClicked
+        onBack = component.onBack
     ) { padding ->
         Column(
             modifier = Modifier

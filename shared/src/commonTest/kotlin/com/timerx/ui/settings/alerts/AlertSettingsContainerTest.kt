@@ -5,6 +5,7 @@ import com.timerx.permissions.IPermissionsHandler
 import com.timerx.permissions.Permission.Notification
 import com.timerx.permissions.PermissionState
 import com.timerx.permissions.PermissionState.Granted
+import com.timerx.platform.platformCapabilitiesOf
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.VibrationSetting
 import com.timerx.settings.VibrationSetting.CanVibrate
@@ -16,6 +17,7 @@ import com.timerx.sound.Volume
 import com.timerx.sound.testVoices
 import com.timerx.sound.voiceInformation1
 import com.timerx.sound.voiceInformation2
+import com.timerx.testutil.TestConfigurationFactory
 import com.timerx.testutil.asUnconfined
 import com.timerx.testutil.idle
 import dev.mokkery.answering.returns
@@ -41,7 +43,7 @@ private fun alertSettingsStateOf(
 ) = AlertsSettingsState(
     volume = volume,
     vibration = vibration,
-    isNotificationsEnabled = isNotificationsEnabled,
+    areNotificationsEnabled = isNotificationsEnabled,
     selectedVoice = selectedVoice,
     availableVoices = availableVoices
 )
@@ -53,9 +55,11 @@ class AlertSettingsContainerTest : FreeSpec({
     val soundManager = mock<SoundManager>()
     val container = {
         AlertsSettingsContainer(
+            configurationFactory = TestConfigurationFactory,
             alertSettingsManager = alertSettingsManager,
             permissionsHandler = permissionsHandler,
             soundManager = soundManager,
+            platformCapabilities = platformCapabilitiesOf()
         )
     }
 
@@ -73,9 +77,11 @@ class AlertSettingsContainerTest : FreeSpec({
 
     "initial state" {
         AlertsSettingsContainer(
+            TestConfigurationFactory,
             alertSettingsManager,
             permissionsHandler,
             soundManager,
+            platformCapabilities = platformCapabilitiesOf()
         ).store.subscribeAndTest {
             states.test {
                 awaitItem() shouldBe AlertsSettingsState()
@@ -126,9 +132,11 @@ class AlertSettingsContainerTest : FreeSpec({
             )
 
             AlertsSettingsContainer(
+                configurationFactory = TestConfigurationFactory,
                 alertSettingsManager = alertSettingsManager,
                 permissionsHandler = permissionsHandler,
                 soundManager = soundManager,
+                platformCapabilities = platformCapabilitiesOf()
             ).store.subscribeAndTest {
                 states.test {
                     awaitItem()
@@ -190,7 +198,7 @@ class AlertSettingsContainerTest : FreeSpec({
                 intent(AlertsSettingsIntent.EnableNotifications)
                 idle()
                 states.test {
-                    awaitItem().isNotificationsEnabled shouldBe true
+                    awaitItem().areNotificationsEnabled shouldBe true
                     expectNoEvents()
                 }
                 verifySuspend { permissionsHandler.requestPermission(Notification) }

@@ -6,6 +6,8 @@ import com.timerx.permissions.Permission
 import com.timerx.permissions.PermissionState
 import com.timerx.settings.AlertSettingsManager
 import com.timerx.settings.TimerXSettings
+import com.timerx.ui.di.ConfigurationFactory
+import com.timerx.ui.di.configure
 import com.timerx.ui.main.MainIntent.DeleteTimer
 import com.timerx.ui.main.MainIntent.DuplicateTimer
 import com.timerx.ui.main.MainIntent.HidePermissionsDialog
@@ -13,6 +15,8 @@ import com.timerx.ui.main.MainIntent.IgnoreNotificationsPermission
 import com.timerx.ui.main.MainIntent.RequestNotificationsPermission
 import com.timerx.ui.main.MainIntent.SwapTimers
 import com.timerx.ui.main.MainIntent.UpdateSortTimersBy
+import com.timerx.ui.main.MainState.Content
+import com.timerx.ui.main.MainState.Empty
 import com.timerx.util.toAgo
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.SharedFlow
@@ -29,6 +33,7 @@ import timerx.shared.generated.resources.never_run
 import kotlin.random.Random
 
 internal class MainContainer(
+    configurationFactory: ConfigurationFactory,
     private val timerRepository: ITimerRepository,
     private val permissionsHandler: IPermissionsHandler,
     private val alertSettingsManager: AlertSettingsManager,
@@ -37,6 +42,7 @@ internal class MainContainer(
 ) : Container<MainState, MainIntent, MainAction> {
 
     override val store = store(MainState.Loading()) {
+        configure(configurationFactory, "Main")
         whileSubscribed {
             launch {
                 combine(
@@ -45,7 +51,7 @@ internal class MainContainer(
                     timerXSettings.sortTimersBy
                 ) { timers, settings, sortTimersBy ->
                     if (timers.isEmpty()) {
-                        MainState.Empty(sortTimersBy)
+                        Empty(sortTimersBy)
                     } else {
                         val stateMainTimers = sortTimersBy.sort(timers).map { roomTimer ->
                             MainTimer(
@@ -55,25 +61,25 @@ internal class MainContainer(
                                 startedCount = roomTimer.startedCount,
                                 completedCount = roomTimer.completedCount,
                                 sortOrder = roomTimer.sortOrder,
-                                lastRunFormatted = roomTimer.lastRun?.toAgo() ?: getString(Res.string.never_run)
+                                lastRunFormatted = roomTimer.lastRun?.toAgo()
+                                    ?: getString(Res.string.never_run)
                             )
                         }
-                        val listItems = stateMainTimers.chunked(2)
-                            .flatMap {
-                                if (it.size == 2) {
-                                    // TODO this is a bug
-                                    it + Ad(Random.nextLong())
-                                } else {
-                                    it
-                                }
+                        val listItems = stateMainTimers.chunked(2).flatMap {
+                            if (it.size == 2) {
+                                // TODO this is a bug
+                                it + Ad(Random.nextLong())
+                            } else {
+                                it
                             }
-                        MainState.Content(
+                        }
+                        Content(
                             timers = listItems.toPersistentList(),
                             sortTimersBy = sortTimersBy,
-                            showNotificationsPermissionRequest =
-                            settings.ignoreNotificationsPermissions.not() &&
-                                permissionsHandler.getPermissionState(Permission.Notification)
-                                != PermissionState.Granted
+                            showNotificationsPermissionRequest = settings.ignoreNotificationsPermissions.not() &&
+                                permissionsHandler.getPermissionState(
+                                    Permission.Notification
+                                ) != PermissionState.Granted
                         )
                     }
                 }.collect { updateState { it } }
@@ -84,10 +90,10 @@ internal class MainContainer(
                 }
             }
         }
+
         reduce {
             when (it) {
-                is DeleteTimer ->
-                    timerRepository.deleteTimer(it.mainTimer.id)
+                is DeleteTimer -> timerRepository.deleteTimer(it.mainTimer.id)
 
                 is DuplicateTimer -> {
                     val newTimerId = timerRepository.duplicate(it.mainTimer.id)
@@ -95,31 +101,25 @@ internal class MainContainer(
                 }
 
                 HidePermissionsDialog -> {
-                    updateState<MainState.Content, _> {
+                    updateState<Content, _> {
                         copy(showNotificationsPermissionRequest = false)
                     }
                 }
 
-                IgnoreNotificationsPermission ->
-                    alertSettingsManager.setIgnoreNotificationPermissions()
+                IgnoreNotificationsPermission -> alertSettingsManager.setIgnoreNotificationPermissions()
 
                 RequestNotificationsPermission -> {
-                    updateState<MainState.Content, _> {
+                    updateState<Content, _> {
                         copy(showNotificationsPermissionRequest = false)
                     }
                     permissionsHandler.requestPermission(Permission.Notification)
                 }
 
-                is SwapTimers ->
-                    timerRepository.swapTimers(
-                        it.from.id,
-                        it.from.sortOrder,
-                        it.to.id,
-                        it.to.sortOrder
-                    )
+                is SwapTimers -> timerRepository.swapTimers(
+                    it.from.id, it.from.sortOrder, it.to.id, it.to.sortOrder
+                )
 
-                is UpdateSortTimersBy ->
-                    timerXSettings.setSortTimersBy(it.sortTimersBy)
+                is UpdateSortTimersBy -> timerXSettings.setSortTimersBy(it.sortTimersBy)
             }
         }
     }

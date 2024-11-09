@@ -11,6 +11,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.timerx.contact.ContactProvider
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.settings.AnalyticsSettings.Available
 import com.timerx.settings.AnalyticsSettings.NotAvailable
 import com.timerx.settings.TimerXSettings
@@ -23,6 +24,8 @@ import kotlinx.serialization.Serializable
 
 interface AboutMainComponent {
 
+    val onBack: () -> Unit
+
     val state: Value<AboutMainState>
 
     val aboutLibsSlot: Value<ChildSlot<*, AboutLibsComponent>>
@@ -30,8 +33,6 @@ interface AboutMainComponent {
     val changeLogSlot: Value<ChildSlot<*, ChangeLogComponent>>
 
     fun contactSupport()
-
-    fun onBackClicked()
 
     fun onAboutLibsClicked()
 
@@ -44,27 +45,28 @@ interface AboutMainComponent {
 
 class DefaultAboutMainComponent(
     componentContext: ComponentContext,
-    val onBack: () -> Unit,
+    override val onBack: () -> Unit,
     private val timerXSettings: TimerXSettings,
     private val contactProvider: ContactProvider,
+    txDispatchers: TxDispatchers
 ) : ComponentContext by componentContext,
     AboutMainComponent {
 
-    private val _state = MutableValue<AboutMainState>(
-        AnalyticsNotSupported()
-    )
+    private val _state = MutableValue<AboutMainState>(AnalyticsNotSupported())
 
     override val state = _state
 
+    private val coroutineScope = coroutineScope(txDispatchers.default)
+
     init {
-        coroutineScope().launch {
+        coroutineScope.launch {
             timerXSettings.analytics.collect { analyticsSettings ->
                 _state.update {
                     when (analyticsSettings) {
                         is Available -> AnalyticsSupported(
                             collectAnalyticsEnable = analyticsSettings.enabled,
                             updateCollectAnalytics = {
-                                launch {
+                                coroutineScope.launch {
                                     timerXSettings.setCollectAnalytics(it)
                                 }
                             }
@@ -97,10 +99,6 @@ class DefaultAboutMainComponent(
 
     override fun contactSupport() {
         contactProvider.contactSupport()
-    }
-
-    override fun onBackClicked() {
-        onBack()
     }
 
     override fun onAboutLibsClicked() {

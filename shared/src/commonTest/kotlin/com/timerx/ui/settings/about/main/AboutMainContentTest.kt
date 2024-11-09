@@ -16,6 +16,7 @@ import com.arkivanov.decompose.value.MutableValue
 import com.timerx.BuildFlags
 import com.timerx.testutil.NotAndroidCondition
 import com.timerx.testutil.asUnconfined
+import com.timerx.testutil.setContentWithLocals
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
 import com.timerx.ui.settings.about.changelog.ChangeLogComponent
 import dev.mokkery.answering.returns
@@ -33,22 +34,24 @@ import io.kotest.matchers.shouldBe
 class AboutMainContentTest : FreeSpec({
     asUnconfined()
     val aboutMainComponent = mock<AboutMainComponent> {
+        every { onBack } returns {}
         every { state } returns MutableValue(AboutMainState.AnalyticsNotSupported())
         every { aboutLibsSlot } returns MutableValue(ChildSlot<Any, AboutLibsComponent>(child = null))
         every { changeLogSlot } returns MutableValue(ChildSlot<Any, ChangeLogComponent>(child = null))
         every { contactSupport() } returns Unit
         every { onAboutLibsClicked() } returns Unit
     }
+
     "displays version information" {
         runComposeUiTest {
-            setContent { AboutMainContent(aboutMainComponent) }
+            setContentWithLocals { AboutMainContent(aboutMainComponent) }
             onNodeWithText("TimerX v${BuildFlags.versionName}").assertIsDisplayed()
         }
     }
 
     "developer message displayed" {
         runComposeUiTest {
-            setContent { AboutMainContent(aboutMainComponent) }
+            setContentWithLocals { AboutMainContent(aboutMainComponent) }
             onNodeWithText(text = "Hey", substring = true).assertIsDisplayed()
         }
     }
@@ -58,7 +61,7 @@ class AboutMainContentTest : FreeSpec({
             every { openUri(any()) } returns Unit
         }
         runComposeUiTest {
-            setContent {
+            setContentWithLocals {
                 CompositionLocalProvider(LocalUriHandler provides uriHandler) {
                     AboutMainContent(aboutMainComponent)
                 }
@@ -72,7 +75,7 @@ class AboutMainContentTest : FreeSpec({
     "analytics" - {
         "not supported does not display card" {
             runComposeUiTest {
-                setContent { AboutMainContent(aboutMainComponent) }
+                setContentWithLocals { AboutMainContent(aboutMainComponent) }
                 onNodeWithTag(COLLECT_ANALYTICS_TEST_TAG).assertDoesNotExist()
             }
         }
@@ -86,7 +89,7 @@ class AboutMainContentTest : FreeSpec({
                     )
                 )
                 runComposeUiTest {
-                    setContent { AboutMainContent(aboutMainComponent) }
+                    setContentWithLocals { AboutMainContent(aboutMainComponent) }
                     onNodeWithTag(COLLECT_ANALYTICS_TEST_TAG)
                         .performScrollTo()
                         .assertIsDisplayed()
@@ -102,7 +105,7 @@ class AboutMainContentTest : FreeSpec({
                     )
                 )
                 runComposeUiTest {
-                    setContent { AboutMainContent(aboutMainComponent) }
+                    setContentWithLocals { AboutMainContent(aboutMainComponent) }
                     onNodeWithTag(COLLECT_ANALYTICS_TEST_TAG)
                         .performScrollTo()
                         .performClick()
@@ -113,7 +116,7 @@ class AboutMainContentTest : FreeSpec({
 
         "about libs invokes component" {
             runComposeUiTest {
-                setContent { AboutMainContent(aboutMainComponent) }
+                setContentWithLocals { AboutMainContent(aboutMainComponent) }
                 onNodeWithTag(ABOUT_LIBS_TEST_TAG)
                     .performScrollTo()
                     .performClick()
@@ -123,7 +126,7 @@ class AboutMainContentTest : FreeSpec({
 
         "contact support invokes component" {
             runComposeUiTest {
-                setContent { AboutMainContent(aboutMainComponent) }
+                setContentWithLocals { AboutMainContent(aboutMainComponent) }
                 waitForIdle()
                 onNodeWithTag(CONTACT_SUPPORT_TEST_TAG)
                     .performScrollTo()
@@ -136,7 +139,7 @@ class AboutMainContentTest : FreeSpec({
     "about libs" - {
         "is does not exist when slots is empty" {
             runComposeUiTest {
-                setContent { AboutMainContent(aboutMainComponent) }
+                setContentWithLocals { AboutMainContent(aboutMainComponent) }
                 waitForIdle()
                 onNodeWithTag(ABOUT_LIBS_SHEET_TEST_TAG).assertDoesNotExist()
             }
@@ -148,7 +151,7 @@ class AboutMainContentTest : FreeSpec({
                         child = Child.Created(AboutLibsComponent, AboutLibsComponent)
                     )
                 )
-                setContent { AboutMainContent(aboutMainComponent) }
+                setContentWithLocals { AboutMainContent(aboutMainComponent) }
                 waitForIdle()
                 onNodeWithTag(ABOUT_LIBS_SHEET_TEST_TAG).assertIsDisplayed()
             }
@@ -157,7 +160,7 @@ class AboutMainContentTest : FreeSpec({
     "change log" - {
         "is does not exist when slots is empty" {
             runComposeUiTest {
-                setContent {
+                setContentWithLocals {
                     AboutMainContent(aboutMainComponent)
                 }
                 waitForIdle()
@@ -171,7 +174,7 @@ class AboutMainContentTest : FreeSpec({
                         child = Child.Created(AboutLibsComponent, ChangeLogComponent)
                     )
                 )
-                setContent { AboutMainContent(aboutMainComponent) }
+                setContentWithLocals { AboutMainContent(aboutMainComponent) }
                 waitForIdle()
                 onNodeWithTag(CHANGE_LOG_SHEET_TEST_TAG).assertExists()
             }

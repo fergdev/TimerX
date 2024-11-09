@@ -5,4 +5,5 @@ actual val platformCapabilities = PlatformCapabilities(
     canSystemDynamicTheme = false,
     hasAnalytics = true,
     hasOwnSplashScreen = false,
+    canOpenOsSettings = true
 )

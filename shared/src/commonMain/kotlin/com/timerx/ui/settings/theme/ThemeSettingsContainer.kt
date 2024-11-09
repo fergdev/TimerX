@@ -2,6 +2,8 @@ package com.timerx.ui.settings.theme
 
 import com.timerx.platform.platformCapabilities
 import com.timerx.settings.ThemeSettingsManager
+import com.timerx.ui.di.ConfigurationFactory
+import com.timerx.ui.di.configure
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateContrast
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateDarkTheme
 import com.timerx.ui.settings.theme.ThemeSettingsIntent.UpdateIsAmoled
@@ -15,10 +17,12 @@ import pro.respawn.flowmvi.plugins.reduce
 import pro.respawn.flowmvi.plugins.whileSubscribed
 
 class ThemeSettingsContainer(
-    private val themeSettingsManager: ThemeSettingsManager
+    configurationFactory: ConfigurationFactory,
+    private val themeSettingsManager: ThemeSettingsManager,
 ) : Container<ThemeSettingsState, ThemeSettingsIntent, Nothing> {
 
     override val store = store(ThemeSettingsState.Loading) {
+        configure(configurationFactory, "Settings:Theme")
         whileSubscribed {
             themeSettingsManager.themeSettings.collect {
                 updateState {

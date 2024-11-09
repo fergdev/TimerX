@@ -75,6 +75,7 @@ import com.timerx.ui.create.CreateScreenIntent.UpdateFinishBeep
 import com.timerx.ui.create.CreateScreenIntent.UpdateFinishColor
 import com.timerx.ui.create.CreateScreenIntent.UpdateFinishVibration
 import com.timerx.ui.create.CreateScreenIntent.UpdateTimerName
+import com.timerx.ui.logging.LogScreen
 import com.timerx.ui.theme.Animation
 import com.timerx.vibration.Vibration
 import org.jetbrains.compose.resources.stringResource
@@ -93,10 +94,13 @@ import timerx.shared.generated.resources.save
 import timerx.shared.generated.resources.timer_name
 import timerx.shared.generated.resources.timer_name_required
 
+private const val LOG_SCREEN_TAG = "Create"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CreateContent(createComponent: CreateComponent) {
     with(createComponent) {
+        LogScreen(LOG_SCREEN_TAG)
         var emptyTimerDialogVisible by remember { mutableStateOf(false) }
         val state by subscribe(DefaultLifecycle) {
             when (it) {

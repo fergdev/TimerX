@@ -30,4 +30,5 @@ actual val platformCapabilities: PlatformCapabilities = PlatformCapabilities(
     canVibrate = detectHostOs() in supportsVibration,
     hasAnalytics = false,
     hasOwnSplashScreen = false,
+    canOpenOsSettings = false,
 )

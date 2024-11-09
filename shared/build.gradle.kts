@@ -244,6 +244,9 @@ kotlin {
 android {
     namespace = Config.namespace
     compileSdk = Config.compileSdk
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         minSdk = Config.minSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -406,6 +409,8 @@ kover {
                 classes("*\$special\$\$inlined\$map*")
                 classes("*\$\$inlined\$singleOf*")
                 classes("*\$\$inlined\$factoryOf\$default\$*")
+                classes("*\$\$inlined\$activate\$default\$*")
+                classes("*\$\$inlined\$dismiss\$default\$*")
             }
         }
     }

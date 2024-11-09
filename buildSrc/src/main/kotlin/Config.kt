@@ -54,6 +54,7 @@ object Config {
     )
     val compilerArgs = listOf(
         "-Xexpect-actual-classes",
+        "-Xcontext-receivers",
         "-Xconsistent-data-class-copy-visibility"
     )
     val jvmCompilerArgs = buildList {
