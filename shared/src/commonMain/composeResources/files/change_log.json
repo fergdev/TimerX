@@ -1,5 +1,24 @@
 [
   {
+    "version": "1.0.4",
+    "date": "2024-11-11",
+    "info": "Stability and logging",
+    "data": [
+      {
+        "title": "Updates",
+        "items": [
+          "Improved logging so we can see how users are interacting with Tx.",
+        ]
+      },
+      {
+        "title": "Bug fixes",
+        "items": [
+          "Fixed crashes on the run screen."
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.0.3",
     "date": "2024-03-11",
     "info": "Bug Fixes Update",
