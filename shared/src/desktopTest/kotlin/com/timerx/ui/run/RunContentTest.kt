@@ -3,9 +3,9 @@ package com.timerx.ui.run
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
-import com.timerx.kompare.kompare
 import com.timerx.settings.VibrationSetting.CanVibrate
 import com.timerx.sound.Volume
+import com.timerx.testutil.kompare
 import com.timerx.testutil.setContentWithLocals
 import dev.mokkery.answering.returns
 import dev.mokkery.every
@@ -37,6 +37,7 @@ class RunContentTest : FreeSpec({
     "loading content" {
         runComposeUiTest {
             setContentWithLocals { RunContent(runComponent = factory(RunScreenState.Loading)) }
+
             kompare()
         }
     }

@@ -2,8 +2,8 @@ package com.timerx.ui.settings.alerts
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
-import com.timerx.kompare.kompare
 import com.timerx.settings.VibrationSetting.CanVibrate
+import com.timerx.testutil.kompare
 import com.timerx.testutil.setContentWithLocals
 import dev.mokkery.answering.returns
 import dev.mokkery.every
