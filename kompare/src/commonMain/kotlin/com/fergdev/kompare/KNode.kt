@@ -1,4 +1,4 @@
-package com.timerx.kompare
+package com.fergdev.kompare
 
 import kotlinx.serialization.Serializable
 

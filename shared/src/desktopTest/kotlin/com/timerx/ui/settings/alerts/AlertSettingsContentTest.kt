@@ -2,34 +2,21 @@ package com.timerx.ui.settings.alerts
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
-import com.timerx.kompare.kompare
 import com.timerx.settings.VibrationSetting.CanVibrate
-import com.timerx.testutil.NotAndroidCondition
-import com.timerx.testutil.createComponent
+import com.timerx.testutil.kompare
 import com.timerx.testutil.setContentWithLocals
-import io.kotest.core.annotation.EnabledIf
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import io.kotest.core.spec.style.FreeSpec
-import pro.respawn.flowmvi.api.Container
-import pro.respawn.flowmvi.api.Store
-import pro.respawn.flowmvi.dsl.store
+import pro.respawn.flowmvi.api.DelicateStoreApi
 
-class FakeAlertSettingsContainer(private val state: AlertsSettingsState = AlertsSettingsState()) :
-    Container<AlertsSettingsState, AlertsSettingsIntent, Nothing> {
-    override val store: Store<AlertsSettingsState, AlertsSettingsIntent, Nothing>
-        get() = store(state) {}
-}
-
-@Suppress("RUNTIME_ANNOTATION_NOT_SUPPORTED")
-@OptIn(ExperimentalTestApi::class)
-@EnabledIf(NotAndroidCondition::class)
+@OptIn(ExperimentalTestApi::class, DelicateStoreApi::class)
 class AlertSettingsContentTest : FreeSpec({
     val factory = { alertSettingsState: AlertsSettingsState ->
-        createComponent {
-            DefaultAlertSettingsComponent(
-                onBackClicked = {},
-                factory = { FakeAlertSettingsContainer(alertSettingsState) },
-                context = it
-            )
+        mock<AlertSettingsComponent> {
+            every { state } returns alertSettingsState
+            every { onBackClicked } returns {}
         }
     }
 

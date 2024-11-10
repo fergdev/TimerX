@@ -226,6 +226,7 @@ kotlin {
                 implementation(libs.kotest.junit)
                 implementation(libs.koin.test)
                 implementation(mokkery("coroutines"))
+                implementation(project(":kompare"))
             }
         }
 

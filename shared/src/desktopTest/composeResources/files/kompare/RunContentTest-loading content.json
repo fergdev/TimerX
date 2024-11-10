@@ -1,0 +1,27 @@
+{
+  "id": 1,
+  "bounds": {
+    "left": 0.0,
+    "top": 0.0,
+    "right": 1024.0,
+    "bottom": 768.0
+  },
+  "properties": {
+    "AccessibilityKey: IsTraversalGroup": "true"
+  },
+  "children": [
+    {
+      "id": 3,
+      "bounds": {
+        "left": 492.0,
+        "top": 364.0,
+        "right": 532.0,
+        "bottom": 404.0
+      },
+      "properties": {
+        "AccessibilityKey: ProgressBarRangeInfo": "ProgressBarRangeInfo(current=0.0, range=0.0..0.0, steps=0)",
+        "AccessibilityKey: TestTag": "loading"
+      }
+    }
+  ]
+}

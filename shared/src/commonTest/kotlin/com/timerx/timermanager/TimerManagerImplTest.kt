@@ -9,6 +9,7 @@ import com.timerx.domain.timerSet
 import com.timerx.sound.Beep
 import com.timerx.sound.IntervalSound
 import com.timerx.testutil.asUnconfined
+import com.timerx.testutil.testDispatchers
 import com.timerx.timermanager.TimerState.Finished
 import com.timerx.vibration.Vibration
 import dev.mokkery.answering.returns
@@ -18,7 +19,17 @@ import dev.mokkery.resetAnswers
 import dev.mokkery.verifySuspend
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.core.test.TestScope
+import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.shouldBe
+
+private fun TestScope.factoryContext(timerRepository: ITimerRepository): TimerManagerImpl {
+    val txDispatchers = testDispatchers(testScheduler = testCoroutineScheduler)
+    return TimerManagerImpl(
+        timerRepository = timerRepository,
+        txDispatchers = txDispatchers
+    )
+}
 
 class TimerManagerImplTest : FreeSpec({
     asUnconfined()
@@ -31,10 +42,7 @@ class TimerManagerImplTest : FreeSpec({
 
     "start timer" - {
         "emits events" {
-            val timerManager = TimerManagerImpl(
-                timerRepository = timerRepository,
-                coroutineScope = testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             timerManager.eventState.test {
                 awaitItem()
@@ -54,10 +62,7 @@ class TimerManagerImplTest : FreeSpec({
         }
 
         "increments timer start count" {
-            val timerManager = TimerManagerImpl(
-                timerRepository = timerRepository,
-                coroutineScope = testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             timerManager.eventState.test {
                 awaitItem()
@@ -80,10 +85,7 @@ class TimerManagerImplTest : FreeSpec({
         }
 
         "increments timer finished count" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             timerManager.eventState.test {
                 awaitItem()
@@ -109,31 +111,82 @@ class TimerManagerImplTest : FreeSpec({
             }
         }
         "throws when attempting to play while a timer is running" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             shouldThrow<IllegalArgumentException> {
                 timerManager.startTimer(timer { timerSet { interval {} } })
             }.apply { message shouldBe "Attempting to start timer while another timer is running" }
         }
+        "can play another timer after on is finished" {
+            val timerManager = factoryContext(timerRepository)
+            timerManager.startTimer(timer { timerSet { interval {} } })
+            timerManager.eventState.test {
+                awaitItem()
+                awaitItem() shouldBe TimerEvent.Started(
+                    runState = RunState(
+                        timerName = "test",
+                        setRepetitionCount = 1,
+                        intervalCount = 1,
+                        intervalName = "test",
+                        intervalDuration = 1L,
+                        backgroundColor = Color.Blue
+                    ),
+                    intervalSound = IntervalSound(Beep.Alert, "test"),
+                    vibration = Vibration.Medium
+                )
+                awaitItem() shouldBe TimerEvent.Finished(
+                    runState = RunState(
+                        timerState = Finished,
+                        timerName = "test",
+                        elapsed = 1L,
+                        setRepetitionCount = 1,
+                        intervalCount = 1,
+                        intervalName = "test",
+                        intervalDuration = 1L,
+                        backgroundColor = Color.Red
+                    ),
+                    intervalSound = IntervalSound(Beep.Alert, "Finished"),
+                    vibration = Vibration.Heavy
+                )
+                timerManager.startTimer(timer { timerSet { interval {} } })
+                awaitItem() shouldBe TimerEvent.Started(
+                    runState = RunState(
+                        timerName = "test",
+                        setRepetitionCount = 1,
+                        intervalCount = 1,
+                        intervalName = "test",
+                        intervalDuration = 1L,
+                        backgroundColor = Color.Blue
+                    ),
+                    intervalSound = IntervalSound(Beep.Alert, "test"),
+                    vibration = Vibration.Medium
+                )
+                awaitItem() shouldBe TimerEvent.Finished(
+                    runState = RunState(
+                        timerState = Finished,
+                        timerName = "test",
+                        elapsed = 1L,
+                        setRepetitionCount = 1,
+                        intervalCount = 1,
+                        intervalName = "test",
+                        intervalDuration = 1L,
+                        backgroundColor = Color.Red
+                    ),
+                    intervalSound = IntervalSound(Beep.Alert, "Finished"),
+                    vibration = Vibration.Heavy
+                )
+            }
+        }
     }
     "play pause" - {
         "throws when a timer is not running" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             shouldThrow<IllegalArgumentException> {
                 timerManager.playPause()
             }.apply { message shouldBe "Attempting to play/pause with null timer" }
         }
         "pauses timer" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             timerManager.eventState.test {
                 awaitItem()
@@ -153,10 +206,7 @@ class TimerManagerImplTest : FreeSpec({
             }
         }
         "resumes timer" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             timerManager.eventState.test {
                 awaitItem()
@@ -178,10 +228,7 @@ class TimerManagerImplTest : FreeSpec({
             }
         }
         "throws when attempting to play finished timer" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             timerManager.eventState.test {
                 awaitItem()
@@ -190,28 +237,21 @@ class TimerManagerImplTest : FreeSpec({
                 timerManager.playPause()
                 awaitItem()
                 awaitItem()
-                shouldThrow<IllegalStateException> {
+                shouldThrow<IllegalArgumentException> {
                     timerManager.playPause()
-                }.apply { message shouldBe "Cannot play/pause finished timer" }
-                timerManager.destroy()
+                }.apply { message shouldBe "Attempting to play/pause with null timer" }
             }
         }
     }
     "next interval " - {
         "throws when no timer is playing" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             shouldThrow<IllegalArgumentException> {
                 timerManager.nextInterval()
             }.apply { message shouldBe "Attempting to invoke next interval with no timer playing" }
         }
         "next interval fires next interval" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(
                 timer {
                     timerSet {
@@ -242,19 +282,13 @@ class TimerManagerImplTest : FreeSpec({
     }
     "previous interval" - {
         "throws when no timer is playing" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             shouldThrow<IllegalArgumentException> {
                 timerManager.previousInterval()
             }.apply { message shouldBe "Attempting to invoke previous interval with no timer playing" }
         }
         "fires previous interval" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(
                 timer {
                     timerSet {
@@ -287,19 +321,13 @@ class TimerManagerImplTest : FreeSpec({
     }
     "destroy" - {
         "throws when no timer is playing" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             shouldThrow<IllegalArgumentException> {
                 timerManager.destroy()
             }.apply { message shouldBe "Attempting to invoke destroy with no timer playing" }
         }
         "fires event" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(
                 timer {
                     timerSet {
@@ -328,16 +356,10 @@ class TimerManagerImplTest : FreeSpec({
     }
     "is running" - {
         "false when no timer is playing" {
-            TimerManagerImpl(
-                timerRepository,
-                testScope
-            ).isRunning() shouldBe false
+            factoryContext(timerRepository).isRunning() shouldBe false
         }
         "true when no is playing" {
-            val timerManager = TimerManagerImpl(
-                timerRepository,
-                testScope
-            )
+            val timerManager = factoryContext(timerRepository)
             timerManager.startTimer(timer { timerSet { interval {} } })
             timerManager.isRunning() shouldBe true
             timerManager.destroy()

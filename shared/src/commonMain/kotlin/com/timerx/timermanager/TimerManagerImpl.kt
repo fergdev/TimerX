@@ -1,5 +1,6 @@
 package com.timerx.timermanager
 
+import com.timerx.coroutines.TxDispatchers
 import com.timerx.database.ITimerRepository
 import com.timerx.domain.Timer
 import com.timerx.timermanager.TimerState.Finished
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 
 internal class TimerManagerImpl(
     private val timerRepository: ITimerRepository,
-    private val coroutineScope: CoroutineScope
+    private val txDispatchers: TxDispatchers
 ) : TimerManager {
     private var timerStateMachine: TimerStateMachine? = null
 
@@ -28,16 +29,21 @@ internal class TimerManagerImpl(
     }
 
     private fun initTimerStateMachine(timer: Timer) {
-        val childScope = CoroutineScope(coroutineScope.coroutineContext)
+        val childScope = CoroutineScope(txDispatchers.main)
         val timerStateMachine = TimerStateMachineImpl(timer, childScope)
         this.timerStateMachine = timerStateMachine
         childScope.launch {
             timerStateMachine.eventState.collect { timerEvent ->
                 _eventState.emit(timerEvent)
                 when (timerEvent) {
-                    is TimerEvent.Destroy -> cancel()
+                    is TimerEvent.Destroy -> {
+                        this@TimerManagerImpl.timerStateMachine = null
+                        cancel()
+                    }
+
                     is TimerEvent.Finished -> {
                         timerRepository.incrementCompletedCount(timer.id)
+                        this@TimerManagerImpl.timerStateMachine = null
                         cancel()
                     }
 

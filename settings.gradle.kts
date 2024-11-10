@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 rootProject.name = "TimerX"
 include(":androidApp")
 include(":shared")
-include(":komparer")
+include(":kompare")

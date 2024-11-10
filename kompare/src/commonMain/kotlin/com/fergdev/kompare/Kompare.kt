@@ -1,4 +1,4 @@
-package com.timerx.kompare
+package com.fergdev.kompare
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -10,12 +10,12 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.toSize
 import io.kotest.core.test.TestCase
 import io.kotest.core.test.TestScope
-import io.kotest.engine.runBlocking
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import timerx.shared.generated.resources.Res
+import java.io.IOException
 
 @OptIn(ExperimentalTestApi::class)
 fun ComposeUiTest.serializeDomToNode() = onRoot().fetchSemanticsNode().serializeDomNode()
@@ -54,14 +54,19 @@ fun createRect(offset: Offset, size: Size) =
         offset.y + size.height
     )
 
+interface KReader {
+    suspend fun readBytes(path: String): ByteArray
+}
+
 context (ComposeUiTest, TestScope)
+@Suppress("TooGenericExceptionCaught")
 @OptIn(ExperimentalTestApi::class)
-fun kompare() {
+fun kompare(reader: KReader) {
     val actualKTree = serializeDomToNode()
     val path = "files/kompare/" + getFullTestName() + ".json"
     val expected = try {
-        runBlocking { Res.readBytes(path).decodeToString() }
-    } catch (t: Throwable) {
+        runBlocking { reader.readBytes(path).decodeToString() }
+    } catch (t: IOException) {
         println("Unable to load path '$path'")
         println("Possible missing test data???")
         println("Add following to complete test")
@@ -79,7 +84,6 @@ fun kompare() {
     } catch (assertionFailedError: Throwable) {
         println("expected $expected")
         println("actual ${Json.encodeToString(actualKTree)}")
-
         throw assertionFailedError
     }
 }

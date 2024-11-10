@@ -48,6 +48,7 @@ versionCatalogUpdatePlugin = "0.8.5"
 jetbrainsKotlinJvm = "1.9.24"
 uiTestAndroid = "1.7.5"
 uiDesktop = "1.7.0"
+uiTestJvmstubs = "1.7.5"
 
 [libraries]
 aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
@@ -115,6 +116,7 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
 androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
+androidx-ui-test-jvmstubs = { group = "androidx.compose.ui", name = "ui-test-jvmstubs", version.ref = "uiTestJvmstubs" }
 
 [plugins]
 aboutLibs = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibs" }
