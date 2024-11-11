@@ -6,6 +6,7 @@ import com.mikepenz.aboutlibraries.plugin.StrictMode
 import dev.mokkery.gradle.mokkery
 import org.intellij.lang.annotations.Language
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -86,7 +87,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class) val commonMain by getting {
             kotlin.srcDir(generateBuildConfig.map { it.destinationDir })
 
             compilerOptions {
