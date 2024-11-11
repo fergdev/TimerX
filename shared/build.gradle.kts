@@ -87,17 +87,16 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class) val commonMain by getting {
             kotlin.srcDir(generateBuildConfig.map { it.destinationDir })
 
-            @OptIn(ExperimentalKotlinGradlePluginApi::class)
             compilerOptions {
                 languageVersion.set(KotlinVersion.KOTLIN_2_0)
                 freeCompilerArgs.addAll(Config.compilerArgs)
             }
             all {
                 languageSettings {
-                    progressiveMode = true
+//                    progressiveMode = true
                     Config.optIns.forEach { optIn(it) }
                 }
             }

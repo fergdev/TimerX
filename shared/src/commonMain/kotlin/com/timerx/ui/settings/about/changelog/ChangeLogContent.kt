@@ -39,7 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 import timerx.shared.generated.resources.Res
 import timerx.shared.generated.resources.change_log
 
-private const val FILES_CHANGE_LOG_JSON = "files/change_log.json"
+internal const val FILES_CHANGE_LOG_JSON = "files/change_log.json"
 
 private const val LOG_SCREEN_TAG = "Settings:About:ChangeLog"
 
@@ -102,7 +102,7 @@ internal fun ChangeLogContent() {
 }
 
 @Serializable
-private data class ChangeLogItem(
+internal data class ChangeLogItem(
     val version: String,
     val date: String,
     val info: String,
@@ -110,7 +110,7 @@ private data class ChangeLogItem(
 )
 
 @Serializable
-private data class ChangeDataItem(val title: String, val items: List<String>)
+internal data class ChangeDataItem(val title: String, val items: List<String>)
 
 @Composable
 private fun rememberChangeLog(
