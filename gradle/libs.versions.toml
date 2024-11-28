@@ -45,7 +45,7 @@ reorderable = "2.4.0"
 sqlite = "2.5.0-SNAPSHOT"
 turbine = "1.2.0"
 versionCatalogUpdatePlugin = "0.8.5"
-jetbrainsKotlinJvm = "2.0.0"
+jetbrainsKotlinJvm = "2.1.0"
 
 [libraries]
 aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
