@@ -1,5 +1,5 @@
 [versions]
-aboutLibs = "11.2.3"
+aboutLibs = "11.6.3"
 agp = "8.8.2"
 android-test-extensions = "1.6.0"
 androidJunit5Plugin = "1.11.2.0"
