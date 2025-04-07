@@ -76,6 +76,7 @@ kotlin {
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
+    //noinspection WrongGradleMethod
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
@@ -97,6 +98,7 @@ kotlin {
             all {
                 languageSettings {
 //                    progressiveMode = true
+                    //noinspection WrongGradleMethod
                     Config.optIns.forEach { optIn(it) }
                 }
             }
