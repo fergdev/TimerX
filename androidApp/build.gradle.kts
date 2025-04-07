@@ -1,9 +1,5 @@
 @file:Suppress("UnusedPrivateProperty")
 
-import java.io.FileInputStream
-import java.io.IOException
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -16,10 +12,8 @@ plugins {
 kotlin {
     androidTarget()
     sourceSets {
-        val androidMain by getting {
-            dependencies {
-                implementation(project(":shared"))
-            }
+        androidMain.dependencies {
+            implementation(project(":shared"))
         }
     }
 }
@@ -45,18 +39,11 @@ android {
     }
     signingConfigs {
         create("release") {
-            val keystorePropertiesFile = rootProject.file(Config.KeyStore.propertiesFile)
-            val keystoreProperties = Properties()
-            @Suppress("SwallowedException")
-            try {
-                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-                storePassword = keystoreProperties.getProperty(Config.KeyStore.storePasswordKey)
-                storeFile = File(keystoreProperties.getProperty(Config.KeyStore.storeFileKey))
-                keyPassword = keystoreProperties.getProperty(Config.KeyStore.keyPasswordKey)
-                keyAlias = keystoreProperties.getProperty(Config.KeyStore.aliasKey)
-            } catch (e: IOException) {
-                // do nothing
-            }
+            val props by localProperties()
+            storePassword = props.storePassword()
+            storeFile = File(rootDir, Config.storeFilePath)
+            keyPassword = props.keyPassword()
+            keyAlias = props.keyAlias()
         }
     }
     buildTypes {

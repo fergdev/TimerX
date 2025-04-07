@@ -19,13 +19,7 @@ object Config {
     const val majorVersionName = "$majorRelease.$minorRelease.$patch"
     const val versionName = "$majorRelease.$minorRelease.$patch"
 
-    object KeyStore {
-        const val propertiesFile = "keystore.properties"
-        const val storePasswordKey = "storePassword"
-        const val storeFileKey = "storeFile"
-        const val keyPasswordKey = "keyPassword"
-        const val aliasKey = "keyAlias"
-    }
+    const val storeFilePath = "certificates/hagah.jks"
 
     @Suppress("MaxLineLength")
     const val appDescription =
