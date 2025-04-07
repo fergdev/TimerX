@@ -76,7 +76,7 @@ kotlin {
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
-    //noinspection WrongGradleMethod
+        //noinspection WrongGradleMethod
     ).forEach {
         it.binaries.framework {
             baseName = "shared"

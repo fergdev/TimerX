@@ -19,7 +19,7 @@ object Config {
     const val majorVersionName = "$majorRelease.$minorRelease.$patch"
     const val versionName = "$majorRelease.$minorRelease.$patch"
 
-    const val storeFilePath = "certificates/hagah.jks"
+    const val storeFilePath = "certificates/timerx.jks"
 
     @Suppress("MaxLineLength")
     const val appDescription =
