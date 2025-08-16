@@ -15,7 +15,6 @@ import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.MutableValue
 import com.timerx.BuildFlags
 import com.timerx.testutil.NotAndroidCondition
-import com.timerx.testutil.asUnconfined
 import com.timerx.testutil.setContentWithLocals
 import com.timerx.ui.settings.about.aboutlibs.AboutLibsComponent
 import com.timerx.ui.settings.about.changelog.ChangeLogComponent
@@ -32,7 +31,7 @@ import io.kotest.matchers.shouldBe
 @OptIn(ExperimentalTestApi::class)
 @EnabledIf(NotAndroidCondition::class)
 class AboutMainContentTest : FreeSpec({
-    asUnconfined()
+//    asUnconfined()
     val aboutMainComponent = mock<AboutMainComponent> {
         every { onBack } returns {}
         every { state } returns MutableValue(AboutMainState.AnalyticsNotSupported())
