@@ -3,7 +3,6 @@ import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-    id("java-library")
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
@@ -23,7 +22,6 @@ kotlin {
 //    applyDefaultHierarchyTemplate()
 
     jvm {
-        withJava()
     }
 //    jvm().compilations.all {
 //        compileTaskProvider.configure {

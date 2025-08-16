@@ -1,3 +1,5 @@
+@file:Suppress("MissingPackageDeclaration")
+
 import java.util.Properties
 
 fun Properties.storePassword() = this["storePassword"] as String
