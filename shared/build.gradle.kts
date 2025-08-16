@@ -274,7 +274,7 @@ android {
 
 compose {
     resources {
-        packageOfResClass = "timerx.shared.generated.resources"
+        packageOfResClass = "intervallum.shared.generated.resources"
         publicResClass = true
     }
     android { }
@@ -325,9 +325,9 @@ compose {
     }
 }
 
-//    "-DmainClass=com.timerx.MainKt"
+//    "-DmainClass=com.intervallum.MainKt"
 tasks.withType<JavaExec>().named { it == "desktopRun" }
-    .configureEach { mainClass = "com.timerx.MainKt" }
+    .configureEach { mainClass = "com.intervallum.MainKt" }
 
 junitPlatform {
     // Using local dependency instead of Maven coordinates
@@ -414,8 +414,8 @@ kover {
         filters {
             excludes {
                 androidGeneratedClasses()
-                annotatedBy("com.timerx.util.KoverIgnore")
-                packages("timerx.shared.generated.resources")
+                annotatedBy("com.intervallum.util.KoverIgnore")
+                packages("intervallum.shared.generated.resources")
                 classes("*\$special\$\$inlined\$map*")
                 classes("*\$\$inlined\$singleOf*")
                 classes("*\$\$inlined\$factoryOf\$default\$*")

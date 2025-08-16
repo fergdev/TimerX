@@ -1,10 +1,10 @@
 package com.timer.di
 
 import android.content.Context
-import com.timerx.coroutines.TxDispatchers
-import com.timerx.di.sharedModule
-import com.timerx.platform.PlatformCapabilities
-import com.timerx.ui.main.MainContainer
+import com.intervallum.coroutines.TxDispatchers
+import com.intervallum.di.sharedModule
+import com.intervallum.platform.PlatformCapabilities
+import com.intervallum.ui.main.MainContainer
 import io.kotest.core.spec.style.FreeSpec
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharedFlow

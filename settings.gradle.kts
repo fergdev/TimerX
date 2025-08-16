@@ -17,7 +17,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TimerX"
+rootProject.name = "Intervallum"
 include(":androidApp")
 include(":shared")
 include(":kompare")

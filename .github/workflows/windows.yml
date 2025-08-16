@@ -34,26 +34,26 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Exe-Release
-          path: shared/build/compose/binaries/main-release/exe/com.timerx**.exe
+          path: shared/build/compose/binaries/main-release/exe/com.intervallum**.exe
           if-no-files-found: error
 
       - name: Archive Exe Debug
         uses: actions/upload-artifact@v4
         with:
           name: Exe-Debug
-          path: shared/build/compose/binaries/main/exe/com.timerx**.exe
+          path: shared/build/compose/binaries/main/exe/com.intervallum**.exe
           if-no-files-found: error
 
       - name: Archive MSI Release
         uses: actions/upload-artifact@v4
         with:
           name: MSI-Release
-          path: shared/build/compose/binaries/main-release/msi/com.timerx**.msi
+          path: shared/build/compose/binaries/main-release/msi/com.intervallum**.msi
           if-no-files-found: error
 
       - name: Archive MSI Debug
         uses: actions/upload-artifact@v4
         with:
           name: MSI-Debug
-          path: shared/build/compose/binaries/main/msi/com.timerx**.msi
+          path: shared/build/compose/binaries/main/msi/com.intervallum**.msi
           if-no-files-found: error
