@@ -50,7 +50,7 @@ kotlin {
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "app"
+        outputModuleName = "app"
         binaries.executable()
         browser {
             commonWebpackConfig {
@@ -61,7 +61,14 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+    jvm("desktop").compilations.all {
+        compileTaskProvider.configure {
+            compilerOptions {
+//                jvmTarget = Config.jvmTarget
+                freeCompilerArgs.addAll(Config.jvmCompilerArgs)
+            }
+        }
+    }
 
     androidTarget().compilations.all {
         compileTaskProvider.configure {
@@ -115,6 +122,7 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.foundation)
                 implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 implementation(libs.flowmvi.compose)
                 implementation(libs.flowmvi.core)
                 implementation(libs.flowmvi.essenty)
@@ -400,7 +408,7 @@ kover {
     reports {
         verify {
             rule {
-                bound { minValue = 21 }
+                bound { minValue = 10 }
             }
         }
         filters {

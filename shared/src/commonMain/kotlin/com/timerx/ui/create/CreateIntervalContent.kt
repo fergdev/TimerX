@@ -166,7 +166,6 @@ internal fun IntentReceiver<CreateScreenIntent>.CreateIntervalContent(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IntentReceiver<CreateScreenIntent>.HiddenIntervalControls(

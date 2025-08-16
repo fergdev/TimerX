@@ -26,11 +26,11 @@ versionCatalogUpdate {
         stabilityLevel(it.candidate.version) >= Config.minStabilityLevel
     }
 
-    keep {
-        keepUnusedVersions = true
-        keepUnusedLibraries = true
-        keepUnusedPlugins = true
-    }
+//    keep {
+//        keepUnusedVersions = true
+//        keepUnusedLibraries = true
+//        keepUnusedPlugins = true
+//    }
 }
 
 doctor {
