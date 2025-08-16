@@ -27,9 +27,9 @@ object Config {
     const val vendorName = "Ferg.Dev"
     const val licenseFile = "LICENSE.txt"
     val javaVersion = JavaVersion.VERSION_17
-    const val compileSdk = 35
+    const val compileSdk = 36
     const val targetSdk = compileSdk
-    const val minSdk = 21
+    const val minSdk = 23
     const val appId = "4a07189f-4143-4a90-9f53-1eedd74ddbeb"
     const val supportEmail = "ferg.dev@outlook.com"
     const val privacyPolicyUrl =
@@ -44,7 +44,8 @@ object Config {
         "kotlin.RequiresOptIn",
         "kotlin.experimental.ExperimentalTypeInference",
         "kotlin.contracts.ExperimentalContracts",
-        "org.jetbrains.compose.resources.ExperimentalResourceApi"
+        "org.jetbrains.compose.resources.ExperimentalResourceApi",
+        "kotlin.time.ExperimentalTime"
     )
     val compilerArgs = listOf(
         "-Xexpect-actual-classes",

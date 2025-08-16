@@ -1,7 +1,7 @@
 package com.timerx.util
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 fun Instant.toAgo(clock: Clock = Clock.System) = "${toTimeDistance(clock)} ago"
 

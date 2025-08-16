@@ -99,7 +99,7 @@ kotlin {
             kotlin.srcDir(generateBuildConfig.map { it.destinationDir })
 
             compilerOptions {
-                languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                languageVersion.set(KotlinVersion.KOTLIN_2_2)
                 freeCompilerArgs.addAll(Config.compilerArgs)
             }
             all {

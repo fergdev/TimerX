@@ -9,7 +9,8 @@ import io.github.xxfast.kstore.storage.storeOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class KStoreDatabase : ITimerRepository {
     private val store: KStore<List<Timer>> = storeOf("timerX.db", default = emptyList())
@@ -42,6 +43,7 @@ class KStoreDatabase : ITimerRepository {
         return nextTimerId
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun incrementStartedCount(timerId: Long) {
         store.update { timers ->
             val index = timers?.indexOfFirst { it.id == timerId } ?: return@update null

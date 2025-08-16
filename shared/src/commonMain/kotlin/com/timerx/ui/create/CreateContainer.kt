@@ -43,12 +43,12 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import pro.respawn.flowmvi.api.Container
 import pro.respawn.flowmvi.dsl.store
 import pro.respawn.flowmvi.plugins.init
 import pro.respawn.flowmvi.plugins.reducePlugin
 import kotlin.math.max
+import kotlin.time.Clock
 
 class CreateContainer(
     timerId: Long,

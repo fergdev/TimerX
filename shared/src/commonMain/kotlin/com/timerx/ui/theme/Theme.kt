@@ -7,6 +7,8 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.DynamicMaterialThemeState
@@ -26,32 +28,29 @@ private val shapes = Shapes(
 
 @Composable
 fun TimerXTheme(content: @Composable () -> Unit) {
-    val settings = koinInject<ThemeSettingsManager>()
+    val settings by koinInject<ThemeSettingsManager>()
         .themeSettings
         .collectAsState(ThemeSettings())
 
-    val isDark = isDarkTheme(settings.value.settingsDarkTheme)
+    val isDark = isDarkTheme(settings.settingsDarkTheme)
     val dynamic = systemDynamicColorScheme(isDark)
     // Required to regenerate colorscheme when the dynamic color has changed
     // returning a different lambdas forces the Dynamic material them to recompose with animation
     // to dynamic
     val modifyColorScheme: (DynamicMaterialThemeState.(ColorScheme) -> ColorScheme) =
-        if (settings.value.isSystemDynamic && dynamic != null) {
+        if (settings.isSystemDynamic && dynamic != null) {
             { dynamic }
         } else {
             { it }
         }
-    val state = with(settings.value) {
-        rememberDynamicMaterialThemeState(
-            seedColor = seedColor,
-            isDark = isDark,
-            isAmoled = isAmoled,
-            style = paletteStyle,
-            extendedFidelity = isHighFidelity,
-            contrastLevel = contrast.value,
-            modifyColorScheme = modifyColorScheme
-        )
-    }
+    val state = rememberDynamicMaterialThemeState(
+        seedColor = Color.White,
+        isDark = isDark,
+        isAmoled = settings.isAmoled,
+        style = settings.paletteStyle,
+        contrastLevel = settings.contrast.value,
+        modifyColorScheme = modifyColorScheme,
+    )
     DynamicMaterialTheme(
         state = state,
         animate = true,
