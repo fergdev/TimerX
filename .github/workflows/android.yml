@@ -26,6 +26,13 @@ jobs:
           distribution: 'corretto'
           cache: gradle
 
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'intervallum.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
+
       - name: Create local properties
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
@@ -46,5 +53,4 @@ jobs:
         with:
           name: Android release build
           path: androidApp/build/outputs/bundle/release/androidApp-release.aab
-
           if-no-files-found: error

@@ -78,7 +78,7 @@ fun TTopBar(
     navigationIcon = { BackIcon(onNavigationIconClick, navigationIcon) },
     actions = actions,
     scrollBehavior = scrollBehavior,
-    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+    colors = TopAppBarDefaults.topAppBarColors(
         containerColor = containerColor(),
         scrolledContainerColor = Color.Transparent,
     ),

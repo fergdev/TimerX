@@ -41,7 +41,7 @@ android {
         create("release") {
             val props by localProperties()
             storePassword = props.storePassword()
-            storeFile = File(rootDir, Config.storeFilePath)
+            storeFile = File(props.storePath())
             keyPassword = props.keyPassword()
             keyAlias = props.keyAlias()
         }
