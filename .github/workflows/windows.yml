@@ -33,6 +33,7 @@ jobs:
         run: echo "$LOCAL_PROPERTIES" | base64 --decode > local.properties
 
       - name: Set store path
+        shell: bash
         run: echo "storePath=${{ steps.decode_keystore.outputs.filePath }}" >> local.properties
 
       - name: Build
