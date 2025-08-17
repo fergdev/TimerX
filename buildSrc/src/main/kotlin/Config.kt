@@ -4,11 +4,9 @@
 )
 
 import org.gradle.api.JavaVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 object Config {
-    //    val jvmTarget = JvmTarget.JVM_11
-//    val idePluginJvmTarget = JvmTarget.JVM_17
-
     const val appName = "Intervallum"
     const val namespace = "com.intervallum"
     const val namespaceAndroid = "$namespace.android"
@@ -26,7 +24,6 @@ object Config {
         "Intervallum is a beautiful, fully customizable HIT timer designed to help you crush your fitness goals by keeping you focused and in control during every workout."
     const val vendorName = "Ferg.Dev"
     const val licenseFile = "LICENSE.txt"
-    val javaVersion = JavaVersion.VERSION_17
     const val compileSdk = 36
     const val targetSdk = compileSdk
     const val minSdk = 23
@@ -59,6 +56,9 @@ object Config {
         add("-Xstring-concat=inline")
         add("-Xlambdas=indy")
     }
+
+    val jvmTarget = JvmTarget.JVM_17
+    val javaVersion = JavaVersion.VERSION_17
 
     object Detekt {
         const val CONFIG_FILE = "detekt.yml"

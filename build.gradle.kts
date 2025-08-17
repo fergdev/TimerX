@@ -2,21 +2,23 @@ import nl.littlerobots.vcu.plugin.versionSelector
 
 plugins {
     alias(libs.plugins.detekt)
-    alias(libs.plugins.ben.manes.versions)
+    alias(libs.plugins.kotest)
+    alias(libs.plugins.kover)
     alias(libs.plugins.gradleDoctor)
+
+    alias(libs.plugins.ben.manes.versions)
     alias(libs.plugins.version.catalog.update)
-    alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.androidLibrary) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
-    alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.aboutLibs) apply false
-    alias(libs.plugins.kotest)
-    alias(libs.plugins.kover)
-    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+
+//    alias(libs.plugins.androidApplication) apply false
+//    alias(libs.plugins.androidLibrary) apply false
+//    alias(libs.plugins.kotlinMultiplatform) apply false
+//    alias(libs.plugins.kotlinAndroid) apply false
+//    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 }
 
 versionCatalogUpdate {
@@ -25,12 +27,6 @@ versionCatalogUpdate {
     versionSelector {
         stabilityLevel(it.candidate.version) >= Config.minStabilityLevel
     }
-
-//    keep {
-//        keepUnusedVersions = true
-//        keepUnusedLibraries = true
-//        keepUnusedPlugins = true
-//    }
 }
 
 doctor {
@@ -38,10 +34,8 @@ doctor {
     downloadSpeedWarningThreshold.set(.5f)
     GCWarningThreshold.set(0.10f)
     GCFailThreshold = 0.9f
-    failOnEmptyDirectories.set(true)
     warnWhenJetifierEnabled.set(true)
     negativeAvoidanceThreshold.set(500)
-    warnWhenNotUsingParallelGC.set(true)
     disallowCleanTaskDependencies.set(true)
     warnIfKotlinCompileDaemonFallback.set(true)
     javaHome {

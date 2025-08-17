@@ -7,11 +7,12 @@ import dev.mokkery.gradle.mokkery
 import org.intellij.lang.annotations.Language
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    id(libs.plugins.kotlinMultiplatform.get().pluginId)
+    id(libs.plugins.androidLibrary.get().pluginId)
+//    alias(libs.plugins.kotlinMultiplatform)
+//    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.androidJunit5)
@@ -70,15 +71,6 @@ kotlin {
         }
     }
 
-    androidTarget().compilations.all {
-        compileTaskProvider.configure {
-            compilerOptions {
-//                jvmTarget = Config.jvmTarget
-                freeCompilerArgs.addAll(Config.jvmCompilerArgs)
-            }
-        }
-    }
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -92,6 +84,32 @@ kotlin {
             export(libs.decompose)
             export(libs.essenty.lifecycle)
         }
+
+        it.compilerOptions {
+            freeCompilerArgs.addAll(Config.compilerArgs)
+//            freeCompilerArgs.addAll("-Xbinary=bundleId=ComposeApp")
+        }
+    }
+
+    androidTarget().compilations.all {
+        compileTaskProvider.configure {
+            compilerOptions {
+//                jvmTarget = Config.jvmTarget
+                freeCompilerArgs.addAll(Config.jvmCompilerArgs)
+            }
+        }
+    }
+
+    targets.all {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll(Config.jvmCompilerArgs)
+                    optIn.addAll(Config.optIns)
+                    progressiveMode.set(true)
+                }
+            }
+        }
     }
 
     sourceSets {
@@ -99,13 +117,11 @@ kotlin {
             kotlin.srcDir(generateBuildConfig.map { it.destinationDir })
 
             compilerOptions {
-                languageVersion.set(KotlinVersion.KOTLIN_2_2)
                 freeCompilerArgs.addAll(Config.compilerArgs)
             }
             all {
                 languageSettings {
-//                    progressiveMode = true
-                    //noinspection WrongGradleMethod
+                    progressiveMode = true
                     Config.optIns.forEach { optIn(it) }
                 }
             }
@@ -268,7 +284,7 @@ android {
         targetCompatibility = Config.javaVersion
     }
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(Config.javaVersion.ordinal)
     }
 }
 
@@ -376,37 +392,14 @@ composeCompiler {
 }
 
 aboutLibraries {
-    // - if the automatic registered android tasks are disabled, a similar thing can be achieved manually
-    // - `./gradlew app:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/res/raw`
-    // - the resulting file can for example be added as part of the SCM
-    // registerAndroidTasks = false
-
-    // define the path configuration files are located in. E.g. additional libraries, licenses to add to the target .json
     configPath = "config"
-    // allow to enable "offline mode", will disable any network check of the plugin (including [fetchRemoteLicense] or pulling spdx license texts)
     offlineMode = false
-    // enable fetching of "remote" licenses. Uses the GitHub API
     fetchRemoteLicense = true
-
-    // Full license text for license IDs mentioned here will be included, even if no detected dependency uses them.
-    // additionalLicenses = ["mit", "mpl_2_0"]
-
-    // Allows to exclude some fields from the generated meta data field.
-    // excludeFields = ["developers", "funding"]
-
-    // Define the strict mode, will fail if the project uses licenses not allowed
-    // - This will only automatically fail for Android projects which have `registerAndroidTasks` enabled
-    // For non Android projects, execute `exportLibraryDefinitions`
     strictMode = StrictMode.FAIL
-    // Allowed set of licenses, this project will be able to use without build failure
     allowedLicenses = arrayOf("Apache-2.0", "MIT", "BSD-3-Clause", "ASDKL", "NOASSERTION")
-    // Allowed set of licenses for specific dependencies, this project will be able to use without build failure
     allowedLicensesMap = mapOf(Pair("asdkl", listOf("androidx.jetpack.library")))
-    // Enable the duplication mode, allows to merge, or link dependencies which relate
     duplicationMode = DuplicateMode.LINK
-    // Configure the duplication rule, to match "duplicates" with
     duplicationRule = DuplicateRule.SIMPLE
-    // Enable pretty printing for the generated JSON file
     prettyPrint = true
 }
 
