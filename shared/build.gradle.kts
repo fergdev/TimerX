@@ -282,6 +282,12 @@ compose {
     desktop {
         application {
             mainClass = "${Config.namespace}.MainKt"
+            buildTypes.release.proguard {
+                version.set("7.7.0") // TODO test this for other builds
+                obfuscate = true
+                optimize = true
+                configurationFiles.from(projectDir.resolve("proguard-rules.pro"))
+            }
             nativeDistributions {
                 targetFormats(
                     TargetFormat.Deb,
