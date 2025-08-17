@@ -28,6 +28,7 @@ jobs:
           encodedString: ${{ secrets.KEYSTORE }}
 
       - name: Create local properties
+        shell: bash
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: echo "$LOCAL_PROPERTIES" | base64 --decode > local.properties
