@@ -21,10 +21,20 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'intervallum.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
+
       - name: Create local properties
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: echo "$LOCAL_PROPERTIES" | base64 --decode > local.properties
+
+      - name: Set store path
+        run: echo "storePath=${{ steps.decode_keystore.outputs.filePath }}" >> local.properties
 
       - name: Create linux Deb
         run: ./gradlew packageDeb packageReleaseDeb packageRpm packageReleaseRpm
