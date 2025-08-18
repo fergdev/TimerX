@@ -13,7 +13,7 @@ object Config {
     const val versionCode = 5
     const val majorRelease = 1
     const val minorRelease = 0
-    const val patch = 4
+    const val patch = 5
     const val majorVersionName = "$majorRelease.$minorRelease.$patch"
     const val versionName = "$majorRelease.$minorRelease.$patch"
 
