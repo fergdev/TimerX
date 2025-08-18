@@ -37,7 +37,7 @@ install_jdk_if_needed() {
   fi
   echo " - No valid JDK installation found, installing..."
   tar_name="jdk-${jdk_version}_${arch_type}_bin.tar.gz"
-  jdk_url="https://download.oracle.com/java/17/archive/${tar_name}"
+  jdk_url="https://download.oracle.com/java/21/archive/${tar_name}"
   echo "Downloading $jdk_url"
   # Download and un-tar JDK to our defined location.
   curl -OLv $jdk_url
