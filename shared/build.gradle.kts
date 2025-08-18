@@ -46,8 +46,14 @@ val generateBuildConfig by tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("generated/kotlin/src/commonMain"))
 }
 
+java {
+    sourceCompatibility = Config.javaVersion
+    targetCompatibility = Config.javaVersion
+}
+
 kotlin {
     applyDefaultHierarchyTemplate()
+    jvmToolchain(21)
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
@@ -62,12 +68,10 @@ kotlin {
         }
     }
 
-    jvm("desktop").compilations.all {
-        compileTaskProvider.configure {
-            compilerOptions {
-//                jvmTarget = Config.jvmTarget
-                freeCompilerArgs.addAll(Config.jvmCompilerArgs)
-            }
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget.set(Config.jvmTarget)
+            freeCompilerArgs.addAll(Config.jvmCompilerArgs)
         }
     }
 
@@ -94,7 +98,7 @@ kotlin {
     androidTarget().compilations.all {
         compileTaskProvider.configure {
             compilerOptions {
-//                jvmTarget = Config.jvmTarget
+                jvmTarget = Config.jvmTarget
                 freeCompilerArgs.addAll(Config.jvmCompilerArgs)
             }
         }
@@ -116,9 +120,10 @@ kotlin {
         @OptIn(ExperimentalKotlinGradlePluginApi::class) val commonMain by getting {
             kotlin.srcDir(generateBuildConfig.map { it.destinationDir })
 
-            compilerOptions {
-                freeCompilerArgs.addAll(Config.compilerArgs)
-            }
+//            compilerOptions {
+//                freeCompilerArgs.addAll(Config.compilerArgs)
+//                jvmToolchain(Config.javaVersion.ordinal)
+//            }
             all {
                 languageSettings {
                     progressiveMode = true
@@ -284,7 +289,7 @@ android {
         targetCompatibility = Config.javaVersion
     }
     kotlin {
-        jvmToolchain(Config.javaVersion.ordinal)
+        jvmToolchain(21)
     }
 }
 

@@ -57,8 +57,8 @@ object Config {
         add("-Xlambdas=indy")
     }
 
-    val jvmTarget = JvmTarget.JVM_17
-    val javaVersion = JavaVersion.VERSION_17
+    val jvmTarget = JvmTarget.JVM_21
+    val javaVersion = JavaVersion.VERSION_21
 
     object Detekt {
         const val CONFIG_FILE = "detekt.yml"

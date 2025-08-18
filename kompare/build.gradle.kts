@@ -9,18 +9,18 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-//java {
-//    sourceCompatibility = Config.javaVersion
-//    targetCompatibility = Config.javaVersion
-//}
-
 kotlin {
     applyDefaultHierarchyTemplate()
+    jvmToolchain(21)
     compilerOptions {
         freeCompilerArgs.addAll("-Xcontext-receivers")
     }
 
     jvm {
+        compilerOptions {
+            jvmTarget.set(Config.jvmTarget)
+            freeCompilerArgs.addAll(Config.jvmCompilerArgs)
+        }
     }
 
     targets.all {
