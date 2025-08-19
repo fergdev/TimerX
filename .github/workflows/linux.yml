@@ -11,15 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: publishing
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          java-version: 24
           check-latest: true
-          java-version: 17
-          cache: 'gradle'
+          distribution: zulu
+          cache: gradle
 
       - name: Decode Keystore
         id: decode_keystore

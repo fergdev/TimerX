@@ -18,12 +18,14 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 17
+      - uses: actions/checkout@v5
+
+      - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'corretto'
+          java-version: 24
+          check-latest: true
+          distribution: zulu
           cache: gradle
 
       - name: Decode Keystore

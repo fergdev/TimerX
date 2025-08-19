@@ -4,7 +4,7 @@ repo_dir=$CI_PRIMARY_REPOSITORY_PATH
 jdk_dir="${CI_DERIVED_DATA_PATH}/JDK"
 gradle_dir="${repo_dir}/Common"
 cache_dir="${CI_DERIVED_DATA_PATH}/.gradle"
-jdk_version="21.0.1"
+jdk_version="24.0.1"
 
 # Check if we stored gradle caches in DerivedData.
 recover_cache_files() {
@@ -37,7 +37,7 @@ install_jdk_if_needed() {
   fi
   echo " - No valid JDK installation found, installing..."
   tar_name="jdk-${jdk_version}_${arch_type}_bin.tar.gz"
-  jdk_url="https://download.oracle.com/java/21/archive/${tar_name}"
+  jdk_url="https://download.oracle.com/java/24/archive/${tar_name}"
   echo "Downloading $jdk_url"
   # Download and un-tar JDK to our defined location.
   curl -OLv $jdk_url
