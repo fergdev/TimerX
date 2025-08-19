@@ -57,8 +57,8 @@ object Config {
         add("-Xlambdas=indy")
     }
 
-    val jvmTarget = JvmTarget.JVM_21
-    val javaVersion = JavaVersion.VERSION_21
+    val jvmTarget = JvmTarget.JVM_24
+    val javaVersion = JavaVersion.VERSION_24
     val javaMajorVersion = javaVersion.ordinal + 1
 
     object Detekt {
