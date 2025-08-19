@@ -59,6 +59,7 @@ object Config {
 
     val jvmTarget = JvmTarget.JVM_21
     val javaVersion = JavaVersion.VERSION_21
+    val javaMajorVersion = javaVersion.ordinal + 1
 
     object Detekt {
         const val CONFIG_FILE = "detekt.yml"

@@ -11,7 +11,7 @@ plugins {
 
 kotlin {
     applyDefaultHierarchyTemplate()
-    jvmToolchain(21)
+    jvmToolchain(Config.javaMajorVersion)
     compilerOptions {
         freeCompilerArgs.addAll("-Xcontext-receivers")
     }

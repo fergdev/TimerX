@@ -53,7 +53,7 @@ java {
 
 kotlin {
     applyDefaultHierarchyTemplate()
-    jvmToolchain(21)
+    jvmToolchain(Config.javaMajorVersion)
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
@@ -289,7 +289,7 @@ android {
         targetCompatibility = Config.javaVersion
     }
     kotlin {
-        jvmToolchain(21)
+        jvmToolchain(Config.javaMajorVersion)
     }
 }
 
