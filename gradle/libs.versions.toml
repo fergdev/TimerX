@@ -117,7 +117,7 @@ aboutLibs = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLib
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidJunit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-ben-manes-versions = "com.github.ben-manes.versions:0.51.0"
+ben-manes-versions = "com.github.ben-manes.versions:0.52.0"
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
