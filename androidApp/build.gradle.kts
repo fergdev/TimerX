@@ -1,8 +1,12 @@
 @file:Suppress("UnusedPrivateProperty")
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+//    alias(libs.plugins.kotlinMultiplatform)
+//    alias(libs.plugins.androidApplication)
+//    android-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+
+    id(libs.plugins.kotlinMultiplatform.get().pluginId)
+    id(libs.plugins.androidApplication.get().pluginId)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.googleServices)
@@ -10,6 +14,7 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(Config.javaMajorVersion)
     androidTarget()
     sourceSets {
         androidMain.dependencies {
@@ -41,7 +46,7 @@ android {
         create("release") {
             val props by localProperties()
             storePassword = props.storePassword()
-            storeFile = File(rootDir, Config.storeFilePath)
+            storeFile = File(props.storePath())
             keyPassword = props.keyPassword()
             keyAlias = props.keyAlias()
         }
@@ -68,8 +73,5 @@ android {
         sourceCompatibility = Config.javaVersion
         targetCompatibility = Config.javaVersion
         isCoreLibraryDesugaringEnabled = true
-    }
-    kotlin {
-        jvmToolchain(17)
     }
 }

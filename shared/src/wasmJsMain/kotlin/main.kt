@@ -8,9 +8,9 @@ import com.arkivanov.decompose.router.stack.webhistory.DefaultWebHistoryControll
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.essenty.lifecycle.stop
-import com.timerx.di.startKoin
-import com.timerx.ui.AppContent
-import com.timerx.ui.navigation.DefaultRootComponent
+import com.intervallum.di.startKoin
+import com.intervallum.ui.AppContent
+import com.intervallum.ui.navigation.DefaultRootComponent
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.koin.compose.KoinContext

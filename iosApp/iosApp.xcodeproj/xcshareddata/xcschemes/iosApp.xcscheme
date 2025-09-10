@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7555FF7A242A565900829871"
-               BuildableName = "TimerX.app"
-               BlueprintName = "TimerX"
+               BuildableName = "Intervallum.app"
+               BlueprintName = "Intervallum"
                ReferencedContainer = "container:iosApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7555FF7A242A565900829871"
-            BuildableName = "TimerX.app"
-            BlueprintName = "TimerX"
+            BuildableName = "Intervallum.app"
+            BlueprintName = "Intervallum"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -68,8 +68,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7555FF7A242A565900829871"
-            BuildableName = "TimerX.app"
-            BlueprintName = "TimerX"
+            BuildableName = "Intervallum.app"
+            BlueprintName = "Intervallum"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

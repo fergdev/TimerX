@@ -11,20 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     environment: publishing
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          java-version: 24
           check-latest: true
-          java-version: 17
-          cache: 'gradle'
+          distribution: zulu
+          cache: gradle
+
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'intervallum.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
 
       - name: Create local properties
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: echo "$LOCAL_PROPERTIES" | base64 --decode > local.properties
+
+      - name: Set store path
+        run: echo "storePath=${{ steps.decode_keystore.outputs.filePath }}" >> local.properties
 
       - name: Create linux Deb
         run: ./gradlew packageDeb packageReleaseDeb packageRpm packageReleaseRpm
@@ -33,26 +43,26 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Deb-Debug
-          path: shared/build/compose/binaries/main/deb/com.timerx**.deb
+          path: shared/build/compose/binaries/main/deb/com.intervallum**.deb
           if-no-files-found: error
 
       - name: Archive Deb Release
         uses: actions/upload-artifact@v4
         with:
           name: Deb-Release
-          path: shared/build/compose/binaries/main-release/deb/com.timerx**.deb
+          path: shared/build/compose/binaries/main-release/deb/com.intervallum**.deb
           if-no-files-found: error
 
       - name: Archive Rpm Debug
         uses: actions/upload-artifact@v4
         with:
           name: Rpm-Debug
-          path: shared/build/compose/binaries/main/rpm/com.timerx**.rpm
+          path: shared/build/compose/binaries/main/rpm/com.intervallum**.rpm
           if-no-files-found: error
 
       - name: Archive Rpm Release
         uses: actions/upload-artifact@v4
         with:
           name: Rpm-Release
-          path: shared/build/compose/binaries/main-release/rpm/com.timerx**.rpm
+          path: shared/build/compose/binaries/main-release/rpm/com.intervallum**.rpm
           if-no-files-found: error

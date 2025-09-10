@@ -18,18 +18,30 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 17
+      - uses: actions/checkout@v5
+
+      - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'corretto'
+          java-version: 24
+          check-latest: true
+          distribution: zulu
           cache: gradle
+
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'intervallum.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
 
       - name: Create local properties
         env:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: echo "$LOCAL_PROPERTIES" | base64 --decode > local.properties
+
+      - name: Set store path
+        run: echo "storePath=${{ steps.decode_keystore.outputs.filePath }}" >> local.properties
 
       - name: Build
         run: ./gradlew bundle
@@ -46,5 +58,4 @@ jobs:
         with:
           name: Android release build
           path: androidApp/build/outputs/bundle/release/androidApp-release.aab
-
           if-no-files-found: error

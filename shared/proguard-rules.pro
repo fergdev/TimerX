@@ -1,4 +1,3 @@
-
 # For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
 -keepclasseswithmembernames,includedescriptorclasses class * {
     native <methods>;
@@ -99,6 +98,17 @@
 	public static void throwIllegalArgument(...);
 	public static void throwIllegalState(...);
 }
+
+-dontwarn kotlinx.datetime.**
+-dontwarn androidx.compose.material3.internal.**
+
+# JetBrains Runtime helper classes not needed on Android
+-dontwarn com.jetbrains.JBR
+-dontwarn com.jetbrains.exported.**
+
+# korlibs.ffi references a MethodHandle signature that doesn’t exist on Android.
+# We don’t need it on the Android runtime, so suppress the warning.
+-dontwarn korlibs.ffi.**
 
 # https://issuetracker.google.com/issues/271805005
 -keeppackagenames '!**'

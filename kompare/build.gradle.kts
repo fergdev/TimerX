@@ -1,37 +1,39 @@
 @file:Suppress("UnusedPrivateProperty")
 import org.jetbrains.compose.ExperimentalComposeLibrary
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
+//    id(libs.plugins.androidApplication.get().pluginId)
+    id(libs.plugins.kotlinMultiplatform.get().pluginId)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinx.serialization)
 }
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
 
 kotlin {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate()
+    jvmToolchain(Config.javaMajorVersion)
     compilerOptions {
-//        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
         freeCompilerArgs.addAll("-Xcontext-receivers")
     }
-//    applyDefaultHierarchyTemplate()
 
     jvm {
+        compilerOptions {
+            jvmTarget.set(Config.jvmTarget)
+            freeCompilerArgs.addAll(Config.jvmCompilerArgs)
+        }
     }
-//    jvm().compilations.all {
-//        compileTaskProvider.configure {
-//            compilerOptions {
-// //                jvmTarget.set(Config.jvmTarget)
-//                freeCompilerArgs.addAll(Config.jvmCompilerArgs)
-//            }
-//        }
-//    }
 
+    targets.all {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll(Config.compilerArgs)
+                    optIn.addAll(Config.optIns)
+                    progressiveMode.set(true)
+                }
+            }
+        }
+    }
     sourceSets {
         @OptIn(ExperimentalComposeLibrary::class)
         val commonMain by getting {

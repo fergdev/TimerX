@@ -107,3 +107,10 @@
 -optimizationpasses 5
 # Dalvik VM can't handle static overridden fields, do not enable
 # -overloadaggressively
+
+-dontwarn kotlinx.datetime.**
+-dontwarn androidx.compose.material3.internal.**
+
+# JetBrains Runtime helper classes not needed on Android
+-dontwarn com.jetbrains.JBR
+-dontwarn com.jetbrains.exported.**

@@ -7,48 +7,49 @@ androidx-activityCompose = "1.10.1"
 androidx-room = "2.7.2"
 animationCoreAndroid = "1.9.0"
 coroutines = "1.10.2"
-crashlytics = "3.0.2"
-decompose = "3.2.2"
+crashlytics = "3.0.6"
+decompose = "3.3.0"
 desugar_jdk_libs = "2.1.5"
 detekt = "1.23.8"
 detektComposePlugin = "1.4.0"
 detektFormattingPlugin = "1.23.8"
-essenty = "2.2.1"
-firebaseAnalytics = "22.1.2"
-firebaseBom = "33.5.1"
-firebaseCrashlytics = "19.2.1"
+essenty = "2.5.0"
+firebaseAnalytics = "23.0.0"
+firebaseBom = "34.1.0"
+firebaseCrashlytics = "20.0.0"
 flowMvi = "3.1.0"
 flowext = "1.0.0"
 freetts = "1.2.2"
 glanceAppwidget = "1.1.1"
-googleServices = "4.4.2"
+googleServices = "4.4.3"
 gradleDoctorPlugin = "0.11.0"
-jetbrains-compose = "1.8.2"
+jetbrains-compose = "1.9.0-beta03"
 junit = "5.13.4"
 kermit = "2.0.6"
 koin = "4.1.0"
-korgeCore = "5.4.0"
+korgeCore = "6.0.0"
 kotest = "6.0.0.M1"
 kotlin = "2.2.10"
 kotlinx-immutable = "0.4.0"
-kotlinx-serialization = "1.7.3"
-kotlinxDatetime = "0.6.1"
-kotlinxSerializationJson = "1.7.3"
+kotlinx-serialization = "1.9.0"
+kotlinxDatetime = "0.7.1"
+kotlinxSerializationJson = "1.9.0"
 kover = "0.9.1"
 ksp = "2.2.10-2.0.2"
-kstore = "0.9.1"
-materialKolor = "2.0.0"
-mokkery = "2.9.0" # 2.9 requires kotlin 2.2+
-multiplatformSettings = "1.2.0"
-playServicesAds = "23.5.0"
-reorderable = "2.4.0"
+kstore = "1.0.0"
+materialKolor = "3.0.1"
+mokkery = "2.9.0"
+multiplatformSettings = "1.3.0"
+playServicesAds = "24.5.0"
+reorderable = "2.5.1"
 sqlite = "2.5.2"
 turbine = "1.2.1"
 versionCatalogUpdatePlugin = "1.0.0"
-jetbrainsKotlinJvm = "2.2.10"
+versions = "0.52.0"
 
 [libraries]
 aboutLibs = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibs" }
+android-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-animation-core-android = { module = "androidx.compose.animation:animation-core-android", version.ref = "animationCoreAndroid" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
@@ -96,6 +97,7 @@ kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-s
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-immutable" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
@@ -117,13 +119,12 @@ aboutLibs = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLib
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidJunit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-ben-manes-versions = "com.github.ben-manes.versions:0.51.0"
+ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 gradleDoctor = { id = "com.osacky.doctor", version.ref = "gradleDoctorPlugin" }
-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotest = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

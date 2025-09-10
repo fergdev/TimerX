@@ -1,16 +1,16 @@
 {
   "project_info": {
     "project_number": "798882514249",
-    "firebase_url": "https://timerx-b7d18.firebaseio.com",
-    "project_id": "timerx-b7d18",
-    "storage_bucket": "timerx-b7d18.appspot.com"
+    "firebase_url": "https://intervallum-b7d18.firebaseio.com",
+    "project_id": "intervallum-b7d18",
+    "storage_bucket": "intervallum-b7d18.appspot.com"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:798882514249:android:9044ffd1871530067fc698",
         "android_client_info": {
-          "package_name": "com.timerx.android"
+          "package_name": "com.intervallum.android"
         }
       },
       "oauth_client": [

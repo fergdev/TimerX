@@ -20,7 +20,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         
         // Kotlin
-        TimerXAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
+        IntervallumAnalytics_iosKt.firebaseCallback(callback: FirebaseLoggingCallback())
         CrashlyticsManager_iosKt.setCrashlyticsCallback(callback: CrashlyticsCallback())
         
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "16d05d566ddd35ca547efdf2eeb1496c", "092ea52e6e29e1041f1216b949d6ab7d" ]
@@ -56,7 +56,7 @@ class FirebaseLoggingCallback: FirebaseIosCallback {
     }
     
     func logError(error:String){
-        let error = NSError(domain: "com.timerx", code: 0, userInfo: [
+        let error = NSError(domain: "com.intervallum", code: 0, userInfo: [
             NSLocalizedDescriptionKey: error,
         ])
 

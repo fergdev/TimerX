@@ -10,8 +10,8 @@
         android:shortcutShortLabel="@string/shortcutNewLabel">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.timerx.MainActivity"
-            android:targetPackage="com.timerx.android">
+            android:targetClass="com.intervallum.MainActivity"
+            android:targetPackage="com.intervallum.android">
 
             <extra
                 android:name="create_timer"
