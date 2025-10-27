@@ -47,14 +47,14 @@ jobs:
         run: ./gradlew check koverXmlReport --warning-mode all
 
       - name: Archive android shared lint
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Android shared lint
           path: shared/build/reports/lint-results-debug.html
           if-no-files-found: error
 
       - name: Archive Android-App lint
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Android app lint
           path: androidApp/build/reports/lint-results-debug.html
